@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/audience",
+      "handler": "Audience.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/audience/:_id",
+      "handler": "Audience.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/audience",
+      "handler": "Audience.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/audience/:_id",
+      "handler": "Audience.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/audience/:_id",
+      "handler": "Audience.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "connection": "default",
+  "collectionName": "keyprocess",
+  "info": {
+    "name": "keyProcess",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "scenario": {
+      "model": "scenario"
+    }
+  }
+}

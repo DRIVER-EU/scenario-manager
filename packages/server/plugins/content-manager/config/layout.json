@@ -1,0 +1,122 @@
+{
+  "scenario": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      },
+      "usesCMS": {
+        "appearance": ""
+      },
+      "usesKeyProcesses": {
+        "appearance": ""
+      },
+      "usesObjectives": {
+        "appearance": ""
+      },
+      "useCMS": {
+        "appearance": ""
+      },
+      "useKeyProcesses": {
+        "appearance": ""
+      },
+      "useObjectives": {
+        "appearance": ""
+      }
+    }
+  },
+  "audience": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      }
+    }
+  },
+  "actionState": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      }
+    }
+  },
+  "injectionState": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      },
+      "color": {
+        "appearance": ""
+      }
+    }
+  },
+  "participantType": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      }
+    }
+  },
+  "returnState": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      }
+    }
+  },
+  "mission": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      },
+      "description": {
+        "appearance": ""
+      }
+    }
+  },
+  "storyline": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      },
+      "description": {
+        "appearance": ""
+      }
+    }
+  },
+  "objective": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      },
+      "description": {
+        "appearance": ""
+      }
+    }
+  },
+  "keyProcess": {
+    "attributes": {
+      "name": {
+        "appearance": ""
+      },
+      "description": {
+        "appearance": ""
+      }
+    }
+  },
+  "injects": {
+    "attributes": {
+      "subject": {
+        "appearance": ""
+      }
+    }
+  },
+  "mediaItem": {
+    "attributes": {
+      "title": {
+        "appearance": ""
+      },
+      "isFolder": {
+        "appearance": ""
+      }
+    }
+  }
+}

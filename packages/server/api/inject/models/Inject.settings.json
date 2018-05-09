@@ -1,0 +1,20 @@
+{
+  "connection": "default",
+  "collectionName": "injects",
+  "info": {
+    "name": "inject",
+    "description": "Inject something into the scenario's timeline."
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "subject": {
+      "type": "string",
+      "required": true
+    },
+    "storyline": {
+      "model": "storyline"
+    }
+  }
+}

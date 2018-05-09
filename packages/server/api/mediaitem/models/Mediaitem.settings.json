@@ -1,0 +1,33 @@
+{
+  "connection": "default",
+  "collectionName": "",
+  "info": {
+    "name": "mediaItem",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "isFolder": {
+      "type": "boolean"
+    },
+    "children": {
+      "collection": "mediaitem",
+      "via": "parent"
+    },
+    "scenario": {
+      "model": "scenario"
+    },
+    "parent": {
+      "model": "mediaitem"
+    },
+    "data": {
+      "model": "mediadata"
+    }
+  }
+}

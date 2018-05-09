@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/objective",
+      "handler": "Objective.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/objective/:_id",
+      "handler": "Objective.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/objective",
+      "handler": "Objective.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/objective/:_id",
+      "handler": "Objective.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/objective/:_id",
+      "handler": "Objective.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

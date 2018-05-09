@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/actionstate",
+      "handler": "Actionstate.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/actionstate/:_id",
+      "handler": "Actionstate.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/actionstate",
+      "handler": "Actionstate.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/actionstate/:_id",
+      "handler": "Actionstate.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/actionstate/:_id",
+      "handler": "Actionstate.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

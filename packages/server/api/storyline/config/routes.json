@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/storyline",
+      "handler": "Storyline.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/storyline/:_id",
+      "handler": "Storyline.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/storyline",
+      "handler": "Storyline.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/storyline/:_id",
+      "handler": "Storyline.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/storyline/:_id",
+      "handler": "Storyline.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

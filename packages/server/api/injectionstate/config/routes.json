@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/injectionstate",
+      "handler": "Injectionstate.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/injectionstate/:_id",
+      "handler": "Injectionstate.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/injectionstate",
+      "handler": "Injectionstate.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/injectionstate/:_id",
+      "handler": "Injectionstate.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/injectionstate/:_id",
+      "handler": "Injectionstate.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/returnstate",
+      "handler": "Returnstate.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/returnstate/:_id",
+      "handler": "Returnstate.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/returnstate",
+      "handler": "Returnstate.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/returnstate/:_id",
+      "handler": "Returnstate.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/returnstate/:_id",
+      "handler": "Returnstate.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}
