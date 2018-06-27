@@ -1,0 +1,22 @@
+{
+  "connection": "default",
+  "collectionName": "",
+  "info": {
+    "name": "mediaData",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "data": {
+      "model": "file",
+      "via": "related",
+      "plugin": "upload"
+    },
+    "item": {
+      "model": "mediaitem",
+      "required": true
+    }
+  }
+}

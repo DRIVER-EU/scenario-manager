@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/mediadata",
+      "handler": "Mediadata.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/mediadata/:_id",
+      "handler": "Mediadata.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/mediadata",
+      "handler": "Mediadata.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/mediadata/:_id",
+      "handler": "Mediadata.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/mediadata/:_id",
+      "handler": "Mediadata.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

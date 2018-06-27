@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/keyprocess",
+      "handler": "Keyprocess.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/keyprocess/:_id",
+      "handler": "Keyprocess.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/keyprocess",
+      "handler": "Keyprocess.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/keyprocess/:_id",
+      "handler": "Keyprocess.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/keyprocess/:_id",
+      "handler": "Keyprocess.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ScenarioService } from './scenario.service';
+
+describe('ScenarioService', () => {
+  let service: ScenarioService;
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ScenarioService],
+    }).compile();
+    service = module.get<ScenarioService>(ScenarioService);
+  });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+});

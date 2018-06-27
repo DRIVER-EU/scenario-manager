@@ -1,0 +1,23 @@
+{
+  "name": "boobook",
+  "version": "0.0.1",
+  "description": "Scenario manager interface for performing Concept Development & Experimentations.",
+  "scripts": {
+    "start": "parcel index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Erik Vullings <erik.vullings@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "materialize-css": "^0.100.2",
+    "meiosis": "^1.4.1",
+    "mithril": "^1.1.6"
+  },
+  "devDependencies": {
+    "@types/mithril": "^1.1.12",
+    "autoprefixer": "^8.5.0",
+    "parcel-bundler": "^1.8.1",
+    "typescript": "^2.8.3"
+  }
+}

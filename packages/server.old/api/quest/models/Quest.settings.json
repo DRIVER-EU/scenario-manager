@@ -1,0 +1,28 @@
+{
+  "connection": "default",
+  "collectionName": "mission",
+  "info": {
+    "name": "quest",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "scenario": {
+      "model": "scenario"
+    },
+    "storylines": {
+      "collection": "storyline",
+      "via": "quest",
+      "plugin": " "
+    }
+  }
+}
