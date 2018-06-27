@@ -1,6 +1,6 @@
 import { Content } from 'content/content.entity';
 import { Column, Entity } from 'typeorm';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 
 @Entity()
 export class Scenario extends Content {
@@ -8,7 +8,7 @@ export class Scenario extends Content {
   @Column()
   startDate: number;
 
-  @ApiModelProperty()
+  @ApiModelPropertyOptional()
   @Column()
   endDate?: number;
 }

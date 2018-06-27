@@ -2,7 +2,9 @@ import { ObjectID } from 'typeorm';
 import { ScenarioService } from './scenario.service';
 import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common';
 import { Scenario } from './scenario.entity';
+import { ApiUseTags, ApiResponse } from '@nestjs/swagger';
 
+@ApiUseTags('scenario')
 @Controller('scenario')
 export class ScenarioController {
   constructor(private readonly scenarioService: ScenarioService) { }
@@ -26,6 +28,8 @@ export class ScenarioController {
   }
 
   @Post()
+  @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.'})
   async create(@Body() scenario: Scenario) {
     console.log('Create: ' + JSON.stringify(scenario));
     return this.scenarioService.create(scenario);
