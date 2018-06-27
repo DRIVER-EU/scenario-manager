@@ -1,8 +1,7 @@
-import { ObjectID } from 'typeorm';
 import { ScenarioService } from './scenario.service';
 import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common';
 import { Scenario } from './scenario.entity';
-import { ApiUseTags, ApiResponse } from '@nestjs/swagger';
+import { ApiUseTags, ApiResponse, ApiImplicitBody } from '@nestjs/swagger';
 
 @ApiUseTags('scenario')
 @Controller('scenario')
@@ -10,13 +9,13 @@ export class ScenarioController {
   constructor(private readonly scenarioService: ScenarioService) { }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Scenario> {
+  async findOne(@Param('id') id: string) {
     console.log(`Find scenario by id: ${id}.`);
     return this.scenarioService.findOne(id);
   }
 
   @Get()
-  async findAll(): Promise<Scenario[]> {
+  async findAll() {
     console.log('Find all');
     return this.scenarioService.findAll();
   }
@@ -28,7 +27,8 @@ export class ScenarioController {
   }
 
   @Post()
-  @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
+  // @ApiImplicitBody( { name: 'scenario', description: 'The new scenario', required: true })
+  @ApiResponse({ status: 201, description: 'The record has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.'})
   async create(@Body() scenario: Scenario) {
     console.log('Create: ' + JSON.stringify(scenario));

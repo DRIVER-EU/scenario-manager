@@ -7,28 +7,28 @@ import { Scenario } from './scenario.entity';
 export class ScenarioService {
   constructor(
     @InjectRepository(Scenario)
-    private readonly scenarioRepository: Repository<Scenario>,
+    private readonly repository: Repository<Scenario>,
   ) { }
 
-  async findOne(id: string): Promise<Scenario> {
-    return await this.scenarioRepository.findOne(id);
+  async findOne(id: string) {
+    return await this.repository.findOne(id);
   }
 
-  async findAll(): Promise<Scenario[]> {
-    return await this.scenarioRepository.find();
+  async findAll() {
+    return await this.repository.find();
   }
 
   async update(id: string, scenario: Scenario) {
-    return await this.scenarioRepository.update(id, scenario);
+    return await this.repository.update(id, scenario);
   }
 
   async create(scenario: Scenario) {
     if (!scenario.startDate) { scenario.startDate = Date.now(); }
-    return await this.scenarioRepository.save(scenario);
+    return await this.repository.save(scenario);
   }
 
   async delete(id: string) {
     const scenario = await this.findOne(id);
-    return await this.scenarioRepository.remove(scenario);
+    return await this.repository.remove(scenario);
   }
 }
