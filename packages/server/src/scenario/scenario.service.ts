@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ObjectID } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Scenario } from './scenario.entity';
 
 @Injectable()
@@ -18,9 +18,12 @@ export class ScenarioService {
     return await this.scenarioRepository.find();
   }
 
+  async update(id: string, scenario: Scenario) {
+    return await this.scenarioRepository.update(id, scenario);
+  }
+
   async create(scenario: Scenario) {
     if (!scenario.startDate) { scenario.startDate = Date.now(); }
-    if (!scenario.endDate) { scenario.endDate = new Date(); }
     return await this.scenarioRepository.save(scenario);
   }
 

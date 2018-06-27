@@ -1,11 +1,14 @@
 import { Content } from 'content/content.entity';
-import { CreateDateColumn, Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Scenario extends Content {
-  @CreateDateColumn()
+  @ApiModelProperty()
+  @Column()
   startDate: number;
 
-  @CreateDateColumn()
-  endDate: Date;
+  @ApiModelProperty()
+  @Column()
+  endDate?: number;
 }

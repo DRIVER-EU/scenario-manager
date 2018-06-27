@@ -1,6 +1,6 @@
 import { ObjectID } from 'typeorm';
 import { ScenarioService } from './scenario.service';
-import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common';
 import { Scenario } from './scenario.entity';
 
 @Controller('scenario')
@@ -17,6 +17,12 @@ export class ScenarioController {
   async findAll(): Promise<Scenario[]> {
     console.log('Find all');
     return this.scenarioService.findAll();
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() scenario: Scenario) {
+    console.log('Update: ' + JSON.stringify(scenario));
+    return this.scenarioService.update(id, scenario);
   }
 
   @Post()
