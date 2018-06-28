@@ -18,16 +18,16 @@ export class ObjectiveService {
     return await this.repository.find();
   }
 
-  async update(id: string, scenario: Objective) {
-    return await this.repository.update(id, scenario);
+  async update(id: string, objective: Objective) {
+    return await this.repository.update(id, objective);
   }
 
-  async create(scenario: Objective) {
-    return await this.repository.save(scenario);
+  async create(objective: Objective) {
+    return await this.repository.save(objective);
   }
 
   async delete(id: string) {
-    const scenario = await this.findOne(id);
-    return await this.repository.remove(scenario);
+    const objective = await this.findOne(id);
+    return await this.repository.remove(objective);
   }
 }
