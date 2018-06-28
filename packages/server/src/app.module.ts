@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ObjectiveModule } from './objective/objective.module';
 import { StorylineModule } from './storyline/storyline.module';
 import { InjectModule } from './inject/inject.module';
+import { ConstraintModule } from './constraint/constraint.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), ScenarioModule, ObjectiveModule, StorylineModule, InjectModule],
+  imports: [TypeOrmModule.forRoot(), ScenarioModule, ObjectiveModule, StorylineModule, InjectModule, ConstraintModule],
   controllers: [AppController],
   providers: [AppService],
 })
