@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScenarioModule } from './scenario/scenario.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ObjectiveModule } from './objective/objective.module';
 import { StorylineModule } from './storyline/storyline.module';
 import { InjectModule } from './inject/inject.module';

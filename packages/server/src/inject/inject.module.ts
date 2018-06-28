@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { InjectController } from './inject.controller';
 import { InjectService } from './inject.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Inject } from './inject.entity';
 
 @Module({

@@ -1,6 +1,6 @@
-import { BaseInject } from 'inject/inject.entity';
-import { Entity, Column, ObjectIdColumn, ObjectID, OneToOne, ManyToOne } from 'typeorm';
+import { Entity, Column, ObjectIdColumn, ObjectID, ManyToOne } from 'typeorm';
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
+import { BaseInject } from '../inject/base-inject.entity';
 
 export enum ConstraintType {
   MANUAL,

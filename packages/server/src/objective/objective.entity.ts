@@ -1,11 +1,13 @@
-import { Scenario } from 'scenario/scenario.entity';
-import { Content } from 'content/content.entity';
 import { Entity, OneToMany, ManyToOne, ManyToMany } from 'typeorm';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Storyline } from 'storyline/storyline.entity';
+import { Scenario } from '../scenario/scenario.entity';
+import { Content } from '../content/content.entity';
+import { Storyline } from '../storyline/storyline.entity';
 
 @Entity()
 export class Objective extends Content {
+  constructor() { super(); }
+
   // @ApiModelProperty( { type: Objective })
   @ManyToOne(type => Objective, objective => objective.children)
   parent: Objective;

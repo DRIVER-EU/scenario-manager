@@ -1,7 +1,7 @@
-import { ScenarioService } from './scenario.service';
+import { ApiUseTags, ApiResponse } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common';
 import { Scenario } from './scenario.entity';
-import { ApiUseTags, ApiResponse, ApiImplicitBody } from '@nestjs/swagger';
+import { ScenarioService } from './scenario.service';
 
 @ApiUseTags('scenario')
 @Controller('scenario')
