@@ -15,6 +15,10 @@ export enum ConstraintType {
 
 @Entity()
 export class Constraint {
+  constructor(type: ConstraintType) {
+    this.type = type;
+  }
+
   @ApiModelProperty()
   @ObjectIdColumn()
   id: ObjectID;
