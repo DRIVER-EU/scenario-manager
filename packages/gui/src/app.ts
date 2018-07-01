@@ -2,26 +2,26 @@ import 'materialize-css/js/jquery.hammer';
 import 'materialize-css/js/hammer.min';
 import 'materialize-css/dist/css/materialize.min.css';
 import 'materialize-css/dist/js/materialize.min';
-import m, { RouteDefs, Vnode } from 'mithril';
 import './styles.css';
+import m, { RouteDefs, Vnode } from 'mithril';
 import { Layout } from './components/layout';
 import { UserForm } from './components/user-form';
-import { UserList } from './components/user-list';
+import { ScenarioList } from './components/scenario-list';
 
 export const M: { updateTextFields: () => void } = (window as any).Materialize;
 
 const routingTable: RouteDefs = {
-  '/create': {
+  '/scenario': {
     render: (vnode: Vnode<{ id: number; editing: boolean }>) =>
       m(Layout, m(UserForm, { ...vnode.attrs, editing: false })),
   },
-  '/edit/:id': {
+  '/scenario/:id': {
     render: (vnode: Vnode<{ id: number; editing: boolean }>) =>
       m(Layout, m(UserForm, { ...vnode.attrs, editing: true })),
   },
-  '/list': {
-    render: () => m(Layout, m(UserList)),
+  '/': {
+    render: () => m(Layout, m(ScenarioList)),
   },
 };
 
-m.route(document.body, '/list', routingTable);
+m.route(document.body, '/', routingTable);

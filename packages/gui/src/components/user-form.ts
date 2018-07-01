@@ -1,6 +1,6 @@
 import { M } from '../app';
 import m, { Vnode } from 'mithril';
-import { User } from './../models/user';
+import { User } from '../models/user';
 import { button } from '../utils/html';
 
 const log = console.log;

@@ -3,21 +3,24 @@ import m, { Vnode } from 'mithril';
 export const Layout = () => ({
   view: (vnode: Vnode) =>
     m('container', [
-      m('nav',
+      m(
+        'nav',
         m('.nav-wrapper', [
-          m('a.brand-logo', { style: 'margin-left: 20px'}, 'Logo'),
+          m('a.brand-logo', { style: 'margin-left: 20px' }, 'Logo'),
           m('ul.right', [
-            m('li',
-              m('a[href="/list"]',
+            m(
+              `li${m.route.get() === '/' ? '.active' : ''}`,
+              m(
+                'a[href="/"]',
                 {
                   oncreate: m.route.link,
                 },
-                'Users'
+                'Home'
               )
             ),
           ]),
         ])
       ),
-      m('section', vnode.children),
+      m('section.main', vnode.children),
     ]),
 });
