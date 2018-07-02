@@ -44,14 +44,39 @@ export const icon = (iconName: string) => m('i.material-icons', iconName);
 
 export const iconPrefix = (iconName: string) => m('i.material-icons.prefix', iconName);
 
-export const button = <State, Attrs>(
-  label: string,
-  attr = {} as IHtmlAttributes,
-  ui = {} as IHtmlInputEvents<State, Attrs>
-) => m(`button.waves-effect.waves-light.btn${toAttributeString(attr)}`, ui, label);
-
-export const roundIconButton = <State, Attrs>(
+const baseButton = (defaultClassNames: string[]) => <State, Attrs>(
   iconName: string,
+  classNames: string[] = [],
   attr = {} as IHtmlAttributes,
   ui = {} as IHtmlInputEvents<State, Attrs>
-) => m(`a.btn-floating.btn-large.waves-effect.waves-light.red${toAttributeString(attr)}`, ui, icon(iconName));
+) =>
+  m(
+    `${defaultClassNames.join('.')}${classNames.length > 0 ? '.' : ''}${classNames.join('.')}${toAttributeString(
+      attr
+    )}`,
+    ui,
+    icon(iconName)
+  );
+
+export const button = baseButton(['button', 'waves-effect', 'waves-light', 'btn']);
+export const roundIconButton = baseButton(['button', 'btn-floating', 'btn-large', 'waves-effect', 'waves-light']);
+
+const inputField = (type: string) => (options: {
+  id: string;
+  initialValue?: string;
+  onchange: (value: string) => void;
+  label: string;
+  icon?: string;
+  size?: string;
+}) =>
+  m(`.input-field.col.${options.size || 's12'}`, [
+    options.icon ? m('i.material-icons.prefix', options.icon) : '',
+    m(`${type}[id=${options.id}]`, {
+      oninput: m.withAttr('value', options.onchange),
+      value: options.initialValue,
+    }),
+    m(`label[for=${options.id}]`, options.label),
+  ]);
+
+export const inputTextArea = inputField('textarea.materialize-textarea');
+export const inputText = inputField('input[type=text]');
