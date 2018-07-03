@@ -14,11 +14,12 @@ const withCredentials = false;
 
 export class BaseModel<T extends IBaseModel> {
   public list = [] as T[];
-  private current = {} as T;
+  public current = {} as T;
 
   public constructor(protected baseUrl: string) {}
 
   public create() {
+    log(`Creating...`);
     return m
       .request<T>({
         method: 'POST',
@@ -28,7 +29,6 @@ export class BaseModel<T extends IBaseModel> {
       })
       .then((result) => {
         log(`Created with id: ${result.id}.`);
-        m.route.set('/list');
       })
       .catch((err) => error(err));
   }
@@ -88,11 +88,12 @@ export class BaseModel<T extends IBaseModel> {
       });
   }
 
-  public newScenario() {
+  public new() {
     this.current = {} as T;
   }
 
   public save() {
+    log(`Saving...`);
     return m.request<T>({
       method: 'PUT',
       url: this.baseUrl + this.current.id,

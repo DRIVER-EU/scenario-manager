@@ -1,7 +1,7 @@
 import { M } from '../app';
 import m, { Vnode } from 'mithril';
 import { User } from '../models/user';
-import { button } from '../utils/html';
+import { roundIconButton } from '../utils/html';
 
 const log = console.log;
 
@@ -45,8 +45,8 @@ export const UserForm = () => {
                 m('label.label', 'Last name'),
               ]),
               m('.inline', [
-                button('Save', { type: 'submit' }),
-                button('Delete', {}, { onclick: () => User.delete(User.current.id) }),
+                roundIconButton('save', ['green'], { type: 'submit' }),
+                roundIconButton('delete', ['red'], {}, { onclick: () => User.delete(User.current.id) }),
               ]),
             ],
           ])
