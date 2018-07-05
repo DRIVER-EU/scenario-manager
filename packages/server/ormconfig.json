@@ -1,10 +1,11 @@
 {
-  "type": "mongodb",
+  "type": "postgres",
   "host": "localhost",
-  "port": 27017,
-  "username": "",
-  "password": "",
-  "database": "test",
+  "port": 6543,
+  "username": "postgres",
+  "password": "postgres",
+  "database": "TEST_SM",
   "entities": ["src/**/**.entity.ts"],
-  "synchronize": true
+  "synchronize": true,
+  "logging": "all"
 }
