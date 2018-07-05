@@ -16,12 +16,14 @@ export const camelToSnake = (cc: string) => cc.replace(/([A-Z])/g, ($1) => '-' +
 
 const encodeAttribute = (x = '') => x.toString().replace(/"/g, '&quot;');
 
-const toAttributeString = <T extends { [key: string]: any }>(x: T) =>
-  compose(
-    join(''),
-    map((attribute: string) => `[${camelToSnake(attribute)}="${encodeAttribute(x[attribute])}"]`),
-    Object.keys
-  )(x);
+const toAttributeString = <T extends { [key: string]: any }>(x?: T) =>
+  x
+    ? compose(
+        join(''),
+        map((attribute: string) => `[${camelToSnake(attribute)}="${encodeAttribute(x[attribute])}"]`),
+        Object.keys
+      )(x)
+    : '';
 
 export interface IHtmlAttributes {
   id?: string;
@@ -37,6 +39,7 @@ export interface IHtmlInputEvents<State, Attrs> extends Lifecycle<Attrs, State> 
   href?: string;
   class?: string;
   style?: string;
+  type?: string;
   onclick?: (e: UIEvent) => void;
 }
 
@@ -44,38 +47,46 @@ export const icon = (iconName: string) => m('i.material-icons', iconName);
 
 export const iconPrefix = (iconName: string) => m('i.material-icons.prefix', iconName);
 
-const baseButton = (defaultClassNames: string[]) => <State, Attrs>(
-  iconName: string,
-  classNames: string[] = [],
-  attr = {} as IHtmlAttributes,
-  ui = {} as IHtmlInputEvents<State, Attrs>
-) =>
+/**
+ * Convert a list of class names to mithril syntax, e.g. .class1.class2.class3
+ * @param classNames
+ */
+export const toDottedClassList = (classNames?: string | string[]) =>
+  classNames instanceof Array && classNames.length > 0 ? '.' + classNames.join('.') : '';
+
+const baseButton = (defaultClassNames: string[]) => <State, Attrs>(opt: {
+  label?: string;
+  iconName?: string;
+  attr?: IHtmlAttributes;
+  ui?: IHtmlInputEvents<State, Attrs>;
+}) =>
   m(
-    `${defaultClassNames.join('.')}${classNames.length > 0 ? '.' : ''}${classNames.join('.')}${toAttributeString(
-      attr
-    )}`,
-    ui,
-    icon(iconName)
+    `${defaultClassNames.join('.')}${toAttributeString(opt.attr)}`,
+    opt.ui || {},
+    opt.iconName ? icon(opt.iconName) : '',
+    opt.label ? opt.label : ''
   );
 
 export const button = baseButton(['button', 'waves-effect', 'waves-light', 'btn']);
+export const flatButton = baseButton(['button', 'waves-effect', 'waves-teal', 'btn-flat']);
 export const roundIconButton = baseButton(['button', 'btn-floating', 'btn-large', 'waves-effect', 'waves-light']);
 
-const inputField = (type: string) => (options: {
+const inputField = (type: string) => (opt: {
   id: string;
   initialValue?: string;
   onchange: (value: string) => void;
   label: string;
-  icon?: string;
-  size?: string;
+  iconName?: string;
+  style?: string;
+  classNames?: string | string[];
 }) =>
-  m(`.input-field.col.${options.size || 's12'}`, [
-    options.icon ? m('i.material-icons.prefix', options.icon) : '',
-    m(`${type}[id=${options.id}]`, {
-      oninput: m.withAttr('value', options.onchange),
-      value: options.initialValue,
+  m(`.input-field${toDottedClassList(opt.classNames)}`, { style: opt.style || '' }, [
+    opt.iconName ? m('i.material-icons.prefix', opt.iconName) : '',
+    m(`${type}[id=${opt.id}]`, {
+      oninput: m.withAttr('value', opt.onchange),
+      value: opt.initialValue,
     }),
-    m(`label[for=${options.id}]`, options.label),
+    m(`label[for=${opt.id}]`, opt.label),
   ]);
 
 export const inputTextArea = inputField('textarea.materialize-textarea');

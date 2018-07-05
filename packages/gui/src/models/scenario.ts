@@ -1,17 +1,6 @@
-import { BaseModel } from './base-model';
+import { IContent } from './content';
 
-export interface IScenario {
-  id: string;
-  title: string;
-  description?: string;
+export interface IScenario extends IContent {
   startDate: number;
   endDate: number;
 }
-
-class ScenarioModel extends BaseModel<IScenario> {
-  constructor() {
-    super('http://localhost:3000/scenario/');
-  }
-}
-
-export const Scenario = new ScenarioModel();

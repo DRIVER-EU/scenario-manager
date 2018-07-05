@@ -1,4 +1,11 @@
-import { Scenario } from './scenario';
+import { EventEmitter } from './../utils/event-emitter';
+import { ScenarioSvc } from '../services/scenario-service';
+import { IObjective } from './objective';
+
+export interface IPropertyChanged<T> {
+  newValue: T;
+}
+
 export const AppState = {
   scenarioLoaded: false,
   dashboards: [
@@ -9,7 +16,7 @@ export const AppState = {
     },
     {
       title: 'Scenario',
-      route: () => Scenario.current ? `/scenario/${Scenario.current.id}` : '/scenario',
+      route: () => ScenarioSvc.current ? `/scenario/${ScenarioSvc.current.id}` : '/scenario',
       visible: (): boolean => AppState.scenarioLoaded,
     },
     {
@@ -18,4 +25,8 @@ export const AppState = {
       visible: (): boolean => AppState.scenarioLoaded,
     },
   ],
+  objectives: {
+    parentChanged: new EventEmitter<IPropertyChanged<IObjective>>(),
+    parent: {} as IObjective,
+  },
 };

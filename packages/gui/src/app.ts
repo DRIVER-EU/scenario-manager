@@ -7,6 +7,7 @@ import m, { RouteDefs, Vnode } from 'mithril';
 import { Layout } from './components/layout';
 import { ScenarioList } from './components/scenario-list';
 import { ScenarioForm } from './components/scenario-form';
+import { ObjectivesView } from './components/objective-view';
 
 export const M: { updateTextFields: () => void } = (window as any).Materialize;
 
@@ -14,6 +15,9 @@ const routingTable: RouteDefs = {
   '/scenario': {
     render: (vnode: Vnode<{ id: number; editing: boolean }>) =>
       m(Layout, m(ScenarioForm, { ...vnode.attrs, editing: false })),
+  },
+  '/objectives': {
+    render: () => m(Layout, m(ObjectivesView)),
   },
   '/scenario/:id': {
     render: (vnode: Vnode<{ id: number; editing: boolean }>) =>

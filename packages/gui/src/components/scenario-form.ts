@@ -1,8 +1,8 @@
-import { AppState } from './../models/app-state';
 import { M } from '../app';
 import m, { Vnode } from 'mithril';
-import { Scenario } from '../models/scenario';
-import { roundIconButton, inputTextArea, inputText } from './../utils/html';
+import { roundIconButton, inputTextArea, inputText } from '../utils/html';
+import { ScenarioSvc } from '../services/scenario-service';
+import { AppState } from '../models/app-state';
 
 const log = console.log;
 const close = () => {
@@ -13,7 +13,7 @@ const close = () => {
 export const ScenarioForm = () => {
   return {
     oninit: (vnode: Vnode<{ id: number; editing: boolean }>) =>
-      vnode.attrs.editing ? Scenario.load(vnode.attrs.id) : Scenario.new(),
+      vnode.attrs.editing ? ScenarioSvc.load(vnode.attrs.id) : ScenarioSvc.new(),
     onupdate: () => M.updateTextFields(),
     view: (vnode: Vnode<{ id: number; editing: boolean }>) =>
       m(
@@ -25,7 +25,7 @@ export const ScenarioForm = () => {
             onsubmit: (e: MouseEvent) => {
               log('submitting...');
               e.preventDefault();
-              vnode.attrs.editing ? Scenario.save() : Scenario.create();
+              vnode.attrs.editing ? ScenarioSvc.save() : ScenarioSvc.create();
             },
           },
           [
@@ -33,24 +33,27 @@ export const ScenarioForm = () => {
               [
                 inputText({
                   id: 'title',
-                  initialValue: Scenario.current.title,
-                  onchange: (v: string) => Scenario.current.title = v,
+                  initialValue: ScenarioSvc.current.title,
+                  onchange: (v: string) => (ScenarioSvc.current.title = v),
                   label: 'Title',
-                  icon: 'title',
+                  iconName: 'title',
                 }),
                 inputTextArea({
                   id: 'desc',
-                  initialValue: Scenario.current.description,
-                  onchange: (v: string) => Scenario.current.description = v,
+                  initialValue: ScenarioSvc.current.description,
+                  onchange: (v: string) => (ScenarioSvc.current.description = v),
                   label: 'Description',
-                  icon: 'description',
+                  iconName: 'description',
                 }),
               ],
             ]),
             m('row.inline', [
-              roundIconButton('save', ['green'], { type: 'submit' }),
-              roundIconButton('close', ['green'], {}, { onclick: () => close() }),
-              roundIconButton('delete', ['red'], {}, { onclick: () => Scenario.delete(Scenario.current.id) }),
+              roundIconButton({ iconName: 'save', ui: { class: 'green', type: 'submit' } }),
+              roundIconButton({ iconName: 'close', ui: { class: 'green', onclick: () => close() } }),
+              roundIconButton({
+                iconName: 'delete',
+                ui: { class: 'red', onclick: () => ScenarioSvc.delete(ScenarioSvc.current.id) },
+              }),
             ]),
           ]
         )

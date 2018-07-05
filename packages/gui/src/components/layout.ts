@@ -1,4 +1,4 @@
-import { AppState } from './../models/app-state';
+import { AppState } from '../models/app-state';
 import m, { Vnode } from 'mithril';
 import owl from '../assets/owl.svg';
 
