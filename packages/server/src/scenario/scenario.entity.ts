@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  UpdateDateColumn,
+  VersionColumn,
+  CreateDateColumn,
+} from 'typeorm';
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 import { Objective } from '../objective/objective.entity';
 import { Content } from '../content/content.entity';
@@ -6,21 +13,27 @@ import { Storyline } from '../storyline/storyline.entity';
 
 @Entity()
 export class Scenario extends Content {
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
 
   @ApiModelProperty()
   @Column()
-  startDate: number;
+  startDate: Date;
 
   @ApiModelPropertyOptional()
-  @Column()
-  endDate?: number;
+  @Column({ nullable: true })
+  endDate?: Date;
 
-  @ApiModelProperty({ type: Objective, isArray: true })
-  @OneToMany(type => Objective, objective => objective.scenario)
-  objectives: Objective[];
+  @ApiModelProperty()
+  @CreateDateColumn()
+  createdDate: Date;
 
-  @ApiModelProperty({ type: Storyline, isArray: true })
-  @OneToMany(type => Storyline, storyline => storyline.scenario)
-  storylines: Storyline[];
+  @ApiModelProperty()
+  @UpdateDateColumn()
+  updatedDate: Date;
+
+  @ApiModelProperty()
+  @VersionColumn()
+  version: number;
 }

@@ -20,6 +20,12 @@ export class ObjectiveController {
     return this.service.findAll();
   }
 
+  @Get('scenario/:id')
+  async findAllInScenario(@Param('id') id: string) {
+    console.log('Find all in scenario with id ' + id);
+    return this.service.findAllInScenario(id);
+  }
+
   @Put(':id')
   async update(@Param('id') id: string, @Body() objective: Objective) {
     console.log('Update: ' + JSON.stringify(objective));

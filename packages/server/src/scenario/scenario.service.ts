@@ -8,14 +8,18 @@ export class ScenarioService {
   constructor(
     @InjectRepository(Scenario)
     private readonly repository: Repository<Scenario>,
-  ) { }
+  ) {}
 
   async findOne(id: string) {
     return await this.repository.findOne(id);
   }
 
   async findAll() {
-    return await this.repository.find();
+    return await this.repository.find({
+      order: {
+        updatedDate: 'DESC',
+      },
+    });
   }
 
   async update(id: string, scenario: Scenario) {
@@ -23,7 +27,9 @@ export class ScenarioService {
   }
 
   async create(scenario: Scenario) {
-    if (!scenario.startDate) { scenario.startDate = Date.now(); }
+    if (!scenario.startDate) {
+      scenario.startDate = new Date();
+    }
     return await this.repository.save(scenario);
   }
 

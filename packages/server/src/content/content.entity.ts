@@ -1,11 +1,11 @@
-import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Content {
   @ApiModelProperty()
-  @ObjectIdColumn()
-  id: ObjectID;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ApiModelProperty()
   @Column({ length: 500 })

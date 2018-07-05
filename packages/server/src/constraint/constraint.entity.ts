@@ -1,4 +1,4 @@
-import { Entity, Column, ObjectIdColumn, ObjectID, ManyToOne } from 'typeorm';
+import { Entity, Column, ObjectIdColumn, ObjectID, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 import { BaseInject } from '../inject/base-inject.entity';
 
@@ -20,8 +20,8 @@ export class Constraint {
   }
 
   @ApiModelProperty()
-  @ObjectIdColumn()
-  id: ObjectID;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ApiModelProperty({ enum: ConstraintType })
   @Column()

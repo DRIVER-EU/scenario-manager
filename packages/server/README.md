@@ -2,7 +2,7 @@
 
 ## Description
 
-REST service for the Scenario Manager backend
+REST service for the Scenario Manager backend. Requires a working PostgreSQL server running. See `ormconfig.json` for the settings. In case you don't have a PostgreSQL service running, you can optionally run the provided `docker-compose.yml` file using `npm run up` to start it.
 
 ## Installation
 

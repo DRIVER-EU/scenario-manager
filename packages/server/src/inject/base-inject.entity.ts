@@ -1,12 +1,30 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { OneToMany, Entity } from 'typeorm';
+import { Entity, Column } from 'typeorm';
 import { Constraint } from '../constraint/constraint.entity';
 import { Content } from '../content/content.entity';
+import { ValueTransformer } from 'typeorm/decorator/options/ValueTransformer';
+
+class ConstraintTransformer implements ValueTransformer {
+  to(value: Constraint[]): string {
+    return JSON.stringify([...value]);
+  }
+
+  from(value: string): Constraint[] {
+    return JSON.parse(value);
+  }
+}
 
 @Entity()
 export class BaseInject extends Content {
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
+
+  @ApiModelProperty()
+  @Column()
+  scenarioId: string;
+
   @ApiModelProperty({ type: Constraint, isArray: true })
-  @OneToMany(() => Constraint, constraint => constraint.dependsOn, { eager: true, cascade: true })
+  @Column({ type: String, transformer: new ConstraintTransformer() })
   constraints: Constraint[];
 }
