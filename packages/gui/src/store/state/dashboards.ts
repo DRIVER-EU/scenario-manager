@@ -1,5 +1,5 @@
 import { Action, Reducer } from 'redux';
-import { UPDATED_SCENARIO, DELETE_SCENARIO, IScenarioAction } from './scenario';
+import { UPDATE_SCENARIO, DELETE_SCENARIO, IScenarioAction } from './scenario';
 import { IDashboard } from '../../models/dashboard';
 
 /*
@@ -67,7 +67,7 @@ export const dashboards: Reducer<IDashboard[], IDashboardAction | IScenarioActio
   action: IDashboardAction | IScenarioAction
 ) => {
   switch (action.type) {
-    case UPDATED_SCENARIO:
+    case UPDATE_SCENARIO:
       // Show all dashboards except newScenario.
       return state.map((d) => {
         d.visible = d.id !== Dashboards.NEW_SCENARIO;

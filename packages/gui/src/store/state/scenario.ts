@@ -6,7 +6,7 @@ const log = console.log;
 /*
  * action types
  */
-export const UPDATED_SCENARIO = 'UPDATED_SCENARIO';
+export const UPDATE_SCENARIO = 'UPDATED_SCENARIO';
 export const DELETE_SCENARIO = 'DELETE_SCENARIO';
 
 /*
@@ -17,7 +17,7 @@ export interface IScenarioAction extends Action<string> {
 }
 
 export const updateScenario = (updatedScenario: IScenario) => {
-  return { type: UPDATED_SCENARIO, scenario: updatedScenario } as IScenarioAction;
+  return { type: UPDATE_SCENARIO, scenario: updatedScenario } as IScenarioAction;
 };
 
 export const deleteScenario = () => {
@@ -42,7 +42,7 @@ export const scenario: Reducer<IScenario, IScenarioAction> = (
   action: IScenarioAction
 ) => {
   switch (action.type) {
-    case UPDATED_SCENARIO:
+    case UPDATE_SCENARIO:
       if (action && action.scenario) {
         log('STORE: New scenario ' + action.scenario.id);
         return action.scenario;
