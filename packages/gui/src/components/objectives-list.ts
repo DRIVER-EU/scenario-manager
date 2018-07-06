@@ -1,21 +1,28 @@
-import { AppState } from './../models/app-state';
 import m from 'mithril';
 import { flatButton, roundIconButton, inputText } from '../utils/html';
-import { ObjectiveSvc } from '../services/objective-service';
+import { ObjectiveSvc } from './../services/objective-service';
 import { IObjective } from './../models/objective';
-import { ScenarioSvc } from '../services/scenario-service';
+import { store } from '../store/store';
 
 export const ObjectivesList = () => {
   const state = {
+    parentId: null as string | null,
     filterValue: '',
+    scenarioId: '',
   };
   const titleFilter = (contains: string) => (objective: IObjective) =>
     !contains || !objective.title || objective.title.indexOf(contains) >= 0;
   return {
     oncreate: () => {
-      if (ScenarioSvc.current) {
-        ObjectiveSvc.loadListInScenario(ScenarioSvc.current.id);
-      }
+      const loadObjectives = () => {
+        const scenario = store.getState().scenario;
+        state.scenarioId = scenario.id;
+        if (scenario && scenario.id) {
+          ObjectiveSvc.loadListInScenario(scenario.id);
+        }
+      };
+      // store.subscribe(() => loadObjectives());
+      loadObjectives();
     },
     view: () => {
       return m('.row', [
@@ -28,8 +35,8 @@ export const ObjectivesList = () => {
                 ObjectiveSvc.current = {
                   title: '',
                   description: '',
-                  parentId: AppState.objectives.parent ? AppState.objectives.parent.id : null,
-                  scenarioId: ScenarioSvc.current.id,
+                  parentId: state.parentId,
+                  scenarioId: state.scenarioId,
                 } as IObjective;
               },
             },
@@ -65,7 +72,7 @@ export const ObjectivesList = () => {
                       label: objective.title,
                       ui: {
                         onclick: () => {
-                          AppState.objectives.parent = objective;
+                          state.parentId = objective.id;
                           ObjectiveSvc.current = objective;
                         },
                       },

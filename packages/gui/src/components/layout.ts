@@ -1,6 +1,6 @@
-import { AppState } from '../models/app-state';
 import m, { Vnode } from 'mithril';
 import owl from '../assets/owl.svg';
+import { store } from '../store/store';
 
 const isActive = (path: string) => (m.route.get().indexOf(path) >= 0 ? '.active' : '');
 
@@ -17,10 +17,10 @@ export const Layout = () => ({
           ),
           m(
             'ul.right',
-            AppState.dashboards
-              .filter((d) => d.visible())
+            store.getState().dashboards
+              .filter((d) => d.visible)
               .map((d) =>
-                m(`li${isActive(d.route())}`, m(`a[href="${d.route()}"]`, { oncreate: m.route.link }, d.title))
+                m(`li${isActive(d.route)}`, m(`a[href="${d.route}"]`, { oncreate: m.route.link }, d.title))
               )
           ),
         ])

@@ -38,6 +38,7 @@ export class RestService<T extends IBaseModel> {
       .then((result) => {
         log(`Updated with id: ${result.id}.`);
         m.route.set('/list');
+        return result;
       })
       .catch((err) => error(err));
   }
@@ -66,6 +67,7 @@ export class RestService<T extends IBaseModel> {
       .then((result) => {
         log(result);
         this.current = result;
+        return result;
       });
   }
 
@@ -106,6 +108,6 @@ export class RestService<T extends IBaseModel> {
       url: this.baseUrl + this.current.id,
       data: this.current,
       withCredentials,
-    });
+    }).then((result) => result);
   }
 }

@@ -80,14 +80,18 @@ const inputField = (type: string) => (opt: {
   style?: string;
   classNames?: string | string[];
 }) =>
-  m(`.input-field${toDottedClassList(opt.classNames)}`, { style: opt.style || '' }, [
-    opt.iconName ? m('i.material-icons.prefix', opt.iconName) : '',
-    m(`${type}[id=${opt.id}]`, {
-      oninput: m.withAttr('value', opt.onchange),
-      value: opt.initialValue,
-    }),
-    m(`label[for=${opt.id}]`, opt.label),
-  ]);
+  m(
+    `.input-field${toDottedClassList(opt.classNames)}`,
+    { style: opt.style || '' },
+    [
+      opt.iconName ? m('i.material-icons.prefix', opt.iconName) : '',
+      m(`${type}[id=${opt.id}]`, {
+        oninput: m.withAttr('value', opt.onchange),
+        value: opt.initialValue,
+      }),
+      m(`label${opt.initialValue ? '.active' : ''}[for=${opt.id}]`, opt.label),
+    ]
+  );
 
 export const inputTextArea = inputField('textarea.materialize-textarea');
 export const inputText = inputField('input[type=text]');
