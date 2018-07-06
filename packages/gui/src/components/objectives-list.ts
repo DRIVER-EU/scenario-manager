@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { flatButton, roundIconButton, inputText } from '../utils/html';
-import { ObjectiveSvc } from './../services/objective-service';
-import { IObjective } from './../models/objective';
+import { ObjectiveSvc } from '../services/objective-service';
+import { IObjective } from '../models/objective';
 import { store } from '../store/store';
 
 export const ObjectivesList = () => {

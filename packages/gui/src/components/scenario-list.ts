@@ -1,10 +1,10 @@
-import { flatButton } from './../utils/html';
+import { flatButton } from '../utils/html';
 import m from 'mithril';
 import { inputText, roundIconButton } from '../utils/html';
 import { IScenario } from '../models/scenario';
 import { ScenarioSvc } from '../services/scenario-service';
 import { store } from '../store/store';
-import { updateScenario } from './../store/actions';
+import { updateScenario } from '../store/state/scenario';
 
 export const ScenarioList = () => {
   const state = {

@@ -1,4 +1,4 @@
-import { EventEmitter } from './../utils/event-emitter';
+import { EventEmitter } from '../utils/event-emitter';
 import { ScenarioSvc } from '../services/scenario-service';
 import { IObjective } from './objective';
 

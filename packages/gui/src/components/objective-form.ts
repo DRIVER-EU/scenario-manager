@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { roundIconButton, inputTextArea, inputText } from '../utils/html';
-import { ScenarioSvc } from './../services/scenario-service';
+import { ScenarioSvc } from '../services/scenario-service';
 import { ObjectiveSvc } from '../services/objective-service';
 import { AppState } from '../models/app-state';
 

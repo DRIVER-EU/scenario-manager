@@ -1,9 +1,8 @@
-import { M } from '../app';
 import m from 'mithril';
 import { roundIconButton, inputTextArea, inputText } from '../utils/html';
 import { ScenarioSvc } from '../services/scenario-service';
-import { updateScenario, deleteScenario } from './../store/actions';
-import { store } from './../store/store';
+import { updateScenario, deleteScenario } from '../store/state/scenario';
+import { store } from '../store/store';
 
 const log = console.log;
 const close = () => {
@@ -20,13 +19,7 @@ export const ScenarioForm = () => {
         log('On INIT: NEW');
         ScenarioSvc.new();
       }
-      // M.updateTextFields();
     },
-    // vnode.attrs.editing ? ScenarioSvc.load(vnode.attrs.id) : ScenarioSvc.new(),
-    // onupdate: () => {
-    //   log('On update');
-    //   M.updateTextFields();
-    // },
     view: () => {
       const scenario = store.getState().scenario;
       return m(
