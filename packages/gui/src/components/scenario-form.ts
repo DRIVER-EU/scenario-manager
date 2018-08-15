@@ -1,27 +1,38 @@
 import m from 'mithril';
-import { roundIconButton, inputTextArea, inputText } from '../utils/html';
+import { roundIconButton, inputTextArea, inputText, button } from '../utils/html';
 import { ScenarioSvc } from '../services/scenario-service';
-import { updateScenario, deleteScenario } from '../store/state/scenario';
-import { store } from '../store/store';
+import { IScenario } from './../models/scenario';
+import { deepCopy, deepEqual } from '../utils/utils';
 
 const log = console.log;
-const close = () => {
-  store.dispatch(deleteScenario());
+const close = async (e: UIEvent) => {
+  log('closing...');
+  await ScenarioSvc.unload();
   m.route.set('/');
+  e.preventDefault();
 };
 
 export const ScenarioForm = () => {
+  const state = {
+    original: undefined as IScenario | undefined,
+    scenario: {} as IScenario,
+  };
   return {
     oninit: () => {
       log('On INIT');
-      const scenario = store.getState().scenario;
+      log(state);
+      const scenario = ScenarioSvc.getCurrent();
       if (!scenario || !scenario.id) {
         log('On INIT: NEW');
-        ScenarioSvc.new();
+        state.scenario = deepCopy(ScenarioSvc.new());
+      } else {
+        state.scenario = deepCopy(scenario);
       }
+      state.original = deepCopy(state.scenario);
     },
     view: () => {
-      const scenario = store.getState().scenario;
+      const scenario = state.scenario;
+      const hasChanged = !deepEqual(scenario, state.original);
       return m(
         '.row',
         { style: 'color: black' },
@@ -31,10 +42,8 @@ export const ScenarioForm = () => {
             onsubmit: async (e: MouseEvent) => {
               log('submitting...');
               e.preventDefault();
-              const curScenario = store.getState().scenario;
-              const newScenario = curScenario && curScenario.id ? await ScenarioSvc.save() : await ScenarioSvc.create();
-              if (newScenario) {
-                store.dispatch(updateScenario(newScenario));
+              if (scenario) {
+                await ScenarioSvc.save(scenario);
               }
             },
           },
@@ -57,15 +66,37 @@ export const ScenarioForm = () => {
                 }),
               ],
             ]),
-            m('row.inline', [
-              roundIconButton({ iconName: 'save', ui: { class: 'green', type: 'submit' } }),
-              roundIconButton({ iconName: 'close', ui: { class: 'green', onclick: () => close() } }),
-              roundIconButton({
+            m('row', [
+              button({
+                iconName: 'undo',
+                ui: {
+                  class: `green ${hasChanged ? '' : 'disabled'}`,
+                  onclick: () => (state.scenario = deepCopy(state.original) as IScenario),
+                },
+              }),
+              ' ',
+              button({
+                iconName: 'save',
+                ui: {
+                  class: `green ${hasChanged ? '' : 'disabled'}`,
+                  type: 'submit',
+                },
+              }),
+              ' ',
+              button({
+                iconName: 'close',
+                ui: {
+                  onclick: e => close(e),
+                },
+              }),
+              ' ',
+              button({
                 iconName: 'delete',
                 ui: {
-                  class: 'red', onclick: () => {
+                  class: 'red',
+                  onclick: e => {
                     ScenarioSvc.delete(scenario.id);
-                    close();
+                    close(e);
                   },
                 },
               }),

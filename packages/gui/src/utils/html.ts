@@ -43,9 +43,9 @@ export interface IHtmlInputEvents<State, Attrs> extends Lifecycle<Attrs, State> 
   onclick?: (e: UIEvent) => void;
 }
 
-export const icon = (iconName: string) => m('i.material-icons', iconName);
+export const icon = (iconName: string, attrs = {}) => m('i.material-icons', attrs, iconName);
 
-export const iconPrefix = (iconName: string) => m('i.material-icons.prefix', iconName);
+export const iconPrefix = (iconName: string, attrs = {}) => m('i.material-icons.prefix', attrs, iconName);
 
 /**
  * Convert a list of class names to mithril syntax, e.g. .class1.class2.class3

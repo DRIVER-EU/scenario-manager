@@ -1,63 +1,104 @@
 import m from 'mithril';
-import { roundIconButton, inputTextArea, inputText } from '../utils/html';
-import { ScenarioSvc } from '../services/scenario-service';
+import { IObjective } from './../models/objective';
+import { roundIconButton, inputTextArea, inputText, button } from '../utils/html';
 import { ObjectiveSvc } from '../services/objective-service';
-import { AppState } from '../models/app-state';
+import { ISubscriptionDefinition } from '../services/message-bus-service';
+import { TopicNames, objectiveChannel } from '../models/channels';
+import { deepCopy, deepEqual } from '../utils/utils';
 
 const log = console.log;
 
 export const ObjectiveForm = () => {
+  const state = {
+    parent: undefined as IObjective | undefined,
+    objective: undefined as IObjective | undefined,
+    original: undefined as IObjective | undefined,
+    subscription: {} as ISubscriptionDefinition<any>,
+  };
+
   const getParent = (id: string) =>
-    ObjectiveSvc.list.filter((o) => o.parentId && o.parentId === id).shift() || AppState.objectives.parent;
+    ObjectiveSvc.getList()
+      .filter(o => o.id === id)
+      .shift();
+
   return {
-    oninit: () => ObjectiveSvc.new(),
-    view: () =>
-      m(
+    oninit: () => {
+      state.subscription = objectiveChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
+        state.objective = cur && cur.id ? deepCopy(cur) : undefined;
+        state.original = cur && cur.id ? deepCopy(cur) : undefined;
+        state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
+      });
+    },
+    onbeforeremove: () => {
+      state.subscription.unsubscribe();
+    },
+    view: () => {
+      const parent = state.parent;
+      const objective = state.objective;
+      const hasChanged = !deepEqual(objective, state.original);
+      return m(
         '.row',
         { style: 'color: black' },
         m(
           'form.col.s12',
           {
-            onsubmit: (e: MouseEvent) => {
+            onsubmit: (e: UIEvent) => {
+              e.preventDefault();
               log('submitting...');
-              ObjectiveSvc.current.scenarioId = ScenarioSvc.current.id;
-              ObjectiveSvc.current.id ? ObjectiveSvc.save() : ObjectiveSvc.create();
+              if (objective) {
+                ObjectiveSvc.update(objective);
+              }
             },
           },
           [
-            m('.row', [
-              m(
-                'h4',
-                getParent(ObjectiveSvc.current.parentId)
-                  ? `Child of ${getParent(ObjectiveSvc.current.parentId).title}`
-                  : 'New top-level objective'
-              ),
-              [
-                inputText({
-                  id: 'title',
-                  initialValue: ObjectiveSvc.current.title,
-                  onchange: (v: string) => (ObjectiveSvc.current.title = v),
-                  label: 'Title',
-                  iconName: 'title',
-                }),
-                inputTextArea({
-                  id: 'desc',
-                  initialValue: ObjectiveSvc.current.description,
-                  onchange: (v: string) => (ObjectiveSvc.current.description = v),
-                  label: 'Description',
-                  iconName: 'description',
-                }),
-              ],
-            ]),
-            m('row.inline', [
-              roundIconButton({ iconName: 'save', ui: { class: 'green', type: 'submit' } }),
-              roundIconButton({
-                iconName: 'delete',
-                ui: { class: 'red', onclick: () => ObjectiveSvc.delete(ObjectiveSvc.current.id) },
-              }),
-            ]),
+            m(
+              '.row',
+              objective
+                ? [
+                    m('h4', parent ? `Secondary objective of "${parent.title}"` : 'Main objective'),
+                    [
+                      inputText({
+                        id: 'title',
+                        initialValue: objective.title,
+                        onchange: (v: string) => (objective.title = v),
+                        label: 'Title',
+                        iconName: 'title',
+                        classNames: 'active',
+                      }),
+                      inputTextArea({
+                        id: 'desc',
+                        initialValue: objective.description,
+                        onchange: (v: string) => (objective.description = v),
+                        label: 'Description',
+                        iconName: 'description',
+                        classNames: 'active',
+                      }),
+                    ],
+                    m('row', [
+                      button({
+                        iconName: 'undo',
+                        ui: {
+                          class: `green ${hasChanged ? '' : 'disabled'}`,
+                          onclick: () => (state.objective = deepCopy(state.original)),
+                        },
+                      }),
+                      ' ',
+                      button({
+                        iconName: 'save',
+                        ui: { class: `green ${hasChanged ? '' : 'disabled'}`, type: 'submit' },
+                      }),
+                      ' ',
+                      button({
+                        iconName: 'delete',
+                        ui: { class: 'red', onclick: () => ObjectiveSvc.delete(objective.id) },
+                      }),
+                    ]),
+                  ]
+                : []
+            ),
           ]
         )
-      ),
+      );
+    },
   };
 };

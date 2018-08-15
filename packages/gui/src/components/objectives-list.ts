@@ -1,88 +1,108 @@
-import m from 'mithril';
-import { flatButton, roundIconButton, inputText } from '../utils/html';
+import m, { Vnode, Component } from 'mithril';
 import { ObjectiveSvc } from '../services/objective-service';
-import { IObjective } from '../models/objective';
-import { store } from '../store/store';
+import { IObjectiveVM, IObjective } from '../models/objective';
+import { unflatten, titleAndDescriptionFilter } from '../utils/utils';
+import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
+import { ScenarioSvc } from '../services/scenario-service';
+import { ISubscriptionDefinition } from '../services/message-bus-service';
+import { TopicNames, objectiveChannel } from '../models/channels';
+import { inputText } from '../utils/html';
 
 export const ObjectivesList = () => {
   const state = {
-    parentId: null as string | null,
+    selected: undefined as IObjectiveVM | undefined,
     filterValue: '',
     scenarioId: '',
+    subscription: {} as ISubscriptionDefinition<any>,
   };
-  const titleFilter = (contains: string) => (objective: IObjective) =>
-    !contains || !objective.title || objective.title.indexOf(contains) >= 0;
+
+  const options = {
+    id: 'id',
+    parentId: 'parentId',
+    name: 'title',
+    treeItemView: {
+      view: (vnode: Vnode<ITreeItemViewComponent>) => {
+        return vnode.attrs.treeItem.title;
+      },
+    } as Component<ITreeItemViewComponent>,
+    onSelect: (ti, isSelected) => objectiveSelected(ti as IObjectiveVM, isSelected),
+    onBeforeCreate: ti => {
+      console.log(`On before create ${ti.title}`);
+      ObjectiveSvc.create(ti as IObjective)
+        .then(() => true)
+        .catch(e => {
+          console.error(e);
+          return false;
+        });
+    },
+    onCreate: ti => {
+      console.log(`On create ${ti.title}`);
+    },
+    onBeforeDelete: ti => console.log(`On before delete ${ti.title}`),
+    onDelete: async ti => {
+      console.log(`On delete ${ti.title}`);
+      await ObjectiveSvc.delete(ti.id);
+    },
+    onBeforeUpdate: (ti, action, newParent) =>
+      console.log(`On before ${action} update ${ti.title} to ${newParent ? newParent.title : ''}.`),
+    onUpdate: ti => {
+      console.log(`On update ${ti.title}`);
+      if (!ti.parentId) {
+        ti.parentId = '';
+      }
+      ObjectiveSvc.update(ti as IObjective);
+    },
+    create: (parent?: IObjectiveVM) => {
+      const item = {
+        parentId: parent ? parent.id : undefined,
+        title: 'New objective',
+        scenarioId: ScenarioSvc.getCurrent().id,
+      } as IObjectiveVM;
+      return item as ITreeItem;
+    },
+    maxDepth: 1,
+    editable: { canCreate: true, canDelete: true, canUpdate: true, canDeleteParent: false },
+  } as ITreeOptions;
+
+  const objectiveSelected = (selected: IObjectiveVM, isSelected: boolean) => {
+    state.selected = selected;
+    objectiveChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as IObjective });
+  };
+
   return {
-    oncreate: () => {
-      const loadObjectives = () => {
-        const scenario = store.getState().scenario;
+    oninit: () => {
+      console.log('Oninit objectives-view called...');
+      const loadObjectives = async () => {
+        const scenario = ScenarioSvc.getCurrent();
         state.scenarioId = scenario.id;
         if (scenario && scenario.id) {
-          ObjectiveSvc.loadListInScenario(scenario.id);
+          await ObjectiveSvc.loadListInScenario(scenario.id);
         }
       };
-      // store.subscribe(() => loadObjectives());
+      state.subscription = objectiveChannel.subscribe(TopicNames.LIST, m.redraw);
       loadObjectives();
     },
+    onbeforeremove: () => {
+      state.subscription.unsubscribe();
+    },
     view: () => {
+      const query = titleAndDescriptionFilter(state.filterValue);
+      const objectives = ObjectiveSvc.getList();
+      const filteredObjectives = objectives.filter(query);
+      // console.log(objectives.map(o => o.title).join('\n'));
+      const tree = unflatten(filteredObjectives);
+      // console.log('Objectives-list updated...');
       return m('.row', [
-        m('.row', [
-          roundIconButton({
-            iconName: 'add',
-            ui: {
-              class: 'green input-field right',
-              onclick: () => {
-                ObjectiveSvc.current = {
-                  title: '',
-                  description: '',
-                  parentId: state.parentId,
-                  scenarioId: state.scenarioId,
-                } as IObjective;
-              },
-            },
-          }),
-          inputText({
-            label: 'Filter',
-            id: 'filter',
-            iconName: 'filter_list',
-            initialValue: state.filterValue,
-            onchange: (v: string) => (state.filterValue = v),
-            style: 'margin-right:100px',
-            classNames: 'right',
-          }),
-        ]),
-        m(
-          '.row',
-          m('ul.col.s12', [
-            m(
-              'li',
-              flatButton({
-                label: 'root',
-                ui: { onclick: () => ObjectiveSvc.new() },
-              })
-            ),
-            m(
-              'li',
-              m(
-                'ul.col.s12',
-                ObjectiveSvc.list.filter(titleFilter(state.filterValue)).map((objective) =>
-                  m(
-                    'li',
-                    flatButton({
-                      label: objective.title,
-                      ui: {
-                        onclick: () => {
-                          state.parentId = objective.id;
-                          ObjectiveSvc.current = objective;
-                        },
-                      },
-                    })
-                  )
-                )
-              )
-            ),
-          ])
-        ),
+        inputText({
+          label: 'Filter',
+          id: 'filter',
+          iconName: 'filter_list',
+          initialValue: state.filterValue,
+          onchange: (v: string) => (state.filterValue = v),
+          style: 'margin-right:100px',
+          classNames: 'right',
+        }),
+        m(TreeContainer, { tree, options }),
       ]);
     },
   };

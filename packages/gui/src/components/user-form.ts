@@ -13,7 +13,8 @@ export const UserForm = () => {
     onupdate: () => M.updateTextFields(),
     view: (vnode: Vnode<{ id: number; editing: boolean }>) =>
       m(
-        '.row', { style: 'color: black'},
+        '.row',
+        { style: 'color: black' },
         m(
           'form.col.s12',
           {
@@ -45,8 +46,11 @@ export const UserForm = () => {
                 m('label.label', 'Last name'),
               ]),
               m('.inline', [
-                roundIconButton('save', ['green'], { type: 'submit' }),
-                roundIconButton('delete', ['red'], {}, { onclick: () => User.delete(User.current.id) }),
+                roundIconButton({ iconName: 'save', ui: { class: 'green', type: 'submit' } }),
+                roundIconButton({
+                  iconName: 'delete',
+                  ui: { class: 'red', onclick: () => User.delete(User.current.id) },
+                }),
               ]),
             ],
           ])

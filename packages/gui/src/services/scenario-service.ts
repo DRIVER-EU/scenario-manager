@@ -1,9 +1,10 @@
 import { RestService } from './rest-service';
 import { IScenario } from '../models/scenario';
+import { ChannelNames } from '../models/channels';
 
 class ScenarioService extends RestService<IScenario> {
   constructor() {
-    super('http://localhost:3000/scenario/');
+    super('scenario', ChannelNames.SCENARIO);
   }
 }
 

@@ -1,9 +1,10 @@
 import { RestService } from './rest-service';
 import { IObjective } from '../models/objective';
+import { ChannelNames } from '../models/channels';
 
 class ObjectiveService extends RestService<IObjective> {
   constructor() {
-    super('http://localhost:3000/objective/');
+    super('objective', ChannelNames.OBJECTIVE);
   }
 }
 

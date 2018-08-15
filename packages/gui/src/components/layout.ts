@@ -1,6 +1,7 @@
 import m, { Vnode } from 'mithril';
 import owl from '../assets/owl.svg';
 import { store } from '../store/store';
+import { dashboardSvc } from '../services/dashboard-service';
 
 const isActive = (path: string) => (m.route.get().indexOf(path) >= 0 ? '.active' : '');
 
@@ -17,7 +18,8 @@ export const Layout = () => ({
           ),
           m(
             'ul.right',
-            store.getState().dashboards
+            dashboardSvc
+              .getList()
               .filter((d) => d.visible)
               .map((d) =>
                 m(`li${isActive(d.route)}`, m(`a[href="${d.route}"]`, { oncreate: m.route.link }, d.title))

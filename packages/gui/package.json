@@ -10,16 +10,15 @@
   "author": "Erik Vullings <erik.vullings@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "materialize-css": "^0.100.2",
-    "meiosis": "^1.4.1",
     "mithril": "^1.1.6",
-    "redux": "^4.0.0"
+    "mithril-tree-component": "^0.3.4",
+    "materialize-css": "^0.100.2"
   },
   "devDependencies": {
     "@types/mithril": "^1.1.12",
-    "autoprefixer": "^8.6.4",
-    "parcel-bundler": "^1.9.4",
+    "autoprefixer": "^9.1.1",
+    "parcel-bundler": "^1.9.7",
     "parcel-plugin-typescript": "^1.0.0",
-    "typescript": "^2.9.2"
+    "typescript": "^3.0.1"
   }
 }

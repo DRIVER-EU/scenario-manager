@@ -1,3 +1,4 @@
 import { EventEmitter } from '../utils/event-emitter';
+import { IObjective } from '../models/objective';
 
-export const objectivesEmitter = new EventEmitter<{ parentId: string }>();
+export const onObjective = new EventEmitter<{ parent?: IObjective, selected?: IObjective }>();

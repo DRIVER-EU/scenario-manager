@@ -12,6 +12,6 @@ export class Content {
   title: string;
 
   @ApiModelProperty()
-  @Column('text')
+  @Column('text', { nullable: true })
   description: string;
 }

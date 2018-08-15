@@ -1,20 +1,19 @@
-import { flatButton } from '../utils/html';
 import m from 'mithril';
+import { flatButton } from '../utils/html';
 import { inputText, roundIconButton } from '../utils/html';
-import { IScenario } from '../models/scenario';
 import { ScenarioSvc } from '../services/scenario-service';
-import { store } from '../store/store';
-import { updateScenario } from '../store/state/scenario';
+import { titleAndDescriptionFilter } from '../utils/utils';
 
 export const ScenarioList = () => {
   const state = {
     filterValue: '',
   };
-  const titleFilter = (contains: string) => (scenario: IScenario) =>
-    !contains || !scenario.title || scenario.title.indexOf(contains) >= 0;
   return {
-    oncreate: () => ScenarioSvc.loadList(),
+    oninit: () => ScenarioSvc.loadList(),
     view: () => {
+      const scenarios = ScenarioSvc.getList();
+      const query = titleAndDescriptionFilter(state.filterValue);
+      const filteredScenarios = scenarios.filter(query);
       return m('.row', [
         m('.row', [
           roundIconButton({
@@ -24,7 +23,7 @@ export const ScenarioList = () => {
               href: '/new_scenario',
               oncreate: m.route.link,
               onclick: () => {
-                store.dispatch(updateScenario({} as IScenario));
+                ScenarioSvc.new();
               },
             },
           }),
@@ -40,7 +39,7 @@ export const ScenarioList = () => {
         ]),
         m(
           '.row',
-          ScenarioSvc.list.filter(titleFilter(state.filterValue)).map((scenario) =>
+          filteredScenarios.map(scenario =>
             m('.col.s6.m4.l3', [
               m(
                 '.card',
@@ -53,8 +52,8 @@ export const ScenarioList = () => {
                         onclick: () => {
                           // tslint:disable-next-line:no-console
                           console.log('Set scenario to ' + scenario.title);
-                          store.dispatch(updateScenario(scenario));
-                          m.route.set('/scenario');
+                          // store.dispatch(updateScenario(scenario));
+                          return ScenarioSvc.load(scenario.id);
                         },
                       },
                     })

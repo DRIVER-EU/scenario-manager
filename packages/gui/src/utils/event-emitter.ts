@@ -14,8 +14,8 @@ export interface IDisposable {
  * @see https://basarat.gitbooks.io/typescript/docs/tips/typed-event.html
  *
  * Usage:
- * const onFoo = new TypedEvent<Foo>();
- * const onBar = new TypedEvent<Bar>();
+ * const onFoo = new EventEmitter<Foo>();
+ * const onBar = new EventEmitter<Bar>();
  *
  * // Emit:
  * onFoo.emit(foo);
