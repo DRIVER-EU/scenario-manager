@@ -1,10 +1,10 @@
 import m from 'mithril';
-import { IObjective } from './../models/objective';
-import { roundIconButton, inputTextArea, inputText, button } from '../utils/html';
-import { ObjectiveSvc } from '../services/objective-service';
-import { ISubscriptionDefinition } from '../services/message-bus-service';
-import { TopicNames, objectiveChannel } from '../models/channels';
-import { deepCopy, deepEqual } from '../utils/utils';
+import { IObjective } from '../../models/objective';
+import { roundIconButton, inputTextArea, inputText, button } from '../../utils/html';
+import { ObjectiveSvc } from '../../services/objective-service';
+import { ISubscriptionDefinition } from '../../services/message-bus-service';
+import { TopicNames, objectiveChannel } from '../../models/channels';
+import { deepCopy, deepEqual } from '../../utils/utils';
 
 const log = console.log;
 

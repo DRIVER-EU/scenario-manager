@@ -5,12 +5,12 @@ import { Content } from '../content/content.entity';
 import { ValueTransformer } from 'typeorm/decorator/options/ValueTransformer';
 
 class ConstraintTransformer implements ValueTransformer {
-  to(value: Constraint[]): string {
-    return JSON.stringify([...value]);
+  to(value?: Constraint[]): string {
+    return value && value instanceof Array ? JSON.stringify([...value]) : '';
   }
 
   from(value: string): Constraint[] {
-    return JSON.parse(value);
+    return value ? JSON.parse(value) : [];
   }
 }
 

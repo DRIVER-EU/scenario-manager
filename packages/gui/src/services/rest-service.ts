@@ -53,7 +53,6 @@ export class RestService<T extends IBaseModel> {
   }
 
   public update(data: T) {
-    debugger;
     return m
       .request<T>({
         method: 'PUT',

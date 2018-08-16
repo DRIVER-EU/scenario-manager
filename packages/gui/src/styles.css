@@ -111,3 +111,13 @@ ul.tree-item-body {
 span.tree-item-title {
   margin-right: 1rem;
 }
+
+div.icon-label {
+  display: inline-block;
+}
+
+div.icon-label .material-icons {
+  vertical-align: middle;
+  margin-right: 8px;
+  padding-bottom: 5px;
+}

@@ -18,6 +18,12 @@ export class InjectService {
     return await this.repository.find();
   }
 
+  async findAllInScenario(scenarioId: string) {
+    return await this.repository.find({
+      where: { scenarioId },
+    });
+  }
+
   async update(id: string, inject: Inject) {
     return await this.repository.update(id, inject);
   }

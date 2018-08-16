@@ -1,12 +1,12 @@
 import m, { RouteDefs, ComponentTypes } from 'mithril';
 import { IDashboard } from '../models/dashboard';
-import { messageBus, ISubscriptionDefinition } from './message-bus-service';
-import { IScenario } from '../models/scenario';
-import { ChannelNames, TopicNames, scenarioChannel } from '../models/channels';
-import { ObjectivesView } from '../components/objective-view';
-import { ScenarioForm } from '../components/scenario-form';
-import { ScenarioList } from '../components/scenario-list';
+import { ISubscriptionDefinition } from './message-bus-service';
+import { TopicNames, scenarioChannel } from '../models/channels';
+import { ObjectivesView } from '../components/objectives/objective-view';
+import { ScenarioForm } from '../components/scenario/scenario-form';
+import { ScenarioList } from '../components/scenario/scenario-list';
 import { Layout } from '../components/layout';
+import { InjectsView } from '../components/injects/injects-view';
 
 export const enum Dashboards {
   HOME = 'HOME',
@@ -99,5 +99,12 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/objectives',
     visible: false,
     component: ObjectivesView,
+  },
+  {
+    id: Dashboards.OBJECTIVES,
+    title: 'Storylines',
+    route: '/storylines',
+    visible: false,
+    component: InjectsView,
   },
 ]);

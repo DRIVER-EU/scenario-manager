@@ -44,6 +44,7 @@ export interface IHtmlInputEvents<State, Attrs> extends Lifecycle<Attrs, State> 
 }
 
 export const icon = (iconName: string, attrs = {}) => m('i.material-icons', attrs, iconName);
+export const smallIcon = (iconName: string, attrs = {}) => m('i.small.material-icons', attrs, iconName);
 
 export const iconPrefix = (iconName: string, attrs = {}) => m('i.material-icons.prefix', attrs, iconName);
 

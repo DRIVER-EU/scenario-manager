@@ -1,8 +1,8 @@
 import m from 'mithril';
-import { roundIconButton, inputTextArea, inputText, button } from '../utils/html';
-import { ScenarioSvc } from '../services/scenario-service';
-import { IScenario } from './../models/scenario';
-import { deepCopy, deepEqual } from '../utils/utils';
+import { inputTextArea, inputText, button } from '../../utils/html';
+import { ScenarioSvc } from '../../services/scenario-service';
+import { IScenario } from '../../models/scenario';
+import { deepCopy, deepEqual } from '../../utils/utils';
 
 const log = console.log;
 const close = async (e: UIEvent) => {

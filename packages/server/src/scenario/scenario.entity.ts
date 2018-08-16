@@ -1,15 +1,12 @@
 import {
   Column,
   Entity,
-  OneToMany,
   UpdateDateColumn,
   VersionColumn,
   CreateDateColumn,
 } from 'typeorm';
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
-import { Objective } from '../objective/objective.entity';
 import { Content } from '../content/content.entity';
-import { Storyline } from '../storyline/storyline.entity';
 
 @Entity()
 export class Scenario extends Content {

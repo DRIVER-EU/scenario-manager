@@ -1,6 +1,5 @@
 import m, { Vnode } from 'mithril';
 import owl from '../assets/owl.svg';
-import { store } from '../store/store';
 import { dashboardSvc } from '../services/dashboard-service';
 
 const isActive = (path: string) => (m.route.get().indexOf(path) >= 0 ? '.active' : '');

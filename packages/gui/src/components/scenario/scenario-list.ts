@@ -1,8 +1,8 @@
 import m from 'mithril';
-import { flatButton } from '../utils/html';
-import { inputText, roundIconButton } from '../utils/html';
-import { ScenarioSvc } from '../services/scenario-service';
-import { titleAndDescriptionFilter } from '../utils/utils';
+import { flatButton } from '../../utils/html';
+import { inputText, roundIconButton } from '../../utils/html';
+import { ScenarioSvc } from '../../services/scenario-service';
+import { titleAndDescriptionFilter } from '../../utils/utils';
 
 export const ScenarioList = () => {
   const state = {

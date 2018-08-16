@@ -1,12 +1,12 @@
 import m, { Vnode, Component } from 'mithril';
-import { ObjectiveSvc } from '../services/objective-service';
-import { IObjectiveVM, IObjective } from '../models/objective';
-import { unflatten, titleAndDescriptionFilter } from '../utils/utils';
+import { ObjectiveSvc } from '../../services/objective-service';
+import { IObjectiveVM, IObjective } from '../../models/objective';
+import { unflatten, titleAndDescriptionFilter } from '../../utils/utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
-import { ScenarioSvc } from '../services/scenario-service';
-import { ISubscriptionDefinition } from '../services/message-bus-service';
-import { TopicNames, objectiveChannel } from '../models/channels';
-import { inputText } from '../utils/html';
+import { ScenarioSvc } from '../../services/scenario-service';
+import { ISubscriptionDefinition } from '../../services/message-bus-service';
+import { TopicNames, objectiveChannel } from '../../models/channels';
+import { inputText } from '../../utils/html';
 
 export const ObjectivesList = () => {
   const state = {
