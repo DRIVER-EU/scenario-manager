@@ -92,7 +92,7 @@ export const ObjectivesList = () => {
       // console.log(objectives.map(o => o.title).join('\n'));
       const tree = unflatten(filteredObjectives);
       // console.log('Objectives-list updated...');
-      return m('.row', [
+      return m('.objectives-list', [
         inputText({
           label: 'Filter',
           id: 'filter',

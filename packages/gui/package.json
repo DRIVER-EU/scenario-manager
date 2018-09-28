@@ -11,15 +11,15 @@
   "author": "Erik Vullings <erik.vullings@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "materialize-css": "^1.0.0",
     "mithril": "^1.1.6",
-    "mithril-tree-component": "^0.3.6",
-    "materialize-css": "^0.100.2"
+    "mithril-tree-component": "^0.3.6"
   },
   "devDependencies": {
+    "@types/materialize-css": "^1.0.4",
     "@types/mithril": "^1.1.12",
-    "autoprefixer": "^9.1.1",
-    "parcel-bundler": "^1.9.7",
-    "parcel-plugin-typescript": "^1.0.0",
-    "typescript": "^3.0.1"
+    "autoprefixer": "^9.1.5",
+    "parcel-bundler": "^1.10.1",
+    "typescript": "^3.1.1"
   }
 }

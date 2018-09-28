@@ -52,7 +52,7 @@ export const ObjectiveForm = () => {
           },
           [
             m(
-              '.row',
+              '.objectives-form',
               objective
                 ? [
                     m('h4', parent ? `Secondary objective of "${parent.title}"` : 'Main objective'),

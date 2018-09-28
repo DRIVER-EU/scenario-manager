@@ -34,7 +34,7 @@ export const ScenarioForm = () => {
       const scenario = state.scenario;
       const hasChanged = !deepEqual(scenario, state.original);
       return m(
-        '.row',
+        '.scenario-form',
         { style: 'color: black' },
         m(
           'form.col.s12',

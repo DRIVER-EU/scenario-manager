@@ -1,8 +1,8 @@
 import m from 'mithril';
-import { inputTextArea, inputText, button } from '../../utils/html';
+import { inputTextArea, inputText, button, smallIcon } from '../../utils/html';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, injectChannel } from '../../models/channels';
-import { deepCopy, deepEqual } from '../../utils/utils';
+import { deepCopy, deepEqual, getInjectIcon } from '../../utils/utils';
 import { InjectSvc } from '../../services/inject-service';
 import { IInject } from '../../models/inject';
 
@@ -37,7 +37,7 @@ export const InjectsForm = () => {
       const inject = state.inject;
       const hasChanged = !deepEqual(inject, state.original);
       return m(
-        '.row',
+        '.injects-form',
         { style: 'color: black' },
         m(
           'form.col.s12',
@@ -55,7 +55,7 @@ export const InjectsForm = () => {
               '.row',
               inject
                 ? [
-                    m('h4', inject.type),
+                    m('h4', [smallIcon(getInjectIcon(inject.type), { style: 'margin-right: 12px;' }), inject.type]),
                     [
                       inputText({
                         id: 'title',

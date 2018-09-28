@@ -1,6 +1,7 @@
 import m, { Vnode } from 'mithril';
 import owl from '../assets/owl.svg';
 import { dashboardSvc } from '../services/dashboard-service';
+// import M from 'materialize-css';
 
 const isActive = (path: string) => (m.route.get().indexOf(path) >= 0 ? '.active' : '');
 

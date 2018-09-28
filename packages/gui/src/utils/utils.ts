@@ -1,4 +1,5 @@
 import { IContent } from '../models/content';
+import { InjectType } from '../models/inject';
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.
@@ -82,3 +83,15 @@ export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boole
 // console.log(`${++i}: ${deepEqual([1, 2, 3], [1, 2, 3, 4])}`);
 // console.log(`${++i}: ${deepEqual({ a: 'foo', b: 'bar' }, { a: 'foo', b: 'bar' })}`);
 // console.log(`${++i}: ${deepEqual({ a: 'foo', b: 'bar' }, { b: 'bar', a: 'foo' })}`);
+
+/**
+ * Represent the inject with an icon.
+ * @param type inject type
+ */
+export const getInjectIcon = (type: InjectType) => {
+  switch (type) {
+    case InjectType.INJECT: return 'colorize';
+    case InjectType.ACT: return 'call_to_action'; // 'chat';
+    default: return 'import_contacts';
+  }
+};

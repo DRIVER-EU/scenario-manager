@@ -5,7 +5,7 @@
   "username": "postgres",
   "password": "postgres",
   "database": "TEST_SM",
-  "entities": ["src/**/**.entity.ts"],
+  "entities": ["src/**/**.entity{.ts,.js}"],
   "synchronize": true,
   "logging": "all"
 }

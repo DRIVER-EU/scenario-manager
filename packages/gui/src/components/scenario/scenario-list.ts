@@ -14,7 +14,7 @@ export const ScenarioList = () => {
       const scenarios = ScenarioSvc.getList();
       const query = titleAndDescriptionFilter(state.filterValue);
       const filteredScenarios = scenarios.filter(query);
-      return m('.row', [
+      return m('.scenario-list', [
         m('.row', [
           roundIconButton({
             iconName: 'add',

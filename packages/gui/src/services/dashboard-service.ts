@@ -7,13 +7,7 @@ import { ScenarioForm } from '../components/scenario/scenario-form';
 import { ScenarioList } from '../components/scenario/scenario-list';
 import { Layout } from '../components/layout';
 import { InjectsView } from '../components/injects/injects-view';
-
-export const enum Dashboards {
-  HOME = 'HOME',
-  NEW_SCENARIO = 'NEW_SCENARIO',
-  SCENARIO = 'SCENARIO',
-  OBJECTIVES = 'OBJECTIVES',
-}
+import { Dashboards } from '../models/dashboards';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;

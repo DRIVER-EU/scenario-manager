@@ -1,5 +1,5 @@
 import m, { Vnode, Component } from 'mithril';
-import { unflatten, titleAndDescriptionFilter } from '../../utils/utils';
+import { unflatten, titleAndDescriptionFilter, getInjectIcon } from '../../utils/utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { ScenarioSvc } from '../../services/scenario-service';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
@@ -16,14 +16,6 @@ export const InjectsList = () => {
     subscription: {} as ISubscriptionDefinition<any>,
   };
 
-  const getIcon = (depth: number) => {
-    switch (depth) {
-      case 2: return 'colorize';
-      case 1: return 'call_to_action'; // 'chat';
-      default: return 'import_contacts';
-    }
-  };
-
   const options = {
     id: 'id',
     parentId: 'parentId',
@@ -31,7 +23,7 @@ export const InjectsList = () => {
     treeItemView: {
       view: ({ attrs }: Vnode<ITreeItemViewComponent>) => {
         return m('div.icon-label', [
-          smallIcon(getIcon(attrs.depth)),
+          smallIcon(getInjectIcon(attrs.treeItem.type)),
           attrs.treeItem.title,
         ]);
       },
@@ -112,7 +104,7 @@ export const InjectsList = () => {
       // console.log(objectives.map(o => o.title).join('\n'));
       const tree = unflatten(filteredStorylines);
       // console.log('Storylines-list updated...');
-      return m('.row', [
+      return m('.injects-list', [
         inputText({
           label: 'Filter',
           id: 'filter',
