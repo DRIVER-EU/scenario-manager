@@ -8,7 +8,22 @@ import { InjectModule } from './inject/inject.module';
 import { ConstraintModule } from './constraint/constraint.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), ScenarioModule, ObjectiveModule, InjectModule, ConstraintModule],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 6543,
+      username: 'postgres',
+      password: 'postgres',
+      database: 'TEST_SM',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
+    ScenarioModule,
+    ObjectiveModule,
+    InjectModule,
+    ConstraintModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
