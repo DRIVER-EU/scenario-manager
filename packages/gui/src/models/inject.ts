@@ -12,7 +12,8 @@ export interface IInject extends IContent {
   type: InjectType;
   scenarioId: string;
   parentId?: string;
-  objectiveId?: string;
+  mainObjectiveId?: string;
+  secondaryObjectiveId?: string;
 }
 
 export interface IInjectVM extends IInject, ISelectable, IExpandable { }

@@ -1,6 +1,11 @@
 import m from 'mithril';
 import { IObjective } from '../../models/objective';
-import { roundIconButton, inputTextArea, inputText, button } from '../../utils/html';
+import {
+  inputTextArea,
+  inputText,
+  button,
+  smallIcon
+} from '../../utils/html';
 import { ObjectiveSvc } from '../../services/objective-service';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, objectiveChannel } from '../../models/channels';
@@ -23,11 +28,14 @@ export const ObjectiveForm = () => {
 
   return {
     oninit: () => {
-      state.subscription = objectiveChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
-        state.objective = cur && cur.id ? deepCopy(cur) : undefined;
-        state.original = cur && cur.id ? deepCopy(cur) : undefined;
-        state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
-      });
+      state.subscription = objectiveChannel.subscribe(
+        TopicNames.ITEM,
+        ({ cur }) => {
+          state.objective = cur && cur.id ? deepCopy(cur) : undefined;
+          state.original = cur && cur.id ? deepCopy(cur) : undefined;
+          state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
+        }
+      );
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();
@@ -55,7 +63,12 @@ export const ObjectiveForm = () => {
               '.objectives-form',
               objective
                 ? [
-                    m('h4', parent ? `Secondary objective of "${parent.title}"` : 'Main objective'),
+                    m('h4', [
+                      smallIcon('my_location', {
+                        style: 'margin-right: 12px;',
+                      }),
+                      `${objective.parentId ? 'Secondary' : 'Main'} objective`,
+                    ]),
                     [
                       inputText({
                         id: 'title',
@@ -79,18 +92,25 @@ export const ObjectiveForm = () => {
                         iconName: 'undo',
                         ui: {
                           class: `green ${hasChanged ? '' : 'disabled'}`,
-                          onclick: () => (state.objective = deepCopy(state.original)),
+                          onclick: () =>
+                            (state.objective = deepCopy(state.original)),
                         },
                       }),
                       ' ',
                       button({
                         iconName: 'save',
-                        ui: { class: `green ${hasChanged ? '' : 'disabled'}`, type: 'submit' },
+                        ui: {
+                          class: `green ${hasChanged ? '' : 'disabled'}`,
+                          type: 'submit',
+                        },
                       }),
                       ' ',
                       button({
                         iconName: 'delete',
-                        ui: { class: 'red', onclick: () => ObjectiveSvc.delete(objective.id) },
+                        ui: {
+                          class: 'red',
+                          onclick: () => ObjectiveSvc.delete(objective.id),
+                        },
                       }),
                     ]),
                   ]

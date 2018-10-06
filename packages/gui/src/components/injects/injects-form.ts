@@ -5,6 +5,7 @@ import { TopicNames, injectChannel } from '../../models/channels';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils/utils';
 import { InjectSvc } from '../../services/inject-service';
 import { IInject } from '../../models/inject';
+import { DropDownObjectives } from '../ui/drop-down-objectives';
 
 const log = console.log;
 
@@ -23,17 +24,19 @@ export const InjectsForm = () => {
 
   return {
     oninit: () => {
-      state.subscription = injectChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
-        state.inject = cur && cur.id ? deepCopy(cur) : undefined;
-        state.original = cur && cur.id ? deepCopy(cur) : undefined;
-        state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
-      });
+      state.subscription = injectChannel.subscribe(
+        TopicNames.ITEM,
+        ({ cur }) => {
+          state.inject = cur && cur.id ? deepCopy(cur) : undefined;
+          state.original = cur && cur.id ? deepCopy(cur) : undefined;
+          state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
+        }
+      );
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();
     },
     view: () => {
-      const parent = state.parent;
       const inject = state.inject;
       const hasChanged = !deepEqual(inject, state.original);
       return m(
@@ -55,7 +58,12 @@ export const InjectsForm = () => {
               '.row',
               inject
                 ? [
-                    m('h4', [smallIcon(getInjectIcon(inject.type), { style: 'margin-right: 12px;' }), inject.type]),
+                    m('h4', [
+                      smallIcon(getInjectIcon(inject.type), {
+                        style: 'margin-right: 12px;',
+                      }),
+                      inject.type,
+                    ]),
                     [
                       inputText({
                         id: 'title',
@@ -73,24 +81,53 @@ export const InjectsForm = () => {
                         iconName: 'description',
                         classNames: 'active',
                       }),
+                      m('.row', [
+                        m(
+                          '.col.s6',
+                          m(DropDownObjectives, {
+                            title: 'Select main objective',
+                            objectiveId: inject.mainObjectiveId,
+                            onchange: id => {
+                              inject.mainObjectiveId = id;
+                            },
+                          })
+                        ),
+                        m(
+                          '.col.s6',
+                          m(DropDownObjectives, {
+                            title: 'Select secondary objective',
+                            objectiveId: inject.secondaryObjectiveId,
+                            onchange: id => {
+                              inject.secondaryObjectiveId = id;
+                            },
+                          })
+                        ),
+                      ]),
                     ],
                     m('row', [
                       button({
                         iconName: 'undo',
                         ui: {
                           class: `green ${hasChanged ? '' : 'disabled'}`,
-                          onclick: () => (state.inject = deepCopy(state.original)),
+                          onclick: () =>
+                            (state.inject = deepCopy(state.original)),
                         },
                       }),
                       ' ',
                       button({
                         iconName: 'save',
-                        ui: { class: `green ${hasChanged ? '' : 'disabled'}`, type: 'submit' },
+                        ui: {
+                          class: `green ${hasChanged ? '' : 'disabled'}`,
+                          type: 'submit',
+                        },
                       }),
                       ' ',
                       button({
                         iconName: 'delete',
-                        ui: { class: 'red', onclick: () => InjectSvc.delete(inject.id) },
+                        ui: {
+                          class: 'red',
+                          onclick: () => InjectSvc.delete(inject.id),
+                        },
                       }),
                     ]),
                   ]

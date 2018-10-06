@@ -21,8 +21,8 @@ export const ObjectivesList = () => {
     parentId: 'parentId',
     name: 'title',
     treeItemView: {
-      view: (vnode: Vnode<ITreeItemViewComponent>) => {
-        return vnode.attrs.treeItem.title;
+      view: ({attrs}) => {
+        return attrs.treeItem.title;
       },
     } as Component<ITreeItemViewComponent>,
     onSelect: (ti, isSelected) => objectiveSelected(ti as IObjectiveVM, isSelected),
