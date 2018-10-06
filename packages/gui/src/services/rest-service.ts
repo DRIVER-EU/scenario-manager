@@ -9,10 +9,10 @@ const withCredentials = false;
 const apiService = 'http://localhost:3000';
 
 export class RestService<T extends IBaseModel> {
-  private list: T[] = [];
-  private current: T = {} as T;
-  private baseUrl: string;
-  private channel: IChannelDefinition<{ list: T[] } | { cur: T; old: T }>;
+  protected current: T = {} as T;
+  protected list: T[] = [];
+  protected baseUrl: string;
+  protected channel: IChannelDefinition<{ list: T[] } | { cur: T; old: T }>;
 
   constructor(
     protected urlFragment: string,
@@ -99,7 +99,7 @@ export class RestService<T extends IBaseModel> {
         log(result);
         this.setCurrent(result);
         this.updateItemInList(this.current);
-        return this.list;
+        return this.current;
       });
   }
 
