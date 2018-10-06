@@ -1,4 +1,4 @@
-import { M } from '../app';
+import M from 'materialize-css';
 import m, { Vnode } from 'mithril';
 import { User } from '../models/user';
 import { roundIconButton } from '../utils/html';
