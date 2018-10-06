@@ -59,10 +59,10 @@ export const InjectsForm = () => {
               inject
                 ? [
                     m('h4', [
-                      smallIcon(getInjectIcon(inject.type), {
+                      smallIcon(getInjectIcon(inject.injectType), {
                         style: 'margin-right: 12px;',
                       }),
-                      inject.type,
+                      inject.injectType,
                     ]),
                     [
                       inputText({
@@ -87,9 +87,8 @@ export const InjectsForm = () => {
                           m(DropDownObjectives, {
                             title: 'Select main objective',
                             objectiveId: inject.mainObjectiveId,
-                            onchange: id => {
-                              inject.mainObjectiveId = id;
-                            },
+                            onchange: (id: string) =>
+                              (inject.mainObjectiveId = id),
                           })
                         ),
                         m(
@@ -97,9 +96,8 @@ export const InjectsForm = () => {
                           m(DropDownObjectives, {
                             title: 'Select secondary objective',
                             objectiveId: inject.secondaryObjectiveId,
-                            onchange: id => {
-                              inject.secondaryObjectiveId = id;
-                            },
+                            onchange: (id: string) =>
+                              (inject.secondaryObjectiveId = id),
                           })
                         ),
                       ]),

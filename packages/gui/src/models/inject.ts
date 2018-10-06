@@ -9,7 +9,7 @@ export enum InjectType {
 }
 
 export interface IInject extends IContent {
-  type: InjectType;
+  injectType: InjectType;
   scenarioId: string;
   parentId?: string;
   mainObjectiveId?: string;

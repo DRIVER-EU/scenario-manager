@@ -23,7 +23,7 @@ export const InjectsList = () => {
     treeItemView: {
       view: ({ attrs }: Vnode<ITreeItemViewComponent>) => {
         return m('div.icon-label', [
-          smallIcon(getInjectIcon(attrs.treeItem.type)),
+          smallIcon(getInjectIcon(attrs.treeItem.injectType)),
           attrs.treeItem.title,
         ]);
       },
@@ -58,13 +58,13 @@ export const InjectsList = () => {
     create: (parent?: IInject, depth?: number) => {
       const itemFactory: () => IInject = () => {
         if (!parent) {
-          return { title: 'New storyline', type: InjectType.STORYLINE } as IInject;
+          return { title: 'New storyline', injectType: InjectType.STORYLINE } as IInject;
         }
         switch (depth) {
           case 0:
-            return { title: 'New act', type: InjectType.ACT, parentId: parent.id } as IInject;
+            return { title: 'New act', injectType: InjectType.ACT, parentId: parent.id } as IInject;
           default:
-            return { title: 'New inject', type: InjectType.INJECT, parentId: parent.id } as IInject;
+            return { title: 'New inject', injectType: InjectType.INJECT, parentId: parent.id } as IInject;
         }
       };
       return {
