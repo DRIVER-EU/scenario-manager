@@ -121,3 +121,22 @@ div.icon-label .material-icons {
   margin-right: 8px;
   padding-bottom: 5px;
 }
+
+.mithril-date-picker-container > .mithril-date-picker > .current-date {
+  width: 250px;
+  background: #dddddd;
+  padding: 6px;
+  font-size: 19px;
+}
+
+.list-inline {
+  padding-left: 0;
+  margin-left: -5px;
+  list-style: none;
+}
+
+.list-inline > li {
+  display: inline-block;
+  vertical-align: top;
+  padding-right: 10px;
+}

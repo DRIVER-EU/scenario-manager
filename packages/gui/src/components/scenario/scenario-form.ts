@@ -3,6 +3,7 @@ import { inputTextArea, inputText, button } from '../../utils/html';
 import { ScenarioSvc } from '../../services/scenario-service';
 import { IScenario } from '../../models/scenario';
 import { deepCopy, deepEqual } from '../../utils/utils';
+import { DateTimeControl } from './date-time-control';
 
 const log = console.log;
 const close = async (e: UIEvent) => {
@@ -34,7 +35,7 @@ export const ScenarioForm = () => {
       const scenario = state.scenario;
       const hasChanged = !deepEqual(scenario, state.original);
       return m(
-        '.scenario-form',
+        '.row.scenario-form',
         { style: 'color: black' },
         m(
           'form.col.s12',
@@ -43,7 +44,10 @@ export const ScenarioForm = () => {
               log('submitting...');
               e.preventDefault();
               if (scenario) {
-                await ScenarioSvc.save(scenario);
+                const s = deepCopy(scenario);
+                delete s.version;
+                delete s.updatedDate;
+                await ScenarioSvc.save(s);
               }
             },
           },
@@ -64,6 +68,17 @@ export const ScenarioForm = () => {
                   label: 'Description',
                   iconName: 'description',
                 }),
+                m(DateTimeControl, {
+                  prefix: 'Start',
+                  dt: scenario.startDate || new Date(),
+                  onchange: (d: Date) => (scenario.startDate = d),
+                }),
+                m(DateTimeControl, {
+                  prefix: 'End',
+                  icon: 'timer_off',
+                  dt: scenario.endDate || new Date().setHours(new Date().getHours() + 6),
+                  onchange: (d: Date) => (scenario.endDate = d),
+                }),
               ],
             ]),
             m('row', [
@@ -71,7 +86,8 @@ export const ScenarioForm = () => {
                 iconName: 'undo',
                 ui: {
                   class: `green ${hasChanged ? '' : 'disabled'}`,
-                  onclick: () => (state.scenario = deepCopy(state.original) as IScenario),
+                  onclick: () =>
+                    (state.scenario = deepCopy(state.original) as IScenario),
                 },
               }),
               ' ',
