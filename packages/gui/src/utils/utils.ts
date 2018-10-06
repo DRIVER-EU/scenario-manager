@@ -12,7 +12,9 @@ export const unflatten = <T extends { id: string; parentId?: string }>(
 ) => {
   const children = (parent.id
     ? entities.filter(entity => entity.parentId === parent.id)
-    : entities.filter(entity => !entity.parentId)) as Array<T & { children: T[] }>;
+    : entities.filter(entity => !entity.parentId)) as Array<
+    T & { children: T[] }
+  >;
 
   if (children.length > 0) {
     if (!parent.id) {
@@ -48,7 +50,9 @@ export const deepCopy = <T>(target: T): T => {
     return cp.map((n: any) => deepCopy<any>(n)) as any;
   }
   if (typeof target === 'object' && target !== {}) {
-    const cp = { ...(target as { [key: string]: any }) } as { [key: string]: any };
+    const cp = { ...(target as { [key: string]: any }) } as {
+      [key: string]: any;
+    };
     Object.keys(cp).forEach(k => {
       cp[k] = deepCopy<any>(cp[k]);
     });
@@ -67,15 +71,22 @@ export const titleAndDescriptionFilter = (filterValue: string) => {
     !filterValue ||
     !content.title ||
     content.title.toLowerCase().indexOf(filterValue) >= 0 ||
-    (content.description && content.description.toLowerCase().indexOf(filterValue) >= 0);
+    (content.description &&
+      content.description.toLowerCase().indexOf(filterValue) >= 0);
 };
 
-export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boolean => {
+export const deepEqual = <T extends { [key: string]: any }>(
+  x?: T,
+  y?: T
+): boolean => {
   const tx = typeof x;
   const ty = typeof y;
-  return x && y && tx === 'object' && tx === ty
-    ? Object.keys(x).length === Object.keys(y).length && Object.keys(x).every(key => deepEqual(x[key], y[key]))
-    : x === y;
+  return x instanceof Date && y instanceof Date
+    ? x.getTime() === y.getTime()
+    : x && y && tx === 'object' && tx === ty
+      ? Object.keys(x).length === Object.keys(y).length &&
+        Object.keys(x).every(key => deepEqual(x[key], y[key]))
+      : x === y;
 };
 
 // let i = 0;
@@ -90,8 +101,11 @@ export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boole
  */
 export const getInjectIcon = (type: InjectType) => {
   switch (type) {
-    case InjectType.INJECT: return 'colorize';
-    case InjectType.ACT: return 'call_to_action'; // 'chat';
-    default: return 'import_contacts';
+    case InjectType.INJECT:
+      return 'colorize';
+    case InjectType.ACT:
+      return 'call_to_action'; // 'chat';
+    default:
+      return 'import_contacts';
   }
 };
