@@ -15,7 +15,7 @@
     "baseUrl": "./src"
   },
   "include": [
-    "src/**/*", "../gui/src/components/injects/injects-view.ts", "../gui/src/components/injects/injects-list.ts", "../gui/src/components/injects/injects-form.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
