@@ -1,6 +1,8 @@
 dependencies:
   materialize-css: 1.0.0
   mithril: 1.1.6
+  mithril-datepicker: 0.9.2
+  mithril-timepicker: 0.9.2
   mithril-tree-component: 0.3.6
 devDependencies:
   '@types/materialize-css': 1.0.4
@@ -795,11 +797,9 @@ packages:
     resolution:
       integrity: sha512-T/zvzYRfbVojPWahDsE5evJdHb3oJoQfFbsrKM7w5Zcs++Tr257tia3BmMP8XYVjp1S9RZXQMh7gao96BlqZOw==
   /alphanum-sort/1.0.2:
-    dev: true
     resolution:
       integrity: sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
   /ansi-regex/2.1.1:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -811,7 +811,6 @@ packages:
     resolution:
       integrity: sha1-7QMXwyIGT3lGbAKWa922Bas32Zg=
   /ansi-styles/2.2.1:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -819,7 +818,6 @@ packages:
   /ansi-styles/3.2.1:
     dependencies:
       color-convert: 1.9.3
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -841,7 +839,6 @@ packages:
   /argparse/1.0.10:
     dependencies:
       sprintf-js: 1.0.3
-    dev: true
     resolution:
       integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==
   /arr-diff/4.0.0:
@@ -911,7 +908,6 @@ packages:
       num2fraction: 1.2.2
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-Hb0cg1ZY41zj+ZhAmdsAWFx4IBQ=
   /autoprefixer/9.1.5:
@@ -928,6 +924,14 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-kk4Zb6RUc58ld7gdosERHMF3DzIYJc2fp5sX46qEsGXQQy5bXsu8qyLjoxuY1NuQ/cJuCYnx99BfjwnRggrYIw==
+  /babel-code-frame/6.26.0:
+    dependencies:
+      chalk: 1.1.3
+      esutils: 2.0.2
+      js-tokens: 3.0.2
+    dev: false
+    resolution:
+      integrity: sha1-Y/1D99weO7fONZR9uP42mj9Yx0s=
   /babel-runtime/6.26.0:
     dependencies:
       core-js: 2.5.7
@@ -953,7 +957,6 @@ packages:
     resolution:
       integrity: sha1-OxWl3btIKni0zpwByLoYFwLZ1s4=
   /balanced-match/0.4.2:
-    dev: true
     resolution:
       integrity: sha1-yz8+PHMtwPAe5wtAPzAuYddwmDg=
   /base/0.11.2:
@@ -974,6 +977,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-ccav/yGvoa80BQDljCxsmmQ3Xvx60/UpBIij5QN21W3wBi/hhIC9OoO+KLpu9IJTS9j4DRVJ3aDDF9cMSoa2lw==
+  /big.js/3.2.0:
+    dev: false
+    resolution:
+      integrity: sha512-+hN/Zh2D08Mx65pZ/4g5bsmNiZUuChDiQfTUQ7qJr4/kuopCr88xZsAXv6mBoZEsUI4OuGHlX59qE94K2mMW8Q==
   /binary-extensions/1.12.0:
     dev: true
     engines:
@@ -1083,7 +1090,6 @@ packages:
       caniuse-db: 1.0.30000888
       electron-to-chromium: 1.3.72
     deprecated: Browserslist 2 could fail on reading Browserslist >3.0 config used in other tools.
-    dev: true
     hasBin: true
     resolution:
       integrity: sha1-C9dnBCWL6CmyOYu1Dkti0aFmsLk=
@@ -1149,7 +1155,6 @@ packages:
       caniuse-db: 1.0.30000888
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
-    dev: true
     resolution:
       integrity: sha1-tTTnxzTE+B7F++isoq0kNUuWLGw=
   /caniuse-api/3.0.0:
@@ -1162,7 +1167,6 @@ packages:
     resolution:
       integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==
   /caniuse-db/1.0.30000888:
-    dev: true
     resolution:
       integrity: sha512-bp7cHptv4AQZFtkyzYk2bJN5E8CSYklm6K3bJ/fGUa52oxydzBKK4uYlZ+A0lNIiThRFJMoXU2TacG9ve2KpXw==
   /caniuse-lite/1.0.30000888:
@@ -1176,7 +1180,6 @@ packages:
       has-ansi: 2.0.0
       strip-ansi: 3.0.1
       supports-color: 2.0.0
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -1187,7 +1190,6 @@ packages:
       ansi-styles: 3.2.1
       escape-string-regexp: 1.0.5
       supports-color: 5.5.0
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -1221,7 +1223,6 @@ packages:
   /clap/1.2.3:
     dependencies:
       chalk: 1.1.3
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -1252,7 +1253,6 @@ packages:
     resolution:
       integrity: sha512-1QL4544moEsDVH9T/l6Cemov/37iv1RtoKf7NJ04A60+4MREXNfx/QvavbH6QoGdsD4N4Mwy49cmaINR/o2mdg==
   /clone/1.0.4:
-    dev: true
     engines:
       node: '>=0.8'
     resolution:
@@ -1272,7 +1272,6 @@ packages:
   /coa/1.0.4:
     dependencies:
       q: 1.5.1
-    dev: true
     engines:
       node: '>= 0.8.0'
     resolution:
@@ -1297,21 +1296,17 @@ packages:
   /color-convert/1.9.3:
     dependencies:
       color-name: 1.1.3
-    dev: true
     resolution:
       integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==
   /color-name/1.1.3:
-    dev: true
     resolution:
       integrity: sha1-p9BVi9icQveV3UIyj3QIMcpTvCU=
   /color-name/1.1.4:
-    dev: true
     resolution:
       integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
   /color-string/0.3.0:
     dependencies:
       color-name: 1.1.4
-    dev: true
     resolution:
       integrity: sha1-J9RvtnAlxcL6JZk7+/V55HhBuZE=
   /color-string/1.5.3:
@@ -1326,7 +1321,6 @@ packages:
       clone: 1.0.4
       color-convert: 1.9.3
       color-string: 0.3.0
-    dev: true
     resolution:
       integrity: sha1-bXtcdPtl6EHNSHkq0e1eB7kE12Q=
   /color/3.0.0:
@@ -1341,11 +1335,9 @@ packages:
       color: 0.11.4
       css-color-names: 0.0.4
       has: 1.0.3
-    dev: true
     resolution:
       integrity: sha1-6i90IKcrlogaOKrlnsEkpvcpgTM=
   /colors/1.1.2:
-    dev: true
     engines:
       node: '>=0.1.90'
     resolution:
@@ -1483,7 +1475,6 @@ packages:
     resolution:
       integrity: sha512-fz4spIh+znjO2VjL+IdhEpRJ3YN6sMzITSBijk6FK2UvTqruSQW+/cCZTSNsMiZNvUeq0CqurF+dAbyiGOY6Wg==
   /css-color-names/0.0.4:
-    dev: true
     resolution:
       integrity: sha1-gIrcLnnPhHOAabZGyyDsJ762KeA=
   /css-declaration-sorter/4.0.1:
@@ -1495,6 +1486,27 @@ packages:
       node: '>4'
     resolution:
       integrity: sha512-BcxQSKTSEEQUftYpBVnsH4SF05NTuBokb19/sBt6asXGKZ/6VP7PLG1CBCkFDYOnhXhPh0jMhO6xZ71oYHXHBA==
+  /css-loader/0.28.11:
+    dependencies:
+      babel-code-frame: 6.26.0
+      css-selector-tokenizer: 0.7.0
+      cssnano: 3.10.0
+      icss-utils: 2.1.0
+      loader-utils: 1.1.0
+      lodash.camelcase: 4.3.0
+      object-assign: 4.1.1
+      postcss: 5.2.18
+      postcss-modules-extract-imports: 1.2.0
+      postcss-modules-local-by-default: 1.2.0
+      postcss-modules-scope: 1.1.0
+      postcss-modules-values: 1.3.0
+      postcss-value-parser: 3.3.0
+      source-list-map: 2.0.0
+    dev: false
+    engines:
+      node: '>=0.12.0 || >= 4.3.0 < 5.0.0 || >=5.10'
+    resolution:
+      integrity: sha512-wovHgjAx8ZIMGSL8pTys7edA1ClmzxHeY6n/d97gg5odgsxEgKjULPR0viqyC+FWMCL9sfqoC/QCUBo62tLvPg==
   /css-select-base-adapter/0.1.0:
     dev: true
     resolution:
@@ -1508,6 +1520,14 @@ packages:
     dev: true
     resolution:
       integrity: sha512-MGhoq1S9EyPgZIGnts8Yz5WwUOyHmPMdlqeifsYs/xFX7AAm3hY0RJe1dqVlXtYPI66Nsk39R/sa5/ree6L2qg==
+  /css-selector-tokenizer/0.7.0:
+    dependencies:
+      cssesc: 0.1.0
+      fastparse: 1.1.1
+      regexpu-core: 1.0.0
+    dev: false
+    resolution:
+      integrity: sha1-5piEdK6MlTR3v15+/s/OzNnPTIY=
   /css-tree/1.0.0-alpha.28:
     dependencies:
       mdn-data: 1.1.4
@@ -1538,6 +1558,11 @@ packages:
     dev: true
     resolution:
       integrity: sha1-lGfQMsOM+u+58teVASUwYvh/ob0=
+  /cssesc/0.1.0:
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha1-yBSQPkViM3GgR3tAEJqq++6t27Q=
   /cssnano-preset-default/4.0.2:
     dependencies:
       css-declaration-sorter: 4.0.1
@@ -1635,7 +1660,6 @@ packages:
       postcss-unique-selectors: 2.0.2
       postcss-value-parser: 3.3.0
       postcss-zindex: 2.2.0
-    dev: true
     resolution:
       integrity: sha1-Tzj2zqK5sX+gFJDyPx3GjqZcHDg=
       tarball: 'http://registry.npmjs.org/cssnano/-/cssnano-3.10.0.tgz'
@@ -1654,7 +1678,6 @@ packages:
     dependencies:
       clap: 1.2.3
       source-map: 0.5.7
-    dev: true
     engines:
       node: '>=0.10.0'
     hasBin: true
@@ -1695,7 +1718,6 @@ packages:
     resolution:
       integrity: sha512-D61LaDQPQkxJ5AUM2mbSJRbPkNs/TmdmOeLAi1hgDkpDfIfetSrjmWhccwtuResSwMbACjx/xXQofvM9CE/aeg==
   /decamelize/1.2.0:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -1750,7 +1772,6 @@ packages:
     resolution:
       integrity: sha512-jwK2UV4cnPpbcG7+VRARKTZPUWowwXA8bzH5NP6ud0oeAxyYPuGZUAC7hMugpCdz4BeSZl2Dl9k66CHJ/46ZYQ==
   /defined/1.0.0:
-    dev: true
     resolution:
       integrity: sha1-yY2bzvdWdBiOEQlpFRGZ45sfppM=
   /depd/1.1.2:
@@ -1856,7 +1877,6 @@ packages:
     resolution:
       integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
   /electron-to-chromium/1.3.72:
-    dev: true
     resolution:
       integrity: sha512-OFbXEC01Lq7A66e3UywkvWYNN00HO1I9MAPereGe0NIXrt2MeaovL1bbY+951HKG0euUdPBe0L7yfKxgqxBMMw==
   /elliptic/6.4.1:
@@ -1871,6 +1891,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-BsXLz5sqX8OHcsh7CqBMztyXARmGQ3LWPtGjJi6DiJHq5C/qvi9P3OqgswKSDftbu8+IoI/QDTAm2fFnQ9SZSQ==
+  /emojis-list/2.1.0:
+    dev: false
+    engines:
+      node: '>= 0.10'
+    resolution:
+      integrity: sha1-TapNnbAPmBmIDHn6RXrlsJof04k=
   /encodeurl/1.0.2:
     dev: true
     engines:
@@ -1914,7 +1940,6 @@ packages:
     resolution:
       integrity: sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=
   /escape-string-regexp/1.0.5:
-    dev: true
     engines:
       node: '>=0.8.0'
     resolution:
@@ -1948,7 +1973,6 @@ packages:
     resolution:
       integrity: sha512-6hTjO1NAWkHnDk3OqQ4YrCuwwmGHL9S3nPlzBOUG/R44rda3wLNrfvQ5fkSGjyhHFKM7ALPKcKGrwvCLe0lC7Q==
   /esprima/2.7.3:
-    dev: true
     engines:
       node: '>=0.10.0'
     hasBin: true
@@ -1975,7 +1999,6 @@ packages:
     resolution:
       integrity: sha1-De4/7TH81GlhjOc0IJn8GvoL2xM=
   /esutils/2.0.2:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -2074,6 +2097,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
+  /fastparse/1.1.1:
+    dev: false
+    resolution:
+      integrity: sha1-0eJkOzipTXWDtHkGDmxK/8lAcfg=
   /filesize/3.6.1:
     dev: true
     engines:
@@ -2092,7 +2119,6 @@ packages:
     resolution:
       integrity: sha1-1USBHUKPmOsGpj3EAtJAPDKMOPc=
   /flatten/1.0.2:
-    dev: true
     resolution:
       integrity: sha1-2uRqnXj74lKSJYzB54CkHZXAN4I=
   /for-in/1.0.2:
@@ -2138,7 +2164,6 @@ packages:
     resolution:
       integrity: sha512-FVDjVhR71TkJ+ud6vnRwCHvCgK9drGRdimWcTLqw8iN88uL5tTX+/xrwigJdcuQGrWYo3TRw9gRzk9xqR0UPPQ==
   /function-bind/1.1.1:
-    dev: true
     resolution:
       integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==
   /get-port/3.2.0:
@@ -2186,19 +2211,16 @@ packages:
   /has-ansi/2.0.0:
     dependencies:
       ansi-regex: 2.1.1
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-NPUEnOHs3ysGSa8+8k5F7TVBbZE=
   /has-flag/1.0.0:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-nZ55MWXOAXoA8AQYxD+UKnsdEfo=
   /has-flag/3.0.0:
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -2247,7 +2269,6 @@ packages:
   /has/1.0.3:
     dependencies:
       function-bind: 1.1.1
-    dev: true
     engines:
       node: '>= 0.4.0'
     resolution:
@@ -2289,7 +2310,6 @@ packages:
     resolution:
       integrity: sha1-wc56MWjIxmFAM6S194d/OyJfnDg=
   /html-comment-regex/1.1.1:
-    dev: true
     resolution:
       integrity: sha1-ZouTd26q5V696POtRkswekljYl4=
   /htmlnano/0.1.10:
@@ -2330,12 +2350,21 @@ packages:
     dev: true
     resolution:
       integrity: sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=
+  /icss-replace-symbols/1.1.0:
+    dev: false
+    resolution:
+      integrity: sha1-Bupvg2ead0njhs/h/oEq5dsiPe0=
+  /icss-utils/2.1.0:
+    dependencies:
+      postcss: 6.0.23
+    dev: false
+    resolution:
+      integrity: sha1-g/Cg7DeL8yRheLbCrZE28TWxyWI=
   /ieee754/1.1.12:
     dev: true
     resolution:
       integrity: sha512-GguP+DRY+pJ3soyIiGPTvdiVXjZ+DbXOxGpXn3eMvNW4x4irjqXm4wHKscC+TfxSJ0yw/S1F24tqdMNsMZTiLA==
   /indexes-of/1.0.1:
-    dev: true
     resolution:
       integrity: sha1-8w9xbI4r00bHtn0985FVZqfAVgc=
   /indexof/0.0.1:
@@ -2361,7 +2390,6 @@ packages:
     resolution:
       integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
   /is-absolute-url/2.1.0:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -2519,7 +2547,6 @@ packages:
       integrity: sha1-PkcprB9f3gJc19g6iW2rn09n2w8=
       tarball: 'http://registry.npmjs.org/is-obj/-/is-obj-1.0.1.tgz'
   /is-plain-obj/1.1.0:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -2547,7 +2574,6 @@ packages:
   /is-svg/2.1.0:
     dependencies:
       html-comment-regex: 1.1.1
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -2611,7 +2637,6 @@ packages:
     resolution:
       integrity: sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
   /js-base64/2.4.9:
-    dev: true
     resolution:
       integrity: sha512-xcinL3AuDJk7VSzsHgb9DvvIXayBbadtMZ4HFPx8rUszbW1MuNMlwYVC4zzCZ6e1sqZpnNS5ZFYOhXqA39T7LQ==
   /js-beautify/1.8.6:
@@ -2630,6 +2655,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-PxfGzSs0ztShKrUYPIn5r0MtyAhYcCwmndozzpz8YObbPnD1jFxzlBGbRnX2mIu6Z13xN6+PTu05TQFnZFlzow==
+  /js-tokens/3.0.2:
+    dev: false
+    resolution:
+      integrity: sha1-mGbfOVECEw449/mWvOtlRDIJwls=
   /js-tokens/4.0.0:
     dev: true
     resolution:
@@ -2646,12 +2675,10 @@ packages:
     dependencies:
       argparse: 1.0.10
       esprima: 2.7.3
-    dev: true
     hasBin: true
     resolution:
       integrity: sha1-XJZ93YN6m/3KXy3oQlOr6KHAO4A=
   /jsesc/0.5.0:
-    dev: true
     hasBin: true
     resolution:
       integrity: sha1-597mbjXW/Bb3EP6R1c9p9w8IkR0=
@@ -2667,7 +2694,6 @@ packages:
     resolution:
       integrity: sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==
   /json5/0.5.1:
-    dev: true
     hasBin: true
     resolution:
       integrity: sha1-Hq3nrMASA0rYTiOWdn6tn6VJWCE=
@@ -2717,6 +2743,20 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha1-OwmSTt+fCDwEkP3UwLxEIeBHZO4=
+  /loader-utils/1.1.0:
+    dependencies:
+      big.js: 3.2.0
+      emojis-list: 2.1.0
+      json5: 0.5.1
+    dev: false
+    engines:
+      node: '>=4.0.0'
+    resolution:
+      integrity: sha1-yYrvSIvM7aL/teLeZG1qdUQp9c0=
+  /lodash.camelcase/4.3.0:
+    dev: false
+    resolution:
+      integrity: sha1-soqmKIorn8ZRA1x3EfZathkDMaY=
   /lodash.clone/4.5.0:
     dev: true
     resolution:
@@ -2726,11 +2766,9 @@ packages:
     resolution:
       integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=
   /lodash.memoize/4.1.2:
-    dev: true
     resolution:
       integrity: sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
   /lodash.uniq/4.5.0:
-    dev: true
     resolution:
       integrity: sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
   /lodash/4.17.11:
@@ -2785,7 +2823,6 @@ packages:
     resolution:
       integrity: sha512-4/oecXl8y/1i8RDZvyvwAICyqwNoKU4or5uf8uoAd74k76KzZ0Llym4zhJ5lLNUskcqjO0AuMcvNyDkpz8Z6zw==
   /math-expression-evaluator/1.2.17:
-    dev: true
     resolution:
       integrity: sha1-3oGf282E3M2PrlnGrreWFbnSZqw=
   /md5.js/1.3.4:
@@ -2859,7 +2896,6 @@ packages:
     resolution:
       integrity: sha1-9sAMHAsIIkblxNmd+4x8CDsrWCo=
   /minimist/0.0.8:
-    dev: true
     resolution:
       integrity: sha1-hX/Kv8M5fSYluCKCYuhqp6ARsF0=
       tarball: 'http://registry.npmjs.org/minimist/-/minimist-0.0.8.tgz'
@@ -2868,6 +2904,19 @@ packages:
     resolution:
       integrity: sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=
       tarball: 'http://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz'
+  /mithril-datepicker/0.9.2:
+    dependencies:
+      mithril: 1.1.6
+    dev: false
+    resolution:
+      integrity: sha512-8ATd/rexXE6qQosZn3y8agKP7ZY9zn555FRdbtG/++w/GF61ONzirBGCGNH7O9PY95rdQgAx0pmV7EP5JejOzA==
+  /mithril-timepicker/0.9.2:
+    dependencies:
+      css-loader: 0.28.11
+      mithril: 1.1.6
+    dev: false
+    resolution:
+      integrity: sha512-8DY0QVCOjLSGHE2Hwa8gFtSkTGMo5HVNmmUv3m2RHYLus5+zYDCLTP2qPB2+/g2HAigEsSwvMdam2tjqEog4AA==
   /mithril-tree-component/0.3.6:
     dependencies:
       mithril: 1.1.6
@@ -2891,7 +2940,6 @@ packages:
   /mkdirp/0.5.1:
     dependencies:
       minimist: 0.0.8
-    dev: true
     hasBin: true
     resolution:
       integrity: sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
@@ -2985,7 +3033,6 @@ packages:
     resolution:
       integrity: sha1-GrKLVW4Zg2Oowab35vogE3/mrtk=
   /normalize-range/0.1.2:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -2996,7 +3043,6 @@ packages:
       prepend-http: 1.0.4
       query-string: 4.3.4
       sort-keys: 1.1.2
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -3014,11 +3060,9 @@ packages:
     resolution:
       integrity: sha1-mSms32KPwsQQmN6rgqxYDPFJquQ=
   /num2fraction/1.2.2:
-    dev: true
     resolution:
       integrity: sha1-b2gragJ6Tp3fpFZM0lidHU5mnt4=
   /object-assign/4.1.1:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -3309,7 +3353,6 @@ packages:
       postcss: 5.2.18
       postcss-message-helpers: 2.0.0
       reduce-css-calc: 1.3.0
-    dev: true
     resolution:
       integrity: sha1-d7rnypKK2FcW4v2kLyYb98HWW14=
       tarball: 'http://registry.npmjs.org/postcss-calc/-/postcss-calc-5.3.1.tgz'
@@ -3327,7 +3370,6 @@ packages:
       colormin: 1.1.2
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-ZjFBfV8OkJo9fsJrJMio0eT5bks=
   /postcss-colormin/4.0.2:
@@ -3346,7 +3388,6 @@ packages:
     dependencies:
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-u9hZPFwf0uPRwyK7kl3K6Nrk1i0=
   /postcss-convert-values/4.0.1:
@@ -3361,7 +3402,6 @@ packages:
   /postcss-discard-comments/2.0.4:
     dependencies:
       postcss: 5.2.18
-    dev: true
     resolution:
       integrity: sha1-vv6J+v1bPazlzM5Rt2uBUUvgDj0=
       tarball: 'http://registry.npmjs.org/postcss-discard-comments/-/postcss-discard-comments-2.0.4.tgz'
@@ -3376,7 +3416,6 @@ packages:
   /postcss-discard-duplicates/2.1.0:
     dependencies:
       postcss: 5.2.18
-    dev: true
     resolution:
       integrity: sha1-uavye4isGIFYpesSq8riAmO5GTI=
   /postcss-discard-duplicates/4.0.2:
@@ -3390,7 +3429,6 @@ packages:
   /postcss-discard-empty/2.1.0:
     dependencies:
       postcss: 5.2.18
-    dev: true
     resolution:
       integrity: sha1-0rS9nVztXr2Nyt52QMfXzX9PkrU=
       tarball: 'http://registry.npmjs.org/postcss-discard-empty/-/postcss-discard-empty-2.1.0.tgz'
@@ -3405,7 +3443,6 @@ packages:
   /postcss-discard-overridden/0.1.1:
     dependencies:
       postcss: 5.2.18
-    dev: true
     resolution:
       integrity: sha1-ix6vVU9ob7KIzYdMVWZ7CqNmjVg=
       tarball: 'http://registry.npmjs.org/postcss-discard-overridden/-/postcss-discard-overridden-0.1.1.tgz'
@@ -3421,14 +3458,12 @@ packages:
     dependencies:
       postcss: 5.2.18
       uniqs: 2.0.0
-    dev: true
     resolution:
       integrity: sha1-vOMLLMWR/8Y0Mitfs0ZLbZNPRDM=
       tarball: 'http://registry.npmjs.org/postcss-discard-unused/-/postcss-discard-unused-2.2.3.tgz'
   /postcss-filter-plugins/2.0.3:
     dependencies:
       postcss: 5.2.18
-    dev: true
     resolution:
       integrity: sha512-T53GVFsdinJhgwm7rg1BzbeBRomOg9y5MBVhGcsV0CxurUdVj1UlPdKtn7aqYA/c/QVkzKMjq2bSV5dKG5+AwQ==
   /postcss-merge-idents/2.1.7:
@@ -3436,14 +3471,12 @@ packages:
       has: 1.0.3
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-TFUwMTwI4dWzu/PSu8dH4njuonA=
       tarball: 'http://registry.npmjs.org/postcss-merge-idents/-/postcss-merge-idents-2.1.7.tgz'
   /postcss-merge-longhand/2.0.2:
     dependencies:
       postcss: 5.2.18
-    dev: true
     resolution:
       integrity: sha1-I9kM0Sewp3mUkVMyc5A0oaTz1lg=
   /postcss-merge-longhand/4.0.6:
@@ -3464,7 +3497,6 @@ packages:
       postcss: 5.2.18
       postcss-selector-parser: 2.2.3
       vendors: 1.0.2
-    dev: true
     resolution:
       integrity: sha1-0d9d+qexrMO+VT8OnhDofGG19yE=
   /postcss-merge-rules/4.0.2:
@@ -3481,7 +3513,6 @@ packages:
     resolution:
       integrity: sha512-UiuXwCCJtQy9tAIxsnurfF0mrNHKc4NnNx6NxqmzNNjXpQwLSukUxELHTRF0Rg1pAmcoKLih8PwvZbiordchag==
   /postcss-message-helpers/2.0.0:
-    dev: true
     resolution:
       integrity: sha1-pPL0+rbk/gAvCu0ABHjN9S+bpg4=
   /postcss-minify-font-values/1.0.5:
@@ -3489,7 +3520,6 @@ packages:
       object-assign: 4.1.1
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-S1jttWZB66fIR0qzUmyv17vey2k=
       tarball: 'http://registry.npmjs.org/postcss-minify-font-values/-/postcss-minify-font-values-1.0.5.tgz'
@@ -3506,7 +3536,6 @@ packages:
     dependencies:
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-Xb2hE3NwP4PPtKPqOIHY11/15uE=
       tarball: 'http://registry.npmjs.org/postcss-minify-gradients/-/postcss-minify-gradients-1.0.5.tgz'
@@ -3527,7 +3556,6 @@ packages:
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
       uniqs: 2.0.0
-    dev: true
     resolution:
       integrity: sha1-rSzgcTc7lDs9kwo/pZo1jCjW8fM=
       tarball: 'http://registry.npmjs.org/postcss-minify-params/-/postcss-minify-params-1.2.2.tgz'
@@ -3550,7 +3578,6 @@ packages:
       has: 1.0.3
       postcss: 5.2.18
       postcss-selector-parser: 2.2.3
-    dev: true
     resolution:
       integrity: sha1-ssapjAByz5G5MtGkllCBFDEXNb8=
       tarball: 'http://registry.npmjs.org/postcss-minify-selectors/-/postcss-minify-selectors-2.1.1.tgz'
@@ -3565,10 +3592,36 @@ packages:
       node: '>=6.9.0'
     resolution:
       integrity: sha512-8+plQkomve3G+CodLCgbhAKrb5lekAnLYuL1d7Nz+/7RANpBEVdgBkPNwljfSKvZ9xkkZTZITd04KP+zeJTJqg==
+  /postcss-modules-extract-imports/1.2.0:
+    dependencies:
+      postcss: 6.0.23
+    dev: false
+    resolution:
+      integrity: sha1-ZhQOzs447wa/DT41XWm/WdFB6oU=
+  /postcss-modules-local-by-default/1.2.0:
+    dependencies:
+      css-selector-tokenizer: 0.7.0
+      postcss: 6.0.23
+    dev: false
+    resolution:
+      integrity: sha1-99gMOYxaOT+nlkRmvRlQCn1hwGk=
+  /postcss-modules-scope/1.1.0:
+    dependencies:
+      css-selector-tokenizer: 0.7.0
+      postcss: 6.0.23
+    dev: false
+    resolution:
+      integrity: sha1-1upkmUx5+XtipytCb75gVqGUu5A=
+  /postcss-modules-values/1.3.0:
+    dependencies:
+      icss-replace-symbols: 1.1.0
+      postcss: 6.0.23
+    dev: false
+    resolution:
+      integrity: sha1-7P+p1+GSUYOJ9CrQ6D9yrsRW6iA=
   /postcss-normalize-charset/1.1.1:
     dependencies:
       postcss: 5.2.18
-    dev: true
     resolution:
       integrity: sha1-757nEhLX/nWceO0WL2HtYrXLk/E=
       tarball: 'http://registry.npmjs.org/postcss-normalize-charset/-/postcss-normalize-charset-1.1.1.tgz'
@@ -3648,7 +3701,6 @@ packages:
       normalize-url: 1.9.1
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-EI90s/L82viRov+j6kWSJ5/HgiI=
       tarball: 'http://registry.npmjs.org/postcss-normalize-url/-/postcss-normalize-url-3.0.8.tgz'
@@ -3676,7 +3728,6 @@ packages:
     dependencies:
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-7sbCpntsQSqNsgQud/6NpD+VwR0=
   /postcss-ordered-values/4.1.1:
@@ -3693,14 +3744,12 @@ packages:
     dependencies:
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-wsbSDMlYKE9qv75j92Cb9AkFmtM=
       tarball: 'http://registry.npmjs.org/postcss-reduce-idents/-/postcss-reduce-idents-2.4.0.tgz'
   /postcss-reduce-initial/1.0.1:
     dependencies:
       postcss: 5.2.18
-    dev: true
     resolution:
       integrity: sha1-aPgGlfBF0IJjqHmtJA343WT2ROo=
       tarball: 'http://registry.npmjs.org/postcss-reduce-initial/-/postcss-reduce-initial-1.0.1.tgz'
@@ -3720,7 +3769,6 @@ packages:
       has: 1.0.3
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
-    dev: true
     resolution:
       integrity: sha1-/3b02CEkN7McKYpC0uFEQCV3GuE=
       tarball: 'http://registry.npmjs.org/postcss-reduce-transforms/-/postcss-reduce-transforms-1.0.4.tgz'
@@ -3740,7 +3788,6 @@ packages:
       flatten: 1.0.2
       indexes-of: 1.0.1
       uniq: 1.0.1
-    dev: true
     resolution:
       integrity: sha1-+UN3iGBsPJrO4W/+jYsWKX8nu5A=
   /postcss-selector-parser/3.1.1:
@@ -3759,7 +3806,6 @@ packages:
       postcss: 5.2.18
       postcss-value-parser: 3.3.0
       svgo: 0.7.2
-    dev: true
     resolution:
       integrity: sha1-tt8YqmE7Zm4TPwittSGcJoSsEI0=
       tarball: 'http://registry.npmjs.org/postcss-svgo/-/postcss-svgo-2.1.6.tgz'
@@ -3779,7 +3825,6 @@ packages:
       alphanum-sort: 1.0.2
       postcss: 5.2.18
       uniqs: 2.0.0
-    dev: true
     resolution:
       integrity: sha1-mB1X0p3csz57Hf4f1DuGSfkzyh0=
       tarball: 'http://registry.npmjs.org/postcss-unique-selectors/-/postcss-unique-selectors-2.0.2.tgz'
@@ -3794,7 +3839,6 @@ packages:
     resolution:
       integrity: sha512-+JanVaryLo9QwZjKrmJgkI4Fn8SBgRO6WXQBJi7KiAVPlmxikB5Jzc4EvXMT2H0/m0RjrVVm9rGNhZddm/8Spg==
   /postcss-value-parser/3.3.0:
-    dev: true
     resolution:
       integrity: sha1-h/OPnxj3dKSrTIojL1xc6IcqnRU=
   /postcss-zindex/2.2.0:
@@ -3802,7 +3846,6 @@ packages:
       has: 1.0.3
       postcss: 5.2.18
       uniqs: 2.0.0
-    dev: true
     resolution:
       integrity: sha1-0hCd3AVbka9n/EyzsCWUZjnSryI=
       tarball: 'http://registry.npmjs.org/postcss-zindex/-/postcss-zindex-2.2.0.tgz'
@@ -3812,7 +3855,6 @@ packages:
       js-base64: 2.4.9
       source-map: 0.5.7
       supports-color: 3.2.3
-    dev: true
     engines:
       node: '>=0.12'
     resolution:
@@ -3822,7 +3864,6 @@ packages:
       chalk: 2.4.1
       source-map: 0.6.1
       supports-color: 5.5.0
-    dev: true
     engines:
       node: '>=4.0.0'
     resolution:
@@ -3873,7 +3914,6 @@ packages:
     resolution:
       integrity: sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=
   /prepend-http/1.0.4:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -3922,7 +3962,6 @@ packages:
     resolution:
       integrity: sha1-wNWmOycYgArY4esPpSachN1BhF4=
   /q/1.5.1:
-    dev: true
     engines:
       node: '>=0.6.0'
       teleport: '>=0.2.0'
@@ -3932,7 +3971,6 @@ packages:
     dependencies:
       object-assign: 4.1.1
       strict-uri-encode: 1.1.0
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -4005,7 +4043,6 @@ packages:
       balanced-match: 0.4.2
       math-expression-evaluator: 1.2.17
       reduce-function-call: 1.0.2
-    dev: true
     resolution:
       integrity: sha1-dHyRTgSWFKTJz7umKYca0dKSdxY=
       tarball: 'http://registry.npmjs.org/reduce-css-calc/-/reduce-css-calc-1.3.0.tgz'
@@ -4019,7 +4056,6 @@ packages:
   /reduce-function-call/1.0.2:
     dependencies:
       balanced-match: 0.4.2
-    dev: true
     resolution:
       integrity: sha1-WiAL+S4ON3UXUv5FsKszD9S2vpk=
   /regenerate-unicode-properties/7.0.0:
@@ -4031,7 +4067,6 @@ packages:
     resolution:
       integrity: sha512-s5NGghCE4itSlUS+0WUj88G6cfMVMmH8boTPNvABf8od+2dhT9WDlWu8n01raQAJZMOK8Ch6jSexaRO7swd6aw==
   /regenerate/1.4.0:
-    dev: true
     resolution:
       integrity: sha512-1G6jJVDWrt0rK99kBjvEtziZNCICAuvIPkSiUFIQxVP06RCVpq3dmDo2oi6ABpYaDYaTRr67BEhL8r1wgEZZKg==
   /regenerator-runtime/0.11.1:
@@ -4057,6 +4092,14 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-J6SDjUgDxQj5NusnOtdFxDwN/+HWykR8GELwctJ7mdqhcyy1xEc4SRFHUXvxTp661YaVKAjfRLZ9cCqS6tn32A==
+  /regexpu-core/1.0.0:
+    dependencies:
+      regenerate: 1.4.0
+      regjsgen: 0.2.0
+      regjsparser: 0.1.5
+    dev: false
+    resolution:
+      integrity: sha1-hqdj9Y7k18L2sQLkdkBQ3n7ZDGs=
   /regexpu-core/4.2.0:
     dependencies:
       regenerate: 1.4.0
@@ -4070,10 +4113,21 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-Z835VSnJJ46CNBttalHD/dB+Sj2ezmY6Xp38npwU87peK6mqOzOpV8eYktdkLTEkzzD+JsTcxd84ozd8I14+rw==
+  /regjsgen/0.2.0:
+    dev: false
+    resolution:
+      integrity: sha1-bAFq3qxVT3WCP+N6wFuS1aTtsfc=
   /regjsgen/0.4.0:
     dev: true
     resolution:
       integrity: sha512-X51Lte1gCYUdlwhF28+2YMO0U6WeN0GLpgpA7LK7mbdDnkQYiwvEpmpe0F/cv5L14EbxgrdayAG3JETBv0dbXA==
+  /regjsparser/0.1.5:
+    dependencies:
+      jsesc: 0.5.0
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha1-fuj4Tcb6eS0/0K4ijSS9lJ6tIFw=
   /regjsparser/0.3.0:
     dependencies:
       jsesc: 0.5.0
@@ -4156,7 +4210,6 @@ packages:
     resolution:
       integrity: sha512-nDwXOhiheoaBT6op02n8wzsshjLXHhh4YAeqsDEoVmy1k2+lGv/ENLsGaWqkaKArUkUx48VO12/ZPa3sI/OEqQ==
   /sax/1.2.4:
-    dev: true
     resolution:
       integrity: sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
   /semver/5.5.1:
@@ -4311,11 +4364,14 @@ packages:
   /sort-keys/1.1.2:
     dependencies:
       is-plain-obj: 1.1.0
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-RBttTTRnmPG05J6JIK37oOVD+a0=
+  /source-list-map/2.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-I2UmuJSRr/T8jisiROLU3A3ltr+swpniSmNPI4Ml3ZCX6tVnDsuZzK7F2hl5jTqbZBWCEKlj5HRQiPExXLgE8A==
   /source-map-resolve/0.5.2:
     dependencies:
       atob: 2.1.2
@@ -4338,13 +4394,11 @@ packages:
     resolution:
       integrity: sha1-PpNdfd1zYxuXZZlW1VEo6HtQhKM=
   /source-map/0.5.7:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
   /source-map/0.6.1:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -4358,7 +4412,6 @@ packages:
     resolution:
       integrity: sha512-NzNVhJDYpwceVVii8/Hu6DKfD2G+NrQHlS/V/qgv763EYudVwEcMQNxd2lh+0VrUByXN/oJkl5grOhYWvQUYiw==
   /sprintf-js/1.0.3:
-    dev: true
     resolution:
       integrity: sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
   /stable/0.1.8:
@@ -4429,7 +4482,6 @@ packages:
     resolution:
       integrity: sha512-+TSkfINHDo4J+ZobQLWiMouQYB+UVYFttRA94FpEzzJ7ZdqcL4uUUQ7WkdkI4DSozGmgBUE/a47L+38PenXhUw==
   /strict-uri-encode/1.1.0:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -4443,7 +4495,6 @@ packages:
   /strip-ansi/3.0.1:
     dependencies:
       ansi-regex: 2.1.1
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -4467,7 +4518,6 @@ packages:
     resolution:
       integrity: sha512-TK5zEPeD9NyC1uPIdjikzsgWxdQQN/ry1X3d1iOz1UkYDCmcr928gWD1KHgyC27F50UnE0xCTrBOO1l6KR8M4w==
   /supports-color/2.0.0:
-    dev: true
     engines:
       node: '>=0.8.0'
     resolution:
@@ -4475,7 +4525,6 @@ packages:
   /supports-color/3.2.3:
     dependencies:
       has-flag: 1.0.0
-    dev: true
     engines:
       node: '>=0.8.0'
     resolution:
@@ -4483,7 +4532,6 @@ packages:
   /supports-color/5.5.0:
     dependencies:
       has-flag: 3.0.0
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -4497,7 +4545,6 @@ packages:
       mkdirp: 0.5.1
       sax: 1.2.4
       whet.extend: 0.9.9
-    dev: true
     engines:
       node: '>=0.10.0'
     hasBin: true
@@ -4686,11 +4733,9 @@ packages:
     resolution:
       integrity: sha1-XHHDTLW61dzr4+oM0IIHulqhrqQ=
   /uniq/1.0.1:
-    dev: true
     resolution:
       integrity: sha1-sxxa6CVIRKOoKBVBzisEuGWnNP8=
   /uniqs/2.0.0:
-    dev: true
     resolution:
       integrity: sha1-/+3ks2slKQaW5uFl1KWe25mOawI=
   /unquote/1.1.1:
@@ -4757,7 +4802,6 @@ packages:
     resolution:
       integrity: sha512-1wFuMUIM16MDJRCrpbpuEPTUGmM5QMUg0cr3KFwra2XgOgFcPGDQHDh3CszSCD2Zewc/dh/pamNEW8CbfDebUw==
   /vendors/1.0.2:
-    dev: true
     resolution:
       integrity: sha512-w/hry/368nO21AN9QljsaIhb9ZiZtZARoVH5f3CsFbawdLdayCgKRPup7CggujvySMxx0I91NOyxdVENohprLQ==
   /vlq/0.2.3:
@@ -4777,7 +4821,6 @@ packages:
     resolution:
       integrity: sha1-8LDc+RW8X/FSivrbLA4XtTLaL+g=
   /whet.extend/0.9.9:
-    dev: true
     engines:
       node: '>=0.6.0'
     resolution:
@@ -4818,6 +4861,8 @@ specifiers:
   autoprefixer: ^9.1.5
   materialize-css: ^1.0.0
   mithril: ^1.1.6
+  mithril-datepicker: ^0.9.2
+  mithril-timepicker: ^0.9.2
   mithril-tree-component: ^0.3.6
   parcel-bundler: ^1.10.1
   typescript: ^3.1.1
