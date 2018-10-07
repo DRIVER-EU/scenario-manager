@@ -99,7 +99,6 @@ export const ObjectivesList = () => {
           iconName: 'filter_list',
           initialValue: state.filterValue,
           onchange: (v: string) => (state.filterValue = v),
-          style: 'margin-right:100px',
           classNames: 'right',
         }),
         m(TreeContainer, { tree, options }),
