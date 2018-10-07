@@ -1,6 +1,6 @@
-import m, { Vnode, Component } from 'mithril';
+import { Objective } from './../../../../server/src/objective/objective.entity';
+import m, { Component } from 'mithril';
 import { ObjectiveSvc } from '../../services/objective-service';
-import { IObjectiveVM, IObjective } from '../../models/objective';
 import { unflatten, titleAndDescriptionFilter } from '../../utils/utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { ScenarioSvc } from '../../services/scenario-service';
@@ -10,7 +10,7 @@ import { inputText } from '../../utils/html';
 
 export const ObjectivesList = () => {
   const state = {
-    selected: undefined as IObjectiveVM | undefined,
+    selected: undefined as Objective | undefined,
     filterValue: '',
     scenarioId: '',
     subscription: {} as ISubscriptionDefinition<any>,
@@ -25,10 +25,10 @@ export const ObjectivesList = () => {
         return attrs.treeItem.title;
       },
     } as Component<ITreeItemViewComponent>,
-    onSelect: (ti, isSelected) => objectiveSelected(ti as IObjectiveVM, isSelected),
+    onSelect: (ti, isSelected) => objectiveSelected(ti as Objective, isSelected),
     onBeforeCreate: ti => {
       console.log(`On before create ${ti.title}`);
-      ObjectiveSvc.create(ti as IObjective)
+      ObjectiveSvc.create(ti as Objective)
         .then(() => true)
         .catch(e => {
           console.error(e);
@@ -50,23 +50,23 @@ export const ObjectivesList = () => {
       if (!ti.parentId) {
         ti.parentId = '';
       }
-      ObjectiveSvc.update(ti as IObjective);
+      ObjectiveSvc.update(ti as Objective);
     },
-    create: (parent?: IObjectiveVM) => {
+    create: (parent?: Objective) => {
       const item = {
         parentId: parent ? parent.id : undefined,
         title: 'New objective',
         scenarioId: ScenarioSvc.getCurrent().id,
-      } as IObjectiveVM;
+      } as Objective;
       return item as ITreeItem;
     },
     maxDepth: 1,
     editable: { canCreate: true, canDelete: true, canUpdate: true, canDeleteParent: false },
   } as ITreeOptions;
 
-  const objectiveSelected = (selected: IObjectiveVM, isSelected: boolean) => {
+  const objectiveSelected = (selected: Objective, isSelected: boolean) => {
     state.selected = selected;
-    objectiveChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as IObjective });
+    objectiveChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as Objective });
   };
 
   return {

@@ -1,8 +1,8 @@
+import { Objective } from './../../../server/src/objective/objective.entity';
 import { RestService } from './rest-service';
-import { IObjective } from '../models/objective';
 import { ChannelNames } from '../models/channels';
 
-class ObjectiveService extends RestService<IObjective> {
+class ObjectiveService extends RestService<Objective> {
   constructor() {
     super('objective', ChannelNames.OBJECTIVE);
   }

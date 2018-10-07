@@ -1,5 +1,5 @@
+import { Objective } from './../../../../server/src/objective/objective.entity';
 import m from 'mithril';
-import { IObjective } from '../../models/objective';
 import {
   inputTextArea,
   inputText,
@@ -15,9 +15,9 @@ const log = console.log;
 
 export const ObjectiveForm = () => {
   const state = {
-    parent: undefined as IObjective | undefined,
-    objective: undefined as IObjective | undefined,
-    original: undefined as IObjective | undefined,
+    parent: undefined as Objective | undefined,
+    objective: undefined as Objective | undefined,
+    original: undefined as Objective | undefined,
     subscription: {} as ISubscriptionDefinition<any>,
   };
 

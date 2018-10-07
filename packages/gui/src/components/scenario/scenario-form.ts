@@ -1,7 +1,7 @@
+import { Scenario } from './../../../../server/src/scenario/scenario.entity';
 import m from 'mithril';
 import { inputTextArea, inputText, button } from '../../utils/html';
 import { ScenarioSvc } from '../../services/scenario-service';
-import { IScenario } from '../../models/scenario';
 import { deepCopy, deepEqual } from '../../utils/utils';
 import { DateTimeControl } from './date-time-control';
 
@@ -15,8 +15,8 @@ const close = async (e: UIEvent) => {
 
 export const ScenarioForm = () => {
   const state = {
-    original: undefined as IScenario | undefined,
-    scenario: {} as IScenario,
+    original: undefined as Scenario | undefined,
+    scenario: {} as Scenario,
   };
   return {
     oninit: () => {
@@ -34,6 +34,9 @@ export const ScenarioForm = () => {
     view: () => {
       const scenario = state.scenario;
       const hasChanged = !deepEqual(scenario, state.original);
+      const startDate = scenario.startDate || new Date();
+      const endDate = scenario.endDate || new Date(startDate.valueOf());
+      if (!scenario.endDate) { endDate.setHours(endDate.getHours() + 6); }
       return m(
         '.row.scenario-form',
         { style: 'color: black' },
@@ -70,13 +73,13 @@ export const ScenarioForm = () => {
                 }),
                 m(DateTimeControl, {
                   prefix: 'Start',
-                  dt: scenario.startDate || new Date(),
+                  dt: startDate,
                   onchange: (d: Date) => (scenario.startDate = d),
                 }),
                 m(DateTimeControl, {
                   prefix: 'End',
                   icon: 'timer_off',
-                  dt: scenario.endDate || new Date().setHours(new Date().getHours() + 6),
+                  dt: endDate,
                   onchange: (d: Date) => (scenario.endDate = d),
                 }),
               ],
@@ -87,7 +90,7 @@ export const ScenarioForm = () => {
                 ui: {
                   class: `green ${hasChanged ? '' : 'disabled'}`,
                   onclick: () =>
-                    (state.scenario = deepCopy(state.original) as IScenario),
+                    (state.scenario = deepCopy(state.original) as Scenario),
                 },
               }),
               ' ',
