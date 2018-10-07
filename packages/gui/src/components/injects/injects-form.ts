@@ -4,7 +4,7 @@ import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, injectChannel } from '../../models/channels';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils/utils';
 import { InjectSvc } from '../../services/inject-service';
-import { IInject } from '../../models/inject';
+import { IInject, InjectType } from '../../models/inject';
 import { DropDownObjectives } from '../ui/drop-down-objectives';
 
 const log = console.log;
@@ -81,26 +81,28 @@ export const InjectsForm = () => {
                         iconName: 'description',
                         classNames: 'active',
                       }),
-                      m('.row', [
-                        m(
-                          '.col.s6',
-                          m(DropDownObjectives, {
-                            title: 'Select main objective',
-                            objectiveId: inject.mainObjectiveId,
-                            onchange: (id: string) =>
-                              (inject.mainObjectiveId = id),
-                          })
-                        ),
-                        m(
-                          '.col.s6',
-                          m(DropDownObjectives, {
-                            title: 'Select secondary objective',
-                            objectiveId: inject.secondaryObjectiveId,
-                            onchange: (id: string) =>
-                              (inject.secondaryObjectiveId = id),
-                          })
-                        ),
-                      ]),
+                      inject.injectType === InjectType.INJECT
+                        ? ''
+                        : m('.row', [
+                            m(
+                              '.col.s6',
+                              m(DropDownObjectives, {
+                                title: 'Main objective',
+                                objectiveId: inject.mainObjectiveId,
+                                onchange: (id: string) =>
+                                  (inject.mainObjectiveId = id),
+                              })
+                            ),
+                            m(
+                              '.col.s6',
+                              m(DropDownObjectives, {
+                                title: 'Secondary objective',
+                                objectiveId: inject.secondaryObjectiveId,
+                                onchange: (id: string) =>
+                                  (inject.secondaryObjectiveId = id),
+                              })
+                            ),
+                          ]),
                     ],
                     m('row', [
                       button({
