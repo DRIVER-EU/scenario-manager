@@ -22,9 +22,9 @@ export class BaseInject extends Content {
 
   @ApiModelProperty()
   @Column()
-  scenarioId: string;
+  scenarioId!: string;
 
   @ApiModelProperty({ type: Constraint, isArray: true })
   @Column({ type: String, transformer: new ConstraintTransformer() })
-  constraints: Constraint[];
+  constraints?: Constraint[];
 }

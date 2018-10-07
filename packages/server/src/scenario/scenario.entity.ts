@@ -15,8 +15,8 @@ export class Scenario extends Content {
   }
 
   @ApiModelProperty()
-  @Column()
-  startDate: Date;
+  @Column({ nullable: true })
+  startDate?: Date;
 
   @ApiModelPropertyOptional()
   @Column({ nullable: true })
@@ -24,13 +24,13 @@ export class Scenario extends Content {
 
   @ApiModelProperty()
   @CreateDateColumn()
-  createdDate: Date;
+  createdDate!: Date;
 
   @ApiModelProperty()
   @UpdateDateColumn()
-  updatedDate: Date;
+  updatedDate!: Date;
 
   @ApiModelProperty()
   @VersionColumn()
-  version: number;
+  version!: number;
 }

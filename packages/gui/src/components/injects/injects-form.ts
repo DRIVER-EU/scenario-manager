@@ -1,19 +1,21 @@
+import { InjectLevel } from './../../../../server/src/models/inject-level';
+import { Inject } from './../../../../server/src/inject/inject.entity';
 import m from 'mithril';
 import { inputTextArea, inputText, button, smallIcon } from '../../utils/html';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, injectChannel } from '../../models/channels';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils/utils';
 import { InjectSvc } from '../../services/inject-service';
-import { IInject, InjectType } from '../../models/inject';
+// import { InjectType } from '../../models/inject';
 import { DropDownObjectives } from '../ui/drop-down-objectives';
 
 const log = console.log;
 
 export const InjectsForm = () => {
   const state = {
-    parent: undefined as IInject | undefined,
-    inject: undefined as IInject | undefined,
-    original: undefined as IInject | undefined,
+    parent: undefined as Inject | undefined,
+    inject: undefined as Inject | undefined,
+    original: undefined as Inject | undefined,
     subscription: {} as ISubscriptionDefinition<any>,
   };
 
@@ -59,10 +61,10 @@ export const InjectsForm = () => {
               inject
                 ? [
                     m('h4', [
-                      smallIcon(getInjectIcon(inject.injectType), {
+                      smallIcon(getInjectIcon(inject.level), {
                         style: 'margin-right: 12px;',
                       }),
-                      inject.injectType,
+                      inject.level,
                     ]),
                     [
                       inputText({
@@ -81,7 +83,7 @@ export const InjectsForm = () => {
                         iconName: 'description',
                         classNames: 'active',
                       }),
-                      inject.injectType === InjectType.INJECT
+                      inject.level === InjectLevel.INJECT
                         ? ''
                         : m('.row', [
                             m(

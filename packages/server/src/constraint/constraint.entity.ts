@@ -19,11 +19,12 @@ export enum ConstraintType {
 export class Constraint {
   constructor(type: ConstraintType) {
     this.type = type;
+    this.delay = 0;
   }
 
   @ApiModelProperty()
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiModelProperty({ enum: ConstraintType })
   @Column()
@@ -40,9 +41,9 @@ export class Constraint {
 
   @ApiModelProperty({ type: BaseInject })
   @ManyToOne(() => BaseInject, baseInject => baseInject.constraints)
-  dependsOn: BaseInject;
+  dependsOn?: BaseInject;
 
   @ApiModelPropertyOptional()
   @Column()
-  eventName: string;
+  eventName?: string;
 }

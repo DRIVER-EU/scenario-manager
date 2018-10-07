@@ -1,7 +1,7 @@
+import { Inject } from './../../../server/src/inject/inject.entity';
 import { messageBus } from '../services/message-bus-service';
 import { IObjective } from './objective';
 import { IScenario } from './scenario';
-import { IInject } from './inject';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
@@ -31,6 +31,6 @@ export const objectiveChannel = messageBus.channel<{ cur: IObjective; old?: IObj
   ChannelNames.OBJECTIVE
 );
 
-export const injectChannel = messageBus.channel<{ cur: IInject; old?: IInject }>(
+export const injectChannel = messageBus.channel<{ cur: Inject; old?: Inject }>(
   ChannelNames.INJECT
 );

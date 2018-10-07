@@ -8,7 +8,7 @@ export class Objective extends Content {
 
   @ApiModelProperty()
   @Column()
-  scenarioId: string;
+  scenarioId!: string;
 
   @ApiModelProperty()
   @Column({ nullable: true })

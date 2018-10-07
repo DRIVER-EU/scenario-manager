@@ -5,13 +5,13 @@ import { ApiModelProperty } from '@nestjs/swagger';
 export class Content {
   @ApiModelProperty()
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiModelProperty()
-  @Column({ length: 500 })
-  title: string;
+  @Column({ length: 500, default: '' })
+  title!: string;
 
   @ApiModelProperty()
-  @Column('text', { nullable: true })
-  description: string;
+  @Column('text', { nullable: true, default: '' })
+  description!: string;
 }

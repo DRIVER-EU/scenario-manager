@@ -1,5 +1,5 @@
+import { InjectLevel } from './../../../server/src/models/inject-level';
 import { IContent } from '../models/content';
-import { InjectType } from '../models/inject';
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.
@@ -99,11 +99,11 @@ export const deepEqual = <T extends { [key: string]: any }>(
  * Represent the inject with an icon.
  * @param type inject type
  */
-export const getInjectIcon = (type: InjectType) => {
+export const getInjectIcon = (type?: InjectLevel) => {
   switch (type) {
-    case InjectType.INJECT:
+    case InjectLevel.INJECT:
       return 'colorize';
-    case InjectType.ACT:
+    case InjectLevel.ACT:
       return 'call_to_action'; // 'chat';
     default:
       return 'import_contacts';

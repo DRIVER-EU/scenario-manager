@@ -1,22 +1,8 @@
 import { Entity, Column } from 'typeorm';
 import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 import { BaseInject } from './base-inject.entity';
-
-export enum Group {
-  INJECT = 'INJECT',
-  ACT = 'ACT',
-  STORYLINE = 'STORYLINE',
-}
-
-export enum InjectType {
-  PARTICIPANT_MESSAGE = 'PARTICIPANT_MESSAGE',
-  OBSERVER_MESSAGE = 'OBSERVER_MESSAGE',
-  ROLE_PLAYER_MESSAGE = 'ROLE_PLAYER_MESSAGE',
-  OPERATOR_MESSAGE = 'OPERATOR_MESSAGE',
-  AUTOMATED_ACTION = 'AUTOMATED_ACTION',
-  BRANCH = 'BRANCH',
-  WAIT_FOR_OPERATOR_INPUT = 'WAIT_FOR_OPERATOR_INPUT',
-}
+import { InjectLevel } from '../models/inject-level';
+import { InjectType } from '../models/inject-type';
 
 @Entity()
 export class Inject extends BaseInject {
@@ -55,11 +41,11 @@ export class Inject extends BaseInject {
   @Column({ nullable: true })
   parentId?: string;
 
-  @ApiModelProperty({ enum: Group })
+  @ApiModelProperty({ enum: InjectLevel })
   @Column({ nullable: true })
-  group: Group;
+  level?: InjectLevel;
 
   @ApiModelProperty({ enum: InjectType })
   @Column({ nullable: true })
-  injectType: InjectType;
+  type?: InjectType;
 }
