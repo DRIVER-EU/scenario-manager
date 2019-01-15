@@ -19,6 +19,7 @@ import {
   UploadedFile,
   UseInterceptors,
   FileInterceptor,
+  Inject,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ScenarioOverview, IUploadedFile } from '../../models';
@@ -27,7 +28,7 @@ import { ScenarioService } from './scenario.service';
 @ApiUseTags('scenarios')
 @Controller('scenarios')
 export class ScenarioController {
-  constructor(private readonly scenarioService: ScenarioService) {}
+  constructor(@Inject('ScenarioService') private readonly scenarioService: ScenarioService) {}
 
   @ApiImplicitQuery({
     name: 'take',

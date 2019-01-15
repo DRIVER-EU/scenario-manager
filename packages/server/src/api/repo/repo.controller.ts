@@ -1,5 +1,5 @@
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
-import { Res, Controller, Get, Param } from '@nestjs/common';
+import { Res, Controller, Get, Param, Inject } from '@nestjs/common';
 import { ScenarioService } from '../scenarios/scenario.service';
 import { Response } from 'express';
 
@@ -7,7 +7,7 @@ import { Response } from 'express';
 @ApiUseTags('repo')
 @Controller('repo')
 export class RepoController {
-  constructor(private readonly scenarioService: ScenarioService) {}
+  constructor(@Inject('ScenarioService') private readonly scenarioService: ScenarioService) {}
 
   @ApiOperation({ title: 'Download a scenario as SQLite3 database by id' })
   @Get(':id')
