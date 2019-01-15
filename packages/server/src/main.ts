@@ -4,19 +4,21 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
-  // const app = await NestFactory.create(AppModule);
-  // app.enableCors({
-  //   credentials: true,
-  // });
 
   const options = new DocumentBuilder()
-    .setTitle('Scenario manager example')
+    .setTitle('Scenario manager service')
     .setDescription('The scenario manager API description')
-    .setVersion('1.0')
-    .addTag('scenario')
+    .setVersion('0.1')
+    .addTag('Scenario manager service')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection:', reason.stack || reason);
+    // Recommended: send the information to sentry.io
+    // or whatever crash reporting service you use
+  });
 
   const port = process.env.SCENARIO_MANAGER_SERVER_PORT || 3000;
   await app.listen(port, () => {
