@@ -12,7 +12,7 @@ const sortScenarioByLastEdit = (a: ScenarioOverview, b: ScenarioOverview) =>
   a.lastEdit > b.lastEdit ? -1 : 1;
 
 export class ScenarioRepository {
-  private databases: { [id: string]: Database } = {};
+  private databases: { [id: string]: { db: Database; filename: string } } = {};
   private overview: ScenarioOverview[] = [];
 
   constructor(private folder: string) {
@@ -29,6 +29,16 @@ export class ScenarioRepository {
     return this.getScenario(id);
   }
 
+  async getScenarioFilename(id: string) {
+    return new Promise<string>((resolve, reject) => {
+      const dbi = this.databases.hasOwnProperty(id) ? this.databases[id] : undefined;
+      if (!dbi) {
+        return reject(`Error, no database with id ${id} found!`);
+      }
+      resolve(dbi.filename);
+    });
+  }
+
   async createScenario(scenario: ScenarioOverview) {
     scenario.id = uuid4();
     const now = new Date();
@@ -41,7 +51,9 @@ export class ScenarioRepository {
 
   async updateScenario(id: string, scenario: ScenarioOverview) {
     return new Promise((resolve, reject) => {
-      const db = this.databases.hasOwnProperty(id) ? this.databases[id] : null;
+      const db = this.databases.hasOwnProperty(id)
+        ? this.databases[id].db
+        : null;
       if (!db) {
         reject(`Database with id ${id} does not exist!`);
       }
@@ -69,8 +81,7 @@ export class ScenarioRepository {
       if (!this.databases.hasOwnProperty(id)) {
         return reject(`Error, no database with ID ${id} exists!`);
       }
-      const db = this.databases[id];
-      const filename = this.toFilename(id);
+      const { db, filename } = this.databases[id];
       db.close(err => {
         if (err) {
           logError(err);
@@ -93,33 +104,44 @@ export class ScenarioRepository {
   // Asset mgmt
 
   async getAsset(id: string, assetId: number | string) {
-    return new Promise<{ id: number; data: Uint8Array; mimetype: string; filename: string }>(
-      async (resolve, reject) => {
-        const db = this.databases.hasOwnProperty(id)
-          ? this.databases[id]
-          : undefined;
-        if (!db) {
-          return reject(`Error, no database with id ${id} found!`);
-        }
-        db.get(
-          `SELECT id, mimetype, filename, data FROM ${ASSETS} WHERE id=?`,
-          assetId,
-          (err: Error, row: { id: number; mimetype: string; data: Uint8Array; filename: string }) => {
-            if (err) {
-              console.error(err);
-              return reject(err);
-            }
-            resolve(row);
+    return new Promise<{
+      id: number;
+      data: Uint8Array;
+      mimetype: string;
+      filename: string;
+    }>(async (resolve, reject) => {
+      const db = this.databases.hasOwnProperty(id)
+        ? this.databases[id].db
+        : undefined;
+      if (!db) {
+        return reject(`Error, no database with id ${id} found!`);
+      }
+      db.get(
+        `SELECT id, mimetype, filename, data FROM ${ASSETS} WHERE id=?`,
+        assetId,
+        (
+          err: Error,
+          row: {
+            id: number;
+            mimetype: string;
+            data: Uint8Array;
+            filename: string;
           },
-        );
-      },
-    );
+        ) => {
+          if (err) {
+            console.error(err);
+            return reject(err);
+          }
+          resolve(row);
+        },
+      );
+    });
   }
 
   async createAsset(id: string, file: IUploadedFile) {
     return new Promise<number>(async (resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
-        ? this.databases[id]
+        ? this.databases[id].db
         : undefined;
       if (!db) {
         return reject(`Error, no database with id ${id} found!`);
@@ -144,7 +166,7 @@ export class ScenarioRepository {
   async updateAsset(id: string, assetId: string | number, file: IUploadedFile) {
     return new Promise(async (resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
-        ? this.databases[id]
+        ? this.databases[id].db
         : undefined;
       if (!db) {
         return reject(`Error, no database with id ${id} found!`);
@@ -169,7 +191,7 @@ export class ScenarioRepository {
   async removeAsset(id: string, assetId: number | string) {
     return new Promise(async (resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
-        ? this.databases[id]
+        ? this.databases[id].db
         : undefined;
       if (!db) {
         return reject(`Error, no database with id ${id} found!`);
@@ -195,7 +217,7 @@ export class ScenarioRepository {
       const db =
         typeof id === 'string'
           ? this.databases.hasOwnProperty(id)
-            ? this.databases[id]
+            ? this.databases[id].db
             : null
           : id;
       if (!db) {
@@ -204,8 +226,7 @@ export class ScenarioRepository {
       db.get(`SELECT data FROM ${SCENARIO}`, (err, row) => {
         if (err) {
           console.error(err);
-          reject(err);
-          return;
+          return reject(err);
         }
         const scenario = JSON.parse(row.data);
         resolve(scenario);
@@ -219,15 +240,15 @@ export class ScenarioRepository {
       .filter(f => path.extname(f) === EXT)
       .map(f => path.resolve(this.folder, f))
       .reduce(
-        (acc, f) => [...acc, new Database(f, logError)],
-        [] as Database[],
+        (acc, f) => [...acc, { db: new Database(f, logError), filename: f }],
+        [] as Array<{ db: Database; filename: string }>,
       );
   }
 
-  private async createOverview(dbs: Database[]) {
+  private async createOverview(dbs: Array<{ db: Database; filename: string }>) {
     const scenarios = await Promise.all<ScenarioOverview>(
       dbs.reduce((acc, db) => {
-        const scenario = this.getScenario(db);
+        const scenario = this.getScenario(db.db);
         acc.push(scenario);
         return acc;
       }, []),
@@ -254,7 +275,7 @@ export class ScenarioRepository {
         return reject(`Cannot create DB: ${filename} already exists!`);
       }
       const db = new Database(filename, logError);
-      this.databases[id] = db;
+      this.databases[id] = { db, filename };
       db.serialize(() => {
         db.run(`CREATE TABLE ${SCENARIO} (data TEXT)`, logError);
         db.run(
@@ -278,7 +299,7 @@ export class ScenarioRepository {
   }
 
   private closeAllDatabases() {
-    Object.keys(this.databases).forEach(key => this.databases[key].close());
+    Object.keys(this.databases).forEach(id => this.databases[id].db.close());
   }
 
   private closeAllDatabasesOnExit() {

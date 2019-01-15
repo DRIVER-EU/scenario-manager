@@ -9,6 +9,7 @@ REST service for the Scenario Manager backend. Uses sqlite3 to store the data:
 
 API
 
+- `/repo/:id`: Download a scenario as SQLite3 database by ID
 - `/scenarios`: List of the available scenarios
 - `/scenarios/:id`: CRUD interface for a single scenario
 - `/scenarios/:id/run`: Run a single scenario

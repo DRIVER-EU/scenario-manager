@@ -27,7 +27,7 @@ import { ScenarioService } from './scenario.service';
 @ApiUseTags('scenarios')
 @Controller('scenarios')
 export class ScenarioController {
-  private scenarioService = new ScenarioService();
+  constructor(private readonly scenarioService: ScenarioService) {}
 
   @ApiImplicitQuery({
     name: 'take',

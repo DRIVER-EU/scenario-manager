@@ -27,6 +27,10 @@ export class ScenarioService {
     return this.findById(id);
   }
 
+  async getScenarioFile(id: string) {
+    return this.repo.getScenarioFilename(id);
+  }
+
   async create(newScenario: ScenarioOverview) {
     if (!newScenario.title) {
       return 'Error, no title provided';
