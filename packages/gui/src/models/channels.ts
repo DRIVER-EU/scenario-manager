@@ -1,7 +1,7 @@
-import { Objective } from './../../../server/src/objective/objective.entity';
-import { Scenario } from './../../../server/src/scenario/scenario.entity';
-import { Inject } from './../../../server/src/inject/inject.entity';
 import { messageBus } from '../services/message-bus-service';
+import { IScenario } from './scenario';
+import { IObjective } from './objective';
+import { IInject } from './inject';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
@@ -23,14 +23,14 @@ export const TopicNames = {
   LIST_UPDATE: 'LIST.UPDATE',
 };
 
-export const scenarioChannel = messageBus.channel<{ cur: Scenario; old?: Scenario }>(
+export const scenarioChannel = messageBus.channel<{ cur: IScenario; old?: IScenario }>(
   ChannelNames.SCENARIO
 );
 
-export const objectiveChannel = messageBus.channel<{ cur: Objective; old?: Objective }>(
+export const objectiveChannel = messageBus.channel<{ cur: IObjective; old?: IObjective }>(
   ChannelNames.OBJECTIVE
 );
 
-export const injectChannel = messageBus.channel<{ cur: Inject; old?: Inject }>(
+export const injectChannel = messageBus.channel<{ cur: IInject; old?: IInject }>(
   ChannelNames.INJECT
 );

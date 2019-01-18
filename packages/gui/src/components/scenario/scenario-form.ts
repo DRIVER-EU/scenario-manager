@@ -1,9 +1,9 @@
-import { Scenario } from './../../../../server/src/scenario/scenario.entity';
 import m from 'mithril';
-import { inputTextArea, inputText, button } from '../../utils/html';
+import { Button, TextArea, TextInput } from 'mithril-materialized';
 import { ScenarioSvc } from '../../services/scenario-service';
 import { deepCopy, deepEqual } from '../../utils/utils';
 import { DateTimeControl } from './date-time-control';
+import { IScenario } from '../../models/scenario';
 
 const log = console.log;
 const close = async (e: UIEvent) => {
@@ -15,8 +15,16 @@ const close = async (e: UIEvent) => {
 
 export const ScenarioForm = () => {
   const state = {
-    original: undefined as Scenario | undefined,
-    scenario: {} as Scenario,
+    original: undefined as IScenario | undefined,
+    scenario: {} as IScenario,
+  };
+  const onsubmit = async (e: MouseEvent) => {
+    log('submitting...');
+    e.preventDefault();
+    if (state.scenario) {
+      const s = deepCopy(state.scenario);
+      await ScenarioSvc.saveScenario(s);
+    }
   };
   return {
     oninit: () => {
@@ -33,38 +41,29 @@ export const ScenarioForm = () => {
     },
     view: () => {
       const scenario = state.scenario;
-      const hasChanged = !deepEqual(scenario, state.original);
       const startDate = scenario.startDate || new Date();
       const endDate = scenario.endDate || new Date(startDate.valueOf());
-      if (!scenario.endDate) { endDate.setHours(endDate.getHours() + 6); }
+      if (!scenario.endDate) {
+        endDate.setHours(startDate.getHours() + 6);
+        scenario.endDate = endDate;
+      }
+      const hasChanged = !deepEqual(scenario, state.original);
       return m(
         '.row.scenario-form',
         { style: 'color: black' },
         m(
           'form.col.s12',
-          {
-            onsubmit: async (e: MouseEvent) => {
-              log('submitting...');
-              e.preventDefault();
-              if (scenario) {
-                const s = deepCopy(scenario);
-                delete s.version;
-                delete s.updatedDate;
-                await ScenarioSvc.save(s);
-              }
-            },
-          },
           [
             m('.row', [
               [
-                inputText({
+                m(TextInput, {
                   id: 'title',
                   initialValue: scenario.title,
                   onchange: (v: string) => (scenario.title = v),
                   label: 'Title',
                   iconName: 'title',
                 }),
-                inputTextArea({
+                m(TextArea, {
                   id: 'desc',
                   initialValue: scenario.description,
                   onchange: (v: string) => (scenario.description = v),
@@ -85,38 +84,34 @@ export const ScenarioForm = () => {
               ],
             ]),
             m('row', [
-              button({
+              m(Button, {
+                label: 'Undo',
                 iconName: 'undo',
-                ui: {
-                  class: `green ${hasChanged ? '' : 'disabled'}`,
-                  onclick: () =>
-                    (state.scenario = deepCopy(state.original) as Scenario),
-                },
+                class: `green ${hasChanged ? '' : 'disabled'}`,
+                onclick: () => (state.scenario = deepCopy(state.original) as IScenario),
               }),
               ' ',
-              button({
+              m(Button, {
+                label: 'Save',
                 iconName: 'save',
-                ui: {
-                  class: `green ${hasChanged ? '' : 'disabled'}`,
-                  type: 'submit',
-                },
+                class: `green ${hasChanged ? '' : 'disabled'}`,
+                type: 'submit',
+                onclick: onsubmit,
               }),
               ' ',
-              button({
+              m(Button, {
+                label: 'Close',
                 iconName: 'close',
-                ui: {
-                  onclick: e => close(e),
-                },
+                onclick: (e: UIEvent) => close(e),
               }),
               ' ',
-              button({
+              m(Button, {
+                label: 'Delete',
                 iconName: 'delete',
-                ui: {
-                  class: 'red',
-                  onclick: e => {
-                    ScenarioSvc.delete(scenario.id);
-                    close(e);
-                  },
+                class: 'red',
+                onclick: (e: UIEvent) => {
+                  ScenarioSvc.delete(scenario.id);
+                  close(e);
                 },
               }),
             ]),

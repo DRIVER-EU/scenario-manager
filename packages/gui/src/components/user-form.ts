@@ -1,7 +1,7 @@
 import M from 'materialize-css';
 import m, { Vnode } from 'mithril';
+import { RoundIconButton } from 'mithril-materialized';
 import { User } from '../models/user';
-import { roundIconButton } from '../utils/html';
 
 const log = console.log;
 
@@ -46,8 +46,8 @@ export const UserForm = () => {
                 m('label.label', 'Last name'),
               ]),
               m('.inline', [
-                roundIconButton({ iconName: 'save', ui: { class: 'green', type: 'submit' } }),
-                roundIconButton({
+                m(RoundIconButton, { iconName: 'save', ui: { class: 'green', type: 'submit' } }),
+                m(RoundIconButton, {
                   iconName: 'delete',
                   ui: { class: 'red', onclick: () => User.delete(User.current.id) },
                 }),

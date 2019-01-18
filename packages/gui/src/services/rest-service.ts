@@ -1,5 +1,4 @@
 import m from 'mithril';
-import { IBaseModel } from '../models/base-model';
 import { IChannelDefinition, messageBus } from './message-bus-service';
 import { TopicNames } from '../models/channels';
 
@@ -8,7 +7,8 @@ const error = console.error;
 const withCredentials = false;
 const apiService = 'http://localhost:3000';
 
-export class RestService<T extends IBaseModel> {
+// export class RestService<T extends IBaseModel> {
+export class RestService<T extends { id?: string }> {
   protected current: T = {} as T;
   protected list: T[] = [];
   protected baseUrl: string;
@@ -88,7 +88,7 @@ export class RestService<T extends IBaseModel> {
     }
   }
 
-  public load(id: string) {
+  public load(id?: string) {
     return m
       .request<T>({
         method: 'GET',
@@ -157,7 +157,7 @@ export class RestService<T extends IBaseModel> {
     this.setList(this.list.map(i => (i.id === item.id ? item : i)));
   }
 
-  private removeItemFromList(id: string) {
+  private removeItemFromList(id?: string) {
     this.setList([...this.list.filter(i => i.id !== id)]);
   }
 }

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Database, Statement } from 'sqlite3';
+import { Database } from 'sqlite3';
 import { ScenarioOverview, IUploadedFile } from '../../models';
 import { uuid4, logError } from '../../utils';
 

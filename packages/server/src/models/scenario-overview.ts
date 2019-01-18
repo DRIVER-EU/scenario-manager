@@ -2,7 +2,7 @@ import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
 
 export interface IScenarioOverview {
   /** Refers to the filename on disk */
-  id?: string;
+  id: string;
   /** Title of the scenario */
   title: string;
   /** Scenario description */
@@ -25,19 +25,14 @@ export class ScenarioOverview implements IScenarioOverview {
   }
 
   /** Refers to the filename on disk */
-  @ApiModelPropertyOptional()
   id: string;
   /** Title of the scenario */
-  @ApiModelProperty()
   title: string;
   /** Scenario description */
-  @ApiModelPropertyOptional()
   description?: string;
   /** When the scenario was created */
-  @ApiModelPropertyOptional()
   creationDate?: Date;
   /** When the scenario was edited */
-  @ApiModelPropertyOptional()
   lastEdit?: Date;
   // boundingBox: number[];
 }

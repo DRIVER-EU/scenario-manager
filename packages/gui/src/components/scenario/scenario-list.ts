@@ -1,6 +1,5 @@
 import m from 'mithril';
-import { flatButton } from '../../utils/html';
-import { inputText, roundIconButton } from '../../utils/html';
+import { FlatButton, TextInput, RoundIconButton } from 'mithril-materialized';
 import { ScenarioSvc } from '../../services/scenario-service';
 import { titleAndDescriptionFilter } from '../../utils/utils';
 
@@ -16,25 +15,22 @@ export const ScenarioList = () => {
       const filteredScenarios = scenarios.filter(query);
       return m('.scenario-list', [
         m('.row', [
-          roundIconButton({
+          m(RoundIconButton, {
             iconName: 'add',
-            ui: {
-              class: 'green input-field right',
-              href: '/new_scenario',
-              oncreate: m.route.link,
-              onclick: () => {
-                ScenarioSvc.new();
-              },
+            class: 'green input-field right',
+            href: '/new_scenario',
+            oncreate: m.route.link,
+            onclick: () => {
+              ScenarioSvc.new();
             },
           }),
-          inputText({
+          m(TextInput, {
             label: 'Filter',
             id: 'filter',
             iconName: 'filter_list',
-            initialValue: state.filterValue,
             onchange: (v: string) => (state.filterValue = v),
             style: 'margin-right:100px',
-            classNames: 'right',
+            contentClass: 'right',
           }),
         ]),
         m(
@@ -46,15 +42,13 @@ export const ScenarioList = () => {
                 m('.card-content', { style: 'height: 150px' }, [
                   m(
                     'span.card-title',
-                    flatButton({
+                    m(FlatButton, {
                       label: scenario.title || 'Untitled',
-                      ui: {
-                        onclick: () => {
-                          // tslint:disable-next-line:no-console
-                          console.log('Set scenario to ' + scenario.title);
-                          // store.dispatch(updateScenario(scenario));
-                          return ScenarioSvc.load(scenario.id);
-                        },
+                      onclick: () => {
+                        // tslint:disable-next-line:no-console
+                        console.log('Set scenario to ' + scenario.title);
+                        // store.dispatch(updateScenario(scenario));
+                        return ScenarioSvc.load(scenario.id);
                       },
                     })
                   ),

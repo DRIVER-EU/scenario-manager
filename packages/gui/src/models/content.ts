@@ -1,6 +1,5 @@
-import { IBaseModel } from './base-model';
-
-export interface IContent extends IBaseModel {
+export interface IContent {
+  id: string;
   title: string;
   parentId?: string;
   description?: string;

@@ -1,13 +1,12 @@
 import m, { Component } from 'mithril';
 import M from 'materialize-css';
-import { ObjectiveSvc } from '../../services/objective-service';
 import { ScenarioSvc } from '../../services/scenario-service';
 
 export const DropDownObjectives = () => {
   const state = {
-    scenarioId: '',
+    scenarioId: '' as string | undefined,
     id: Math.round(Math.random() * 1000000),
-    objectives: ObjectiveSvc.getList(),
+    objectives: ScenarioSvc.getObjectives() || [],
   };
 
   const initDropDown = () => {
@@ -29,9 +28,6 @@ export const DropDownObjectives = () => {
       const loadObjectives = async () => {
         const scenario = ScenarioSvc.getCurrent();
         state.scenarioId = scenario.id;
-        if (scenario && scenario.id) {
-          state.objectives = await ObjectiveSvc.loadListInScenario(scenario.id);
-        }
       };
       loadObjectives();
     },

@@ -1,19 +1,19 @@
-import { InjectLevel } from './../../../../server/src/models/inject-level';
-import { Inject } from './../../../../server/src/inject/inject.entity';
 import m, { Vnode, Component } from 'mithril';
+import { Icon, TextInput } from 'mithril-materialized';
 import { unflatten, titleAndDescriptionFilter, getInjectIcon } from '../../utils/utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { ScenarioSvc } from '../../services/scenario-service';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, injectChannel } from '../../models/channels';
-import { inputText, smallIcon } from '../../utils/html';
 import { InjectSvc } from '../../services/inject-service';
+import { IInject } from '../../models/inject';
+import { InjectLevel } from '../../models/inject-level';
 
 export const InjectsList = () => {
   const state = {
-    selected: undefined as Inject | undefined,
+    selected: undefined as IInject | undefined,
     filterValue: '',
-    scenarioId: '',
+    scenarioId: '' as string | undefined,
     subscription: {} as ISubscriptionDefinition<any>,
   };
 
@@ -23,16 +23,13 @@ export const InjectsList = () => {
     name: 'title',
     treeItemView: {
       view: ({ attrs }: Vnode<ITreeItemViewComponent>) => {
-        return m('div.icon-label', [
-          smallIcon(getInjectIcon(attrs.treeItem.level)),
-          attrs.treeItem.title,
-        ]);
+        return m('div.icon-label', [m(Icon, { iconName: getInjectIcon(attrs.treeItem.level) }), attrs.treeItem.title]);
       },
     } as Component<ITreeItemViewComponent>,
-    onSelect: (ti, isSelected) => injectSelected(ti as Inject, isSelected),
+    onSelect: (ti, isSelected) => injectSelected(ti as IInject, isSelected),
     onBeforeCreate: ti => {
       console.log(`On before create ${ti.title}`);
-      InjectSvc.create(ti as Inject)
+      InjectSvc.create(ti as IInject)
         .then(() => true)
         .catch(e => {
           console.error(e);
@@ -54,10 +51,10 @@ export const InjectsList = () => {
       if (!ti.parentId) {
         ti.parentId = '';
       }
-      InjectSvc.update(ti as Inject);
+      InjectSvc.update(ti as IInject);
     },
-    create: (parent?: Inject, depth?: number) => {
-      const itemFactory: () => Partial<Inject> = () => {
+    create: (parent?: IInject, depth?: number) => {
+      const itemFactory: () => Partial<IInject> = () => {
         if (!parent) {
           return { title: 'New storyline', level: InjectLevel.STORYLINE };
         }
@@ -65,7 +62,7 @@ export const InjectsList = () => {
           case 0:
             return { title: 'New act', level: InjectLevel.ACT, parentId: parent.id };
           default:
-            return { title: 'New inject', level: InjectLevel.INJECT, parentId: parent.id };
+            return { title: 'New IInject', level: InjectLevel.INJECT, parentId: parent.id };
         }
       };
       return {
@@ -77,9 +74,9 @@ export const InjectsList = () => {
     editable: { canCreate: true, canDelete: true, canUpdate: true, canDeleteParent: false },
   } as ITreeOptions;
 
-  const injectSelected = (selected: Inject, isSelected: boolean) => {
+  const injectSelected = (selected: IInject, isSelected: boolean) => {
     state.selected = selected;
-    injectChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as Inject });
+    injectChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as IInject });
   };
 
   return {
@@ -106,13 +103,13 @@ export const InjectsList = () => {
       const tree = unflatten(filteredStorylines);
       // console.log('Storylines-list updated...');
       return m('.injects-list', [
-        inputText({
+        m(TextInput, {
           label: 'Filter',
           id: 'filter',
           iconName: 'filter_list',
           initialValue: state.filterValue,
           onchange: (v: string) => (state.filterValue = v),
-          classNames: 'right',
+          contentClass: 'right',
         }),
         m(TreeContainer, { tree, options }),
       ]);

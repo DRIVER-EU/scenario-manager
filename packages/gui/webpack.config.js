@@ -7,6 +7,7 @@ module.exports = {
   entry: './src/app.ts',
   mode: 'development',
   devtool: 'inline-source-map',
+  watch: true,
   devServer: {
     contentBase: './dist',
     hot: true
@@ -14,7 +15,8 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Boobook'
+      title: 'Boobook',
+      // favicon: './src/assets/favicon.ico'
     }),
     new webpack.HotModuleReplacementPlugin()
   ],

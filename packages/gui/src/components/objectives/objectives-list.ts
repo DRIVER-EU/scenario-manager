@@ -1,18 +1,17 @@
-import { Objective } from './../../../../server/src/objective/objective.entity';
 import m, { Component } from 'mithril';
-import { ObjectiveSvc } from '../../services/objective-service';
+import { TextInput } from 'mithril-materialized';
 import { unflatten, titleAndDescriptionFilter } from '../../utils/utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { ScenarioSvc } from '../../services/scenario-service';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, objectiveChannel } from '../../models/channels';
-import { inputText } from '../../utils/html';
+import { IObjective } from '../../models';
 
 export const ObjectivesList = () => {
   const state = {
-    selected: undefined as Objective | undefined,
+    selected: undefined as IObjective | undefined,
     filterValue: '',
-    scenarioId: '',
+    scenarioId: '' as string | undefined,
     subscription: {} as ISubscriptionDefinition<any>,
   };
 
@@ -21,27 +20,23 @@ export const ObjectivesList = () => {
     parentId: 'parentId',
     name: 'title',
     treeItemView: {
-      view: ({attrs}) => {
+      view: ({ attrs }) => {
         return attrs.treeItem.title;
       },
     } as Component<ITreeItemViewComponent>,
-    onSelect: (ti, isSelected) => objectiveSelected(ti as Objective, isSelected),
+    onSelect: (ti, isSelected) => objectiveSelected(ti as IObjective, isSelected),
     onBeforeCreate: ti => {
       console.log(`On before create ${ti.title}`);
-      ObjectiveSvc.create(ti as Objective)
-        .then(() => true)
-        .catch(e => {
-          console.error(e);
-          return false;
-        });
+      ScenarioSvc.createObjective(ti as IObjective);
     },
     onCreate: ti => {
       console.log(`On create ${ti.title}`);
+      // ScenarioSvc.createObjective(ti as IObjective);
     },
     onBeforeDelete: ti => console.log(`On before delete ${ti.title}`),
     onDelete: async ti => {
       console.log(`On delete ${ti.title}`);
-      await ObjectiveSvc.delete(ti.id);
+      ScenarioSvc.deleteObjective(ti as IObjective);
     },
     onBeforeUpdate: (ti, action, newParent) =>
       console.log(`On before ${action} update ${ti.title} to ${newParent ? newParent.title : ''}.`),
@@ -50,23 +45,23 @@ export const ObjectivesList = () => {
       if (!ti.parentId) {
         ti.parentId = '';
       }
-      ObjectiveSvc.update(ti as Objective);
+      ScenarioSvc.updateObjective(ti as IObjective);
     },
-    create: (parent?: Objective) => {
+    create: (parent?: IObjective) => {
       const item = {
+        id: '',
         parentId: parent ? parent.id : undefined,
         title: 'New objective',
-        scenarioId: ScenarioSvc.getCurrent().id,
-      } as Objective;
+      } as IObjective;
       return item as ITreeItem;
     },
     maxDepth: 1,
     editable: { canCreate: true, canDelete: true, canUpdate: true, canDeleteParent: false },
   } as ITreeOptions;
 
-  const objectiveSelected = (selected: Objective, isSelected: boolean) => {
+  const objectiveSelected = (selected: IObjective, isSelected: boolean) => {
     state.selected = selected;
-    objectiveChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as Objective });
+    objectiveChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as IObjective });
   };
 
   return {
@@ -75,9 +70,6 @@ export const ObjectivesList = () => {
       const loadObjectives = async () => {
         const scenario = ScenarioSvc.getCurrent();
         state.scenarioId = scenario.id;
-        if (scenario && scenario.id) {
-          await ObjectiveSvc.loadListInScenario(scenario.id);
-        }
       };
       state.subscription = objectiveChannel.subscribe(TopicNames.LIST, m.redraw);
       loadObjectives();
@@ -87,21 +79,24 @@ export const ObjectivesList = () => {
     },
     view: () => {
       const query = titleAndDescriptionFilter(state.filterValue);
-      const objectives = ObjectiveSvc.getList();
-      const filteredObjectives = objectives.filter(query);
+      const objectives = ScenarioSvc.getObjectives();
+      const filteredObjectives = objectives && objectives.filter(query);
       // console.log(objectives.map(o => o.title).join('\n'));
       const tree = unflatten(filteredObjectives);
       // console.log('Objectives-list updated...');
-      return m('.objectives-list', [
-        inputText({
-          label: 'Filter',
-          id: 'filter',
-          iconName: 'filter_list',
-          initialValue: state.filterValue,
-          onchange: (v: string) => (state.filterValue = v),
-          classNames: 'right',
-        }),
-        m(TreeContainer, { tree, options }),
+      return m('.row.objectives-list', [
+        m(
+          '.col.s12',
+          m(TextInput, {
+            label: 'Filter',
+            id: 'filter',
+            iconName: 'filter_list',
+            initialValue: state.filterValue,
+            onchange: (v: string) => (state.filterValue = v),
+            contentClass: 'right',
+          })
+        ),
+        m('.col.s12', m(TreeContainer, { tree, options })),
       ]);
     },
   };

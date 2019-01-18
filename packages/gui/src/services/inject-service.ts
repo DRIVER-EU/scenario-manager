@@ -1,8 +1,8 @@
-import { Inject } from './../../../server/src/inject/inject.entity';
 import { RestService } from './rest-service';
 import { ChannelNames } from '../models/channels';
+import { IInject } from '../models/inject';
 
-class InjectService extends RestService<Inject> {
+class InjectService extends RestService<IInject> {
   constructor() {
     super('inject', ChannelNames.INJECT);
   }
