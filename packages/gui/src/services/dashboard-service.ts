@@ -88,15 +88,15 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   },
   {
     id: Dashboards.SCENARIO,
-    title: 'Scenario',
-    route: '/scenario',
+    title: 'Edit',
+    route: '/edit',
     visible: false,
     component: ScenarioForm,
   },
   {
     id: Dashboards.SCENARIO_INFO,
     title: 'Info',
-    route: '/scenario/info',
+    route: '/edit/info',
     visible: false,
     component: ScenarioForm,
     level: Dashboards.SCENARIO,
@@ -104,7 +104,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.USERS,
     title: 'Users',
-    route: '/scenario/users',
+    route: '/edit/users',
     visible: false,
     component: UsersView,
     level: Dashboards.SCENARIO,
@@ -112,7 +112,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.STAKEHOLDERS,
     title: 'Stakeholders',
-    route: '/scenario/stakeholders',
+    route: '/edit/stakeholders',
     visible: false,
     component: StakeholdersView,
     level: Dashboards.SCENARIO,
@@ -120,7 +120,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.OBJECTIVES,
     title: 'Objectives',
-    route: '/scenario/objectives',
+    route: '/edit/objectives',
     visible: false,
     component: ObjectivesView,
     level: Dashboards.SCENARIO,
@@ -128,8 +128,9 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.OBJECTIVES,
     title: 'Storylines',
-    route: '/storylines',
+    route: '/edit/storylines',
     visible: false,
     component: InjectsView,
+    level: Dashboards.SCENARIO,
   },
 ]);

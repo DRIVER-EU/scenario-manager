@@ -1,7 +1,7 @@
 import { RestService } from './rest-service';
-import { ChannelNames, usersChannel, TopicNames, stakeholdersChannel } from '../models/channels';
+import { ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models/channels';
 import { IScenario } from '../models/scenario';
-import { IObjective, IPerson, IStakeholder } from '../models';
+import { IObjective, IPerson, IStakeholder, IInject } from '../models';
 import { uniqueId } from '../utils';
 import { UserRole } from '../models/user-role';
 
@@ -175,6 +175,52 @@ class ScenarioService extends RestService<IScenario> {
     }
     await this.saveScenario();
     stakeholdersChannel.publish(TopicNames.ITEM_DELETE, { cur: sh });
+  }
+
+  /** INJECTS */
+
+  /** Get all injects (or filter by name) */
+  public getInjects(filter?: string) {
+    if (!this.current) {
+      return undefined;
+    }
+    if (!this.current.injects) {
+      this.current.injects = [];
+    }
+    return filter
+      ? this.current.injects.filter(s => s.title && s.title.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
+      : this.current.injects;
+  }
+
+  public async createInject(i: IInject) {
+    const injects = this.getInjects();
+    if (injects) {
+      i.id = i.id || uniqueId();
+      injects.push(i);
+    }
+    await this.saveScenario();
+    injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: i });
+  }
+
+  public async updateInject(i: IInject) {
+    if (this.current) {
+      this.current.injects = this.current.injects.map(s => (s.id === i.id ? i : s));
+    }
+    await this.saveScenario();
+    injectsChannel.publish(TopicNames.ITEM_UPDATE, { cur: i });
+  }
+
+  public async deleteInject(i: IInject) {
+    if (this.current) {
+      this.current.injects = this.current.injects.filter(s => s.id !== i.id);
+      // this.current.objectives.forEach(s => {
+      //   if (s.stakeholderIds) {
+      //     s.stakeholderIds = s.stakeholderIds.filter(id => id !== i.id);
+      //   }
+      // });
+    }
+    await this.saveScenario();
+    injectsChannel.publish(TopicNames.ITEM_DELETE, { cur: i });
   }
 }
 

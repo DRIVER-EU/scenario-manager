@@ -32,5 +32,5 @@ export interface IScenario extends IContent {
   /** Objectives that need to be satisfied by the scenario */
   objectives: IObjective[];
   /** The actual messages that encompass the scenario */
-  storylines: Array<IInject | IInjectGroup>;
+  injects: Array<IInject | IInjectGroup>;
 }

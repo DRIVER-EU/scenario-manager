@@ -34,7 +34,7 @@ export const objectiveChannel = messageBus.channel<{ cur: IObjective; old?: IObj
   ChannelNames.OBJECTIVE
 );
 
-export const injectChannel = messageBus.channel<{ cur: IInject; old?: IInject }>(
+export const injectsChannel = messageBus.channel<{ cur: IInject; old?: IInject }>(
   ChannelNames.INJECT
 );
 

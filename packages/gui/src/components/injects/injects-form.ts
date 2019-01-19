@@ -1,10 +1,9 @@
 import m from 'mithril';
 import { TextInput, TextArea, Button, Icon } from 'mithril-materialized';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
-import { TopicNames, injectChannel } from '../../models/channels';
+import { TopicNames, injectsChannel } from '../../models/channels';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils/utils';
-import { InjectSvc } from '../../services/inject-service';
-// import { InjectType } from '../../models/inject';
+import { ScenarioSvc } from '../../services/scenario-service';
 import { DropDownObjectives } from '../ui/drop-down-objectives';
 import { IInject, InjectLevel, IInjectGroup } from '../../models';
 
@@ -19,13 +18,13 @@ export const InjectsForm = () => {
   };
 
   const getParent = (id: string) =>
-    InjectSvc.getList()
+    ScenarioSvc.getList()
       .filter(o => o.id === id)
       .shift();
 
   return {
     oninit: () => {
-      state.subscription = injectChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
+      state.subscription = injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
         state.inject = cur && cur.id ? deepCopy(cur) : undefined;
         state.original = cur && cur.id ? deepCopy(cur) : undefined;
         state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
@@ -42,7 +41,7 @@ export const InjectsForm = () => {
         e.preventDefault();
         log('submitting...');
         if (inject) {
-          InjectSvc.update(inject);
+          ScenarioSvc.updateInject(inject);
         }
       };
       return m(
@@ -67,7 +66,6 @@ export const InjectsForm = () => {
                       onchange: (v: string) => (inject.title = v),
                       label: 'Title',
                       iconName: 'title',
-                      contentClass: 'active',
                     }),
                     m(TextArea, {
                       id: 'desc',
@@ -75,7 +73,6 @@ export const InjectsForm = () => {
                       onchange: (v: string) => (inject.description = v),
                       label: 'Description',
                       iconName: 'description',
-                      contentClass: 'active',
                     }),
                     isGroup
                       ? m('.row', [
@@ -108,14 +105,13 @@ export const InjectsForm = () => {
                     m(Button, {
                       iconName: 'save',
                       class: `green ${hasChanged ? '' : 'disabled'}`,
-                      type: 'submit',
                       onclick: onsubmit,
                     }),
                     ' ',
                     m(Button, {
                       iconName: 'delete',
                       class: 'red',
-                      onclick: () => InjectSvc.delete(inject.id),
+                      onclick: () => ScenarioSvc.delete(inject.id),
                     }),
                   ]),
                 ]),
