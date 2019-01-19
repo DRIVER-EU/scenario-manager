@@ -1,7 +1,7 @@
 import { RestService } from './rest-service';
-import { ChannelNames, usersChannel, TopicNames } from '../models/channels';
+import { ChannelNames, usersChannel, TopicNames, stakeholdersChannel } from '../models/channels';
 import { IScenario } from '../models/scenario';
-import { IObjective, IPerson } from '../models';
+import { IObjective, IPerson, IStakeholder } from '../models';
 import { uniqueId } from '../utils';
 import { UserRole } from '../models/user-role';
 
@@ -59,7 +59,13 @@ class ScenarioService extends RestService<IScenario> {
     await this.saveScenario();
   }
 
-  /** CONTACTS */
+  /** USERS */
+
+  /** Get a user by ID */
+  public getUserById(id: string) {
+    const users = this.getUsers();
+    return users ? users.filter(u => u.id === id).shift() : undefined;
+  }
 
   /** Get all contacts (or filter by name) */
   public getUsers(filter?: string) {
@@ -95,6 +101,11 @@ class ScenarioService extends RestService<IScenario> {
   public async deleteUser(user: IPerson) {
     if (this.current) {
       this.current.users = this.current.users.filter(u => u.id !== user.id);
+      this.current.stakeholders.forEach(s => {
+        if (s.contactIds) {
+          s.contactIds = s.contactIds.filter(id => id !== user.id);
+        }
+      });
     }
     await this.saveScenario();
     usersChannel.publish(TopicNames.ITEM_DELETE, { cur: user });
@@ -114,6 +125,48 @@ class ScenarioService extends RestService<IScenario> {
       case UserRole.ADMIN: return 'supervisor_account';
     }
   }
+
+  /** STAKEHOLDERS */
+
+  /** Get all contacts (or filter by name) */
+  public getStakeholders(filter?: string) {
+    if (!this.current) {
+      return undefined;
+    }
+    if (!this.current.stakeholders) {
+      this.current.stakeholders = [];
+    }
+    return filter
+      ? this.current.stakeholders.filter(s => s.name && s.name.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
+      : this.current.stakeholders;
+  }
+
+  public async createStakeholder(sh: IStakeholder) {
+    const stakeholders = this.getStakeholders();
+    if (stakeholders) {
+      sh.id = sh.id || uniqueId();
+      stakeholders.push(sh);
+    }
+    await this.saveScenario();
+    stakeholdersChannel.publish(TopicNames.ITEM_CREATE, { cur: sh });
+  }
+
+  public async updateStakeholder(sh: IStakeholder) {
+    if (this.current) {
+      this.current.stakeholders = this.current.stakeholders.map(s => (s.id === sh.id ? sh : s));
+    }
+    await this.saveScenario();
+    stakeholdersChannel.publish(TopicNames.ITEM_UPDATE, { cur: sh });
+  }
+
+  public async deleteStakeholder(user: IStakeholder) {
+    if (this.current) {
+      this.current.stakeholders = this.current.stakeholders.filter(s => s.id !== user.id);
+    }
+    await this.saveScenario();
+    stakeholdersChannel.publish(TopicNames.ITEM_DELETE, { cur: user });
+  }
+
 }
 
 export const ScenarioSvc = new ScenarioService();

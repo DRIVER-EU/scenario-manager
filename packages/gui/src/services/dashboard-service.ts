@@ -9,6 +9,7 @@ import { Layout } from '../components/layout';
 import { InjectsView } from '../components/injects/injects-view';
 import { Dashboards } from '../models/dashboards';
 import { UsersView } from '../components/users/users-list';
+import { StakeholdersView } from '../components/stakeholders/stakeholders-list';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -109,11 +110,20 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     level: Dashboards.SCENARIO,
   },
   {
+    id: Dashboards.STAKEHOLDERS,
+    title: 'Stakeholders',
+    route: '/scenario/stakeholders',
+    visible: false,
+    component: StakeholdersView,
+    level: Dashboards.SCENARIO,
+  },
+  {
     id: Dashboards.OBJECTIVES,
     title: 'Objectives',
     route: '/objectives',
     visible: false,
     component: ObjectivesView,
+    level: Dashboards.SCENARIO,
   },
   {
     id: Dashboards.OBJECTIVES,

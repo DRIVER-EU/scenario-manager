@@ -7,5 +7,8 @@ import { IPerson } from '.';
 export interface IStakeholder {
   id?: string;
   name?: string;
-  contacts?: IPerson[];
+  /** List of IDs of the contacts */
+  contactIds?: string[];
+  /** Some descriptive text */
+  notes?: string;
 }

@@ -2,7 +2,7 @@ dependencies:
   material-icons: 0.3.0
   materialize-css: 1.0.0
   mithril: 2.0.0-rc.3
-  mithril-materialized: 0.6.3
+  mithril-materialized: 0.6.4
   mithril-tree-component: 0.3.6
 devDependencies:
   '@types/materialize-css': 1.0.6
@@ -2580,10 +2580,10 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-x471SsVjUtBRtcvd4BzKE9kFC+/2TeWgKCgw0bZcw1b9l2X3QX5vCWgF+KaZaYm87Ss//rHnWryupDrgLvmSkA==
-  /mithril-materialized/0.6.3:
+  /mithril-materialized/0.6.4:
     dev: false
     resolution:
-      integrity: sha512-6OSuFWv58EWS0wUSHpcluy6ZP6JCA72/OfIO98lDu3+cQ+aI2DxfCI8ihz+w0YcoqeMTtLvPYVKSYwlEAgR3QA==
+      integrity: sha512-hdzhijQ0yJqTDkG275z2A9aazGSaKE27QIpBH3RsVVE8XvOv2d+ofGbs2d6haMpnYd+1ou/UsNc2Od9ieShYHA==
   /mithril-tree-component/0.3.6:
     dependencies:
       mithril: 1.1.6
@@ -4376,7 +4376,7 @@ specifiers:
   material-icons: ^0.3.0
   materialize-css: ^1.0.0
   mithril: ^2.0.0-rc.3
-  mithril-materialized: ^0.6.3
+  mithril-materialized: ^0.6.4
   mithril-tree-component: ^0.3.6
   style-loader: ^0.23.1
   typescript: ^3.2.4
