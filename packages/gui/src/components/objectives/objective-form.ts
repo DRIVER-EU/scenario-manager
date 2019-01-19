@@ -1,11 +1,8 @@
 import m from 'mithril';
 import { TextInput, TextArea, Select, Button, Icon } from 'mithril-materialized';
-import { ISubscriptionDefinition } from '../../services/message-bus-service';
-import { TopicNames, objectiveChannel } from '../../models/channels';
-import { deepCopy, deepEqual } from '../../utils/utils';
-import { IObjective } from '../../models/objective';
-import { IScenario } from './../../models/scenario';
-import { ScenarioSvc } from '../../services/scenario-service';
+import { IScenario, IObjective, TopicNames, objectiveChannel } from '../../models';
+import { deepCopy, deepEqual } from '../../utils';
+import { ScenarioSvc } from '../../services';
 
 const log = console.log;
 
@@ -15,7 +12,11 @@ export const ObjectiveForm = () => {
     parent: undefined as IObjective | undefined,
     objective: undefined as IObjective | undefined,
     original: undefined as IObjective | undefined,
-    subscription: {} as ISubscriptionDefinition<any>,
+    subscription: objectiveChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
+      state.objective = cur && cur.id ? deepCopy(cur) : undefined;
+      state.original = cur && cur.id ? deepCopy(cur) : undefined;
+      state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
+    }),
   };
 
   const getParent = (id: string) => (ScenarioSvc.getObjectives() || []).filter(o => o.id === id).shift();
@@ -23,11 +24,6 @@ export const ObjectiveForm = () => {
   return {
     oninit: () => {
       state.scenario = ScenarioSvc.getCurrent();
-      state.subscription = objectiveChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
-        state.objective = cur && cur.id ? deepCopy(cur) : undefined;
-        state.original = cur && cur.id ? deepCopy(cur) : undefined;
-        state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
-      });
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();

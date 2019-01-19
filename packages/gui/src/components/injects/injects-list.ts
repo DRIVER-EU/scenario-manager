@@ -1,19 +1,16 @@
 import m, { Vnode, Component } from 'mithril';
 import { Icon, TextInput } from 'mithril-materialized';
-import { unflatten, titleAndDescriptionFilter, getInjectIcon } from '../../utils/utils';
+import { unflatten, titleAndDescriptionFilter, getInjectIcon } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
-import { ScenarioSvc } from '../../services/scenario-service';
-import { ISubscriptionDefinition } from '../../services/message-bus-service';
-import { TopicNames, injectsChannel } from '../../models/channels';
-import { IInject } from '../../models/inject';
-import { InjectLevel } from '../../models/inject-level';
+import { ScenarioSvc } from '../../services';
+import { TopicNames, injectsChannel, IInject, InjectLevel } from '../../models';
 
 export const InjectsList = () => {
   const state = {
     selected: undefined as IInject | undefined,
     filterValue: '' as string | undefined,
     scenarioId: '' as string | undefined,
-    subscription: {} as ISubscriptionDefinition<any>,
+    subscription: injectsChannel.subscribe(TopicNames.LIST, m.redraw),
   };
 
   const options = {
@@ -85,7 +82,6 @@ export const InjectsList = () => {
         const scenario = ScenarioSvc.getCurrent();
         state.scenarioId = scenario.id;
       };
-      state.subscription = injectsChannel.subscribe(TopicNames.LIST, m.redraw);
       loadStorylines();
     },
     onbeforeremove: () => {

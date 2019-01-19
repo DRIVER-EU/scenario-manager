@@ -1,6 +1,6 @@
 import m, { Component } from 'mithril';
 import { Icon, DatePicker, TimePicker } from 'mithril-materialized';
-import { padLeft } from '../../utils/utils';
+import { padLeft } from '../../utils';
 
 interface ITimePickerTime {
   /** Hours */

@@ -1,11 +1,8 @@
 import m from 'mithril';
 import { TextInput, TextArea, EmailInput, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
-import { ISubscriptionDefinition } from '../../services/message-bus-service';
-import { TopicNames, usersChannel } from '../../models/channels';
-import { deepCopy, deepEqual, iterEnum } from '../../utils/utils';
-import { IScenario, IPerson } from '../../models';
-import { ScenarioSvc } from '../../services/scenario-service';
-import { UserRole } from '../../models/user-role';
+import { IScenario, IPerson, UserRole, TopicNames, usersChannel } from '../../models';
+import { deepCopy, deepEqual, iterEnum } from '../../utils';
+import { ScenarioSvc } from '../../services';
 
 const log = console.log;
 
@@ -14,21 +11,20 @@ export const UsersForm = () => {
     scenario: undefined as IScenario | undefined,
     user: undefined as IPerson | undefined,
     original: undefined as IPerson | undefined,
-    subscription: {} as ISubscriptionDefinition<any>,
+    subscription: usersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
+      if (envelope.topic === TopicNames.ITEM_DELETE) {
+        state.user = undefined;
+        state.original = undefined;
+      } else {
+        state.user = cur && cur.id ? deepCopy(cur) : undefined;
+        state.original = cur && cur.id ? deepCopy(cur) : undefined;
+      }
+    }),
   };
 
   return {
     oninit: () => {
       state.scenario = ScenarioSvc.getCurrent();
-      state.subscription = usersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
-        if (envelope.topic === TopicNames.ITEM_DELETE) {
-          state.user = undefined;
-          state.original = undefined;
-        } else {
-          state.user = cur && cur.id ? deepCopy(cur) : undefined;
-          state.original = cur && cur.id ? deepCopy(cur) : undefined;
-        }
-      });
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();

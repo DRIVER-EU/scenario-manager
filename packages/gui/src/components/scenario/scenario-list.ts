@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { TextInput, RoundIconButton } from 'mithril-materialized';
-import { ScenarioSvc } from '../../services/scenario-service';
-import { titleAndDescriptionFilter } from '../../utils/utils';
+import { ScenarioSvc } from '../../services';
+import { titleAndDescriptionFilter } from '../../utils';
 
 export const ScenarioList = () => {
   const state = {

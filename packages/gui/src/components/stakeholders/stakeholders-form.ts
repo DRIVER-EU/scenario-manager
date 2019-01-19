@@ -1,11 +1,8 @@
 import m from 'mithril';
 import { TextInput, TextArea, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
-import { ISubscriptionDefinition } from '../../services/message-bus-service';
-import { TopicNames, stakeholdersChannel } from '../../models/channels';
-import { deepCopy, deepEqual, iterEnum } from '../../utils/utils';
-import { IScenario, IStakeholder } from '../../models';
-import { ScenarioSvc } from '../../services/scenario-service';
-import { UserRole } from '../../models/user-role';
+import { IScenario, IStakeholder, TopicNames, stakeholdersChannel } from '../../models';
+import { deepCopy, deepEqual } from '../../utils';
+import { ScenarioSvc } from '../../services';
 
 const log = console.log;
 
@@ -14,21 +11,20 @@ export const StakeholdersForm = () => {
     scenario: undefined as IScenario | undefined,
     stakeholder: undefined as IStakeholder | undefined,
     original: undefined as IStakeholder | undefined,
-    subscription: {} as ISubscriptionDefinition<any>,
+    subscription: stakeholdersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
+      if (envelope.topic === TopicNames.ITEM_DELETE) {
+        state.stakeholder = undefined;
+        state.original = undefined;
+      } else {
+        state.stakeholder = cur && cur.id ? deepCopy(cur) : undefined;
+        state.original = cur && cur.id ? deepCopy(cur) : undefined;
+      }
+    }),
   };
 
   return {
     oninit: () => {
       state.scenario = ScenarioSvc.getCurrent();
-      state.subscription = stakeholdersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
-        if (envelope.topic === TopicNames.ITEM_DELETE) {
-          state.stakeholder = undefined;
-          state.original = undefined;
-        } else {
-          state.stakeholder = cur && cur.id ? deepCopy(cur) : undefined;
-          state.original = cur && cur.id ? deepCopy(cur) : undefined;
-        }
-      });
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();

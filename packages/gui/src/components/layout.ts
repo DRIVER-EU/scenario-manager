@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import owl from '../assets/owl.svg';
-import { dashboardSvc } from '../services/dashboard-service';
+import { dashboardSvc } from '../services';
 
 export const Layout: FactoryComponent<{}> = () => {
   return {
@@ -10,9 +10,6 @@ export const Layout: FactoryComponent<{}> = () => {
       const curDashboard = dashboardSvc.getCurrent(curRoute);
       const subDashboards = curDashboard ? dashboardSvc.getList(curDashboard.id) : [];
       const hasSubDashboards = subDashboards && subDashboards.length > 0;
-      // if (hasSubDashboards && curRoute) {
-      //   m.route.set()
-      // }
       return m('container', [
         m('nav', { class: hasSubDashboards ? 'nav-extended' : '' }, [
           m('.nav-wrapper', [

@@ -1,18 +1,16 @@
 import m, { Component } from 'mithril';
 import { TextInput } from 'mithril-materialized';
-import { unflatten, titleAndDescriptionFilter } from '../../utils/utils';
+import { unflatten, titleAndDescriptionFilter } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
-import { ScenarioSvc } from '../../services/scenario-service';
-import { ISubscriptionDefinition } from '../../services/message-bus-service';
-import { TopicNames, objectiveChannel } from '../../models/channels';
-import { IObjective } from '../../models';
+import { ScenarioSvc } from '../../services';
+import { TopicNames, objectiveChannel, IObjective } from '../../models';
 
 export const ObjectivesList = () => {
   const state = {
     selected: undefined as IObjective | undefined,
     filterValue: '' as string | undefined,
     scenarioId: '' as string | undefined,
-    subscription: {} as ISubscriptionDefinition<any>,
+    subscription: objectiveChannel.subscribe(TopicNames.LIST, m.redraw),
   };
 
   const options = {

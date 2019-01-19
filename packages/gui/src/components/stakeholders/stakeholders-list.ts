@@ -1,8 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { StakeholdersForm } from './stakeholders-form';
-import { IStakeholder } from '../../models';
-import { ScenarioSvc } from '../../services/scenario-service';
-import { stakeholdersChannel, TopicNames } from '../../models/channels';
+import { ScenarioSvc } from '../../services';
+import { IStakeholder, stakeholdersChannel, TopicNames } from '../../models';
 import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
 import { uniqueId } from '../../utils';
 

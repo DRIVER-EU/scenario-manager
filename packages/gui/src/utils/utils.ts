@@ -1,5 +1,4 @@
-import { IContent } from '../models/content';
-import { InjectLevel } from '../models/inject-level';
+import { IContent, InjectLevel } from '../models';
 
 /**
  * Create a unique ID

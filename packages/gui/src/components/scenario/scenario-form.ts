@@ -1,9 +1,9 @@
 import m from 'mithril';
 import { Button, TextArea, TextInput } from 'mithril-materialized';
-import { ScenarioSvc } from '../../services/scenario-service';
-import { deepCopy, deepEqual } from '../../utils/utils';
+import { ScenarioSvc } from '../../services';
+import { deepCopy, deepEqual } from '../../utils';
 import { DateTimeControl } from './date-time-control';
-import { IScenario } from '../../models/scenario';
+import { IScenario } from '../../models';
 
 const log = console.log;
 const close = async (e: UIEvent) => {

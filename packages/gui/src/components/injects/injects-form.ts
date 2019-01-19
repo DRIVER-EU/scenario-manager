@@ -3,7 +3,7 @@ import { TextInput, TextArea, Button, Icon } from 'mithril-materialized';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, injectsChannel } from '../../models/channels';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils/utils';
-import { ScenarioSvc } from '../../services/scenario-service';
+import { ScenarioSvc } from '../../services';
 import { DropDownObjectives } from '../ui/drop-down-objectives';
 import { IInject, InjectLevel, IInjectGroup } from '../../models';
 
@@ -14,7 +14,11 @@ export const InjectsForm = () => {
     parent: undefined as IInject | IInjectGroup | undefined,
     inject: undefined as IInject | undefined,
     original: undefined as IInject | undefined,
-    subscription: {} as ISubscriptionDefinition<any>,
+    subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
+      state.inject = cur && cur.id ? deepCopy(cur) : undefined;
+      state.original = cur && cur.id ? deepCopy(cur) : undefined;
+      state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
+    }),
   };
 
   const getParent = (id: string) =>
@@ -23,13 +27,6 @@ export const InjectsForm = () => {
       .shift();
 
   return {
-    oninit: () => {
-      state.subscription = injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
-        state.inject = cur && cur.id ? deepCopy(cur) : undefined;
-        state.original = cur && cur.id ? deepCopy(cur) : undefined;
-        state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
-      });
-    },
     onbeforeremove: () => {
       state.subscription.unsubscribe();
     },
