@@ -8,6 +8,7 @@ import { ScenarioList } from '../components/scenario/scenario-list';
 import { Layout } from '../components/layout';
 import { InjectsView } from '../components/injects/injects-view';
 import { Dashboards } from '../models/dashboards';
+import { UsersView } from '../components/users/users-list';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -18,12 +19,16 @@ class DashboardService {
     this.subscribe();
   }
 
-  public getList() {
-    return this.dashboards;
+  public getList(level?: string) {
+    return this.dashboards.filter(d => d.level === level);
   }
 
   public setList(list: IDashboard[]) {
     this.dashboards = Object.freeze(list);
+  }
+
+  public getCurrent(route: string) {
+    return this.dashboards.filter(d => route.indexOf(d.route) >= 0).shift();
   }
 
   public get defaultRoute() {
@@ -83,9 +88,25 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.SCENARIO,
     title: 'Scenario',
-    route: '/scenario', // `/scenario/${ScenarioSvc.current.id}`,
+    route: '/scenario',
     visible: false,
     component: ScenarioForm,
+  },
+  {
+    id: Dashboards.SCENARIO_INFO,
+    title: 'Info',
+    route: '/scenario/info',
+    visible: false,
+    component: ScenarioForm,
+    level: Dashboards.SCENARIO,
+  },
+  {
+    id: Dashboards.USERS,
+    title: 'Users',
+    route: '/scenario/users',
+    visible: false,
+    component: UsersView,
+    level: Dashboards.SCENARIO,
   },
   {
     id: Dashboards.OBJECTIVES,

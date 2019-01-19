@@ -31,6 +31,7 @@ export const ObjectivesList = () => {
     },
     onCreate: ti => {
       console.log(`On create ${ti.title}`);
+      objectiveChannel.publish(TopicNames.ITEM_SELECT, { cur: ti as IObjective });
       // ScenarioSvc.createObjective(ti as IObjective);
     },
     onBeforeDelete: ti => console.log(`On before delete ${ti.title}`),

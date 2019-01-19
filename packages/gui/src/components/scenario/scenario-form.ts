@@ -95,7 +95,6 @@ export const ScenarioForm = () => {
                 label: 'Save',
                 iconName: 'save',
                 class: `green ${hasChanged ? '' : 'disabled'}`,
-                type: 'submit',
                 onclick: onsubmit,
               }),
               ' ',

@@ -2,6 +2,21 @@ import { IContent } from '../models/content';
 import { InjectLevel } from '../models/inject-level';
 
 /**
+ * Create a unique ID
+ * @see https://stackoverflow.com/a/2117523/319711
+ *
+ * @returns id followed by 8 hexadecimal characters.
+ */
+export const uniqueId = () => {
+  // tslint:disable-next-line:no-bitwise
+  return 'idxxxxxxxx'.replace(/[x]/g, () => ((Math.random() * 16) | 0).toString(16));
+};
+
+/** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
+export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
+  Object.keys(e).filter((v, i, arr) => i < arr.length / 2);
+
+/**
  * Convert an item array to a tree. Assumes each item has a parentId.
  * @param items Items
  */
@@ -12,9 +27,7 @@ export const unflatten = <T extends { id?: string; parentId?: string }>(
 ) => {
   const children = (parent.id
     ? entities.filter(entity => entity.parentId === parent.id)
-    : entities.filter(entity => !entity.parentId)) as Array<
-    T & { children: T[] }
-  >;
+    : entities.filter(entity => !entity.parentId)) as Array<T & { children: T[] }>;
 
   if (children.length > 0) {
     if (!parent.id) {
@@ -85,22 +98,17 @@ export const titleAndDescriptionFilter = (filterValue: string) => {
     !filterValue ||
     !content.title ||
     content.title.toLowerCase().indexOf(filterValue) >= 0 ||
-    (content.description &&
-      content.description.toLowerCase().indexOf(filterValue) >= 0);
+    (content.description && content.description.toLowerCase().indexOf(filterValue) >= 0);
 };
 
-export const deepEqual = <T extends { [key: string]: any }>(
-  x?: T,
-  y?: T
-): boolean => {
+export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boolean => {
   const tx = typeof x;
   const ty = typeof y;
   return x instanceof Date && y instanceof Date
     ? x.getTime() === y.getTime()
     : x && y && tx === 'object' && tx === ty
-      ? Object.keys(x).length === Object.keys(y).length &&
-        Object.keys(x).every(key => deepEqual(x[key], y[key]))
-      : x === y;
+    ? Object.keys(x).length === Object.keys(y).length && Object.keys(x).every(key => deepEqual(x[key], y[key]))
+    : x === y;
 };
 
 // let i = 0;

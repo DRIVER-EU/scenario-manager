@@ -4,7 +4,7 @@
  *
  * @returns RFC4122 version 4 compliant GUID
  */
-export const uuid4 = () => {
+export const uniqueId = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     // tslint:disable-next-line:no-bitwise
     const r = (Math.random() * 16) | 0;

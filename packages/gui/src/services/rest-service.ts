@@ -61,7 +61,7 @@ export class RestService<T extends { id?: string }> {
         withCredentials,
       })
       .then(() => {
-        this.setCurrent(data);
+        // this.setCurrent(data);
         this.updateItemInList(data);
         return this.current;
       })

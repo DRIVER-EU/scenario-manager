@@ -40,19 +40,23 @@ export const ScenarioList = () => {
               m(
                 '.card',
                 m('.card-content', { style: 'height: 150px' }, [
-                  m(
-                    'span.card-title',
-                    m(FlatButton, {
-                      label: scenario.title || 'Untitled',
-                      onclick: () => {
-                        // tslint:disable-next-line:no-console
-                        console.log('Set scenario to ' + scenario.title);
-                        // store.dispatch(updateScenario(scenario));
-                        return ScenarioSvc.load(scenario.id);
-                      },
-                    })
-                  ),
+                  m('span.card-title', scenario.title || 'Untitled'),
                   m('p', scenario.description),
+                  m(
+                    '.card-action',
+                    m(
+                      'a[href=#]',
+                      {
+                        onclick: () => {
+                          // tslint:disable-next-line:no-console
+                          console.log('Set scenario to ' + scenario.title);
+                          // store.dispatch(updateScenario(scenario));
+                          return ScenarioSvc.load(scenario.id);
+                        },
+                      },
+                      'Open'
+                    )
+                  ),
                 ])
               ),
             ])

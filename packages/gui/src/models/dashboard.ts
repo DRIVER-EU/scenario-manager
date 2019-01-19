@@ -7,4 +7,5 @@ export interface IDashboard {
   route: string;
   visible: boolean;
   component: ComponentTypes;
+  level?: string;
 }

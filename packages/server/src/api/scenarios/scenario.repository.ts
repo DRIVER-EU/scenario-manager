@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Database } from 'sqlite3';
 import { ScenarioOverview, IUploadedFile } from '../../models';
-import { uuid4, logError } from '../../utils';
+import { uniqueId, logError } from '../../utils';
 
 const SCENARIO = 'scenario';
 const EXT = '.sqlite3';
@@ -40,7 +40,7 @@ export class ScenarioRepository {
   }
 
   async createScenario(scenario: ScenarioOverview) {
-    scenario.id = uuid4();
+    scenario.id = uniqueId();
     const now = new Date();
     scenario.creationDate = scenario.lastEdit = now;
     this.overview.push(new ScenarioOverview(scenario));

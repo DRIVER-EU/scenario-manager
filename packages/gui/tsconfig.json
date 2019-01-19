@@ -63,8 +63,13 @@
     "emitDecoratorMetadata": true         /* Enables experimental support for emitting type metadata for decorators. */
   },
   "include": [
-    "src/**/*", "../server/src/models/**/*", "../server/src/**/*.entity.ts"
+    "src/**/*"
   ],
+  "awesomeTypescriptLoaderOptions": {
+    "reportFiles": [
+      "./src/**/*"
+    ]
+  },
   "exclude": [
     "node_modules",
     "**/*.spec.ts"

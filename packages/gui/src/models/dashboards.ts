@@ -2,5 +2,7 @@ export const enum Dashboards {
   HOME = 'HOME',
   NEW_SCENARIO = 'NEW_SCENARIO',
   SCENARIO = 'SCENARIO',
+  SCENARIO_INFO = 'SCENARIO_INFO',
+  USERS = 'USERS',
   OBJECTIVES = 'OBJECTIVES',
 }
