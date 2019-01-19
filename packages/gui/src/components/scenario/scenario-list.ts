@@ -1,11 +1,11 @@
 import m from 'mithril';
-import { FlatButton, TextInput, RoundIconButton } from 'mithril-materialized';
+import { TextInput, RoundIconButton } from 'mithril-materialized';
 import { ScenarioSvc } from '../../services/scenario-service';
 import { titleAndDescriptionFilter } from '../../utils/utils';
 
 export const ScenarioList = () => {
   const state = {
-    filterValue: '',
+    filterValue: undefined as string | undefined,
   };
   return {
     oninit: () => ScenarioSvc.loadList(),
@@ -28,7 +28,7 @@ export const ScenarioList = () => {
             label: 'Filter',
             id: 'filter',
             iconName: 'filter_list',
-            onchange: (v: string) => (state.filterValue = v),
+            onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
             style: 'margin-right:100px',
             contentClass: 'right',
           }),
@@ -40,23 +40,17 @@ export const ScenarioList = () => {
               m(
                 '.card',
                 m('.card-content', { style: 'height: 150px' }, [
-                  m('span.card-title', scenario.title || 'Untitled'),
-                  m('p', scenario.description),
                   m(
-                    '.card-action',
-                    m(
-                      'a[href=#]',
-                      {
-                        onclick: () => {
-                          // tslint:disable-next-line:no-console
-                          console.log('Set scenario to ' + scenario.title);
-                          // store.dispatch(updateScenario(scenario));
-                          return ScenarioSvc.load(scenario.id);
-                        },
+                    'a[href=#].card-title',
+                    {
+                      onclick: () => {
+                        console.log('Set scenario to ' + scenario.title);
+                        return ScenarioSvc.load(scenario.id);
                       },
-                      'Open'
-                    )
+                    },
+                    scenario.title || 'Untitled'
                   ),
+                  m('p', scenario.description),
                 ])
               ),
             ])
