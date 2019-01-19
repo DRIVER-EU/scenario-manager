@@ -92,8 +92,8 @@ export const deepCopy = <T>(target: T): T => {
  * Function to filter case-insensitive title and description.
  * @param filterValue Filter text
  */
-export const titleAndDescriptionFilter = (filterValue: string) => {
-  filterValue = filterValue.toLowerCase();
+export const titleAndDescriptionFilter = (filterValue?: string) => {
+  filterValue = filterValue && filterValue.toLowerCase();
   return (content: IContent) =>
     !filterValue ||
     !content.title ||

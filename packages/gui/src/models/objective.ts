@@ -1,5 +1,5 @@
-import { IContent, IStakeholder } from '.';
+import { IContent } from '.';
 
 export interface IObjective extends IContent {
-  stakeholder?: IStakeholder[];
+  stakeholderIds?: string[];
 }

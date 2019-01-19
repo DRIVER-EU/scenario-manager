@@ -10,7 +10,7 @@ import { IObjective } from '../../models';
 export const ObjectivesList = () => {
   const state = {
     selected: undefined as IObjective | undefined,
-    filterValue: '',
+    filterValue: '' as string | undefined,
     scenarioId: '' as string | undefined,
     subscription: {} as ISubscriptionDefinition<any>,
   };
@@ -82,9 +82,7 @@ export const ObjectivesList = () => {
       const query = titleAndDescriptionFilter(state.filterValue);
       const objectives = ScenarioSvc.getObjectives();
       const filteredObjectives = objectives && objectives.filter(query);
-      // console.log(objectives.map(o => o.title).join('\n'));
       const tree = unflatten(filteredObjectives);
-      // console.log('Objectives-list updated...');
       return m('.row.objectives-list', [
         m(
           '.col.s12',
@@ -93,7 +91,7 @@ export const ObjectivesList = () => {
             id: 'filter',
             iconName: 'filter_list',
             initialValue: state.filterValue,
-            onchange: (v: string) => (state.filterValue = v),
+            onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
             contentClass: 'right',
           })
         ),

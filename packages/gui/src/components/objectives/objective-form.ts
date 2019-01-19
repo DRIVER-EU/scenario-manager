@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { TextInput, TextArea, Button, Icon } from 'mithril-materialized';
+import { TextInput, TextArea, Select, Button, Icon } from 'mithril-materialized';
 import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, objectiveChannel } from '../../models/channels';
 import { deepCopy, deepEqual } from '../../utils/utils';
@@ -35,6 +35,13 @@ export const ObjectiveForm = () => {
     view: () => {
       const objective = state.objective;
       const hasChanged = !deepEqual(objective, state.original);
+      const stakeholders = ScenarioSvc.getStakeholders();
+      const options = stakeholders
+        ? stakeholders.map(u => ({
+            id: u.id,
+            label: u.name || 'unknown',
+          }))
+        : undefined;
       const onsubmit = (e: UIEvent) => {
         e.preventDefault();
         log('submitting...');
@@ -75,6 +82,22 @@ export const ObjectiveForm = () => {
                       iconName: 'description',
                       contentClass: 'active',
                     }),
+                    options
+                      ? m(Select, {
+                          placeholder: 'Select stakeholders',
+                          multiple: true,
+                          iconName: 'group',
+                          label: 'Stakeholders',
+                          checkedId: objective.stakeholderIds,
+                          isMandatory: true,
+                          options,
+                          onchange: (values?: unknown) => {
+                            if (values && values instanceof Array) {
+                              objective.stakeholderIds = values;
+                            }
+                          },
+                        })
+                      : undefined,
                   ],
                   m('row', [
                     m(Button, {

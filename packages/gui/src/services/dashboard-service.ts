@@ -120,7 +120,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.OBJECTIVES,
     title: 'Objectives',
-    route: '/objectives',
+    route: '/scenario/objectives',
     visible: false,
     component: ObjectivesView,
     level: Dashboards.SCENARIO,

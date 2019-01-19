@@ -113,16 +113,21 @@ class ScenarioService extends RestService<IScenario> {
 
   public userRoleToString = (role: UserRole) => {
     switch (role) {
-      default: return UserRole[role];
-      case UserRole.ROLE_PLAYER: return 'ROLE PLAYER';
+      default:
+        return UserRole[role];
+      case UserRole.ROLE_PLAYER:
+        return 'ROLE PLAYER';
     }
   }
 
   public userIcon = (user: IPerson) => {
     switch (user.role) {
-      default: return 'person';
-      case UserRole.ROLE_PLAYER: return 'record_voice_over';
-      case UserRole.ADMIN: return 'supervisor_account';
+      default:
+        return 'person';
+      case UserRole.ROLE_PLAYER:
+        return 'record_voice_over';
+      case UserRole.ADMIN:
+        return 'supervisor_account';
     }
   }
 
@@ -159,14 +164,18 @@ class ScenarioService extends RestService<IScenario> {
     stakeholdersChannel.publish(TopicNames.ITEM_UPDATE, { cur: sh });
   }
 
-  public async deleteStakeholder(user: IStakeholder) {
+  public async deleteStakeholder(sh: IStakeholder) {
     if (this.current) {
-      this.current.stakeholders = this.current.stakeholders.filter(s => s.id !== user.id);
+      this.current.stakeholders = this.current.stakeholders.filter(s => s.id !== sh.id);
+      this.current.objectives.forEach(s => {
+        if (s.stakeholderIds) {
+          s.stakeholderIds = s.stakeholderIds.filter(id => id !== sh.id);
+        }
+      });
     }
     await this.saveScenario();
-    stakeholdersChannel.publish(TopicNames.ITEM_DELETE, { cur: user });
+    stakeholdersChannel.publish(TopicNames.ITEM_DELETE, { cur: sh });
   }
-
 }
 
 export const ScenarioSvc = new ScenarioService();

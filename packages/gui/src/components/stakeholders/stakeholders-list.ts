@@ -5,11 +5,10 @@ import { ScenarioSvc } from '../../services/scenario-service';
 import { stakeholdersChannel, TopicNames } from '../../models/channels';
 import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
 import { uniqueId } from '../../utils';
-import { UserRole } from '../../models/user-role';
 
 const StakeholdersList: FactoryComponent<IStakeholder> = () => {
   const state = {
-    filterValue: '',
+    filterValue: '' as string | undefined,
     curStakeholderId: undefined as string | undefined,
     subscription: stakeholdersChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
       state.curStakeholderId = cur.id;
@@ -24,7 +23,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
           label: 'Filter',
           id: 'filter',
           iconName: 'filter_list',
-          onkeyup: (ev: KeyboardEvent, v?: string) => (v ? (state.filterValue = v) : v),
+          onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
           style: 'margin-right:100px',
           contentClass: 'right',
         }),

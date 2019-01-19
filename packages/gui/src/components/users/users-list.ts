@@ -9,7 +9,7 @@ import { UserRole } from '../../models/user-role';
 
 const UsersList: FactoryComponent<IPerson> = () => {
   const state = {
-    filterValue: '',
+    filterValue: '' as string | undefined,
     currentUserId: undefined as string | undefined,
     subscription: usersChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
       state.currentUserId = cur.id;
@@ -24,7 +24,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
           label: 'Filter',
           id: 'filter',
           iconName: 'filter_list',
-          onkeyup: (ev: KeyboardEvent, v?: string) => (v ? (state.filterValue = v) : v),
+          onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
           style: 'margin-right:100px',
           contentClass: 'right',
         }),
