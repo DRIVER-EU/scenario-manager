@@ -60,7 +60,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
           : undefined,
         m(RoundIconButton, {
           iconName: 'person_add',
-          class: 'green input-field right',
+          class: 'green right',
           onclick: async () => {
             const user = {
               id: uniqueId(),
