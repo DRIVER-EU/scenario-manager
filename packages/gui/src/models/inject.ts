@@ -1,6 +1,6 @@
 import { IContent } from '.';
 
-export interface IInjectGroup extends IInject  {
+export interface IInjectGroup extends IInject {
   mainObjectiveId?: string;
   secondaryObjectiveId?: string;
 }
@@ -33,41 +33,51 @@ export enum InjectLevel {
   INJECT = 'INJECT',
   ACT = 'ACT',
   STORYLINE = 'STORYLINE',
+  SCENARIO = 'SCENARIO',
 }
 
-export enum InjectCondition {
-  DELAY = 'DELAY',
+export enum InjectConditionType {
+  UNKNOWN,
+  /** Delay for a certain amount of time */
+  DELAY,
+  /** Delay for 0 seconds */
+  IMMEDIATELY,
+  /** Wait for manual confirmation to start */
+  MANUALLY,
 }
 
-/*
-An inject can occur after a number of conditions:
+export interface IInjectCondition {
+  /** Type of delay that rules this condition */
+  delayType?: InjectConditionType;
+  /** When the delay type is a DELAY, i.e. a timespan, specifies the units */
+  delay?: number;
+  /** When the delay type is a DELAY, i.e. a timespan, specifies the unit type */
+  delayUnitType?: 'seconds' | 'minutes' | 'hours';
+  /**
+   * By default, for injects, the conditions is based on the previous inject.
+   * However, it may also depend on the start or finish of another act, storyline or scenario.
+   */
+  injectLevel?: InjectLevel;
+  /** In case the level is set, specify its ID */
+  levelId?: string;
+  /**
+   * In most cases, an inject starts when something else has finished.
+   * However, you may also start at the same time as another inject.
+   */
+  levelState?: InjectState;
+}
 
-Time-based conditions are all delays:
-- After a fixed delay (in seconds/minutes/hours)
-- Immediately after the previous inject (which is a fixed delay of 0 sec)
-- At a certain time (which is also a fixed delay, but relative to the scenario start time)
-
-Optionally, you may need to satisfy certain conditions:
-- Another inject is completed
-
-*/
-
-export interface IInject extends IContent  {
+export interface IInject extends IContent {
   /** Who performs the action */
   actorId?: string;
   /** Who is the recipient/receiver of the action/message */
   recipientId?: string;
-  /**
-   * Depends on the successful execution/completion of another inject, where
-   * an inject may also be an act or storyline:
-   * - Each row can contain one or more IDs, comma separated.
-   * - In case a row contains more IDs, separated by &, they are treated as AND conditions.
-   * - Each row is treated as an OR condition.
-   * E.g. ['a & b', 'c'] means that the pre-conditions of an inject are fullfilled
-   * when c is completed, OR when a AND b are completed.
-   */
-  dependsOn?: string[];
+  /** Conditions that will start this inject */
+  condition?: IInjectCondition;
+  /** Only relevant when executing, declares the state of the inject */
   state?: InjectState;
-  level?: InjectLevel;
+  /** Is it a storyline, act or inject */
+  level: InjectLevel;
+  /** What kind of message are we sending */
   type?: InjectType;
 }

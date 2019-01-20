@@ -1,11 +1,11 @@
 import m from 'mithril';
 import { TextInput, TextArea, Button, Icon } from 'mithril-materialized';
-import { ISubscriptionDefinition } from '../../services/message-bus-service';
 import { TopicNames, injectsChannel } from '../../models/channels';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils/utils';
 import { ScenarioSvc } from '../../services';
 import { DropDownObjectives } from '../ui/drop-down-objectives';
 import { IInject, InjectLevel, IInjectGroup } from '../../models';
+import { InjectConditions } from './inject-conditions';
 
 const log = console.log;
 
@@ -21,10 +21,7 @@ export const InjectsForm = () => {
     }),
   };
 
-  const getParent = (id: string) =>
-    ScenarioSvc.getList()
-      .filter(o => o.id === id)
-      .shift();
+  const getParent = (id: string) => (ScenarioSvc.getInjects() || []).filter(o => o.id === id).shift();
 
   return {
     onbeforeremove: () => {
@@ -44,11 +41,11 @@ export const InjectsForm = () => {
       return m(
         '.injects-form',
         { style: 'color: black' },
-        m(
-          'form.col.s12',
-          inject
-            ? [
-                m('.row', [
+        inject
+          ? [
+              m(
+                '.row',
+                m('.col.s12', [
                   m('h4', [
                     m(Icon, {
                       iconName: getInjectIcon(inject.level),
@@ -71,6 +68,7 @@ export const InjectsForm = () => {
                       label: 'Description',
                       iconName: 'description',
                     }),
+                    m(InjectConditions, { inject }),
                     isGroup
                       ? m('.row', [
                           m(
@@ -111,10 +109,10 @@ export const InjectsForm = () => {
                       onclick: () => ScenarioSvc.delete(inject.id),
                     }),
                   ]),
-                ]),
-              ]
-            : undefined
-        )
+                ])
+              ),
+            ]
+          : undefined
       );
     },
   };

@@ -140,3 +140,22 @@ div.icon-label .material-icons {
   vertical-align: top;
   padding-right: 10px;
 }
+
+.input-field.inline {
+  vertical-align: baseline;
+}
+span.inline {
+  font-size: 16px;
+}
+.input-field.inline.xs {
+  width: 70px;
+}
+.input-field.inline.small {
+  width: 100px;
+}
+.input-field.inline.medium {
+  width: 130px;
+}
+.input-field.inline.large {
+  width: 160px;
+}
