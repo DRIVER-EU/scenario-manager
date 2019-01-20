@@ -1,10 +1,8 @@
 import m from 'mithril';
-import { TextInput, TextArea, Button, Icon } from 'mithril-materialized';
-import { TopicNames, injectsChannel } from '../../models/channels';
-import { deepCopy, deepEqual, getInjectIcon } from '../../utils/utils';
+import { TextInput, TextArea, Button, Icon, Dropdown } from 'mithril-materialized';
+import { deepCopy, deepEqual, getInjectIcon } from '../../utils';
 import { ScenarioSvc } from '../../services';
-import { DropDownObjectives } from '../ui/drop-down-objectives';
-import { IInject, InjectLevel, IInjectGroup } from '../../models';
+import { TopicNames, injectsChannel, IInject, InjectLevel, IInjectGroup } from '../../models';
 import { InjectConditions } from './inject-conditions';
 
 const log = console.log;
@@ -38,6 +36,10 @@ export const InjectsForm = () => {
           ScenarioSvc.updateInject(inject);
         }
       };
+      const objectives = [{ id: '', title: 'Pick one' }, ...(ScenarioSvc.getObjectives() || [])].map(o => ({
+        id: o.id,
+        label: o.title,
+      }));
       return m(
         '.injects-form',
         { style: 'color: black' },
@@ -71,22 +73,22 @@ export const InjectsForm = () => {
                     m(InjectConditions, { inject }),
                     isGroup
                       ? m('.row', [
-                          m(
-                            '.col.s6',
-                            m(DropDownObjectives, {
-                              title: 'Main objective',
-                              objectiveId: (inject as IInjectGroup).mainObjectiveId,
-                              onchange: (id: string) => ((inject as IInjectGroup).mainObjectiveId = id),
-                            })
-                          ),
-                          m(
-                            '.col.s6',
-                            m(DropDownObjectives, {
-                              title: 'Secondary objective',
-                              objectiveId: (inject as IInjectGroup).secondaryObjectiveId,
-                              onchange: (id: string) => ((inject as IInjectGroup).secondaryObjectiveId = id),
-                            })
-                          ),
+                          m(Dropdown, {
+                            contentClass: 'col s6',
+                            helperText: 'Main objective',
+                            checkedId: (inject as IInjectGroup).mainObjectiveId,
+                            items: objectives,
+                            onchange: (id: string | number) =>
+                              ((inject as IInjectGroup).mainObjectiveId = id as string),
+                          }),
+                          m(Dropdown, {
+                            contentClass: 'col s6',
+                            helperText: 'Secondary objective',
+                            checkedId: (inject as IInjectGroup).mainObjectiveId,
+                            items: objectives,
+                            onchange: (id: string | number) =>
+                              ((inject as IInjectGroup).secondaryObjectiveId = id as string),
+                          }),
                         ])
                       : undefined,
                   ],
