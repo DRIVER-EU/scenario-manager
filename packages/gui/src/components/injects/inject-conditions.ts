@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { IInject, InjectLevel, InjectState, InjectConditionType, IInjectCondition } from '../../models';
-import { Select, NumberInput, ISelectOption } from 'mithril-materialized';
+import { Select, NumberInput, ISelectOption, Icon } from 'mithril-materialized';
 import { ScenarioSvc } from '../../services';
 
 /*
@@ -32,17 +32,6 @@ For acts and storylines, which are at the beginning of a sequence
 - As above, after [act|storyline|scenario] [name of act|storyline] has [started|finished]
 
 */
-
-// export const GroupConditions: FactoryComponent<IInject> = () => {
-//   return {
-//     view: ({ attrs: { level } }) => {
-//       switch (level) {
-//         case InjectLevel.INJECT:
-//       }
-//       return m('a');
-//     },
-//   };
-// };
 
 export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
   return {
@@ -82,16 +71,16 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
           : (ScenarioSvc.getInjects() || [])
               .filter(i => i.level === condition.injectLevel && i.id !== id)
               .map(i => ({ id: i.id, label: `"${i.title}"` }));
+
       return m(
         '.row',
         m('.col.s12', [
-          m('h5', 'Start condition'),
+          // m('h5', 'Start condition'),
+          m(Icon, { iconName: 'playlist_play', class: 'small', style: 'margin: 0 0.5em;' }),
           m('span.inline', 'Start '),
           m(Select, {
             style: 'width: 70px',
-            contentClass: 'inline large',
-            // iconName: 'playlist_add',
-            // label: 'Start condition',
+            contentClass: 'inline medium',
             placeholder: 'Pick one',
             isMandatory: true,
             checkedId: condition.delayType,
@@ -151,12 +140,3 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
     },
   };
 };
-
-// export const InjectConditions: FactoryComponent<IInject> = () => {
-//   return {
-//     view: ({ attrs }) => [
-//       // m('h5', 'Condition'),
-//       attrs.level === InjectLevel.INJECT ? m(MessageConditions, attrs) : m(GroupConditions, attrs),
-//     ],
-//   };
-// };
