@@ -6,4 +6,5 @@ export const enum Dashboards {
   USERS = 'USERS',
   STAKEHOLDERS = 'STAKEHOLDERS',
   OBJECTIVES = 'OBJECTIVES',
+  EXECUTE = 'EXECUTE',
 }

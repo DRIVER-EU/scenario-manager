@@ -17,44 +17,49 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
       const stakeholders = ScenarioSvc.getStakeholders(state.filterValue);
-      return [
+      return m('.row', [
         m(TextInput, {
           label: 'Filter',
           id: 'filter',
           iconName: 'filter_list',
           onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-          style: 'margin-right:100px',
           contentClass: 'right',
         }),
         stakeholders
           ? m(
-              'ul.collection',
-              stakeholders.map(cur =>
+              '.row',
+              m(
+                '.col.s12',
                 m(
-                  'li.collection-item avatar',
-                  {
-                    class: state.curStakeholderId === cur.id ? 'active' : undefined,
-                    onclick: () => {
-                      stakeholdersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                      state.curStakeholderId = cur.id;
-                    },
-                  },
-                  [
-                    m(Icon, {
-                      iconName: 'person_outline',
-                      class: 'circle yellow black-text',
-                    }),
-                    m('span.title', cur.name),
-                    cur.contactIds
-                      ? m(
-                          'p',
-                          cur.contactIds
-                            .map(id => ScenarioSvc.getUserById(id))
-                            .map(c => c && c.name)
-                            .join(', ')
-                        )
-                      : undefined,
-                  ]
+                  'ul.collection',
+                  stakeholders.map(cur =>
+                    m(
+                      'li.collection-item avatar',
+                      {
+                        class: state.curStakeholderId === cur.id ? 'active' : undefined,
+                        onclick: () => {
+                          stakeholdersChannel.publish(TopicNames.ITEM_SELECT, { cur });
+                          state.curStakeholderId = cur.id;
+                        },
+                      },
+                      [
+                        m(Icon, {
+                          iconName: 'person_outline',
+                          class: 'circle yellow black-text',
+                        }),
+                        m('span.title', cur.name),
+                        cur.contactIds
+                          ? m(
+                              'p',
+                              cur.contactIds
+                                .map(id => ScenarioSvc.getUserById(id))
+                                .map(c => c && c.name)
+                                .join(', ')
+                            )
+                          : undefined,
+                      ]
+                    )
+                  )
                 )
               )
             )
@@ -71,13 +76,13 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
             await ScenarioSvc.createStakeholder(sh);
           },
         }),
-      ];
+      ]);
     },
   };
 };
 
 export const StakeholdersView = () => {
   return {
-    view: () => m('.row', [m('.col.s12.m4', m(StakeholdersList)), m('.col.s12.m8', m(StakeholdersForm))]),
+    view: () => m('.row', [m('.col.s12.m4.l3', m(StakeholdersList)), m('.col.s12.m8.l9', m(StakeholdersForm))]),
   };
 };

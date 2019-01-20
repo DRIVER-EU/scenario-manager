@@ -19,36 +19,41 @@ const UsersList: FactoryComponent<IPerson> = () => {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
       const users = ScenarioSvc.getUsers(state.filterValue);
-      return [
+      return m('.row', [
         m(TextInput, {
           label: 'Filter',
           id: 'filter',
           iconName: 'filter_list',
           onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-          style: 'margin-right:100px',
           contentClass: 'right',
         }),
         users
           ? m(
-              'ul.collection',
-              users.map(cur =>
+              '.row',
+              m(
+                '.col.s12',
                 m(
-                  'li.collection-item avatar',
-                  {
-                    class: state.currentUserId === cur.id ? 'active' : undefined,
-                    onclick: () => {
-                      usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                      state.currentUserId = cur.id;
-                    },
-                  },
-                  [
-                    m(Icon, {
-                      iconName: ScenarioSvc.userIcon(cur),
-                      class: 'circle yellow black-text',
-                    }),
-                    m('span.title', cur.name),
-                    m('p', ScenarioSvc.userRoleToString(cur.role)),
-                  ]
+                  'ul.collection',
+                  users.map(cur =>
+                    m(
+                      'li.collection-item avatar',
+                      {
+                        class: state.currentUserId === cur.id ? 'active' : undefined,
+                        onclick: () => {
+                          usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
+                          state.currentUserId = cur.id;
+                        },
+                      },
+                      [
+                        m(Icon, {
+                          iconName: ScenarioSvc.userIcon(cur),
+                          class: 'circle yellow black-text',
+                        }),
+                        m('span.title', cur.name),
+                        m('p', ScenarioSvc.userRoleToString(cur.role)),
+                      ]
+                    )
+                  )
                 )
               )
             )
@@ -66,7 +71,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
             await ScenarioSvc.createUser(user);
           },
         }),
-      ];
+      ]);
     },
   };
 };

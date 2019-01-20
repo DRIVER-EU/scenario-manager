@@ -133,4 +133,11 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     component: InjectsView,
     level: Dashboards.SCENARIO,
   },
+  {
+    id: Dashboards.EXECUTE,
+    title: 'Run',
+    route: '/execute',
+    visible: false,
+    component: () => ({ view: () => m('span', 'TO DO' )}),
+  },
 ]);
