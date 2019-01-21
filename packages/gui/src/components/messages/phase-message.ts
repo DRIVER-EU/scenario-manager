@@ -4,7 +4,7 @@ import { IInject, InjectType } from '../../models';
 import { getMessage, iterEnum } from '../../utils';
 
 export enum TrialPhase {
-  PROPER_NAME,
+  PROPER_NAME = 1,
   INITIALIZATION,
   PREPARATION,
   PRE_INCIDENT,
@@ -35,6 +35,7 @@ export const PhaseMessageForm: FactoryComponent<{ inject: IInject }> = () => {
 
       return [
         m(Select, {
+          iconName: 'flag',
           placeholder: 'Select the phase type',
           checkedId: pm.phase,
           options,

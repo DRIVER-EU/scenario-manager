@@ -81,3 +81,11 @@ At the highest level, there are menus to:
 - Edit: to specify the storylines, acts and messages.
 - Run: to start and stop the actual scenario.
 - Play: for role-players, to perform a role or other manual actions.
+
+### Uploading assets
+
+When uploading a file, you can specify its alias, so you can later refer to it using `{{alias}}`.
+
+### Locations
+
+You can upload GeoJSON files: the Features are extracted and parsed to Locations, if possible.
