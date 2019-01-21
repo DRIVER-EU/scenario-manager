@@ -82,6 +82,39 @@ export class RestService<T extends { id?: string }> {
       .catch(err => error(err));
   }
 
+  /*
+    There must be a generic file upload function: when uploading a file, it will allow you to set an alias (no spaces).
+    This alias can be used as a link, e.g. you could create an alias image1, and use it in a markdown file as follows:
+    ![My image]({{image1}}).
+   */
+
+  public uploadFiles(fl: FileList, id = this.current.id) {
+    if (fl.length === 0 || !id) { return; }
+    log(`Uploading files...`);
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < fl.length; i++) {
+      const file = fl[i];
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent) => {
+        if (!e || !e.target) { return; }
+        const data = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    // return Promise.all((resolve, reject) => m
+    //   .request<T>({
+    //     method: 'POST',
+    //     url: this.baseUrl + id + '/assets',
+    //     data,
+    //     withCredentials,
+    //   })
+    //   .then(result => {
+    //     log(`Created with id: ${result.id}.`);
+    //     return this.current;
+    //   })
+    //   .catch(err => error(err));
+  }
+
   public unload() {
     if (this.current) {
       this.new();

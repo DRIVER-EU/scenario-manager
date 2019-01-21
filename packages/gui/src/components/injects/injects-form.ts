@@ -1,9 +1,10 @@
 import m from 'mithril';
-import { TextInput, TextArea, Button, Icon, Dropdown } from 'mithril-materialized';
+import { Button, Icon, Dropdown, Select } from 'mithril-materialized';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils';
 import { ScenarioSvc } from '../../services';
-import { TopicNames, injectsChannel, IInject, InjectLevel, IInjectGroup } from '../../models';
+import { TopicNames, injectsChannel, IInject, InjectLevel, IInjectGroup, InjectType } from '../../models';
 import { InjectConditions } from './inject-conditions';
+import { MessageForm } from '../messages/message-form';
 
 const log = console.log;
 
@@ -40,6 +41,7 @@ export const InjectsForm = () => {
         id: o.id,
         label: o.title,
       }));
+
       return m(
         '.injects-form',
         { style: 'color: black' },
@@ -54,22 +56,23 @@ export const InjectsForm = () => {
                       style: 'margin-right: 12px;',
                     }),
                     inject.level,
+                    inject.level === InjectLevel.INJECT
+                      ? m(Select, {
+                          placeholder: 'Select the message type',
+                          checkedId: inject.type,
+                          options: [
+                            { id: InjectType.ROLE_PLAYER_MESSAGE, label: 'Role player message' },
+                            { id: InjectType.POST_MESSAGE, label: 'Post a message' },
+                            { id: InjectType.GEOJSON_MESSAGE, label: 'Send a GeoJSON file' },
+                            { id: InjectType.PHASE_MESSAGE, label: 'Phase message' },
+                            { id: InjectType.AUTOMATED_ACTION, label: 'Automated action' },
+                          ],
+                          onchange: (v: unknown) => (inject.type = v as InjectType),
+                        })
+                      : undefined,
                   ]),
                   [
-                    m(TextInput, {
-                      id: 'title',
-                      initialValue: inject.title,
-                      onchange: (v: string) => (inject.title = v),
-                      label: 'Title',
-                      iconName: 'title',
-                    }),
-                    m(TextArea, {
-                      id: 'desc',
-                      initialValue: inject.description,
-                      onchange: (v: string) => (inject.description = v),
-                      label: 'Description',
-                      iconName: 'description',
-                    }),
+                    m(MessageForm, { inject }),
                     m(InjectConditions, { inject }),
                     isGroup
                       ? m('.row', [

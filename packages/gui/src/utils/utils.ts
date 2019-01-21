@@ -1,4 +1,4 @@
-import { IContent, InjectLevel } from '../models';
+import { IContent, InjectLevel, IInject, InjectType } from '../models';
 
 /**
  * Create a unique ID
@@ -13,7 +13,7 @@ export const uniqueId = () => {
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
-  Object.keys(e).filter((v, i, arr) => i < arr.length / 2);
+  Object.keys(e).filter((v, i, arr) => i < arr.length / 2).map(k => +k);
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.
@@ -129,4 +129,14 @@ export const getInjectIcon = (type?: InjectLevel) => {
     default:
       return 'import_contacts';
   }
+};
+
+/** Gets and optionally creates the inject message */
+export const getMessage = (inject: IInject, type: InjectType) => {
+  const key = InjectType[type];
+  if (!inject.message || !inject.message.hasOwnProperty(key)) {
+    inject.message = {};
+    inject.message[key] = { id: inject.id };
+  }
+  return inject.message[key] as { id: string; [key: string]: unknown };
 };

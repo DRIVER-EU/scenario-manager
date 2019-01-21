@@ -6,13 +6,17 @@ export interface IInjectGroup extends IInject {
 }
 
 export enum InjectType {
-  PARTICIPANT_MESSAGE = 'PARTICIPANT_MESSAGE',
-  OBSERVER_MESSAGE = 'OBSERVER_MESSAGE',
   ROLE_PLAYER_MESSAGE = 'ROLE_PLAYER_MESSAGE',
-  OPERATOR_MESSAGE = 'OPERATOR_MESSAGE',
+  PHASE_MESSAGE = 'PHASE_MESSAGE',
+  POST_MESSAGE = 'POST_MESSAGE',
+  GEOJSON_MESSAGE = 'GEOJSON_MESSAGE',
   AUTOMATED_ACTION = 'AUTOMATED_ACTION',
-  BRANCH = 'BRANCH',
-  WAIT_FOR_OPERATOR_INPUT = 'WAIT_FOR_OPERATOR_INPUT',
+  // PARTICIPANT_MESSAGE = 'PARTICIPANT_MESSAGE',
+  // OBSERVER_MESSAGE = 'OBSERVER_MESSAGE',
+  // OPERATOR_MESSAGE = 'OPERATOR_MESSAGE',
+  // AUTOMATED_ACTION = 'AUTOMATED_ACTION',
+  // BRANCH = 'BRANCH',
+  // WAIT_FOR_OPERATOR_INPUT = 'WAIT_FOR_OPERATOR_INPUT',
 }
 
 /** The inject state communicates the state of an inject during execution of a scenario. */
@@ -80,4 +84,9 @@ export interface IInject extends IContent {
   level: InjectLevel;
   /** What kind of message are we sending */
   type?: InjectType;
+  /** Inject message */
+  message?: {
+    /** Key is the the same as the InjectType */
+    [key: string]: unknown;
+  };
 }
