@@ -51,6 +51,10 @@ export class ScenarioService {
 
   // Asset mgmt
 
+  async getAssets(id: string) {
+    return this.repo.getAssets(id);
+  }
+
   async getAsset(id: string, assetId: string) {
     return this.repo.getAsset(id, assetId);
   }

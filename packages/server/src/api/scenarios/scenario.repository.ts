@@ -103,6 +103,38 @@ export class ScenarioRepository {
 
   // Asset mgmt
 
+  async getAssets(id: string) {
+    return new Promise<Array<{
+      id: number;
+      mimetype: string;
+      filename: string;
+    }>>(async (resolve, reject) => {
+      const db = this.databases.hasOwnProperty(id)
+        ? this.databases[id].db
+        : undefined;
+      if (!db) {
+        return reject(`Error, no database with id ${id} found!`);
+      }
+      db.all(
+        `SELECT id, mimetype, filename FROM ${ASSETS}`,
+        (
+          err: Error,
+          row: Array<{
+            id: number;
+            mimetype: string;
+            filename: string;
+          }>,
+        ) => {
+          if (err) {
+            console.error(err);
+            return reject(err);
+          }
+          resolve(row);
+        },
+      );
+    });
+  }
+
   async getAsset(id: string, assetId: number | string) {
     return new Promise<{
       id: number;

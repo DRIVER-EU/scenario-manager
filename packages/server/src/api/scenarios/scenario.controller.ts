@@ -28,7 +28,10 @@ import { ScenarioService } from './scenario.service';
 @ApiUseTags('scenarios')
 @Controller('scenarios')
 export class ScenarioController {
-  constructor(@Inject('ScenarioService') private readonly scenarioService: ScenarioService) {}
+  constructor(
+    @Inject('ScenarioService')
+    private readonly scenarioService: ScenarioService,
+  ) {}
 
   @ApiImplicitQuery({
     name: 'take',
@@ -102,6 +105,12 @@ export class ScenarioController {
     @UploadedFile() file: IUploadedFile,
   ) {
     this.scenarioService.updateAsset(id, assetId, file);
+  }
+
+  @ApiOperation({ title: 'Get all scenario assets' })
+  @Get(':id/assets')
+  async getAssets(@Param('id') id: string) {
+    return await this.scenarioService.getAssets(id);
   }
 
   @Get(':id/assets/:asset')
