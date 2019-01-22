@@ -88,7 +88,7 @@ export const InjectsForm = () => {
                           m(Dropdown, {
                             contentClass: 'col s6',
                             helperText: 'Secondary objective',
-                            checkedId: (inject as IInjectGroup).mainObjectiveId,
+                            checkedId: (inject as IInjectGroup).secondaryObjectiveId,
                             items: objectives,
                             onchange: (id: string | number) =>
                               ((inject as IInjectGroup).secondaryObjectiveId = id as string),
