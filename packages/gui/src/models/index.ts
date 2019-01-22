@@ -9,3 +9,4 @@ export * from './stakeholder';
 export * from './user-role';
 export * from './object-of-interest';
 export * from './person-of-interest';
+export * from './asset';
