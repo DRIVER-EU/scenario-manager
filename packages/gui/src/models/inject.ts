@@ -46,6 +46,8 @@ export enum InjectConditionType {
   DELAY,
   /** Delay for 0 seconds */
   IMMEDIATELY,
+  /** Delay based on the scenario start time */
+  AT_TIME,
   /** Wait for manual confirmation to start */
   MANUALLY,
 }

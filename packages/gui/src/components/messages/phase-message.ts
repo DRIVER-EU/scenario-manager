@@ -60,7 +60,7 @@ export const PhaseMessageForm: FactoryComponent<{ inject: IInject }> = () => {
             })
           : undefined,
         m(Switch, {
-          initialValue: pm.isStarting,
+          checked: !pm.isStarting,
           label: 'Start or end of phase?',
           left: 'Start',
           right: 'End',

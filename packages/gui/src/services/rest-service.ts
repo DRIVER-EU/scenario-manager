@@ -62,6 +62,7 @@ export class RestService<T extends { id?: string }> {
       })
       .then(() => {
         // this.setCurrent(data);
+        this.current = data;
         this.updateItemInList(data);
         return this.current;
       })

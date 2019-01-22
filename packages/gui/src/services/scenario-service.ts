@@ -21,7 +21,7 @@ class ScenarioService extends RestService<IScenario> {
 
   public async saveScenario(s: IScenario = this.current) {
     s.updatedDate = new Date();
-    super.save(s);
+    return super.save(s);
   }
 
   /** OBJECTIVES */

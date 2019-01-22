@@ -72,7 +72,7 @@ export const UsersForm = () => {
                         id: +r,
                         label: ScenarioSvc.userRoleToString(+r),
                       })),
-                      onchange: (id: unknown) => (user.role = id as number),
+                      onchange: (id: unknown) => (user.role = +(id as number)),
                     }),
                     m(EmailInput, {
                       id: 'email',

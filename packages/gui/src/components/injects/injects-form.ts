@@ -58,14 +58,15 @@ export const InjectsForm = () => {
                     inject.level,
                     inject.level === InjectLevel.INJECT
                       ? m(Select, {
+                          iconName: 'message',
                           placeholder: 'Select the message type',
                           checkedId: inject.type,
                           options: [
-                            { id: InjectType.ROLE_PLAYER_MESSAGE, label: 'Role player message' },
-                            { id: InjectType.POST_MESSAGE, label: 'Post a message' },
-                            { id: InjectType.GEOJSON_MESSAGE, label: 'Send a GeoJSON file' },
-                            { id: InjectType.PHASE_MESSAGE, label: 'Phase message' },
-                            { id: InjectType.AUTOMATED_ACTION, label: 'Automated action' },
+                            { id: InjectType.ROLE_PLAYER_MESSAGE, label: 'ROLE PLAYER MESSAGE' },
+                            { id: InjectType.POST_MESSAGE, label: 'POST A MESSAGE' },
+                            { id: InjectType.GEOJSON_MESSAGE, label: 'SEND A GEOJSON FILE' },
+                            { id: InjectType.PHASE_MESSAGE, label: 'PHASE MESSAGE' },
+                            { id: InjectType.AUTOMATED_ACTION, label: 'AUTOMATED ACTION' },
                           ],
                           onchange: (v: unknown) => (inject.type = v as InjectType),
                         })

@@ -15,15 +15,14 @@ const close = async (e: UIEvent) => {
 
 export const ScenarioForm = () => {
   const state = {
-    original: undefined as IScenario | undefined,
     scenario: {} as IScenario,
   };
   const onsubmit = async (e: MouseEvent) => {
     log('submitting...');
     e.preventDefault();
     if (state.scenario) {
-      const s = deepCopy(state.scenario);
-      await ScenarioSvc.saveScenario(s);
+      await ScenarioSvc.saveScenario(state.scenario);
+      state.scenario = deepCopy(ScenarioSvc.getCurrent());
     }
   };
   return {
@@ -37,17 +36,16 @@ export const ScenarioForm = () => {
       } else {
         state.scenario = deepCopy(scenario);
       }
-      state.original = deepCopy(state.scenario);
     },
     view: () => {
-      const scenario = state.scenario;
+      const { scenario } = state;
       const startDate = scenario.startDate || new Date();
       const endDate = scenario.endDate || new Date(startDate.valueOf());
       if (!scenario.endDate) {
         endDate.setHours(startDate.getHours() + 6);
         scenario.endDate = endDate;
       }
-      const hasChanged = !deepEqual(scenario, state.original);
+      const hasChanged = !deepEqual(scenario, ScenarioSvc.getCurrent());
       return m(
         '.row.scenario-form',
         { style: 'color: black' },
@@ -73,13 +71,19 @@ export const ScenarioForm = () => {
                 m(DateTimeControl, {
                   prefix: 'Start',
                   dt: startDate,
-                  onchange: (d: Date) => (scenario.startDate = d),
+                  onchange: (d: Date) => {
+                    state.scenario.startDate = d;
+                    m.redraw();
+                  },
                 }),
                 m(DateTimeControl, {
                   prefix: 'End',
                   icon: 'timer_off',
                   dt: endDate,
-                  onchange: (d: Date) => (scenario.endDate = d),
+                  onchange: (d: Date) => {
+                    state.scenario.endDate = d;
+                    m.redraw();
+                  },
                 }),
               ],
             ]),
@@ -88,7 +92,7 @@ export const ScenarioForm = () => {
                 label: 'Undo',
                 iconName: 'undo',
                 class: `green ${hasChanged ? '' : 'disabled'}`,
-                onclick: () => (state.scenario = deepCopy(state.original) as IScenario),
+                onclick: () => (state.scenario = deepCopy(ScenarioSvc.getCurrent())),
               }),
               ' ',
               m(Button, {
