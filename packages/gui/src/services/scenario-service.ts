@@ -1,7 +1,7 @@
 import { RestService } from './rest-service';
 import { ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models/channels';
 import { IScenario } from '../models/scenario';
-import { IObjective, IPerson, IStakeholder, IInject } from '../models';
+import { IObjective, IPerson, IStakeholder, IInject, IAsset } from '../models';
 import { uniqueId } from '../utils';
 import { UserRole } from '../models/user-role';
 
@@ -11,10 +11,25 @@ class ScenarioService extends RestService<IScenario> {
   }
 
   public load(id?: string): Promise<IScenario> {
-    return super.load(id).then(s => {
+    return super.load(id).then(async (s) => {
       s.startDate = s.startDate ? new Date(s.startDate) : new Date();
       s.endDate = s.endDate ? new Date(s.endDate) : new Date();
       this.current = s;
+      await super.getAssets().then(newAssets => {
+        if (!newAssets) {
+          return s;
+        }
+        if (!s.assets) {
+          s.assets = [];
+        }
+        const existing = s.assets as IAsset[];
+        newAssets.forEach(a => {
+          const exists = existing.some(e => e.id === a.id);
+          if (!exists) {
+            existing.push(a);
+          }
+        });
+      });
       return s;
     });
   }

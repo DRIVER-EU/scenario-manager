@@ -8,6 +8,7 @@ import {
   ILocation,
   IPersonOfInterest,
   IObjectOfInterest,
+  IAsset,
 } from '.';
 
 export interface IScenario extends IContent {
@@ -23,6 +24,8 @@ export interface IScenario extends IContent {
   objects: IObjectOfInterest[];
   /** Persons of interest that play a role in the scenario */
   players: IPersonOfInterest[];
+  /** List of assets */
+  assets?: IAsset[];
   /** Locations of interest that play a role in the scenario */
   locations: ILocation[];
   /** Persons that can login, and play one of more roles, such as editors, stakeholders, role players */

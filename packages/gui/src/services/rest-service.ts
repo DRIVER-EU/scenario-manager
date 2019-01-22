@@ -1,6 +1,7 @@
 import m from 'mithril';
 import { IChannelDefinition, messageBus } from './message-bus-service';
 import { TopicNames } from '../models/channels';
+import { IAsset } from '../models';
 
 const log = console.log;
 const error = console.error;
@@ -170,6 +171,20 @@ export class RestService<T extends { id?: string }> {
   public new() {
     this.setCurrent({} as T);
     return this.current;
+  }
+
+  protected async getAssets(id = this.current.id) {
+    return m
+      .request<IAsset[]>({
+        method: 'GET',
+        url: this.baseUrl + id + '/assets',
+        withCredentials,
+      })
+      .then(result => {
+        log(`Got assets.`);
+        return result;
+      })
+      .catch(err => error(err));
   }
 
   private setCurrent(value: T) {
