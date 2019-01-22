@@ -49,74 +49,69 @@ export const ObjectiveForm = () => {
       return m(
         '.row',
         { style: 'color: black' },
-        m('form.col.s12', [
-          m(
-            '.objectives-form',
-            objective
-              ? [
-                  m('h4', [
-                    m(Icon, {
-                      iconName: 'my_location',
-                      style: 'margin-right: 12px;',
-                    }),
-                    `${objective.parentId ? 'Secondary' : 'Main'} objective`,
-                  ]),
-                  [
-                    m(TextInput, {
-                      id: 'title',
-                      initialValue: objective.title,
-                      onchange: (v: string) => (objective.title = v),
-                      label: 'Title',
-                      iconName: 'title',
-                      contentClass: 'active',
-                    }),
-                    m(TextArea, {
-                      id: 'desc',
-                      initialValue: objective.description,
-                      onchange: (v: string) => (objective.description = v),
-                      label: 'Description',
-                      iconName: 'description',
-                      contentClass: 'active',
-                    }),
-                    options
-                      ? m(Select, {
-                          placeholder: 'Select stakeholders',
-                          multiple: true,
-                          iconName: 'group',
-                          label: 'Stakeholders',
-                          checkedId: objective.stakeholderIds,
-                          isMandatory: true,
-                          options,
-                          onchange: (values?: unknown) => {
-                            if (values && values instanceof Array) {
-                              objective.stakeholderIds = values;
-                            }
-                          },
-                        })
-                      : undefined,
-                  ],
-                  m('row', [
-                    m(Button, {
-                      iconName: 'undo',
-                      class: `green ${hasChanged ? '' : 'disabled'}`,
-                      onclick: () => (state.objective = deepCopy(state.original)),
-                    }),
-                    ' ',
-                    m(Button, {
-                      iconName: 'save',
-                      class: `green ${hasChanged ? '' : 'disabled'}`,
-                      onclick: onsubmit,
-                    }),
-                    ' ',
-                    m(Button, {
-                      iconName: 'delete',
-                      class: 'red',
-                      onclick: () => ScenarioSvc.deleteObjective(objective),
-                    }),
-                  ]),
-                ]
-              : []
-          ),
+        m('.col.s12', [
+          objective
+            ? [
+                m('h4', [
+                  m(Icon, {
+                    iconName: 'my_location',
+                    style: 'margin-right: 12px;',
+                  }),
+                  `${objective.parentId ? 'Secondary' : 'Main'} objective`,
+                ]),
+                [
+                  m(TextInput, {
+                    id: 'title',
+                    initialValue: objective.title,
+                    onchange: (v: string) => (objective.title = v),
+                    label: 'Title',
+                    iconName: 'title',
+                  }),
+                  m(TextArea, {
+                    id: 'desc',
+                    initialValue: objective.description,
+                    onchange: (v: string) => (objective.description = v),
+                    label: 'Description',
+                    iconName: 'description',
+                  }),
+                  options
+                    ? m(Select, {
+                        placeholder: 'Select stakeholders',
+                        multiple: true,
+                        iconName: 'group',
+                        label: 'Stakeholders',
+                        checkedId: objective.stakeholderIds,
+                        isMandatory: true,
+                        options,
+                        onchange: (values?: unknown) => {
+                          if (values && values instanceof Array) {
+                            objective.stakeholderIds = values;
+                          }
+                        },
+                      })
+                    : undefined,
+                ],
+                m('row', [
+                  m(Button, {
+                    iconName: 'undo',
+                    class: `green ${hasChanged ? '' : 'disabled'}`,
+                    onclick: () => (state.objective = deepCopy(state.original)),
+                  }),
+                  ' ',
+                  m(Button, {
+                    iconName: 'save',
+                    class: `green ${hasChanged ? '' : 'disabled'}`,
+                    onclick: onsubmit,
+                  }),
+                  ' ',
+                  m(Button, {
+                    iconName: 'delete',
+                    class: 'red',
+                    onclick: () => ScenarioSvc.deleteObjective(objective),
+                  }),
+                ]),
+              ]
+            : [],
         ])
       );
     },
