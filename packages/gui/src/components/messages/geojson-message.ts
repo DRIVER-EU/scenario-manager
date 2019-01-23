@@ -14,8 +14,10 @@ export interface IGeoJsonMessage {
 export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   const scenario = ScenarioSvc.getCurrent();
   const assets = scenario ? scenario.assets || [] : [];
-  const options = assets.map(a => ({ id: a.id, label: a.alias || a.filename }));
-  console.warn(options);
+  const options = assets
+    .filter(a => a.mimetype === 'application/json' || a.filename.indexOf('json') >= 0)
+    .map(a => ({ id: a.id, label: a.alias || a.filename }));
+
   return {
     view: ({ attrs: { inject } }) => {
       const pm = getMessage(inject, InjectType.GEOJSON_MESSAGE) as IGeoJsonMessage;
@@ -43,7 +45,7 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
           checkedId: pm.assetId,
           options,
           onchange: (v: unknown) => {
-            pm.assetId = v as number;
+            pm.assetId = +(v as number);
           },
         }),
       ];
