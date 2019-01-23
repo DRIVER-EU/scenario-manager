@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { IInject, InjectLevel, InjectState, InjectConditionType, IInjectCondition } from '../../models';
 import { Select, NumberInput, ISelectOption, Icon, TimePicker } from 'mithril-materialized';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 import { padLeft } from '../../utils';
 
 /*
@@ -69,7 +69,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
       const injects =
         condition.injectLevel === InjectLevel.INJECT
           ? []
-          : (ScenarioSvc.getInjects() || [])
+          : (TrialSvc.getInjects() || [])
               .filter(i => i.level === condition.injectLevel && i.id !== id)
               .map(i => ({ id: i.id, label: `"${i.title}"` }));
 
@@ -92,7 +92,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
               {
                 id: InjectConditionType.AT_TIME,
                 label: 'at',
-                disabled: !ScenarioSvc.getCurrent() || !ScenarioSvc.getCurrent().startDate,
+                disabled: !TrialSvc.getCurrent() || !TrialSvc.getCurrent().startDate,
               },
             ],
             onchange: (v: unknown) => (condition.delayType = +(v as number)),
@@ -160,14 +160,14 @@ const StartAt: FactoryComponent<{ condition: IInjectCondition }> = () => {
   return {
     view: ({ attrs: { condition } }) => {
       const { delay = 0, delayUnitType = 'seconds' } = condition;
-      const scenario = ScenarioSvc.getCurrent();
-      if (!scenario) {
+      const trial = TrialSvc.getCurrent();
+      if (!trial) {
         return;
       }
       const sec = delayUnitType === 'seconds' ? 1 : delayUnitType === 'minutes' ? 60 : 3600;
       const delayInSeconds = delay * sec;
-      const scenarioStart = scenario.startDate || new Date();
-      const atTime = new Date(scenarioStart.getTime() + delayInSeconds * 1000);
+      const trialStart = trial.startDate || new Date();
+      const atTime = new Date(trialStart.getTime() + delayInSeconds * 1000);
       return m(TimePicker, {
         contentClass: 'inline',
         initialValue: `${padLeft(atTime.getHours(), 2)}:${padLeft(atTime.getMinutes(), 2)}`,
@@ -182,7 +182,7 @@ const StartAt: FactoryComponent<{ condition: IInjectCondition }> = () => {
           const hrs = +match[1];
           const min = +match[2];
           const newTime = new Date(new Date(atTime).setHours(hrs, min, 0)).getTime();
-          const oldTime = scenarioStart.getTime();
+          const oldTime = trialStart.getTime();
           const dtInSec = (newTime - oldTime) / 1000;
           if (dtInSec < 0) {
             console.warn('Cannot start before the scenario starts!');

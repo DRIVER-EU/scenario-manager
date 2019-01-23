@@ -1,38 +1,38 @@
 import m from 'mithril';
 import { Button, TextArea, TextInput } from 'mithril-materialized';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 import { deepCopy, deepEqual } from '../../utils';
 import { DateTimeControl } from './date-time-control';
-import { IScenario } from '../../models';
+import { ITrial } from '../../models';
 
 const log = console.log;
 const close = async (e: UIEvent) => {
   log('closing...');
-  await ScenarioSvc.unload();
+  await TrialSvc.unload();
   m.route.set('/');
   e.preventDefault();
 };
 
 export const ScenarioForm = () => {
   const state = {
-    scenario: {} as IScenario,
+    scenario: {} as ITrial,
   };
   const onsubmit = async (e: MouseEvent) => {
     log('submitting...');
     e.preventDefault();
     if (state.scenario) {
-      await ScenarioSvc.saveScenario(state.scenario);
-      state.scenario = deepCopy(ScenarioSvc.getCurrent());
+      await TrialSvc.saveTrial(state.scenario);
+      state.scenario = deepCopy(TrialSvc.getCurrent());
     }
   };
   return {
     oninit: () => {
       log('On INIT');
       log(state);
-      const scenario = ScenarioSvc.getCurrent();
+      const scenario = TrialSvc.getCurrent();
       if (!scenario || !scenario.id) {
         log('On INIT: NEW');
-        state.scenario = deepCopy(ScenarioSvc.new());
+        state.scenario = deepCopy(TrialSvc.new());
       } else {
         state.scenario = deepCopy(scenario);
       }
@@ -45,7 +45,7 @@ export const ScenarioForm = () => {
         endDate.setHours(startDate.getHours() + 6);
         scenario.endDate = endDate;
       }
-      const hasChanged = !deepEqual(scenario, ScenarioSvc.getCurrent());
+      const hasChanged = !deepEqual(scenario, TrialSvc.getCurrent());
       return m(
         '.row.scenario-form',
         { style: 'color: black' },
@@ -92,7 +92,7 @@ export const ScenarioForm = () => {
                 label: 'Undo',
                 iconName: 'undo',
                 class: `green ${hasChanged ? '' : 'disabled'}`,
-                onclick: () => (state.scenario = deepCopy(ScenarioSvc.getCurrent())),
+                onclick: () => (state.scenario = deepCopy(TrialSvc.getCurrent())),
               }),
               ' ',
               m(Button, {
@@ -113,7 +113,7 @@ export const ScenarioForm = () => {
                 iconName: 'delete',
                 class: 'red',
                 onclick: (e: UIEvent) => {
-                  ScenarioSvc.delete(scenario.id);
+                  TrialSvc.delete(scenario.id);
                   close(e);
                 },
               }),

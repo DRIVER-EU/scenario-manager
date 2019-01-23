@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { Button, Icon, Dropdown, Select } from 'mithril-materialized';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 import { TopicNames, injectsChannel, IInject, InjectLevel, IInjectGroup, InjectType } from '../../models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages/message-form';
@@ -20,7 +20,7 @@ export const InjectsForm = () => {
     }),
   };
 
-  const getParent = (id: string) => (ScenarioSvc.getInjects() || []).filter(o => o.id === id).shift();
+  const getParent = (id: string) => (TrialSvc.getInjects() || []).filter(o => o.id === id).shift();
 
   return {
     onbeforeremove: () => {
@@ -34,10 +34,10 @@ export const InjectsForm = () => {
         e.preventDefault();
         log('submitting...');
         if (inject) {
-          ScenarioSvc.updateInject(inject);
+          TrialSvc.updateInject(inject);
         }
       };
-      const objectives = [{ id: '', title: 'Pick one' }, ...(ScenarioSvc.getObjectives() || [])].map(o => ({
+      const objectives = [{ id: '', title: 'Pick one' }, ...(TrialSvc.getObjectives() || [])].map(o => ({
         id: o.id,
         label: o.title,
       }));
@@ -112,7 +112,7 @@ export const InjectsForm = () => {
                     m(Button, {
                       iconName: 'delete',
                       class: 'red',
-                      onclick: () => ScenarioSvc.delete(inject.id),
+                      onclick: () => TrialSvc.delete(inject.id),
                     }),
                   ]),
                 ])

@@ -2,7 +2,7 @@ import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, Switch } from 'mithril-materialized';
 import { IInject, InjectType } from '../../models';
 import { getMessage } from '../../utils';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 
 export interface IGeoJsonMessage {
   /** Should be the same ID as the inject.id */
@@ -12,8 +12,8 @@ export interface IGeoJsonMessage {
 }
 
 export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
-  const scenario = ScenarioSvc.getCurrent();
-  const assets = scenario ? scenario.assets || [] : [];
+  const trial = TrialSvc.getCurrent();
+  const assets = trial ? trial.assets || [] : [];
   const options = assets
     .filter(a => a.mimetype === 'application/json' || a.filename.indexOf('json') >= 0)
     .map(a => ({ id: a.id, label: a.alias || a.filename }));

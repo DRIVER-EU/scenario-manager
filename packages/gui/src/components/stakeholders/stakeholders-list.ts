@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { StakeholdersForm } from './stakeholders-form';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 import { IStakeholder, stakeholdersChannel, TopicNames } from '../../models';
 import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
 import { uniqueId } from '../../utils';
@@ -16,7 +16,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
   return {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
-      const stakeholders = ScenarioSvc.getStakeholders(state.filterValue);
+      const stakeholders = TrialSvc.getStakeholders(state.filterValue);
       return m('.row', [
         m(TextInput, {
           label: 'Filter',
@@ -52,7 +52,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
                           ? m(
                               'p',
                               cur.contactIds
-                                .map(id => ScenarioSvc.getUserById(id))
+                                .map(id => TrialSvc.getUserById(id))
                                 .map(c => c && c.name)
                                 .join(', ')
                             )
@@ -73,7 +73,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
               name: 'New stakeholder',
             } as IStakeholder;
             state.curStakeholderId = sh.id;
-            await ScenarioSvc.createStakeholder(sh);
+            await TrialSvc.createStakeholder(sh);
           },
         }),
       ]);

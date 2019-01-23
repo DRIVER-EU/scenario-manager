@@ -2,7 +2,7 @@ import m, { Component } from 'mithril';
 import { TextInput } from 'mithril-materialized';
 import { unflatten, titleAndDescriptionFilter } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 import { TopicNames, objectiveChannel, IObjective } from '../../models';
 
 export const ObjectivesList = () => {
@@ -25,7 +25,7 @@ export const ObjectivesList = () => {
     onSelect: (ti, isSelected) => objectiveSelected(ti as IObjective, isSelected),
     onBeforeCreate: ti => {
       console.log(`On before create ${ti.title}`);
-      ScenarioSvc.createObjective(ti as IObjective);
+      TrialSvc.createObjective(ti as IObjective);
     },
     onCreate: ti => {
       console.log(`On create ${ti.title}`);
@@ -35,7 +35,7 @@ export const ObjectivesList = () => {
     onBeforeDelete: ti => console.log(`On before delete ${ti.title}`),
     onDelete: async ti => {
       console.log(`On delete ${ti.title}`);
-      ScenarioSvc.deleteObjective(ti as IObjective);
+      TrialSvc.deleteObjective(ti as IObjective);
     },
     onBeforeUpdate: (ti, action, newParent) =>
       console.log(`On before ${action} update ${ti.title} to ${newParent ? newParent.title : ''}.`),
@@ -44,7 +44,7 @@ export const ObjectivesList = () => {
       if (!ti.parentId) {
         ti.parentId = '';
       }
-      ScenarioSvc.updateObjective(ti as IObjective);
+      TrialSvc.updateObjective(ti as IObjective);
     },
     create: (parent?: IObjective) => {
       const item = {
@@ -67,7 +67,7 @@ export const ObjectivesList = () => {
     oninit: () => {
       console.log('Oninit objectives-view called...');
       const loadObjectives = async () => {
-        const scenario = ScenarioSvc.getCurrent();
+        const scenario = TrialSvc.getCurrent();
         state.scenarioId = scenario.id;
       };
       state.subscription = objectiveChannel.subscribe(TopicNames.LIST, m.redraw);
@@ -78,7 +78,7 @@ export const ObjectivesList = () => {
     },
     view: () => {
       const query = titleAndDescriptionFilter(state.filterValue);
-      const objectives = ScenarioSvc.getObjectives();
+      const objectives = TrialSvc.getObjectives();
       const filteredObjectives = objectives && objectives.filter(query);
       const tree = unflatten(filteredObjectives);
       return m('.row.objectives-list', [

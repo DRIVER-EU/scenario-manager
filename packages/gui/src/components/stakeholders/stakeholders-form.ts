@@ -1,14 +1,14 @@
 import m from 'mithril';
 import { TextInput, TextArea, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
-import { IScenario, IStakeholder, TopicNames, stakeholdersChannel } from '../../models';
+import { ITrial, IStakeholder, TopicNames, stakeholdersChannel } from '../../models';
 import { deepCopy, deepEqual } from '../../utils';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 
 const log = console.log;
 
 export const StakeholdersForm = () => {
   const state = {
-    scenario: undefined as IScenario | undefined,
+    trial: undefined as ITrial | undefined,
     stakeholder: undefined as IStakeholder | undefined,
     original: undefined as IStakeholder | undefined,
     subscription: stakeholdersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
@@ -24,14 +24,14 @@ export const StakeholdersForm = () => {
 
   return {
     oninit: () => {
-      state.scenario = ScenarioSvc.getCurrent();
+      state.trial = TrialSvc.getCurrent();
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();
     },
     view: () => {
       const { stakeholder } = state;
-      const users = ScenarioSvc.getUsers();
+      const users = TrialSvc.getUsers();
       const options = users
         ? users.map(u => ({
             id: u.id,
@@ -43,7 +43,7 @@ export const StakeholdersForm = () => {
         e.preventDefault();
         log('submitting...');
         if (stakeholder) {
-          ScenarioSvc.updateStakeholder(stakeholder);
+          TrialSvc.updateStakeholder(stakeholder);
         }
       };
       return m(
@@ -121,8 +121,8 @@ export const StakeholdersForm = () => {
                       {
                         label: 'OK',
                         onclick: async () => {
-                          await ScenarioSvc.deleteStakeholder(stakeholder);
-                          const stakeholders = ScenarioSvc.getStakeholders();
+                          await TrialSvc.deleteStakeholder(stakeholder);
+                          const stakeholders = TrialSvc.getStakeholders();
                           const cur = stakeholders && stakeholders.length > 0 ? stakeholders[0] : undefined;
                           if (cur) {
                             stakeholdersChannel.publish(TopicNames.ITEM_SELECT, { cur });

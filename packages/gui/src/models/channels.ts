@@ -1,5 +1,5 @@
 import { messageBus } from '../services/message-bus-service';
-import { IScenario, IObjective, IInject, IPerson, IStakeholder } from '.';
+import { ITrial, IObjective, IInject, IPerson, IStakeholder } from '.';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
@@ -26,7 +26,7 @@ export const TopicNames = {
   LIST_UPDATE: 'LIST.UPDATE',
 };
 
-export const scenarioChannel = messageBus.channel<{ cur: IScenario; old?: IScenario }>(
+export const scenarioChannel = messageBus.channel<{ cur: ITrial; old?: ITrial }>(
   ChannelNames.SCENARIO
 );
 

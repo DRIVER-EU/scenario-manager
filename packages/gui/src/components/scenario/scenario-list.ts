@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextInput, RoundIconButton } from 'mithril-materialized';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 import { titleAndDescriptionFilter } from '../../utils';
 
 export const ScenarioList = () => {
@@ -8,9 +8,9 @@ export const ScenarioList = () => {
     filterValue: undefined as string | undefined,
   };
   return {
-    oninit: () => ScenarioSvc.loadList(),
+    oninit: () => TrialSvc.loadList(),
     view: () => {
-      const scenarios = ScenarioSvc.getList();
+      const scenarios = TrialSvc.getList();
       const query = titleAndDescriptionFilter(state.filterValue);
       const filteredScenarios = scenarios.filter(query);
       return m('.scenario-list', [
@@ -21,7 +21,7 @@ export const ScenarioList = () => {
             href: '/new_scenario',
             oncreate: m.route.link,
             onclick: () => {
-              ScenarioSvc.new();
+              TrialSvc.new();
             },
           }),
           m(TextInput, {
@@ -45,7 +45,7 @@ export const ScenarioList = () => {
                     {
                       onclick: () => {
                         console.log('Set scenario to ' + scenario.title);
-                        return ScenarioSvc.load(scenario.id);
+                        return TrialSvc.load(scenario.id);
                       },
                     },
                     scenario.title || 'Untitled'

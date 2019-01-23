@@ -2,7 +2,7 @@ import m, { Vnode, Component } from 'mithril';
 import { Icon, TextInput } from 'mithril-materialized';
 import { unflatten, titleAndDescriptionFilter, getInjectIcon } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 import { TopicNames, injectsChannel, IInject, InjectLevel } from '../../models';
 
 export const InjectsList = () => {
@@ -25,7 +25,7 @@ export const InjectsList = () => {
     onSelect: (ti, isSelected) => injectSelected(ti as IInject, isSelected),
     onBeforeCreate: ti => {
       console.log(`On before create ${ti.title}`);
-      ScenarioSvc.createInject(ti as IInject)
+      TrialSvc.createInject(ti as IInject)
         .then(() => true)
         .catch(e => {
           console.error(e);
@@ -38,7 +38,7 @@ export const InjectsList = () => {
     onBeforeDelete: ti => console.log(`On before delete ${ti.title}`),
     onDelete: async ti => {
       console.log(`On delete ${ti.title}`);
-      await ScenarioSvc.deleteInject(ti.id);
+      await TrialSvc.deleteInject(ti.id);
     },
     onBeforeUpdate: (ti, action, newParent) =>
       console.log(`On before ${action} update ${ti.title} to ${newParent ? newParent.title : ''}.`),
@@ -47,7 +47,7 @@ export const InjectsList = () => {
       if (!ti.parentId) {
         ti.parentId = '';
       }
-      ScenarioSvc.updateInject(ti as IInject);
+      TrialSvc.updateInject(ti as IInject);
     },
     create: (parent?: IInject, depth?: number) => {
       const itemFactory: () => Partial<IInject> = () => {
@@ -63,7 +63,7 @@ export const InjectsList = () => {
       };
       return {
         ...itemFactory(),
-        scenarioId: ScenarioSvc.getCurrent().id,
+        scenarioId: TrialSvc.getCurrent().id,
       } as ITreeItem;
     },
     maxDepth: 2,
@@ -79,7 +79,7 @@ export const InjectsList = () => {
     oninit: () => {
       console.log('Oninit objectives-view called...');
       const loadStorylines = async () => {
-        const scenario = ScenarioSvc.getCurrent();
+        const scenario = TrialSvc.getCurrent();
         state.scenarioId = scenario.id;
       };
       loadStorylines();
@@ -89,7 +89,7 @@ export const InjectsList = () => {
     },
     view: () => {
       const query = titleAndDescriptionFilter(state.filterValue);
-      const injects = ScenarioSvc.getInjects();
+      const injects = TrialSvc.getInjects();
       const filteredInjects = injects && injects.filter(query);
       // console.log(objectives.map(o => o.title).join('\n'));
       const tree = unflatten(filteredInjects);

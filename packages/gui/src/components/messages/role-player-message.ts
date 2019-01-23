@@ -2,7 +2,7 @@ import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
 import { IInject, InjectType, UserRole } from '../../models';
 import { getMessage } from './../../utils/utils';
-import { ScenarioSvc } from './../../services/scenario-service';
+import { TrialSvc } from './../../services/scenario-service';
 
 export interface IRolePlayerMessage {
   /** Should be the same ID as the inject.id */
@@ -23,7 +23,7 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () =
   return {
     view: ({ attrs: { inject } }) => {
       const rpm = getMessage(inject, InjectType.ROLE_PLAYER_MESSAGE) as IRolePlayerMessage;
-      const rolePlayers = (ScenarioSvc.getUsers() || [])
+      const rolePlayers = (TrialSvc.getUsers() || [])
         .filter(u => u.role === UserRole.ROLE_PLAYER)
         .map(rp => ({ id: rp.id, label: rp.name }));
 

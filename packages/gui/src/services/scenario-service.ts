@@ -1,16 +1,16 @@
 import { RestService } from './rest-service';
 import { ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models/channels';
-import { IScenario } from '../models/scenario';
+import { ITrial } from '../models/scenario';
 import { IObjective, IPerson, IStakeholder, IInject, IAsset } from '../models';
 import { uniqueId } from '../utils';
 import { UserRole } from '../models/user-role';
 
-class ScenarioService extends RestService<IScenario> {
+class TrialService extends RestService<ITrial> {
   constructor() {
     super('scenarios', ChannelNames.SCENARIO);
   }
 
-  public load(id?: string): Promise<IScenario> {
+  public load(id?: string): Promise<ITrial> {
     return super.load(id).then(async (s) => {
       s.startDate = s.startDate ? new Date(s.startDate) : new Date();
       s.endDate = s.endDate ? new Date(s.endDate) : new Date();
@@ -34,7 +34,7 @@ class ScenarioService extends RestService<IScenario> {
     });
   }
 
-  public async saveScenario(s: IScenario = this.current) {
+  public async saveTrial(s: ITrial = this.current) {
     s.updatedDate = new Date();
     return super.save(s);
   }
@@ -57,21 +57,21 @@ class ScenarioService extends RestService<IScenario> {
       objective.id = uniqueId();
       objectives.push(objective);
     }
-    await this.saveScenario();
+    await this.saveTrial();
   }
 
   public async updateObjective(objective: IObjective) {
     if (this.current) {
       this.current.objectives = this.current.objectives.map(o => (o.id === objective.id ? objective : o));
     }
-    await this.saveScenario();
+    await this.saveTrial();
   }
 
   public async deleteObjective(objective: IObjective) {
     if (this.current) {
       this.current.objectives = this.current.objectives.filter(o => o.id !== objective.id);
     }
-    await this.saveScenario();
+    await this.saveTrial();
   }
 
   /** USERS */
@@ -101,7 +101,7 @@ class ScenarioService extends RestService<IScenario> {
       user.id = user.id || uniqueId();
       users.push(user);
     }
-    await this.saveScenario();
+    await this.saveTrial();
     usersChannel.publish(TopicNames.ITEM_CREATE, { cur: user });
   }
 
@@ -109,7 +109,7 @@ class ScenarioService extends RestService<IScenario> {
     if (this.current) {
       this.current.users = this.current.users.map(u => (u.id === user.id ? user : u));
     }
-    await this.saveScenario();
+    await this.saveTrial();
     usersChannel.publish(TopicNames.ITEM_UPDATE, { cur: user });
   }
 
@@ -122,7 +122,7 @@ class ScenarioService extends RestService<IScenario> {
         }
       });
     }
-    await this.saveScenario();
+    await this.saveTrial();
     usersChannel.publish(TopicNames.ITEM_DELETE, { cur: user });
   }
 
@@ -167,7 +167,7 @@ class ScenarioService extends RestService<IScenario> {
       sh.id = sh.id || uniqueId();
       stakeholders.push(sh);
     }
-    await this.saveScenario();
+    await this.saveTrial();
     stakeholdersChannel.publish(TopicNames.ITEM_CREATE, { cur: sh });
   }
 
@@ -175,7 +175,7 @@ class ScenarioService extends RestService<IScenario> {
     if (this.current) {
       this.current.stakeholders = this.current.stakeholders.map(s => (s.id === sh.id ? sh : s));
     }
-    await this.saveScenario();
+    await this.saveTrial();
     stakeholdersChannel.publish(TopicNames.ITEM_UPDATE, { cur: sh });
   }
 
@@ -188,7 +188,7 @@ class ScenarioService extends RestService<IScenario> {
         }
       });
     }
-    await this.saveScenario();
+    await this.saveTrial();
     stakeholdersChannel.publish(TopicNames.ITEM_DELETE, { cur: sh });
   }
 
@@ -213,7 +213,7 @@ class ScenarioService extends RestService<IScenario> {
       i.id = i.id || uniqueId();
       injects.push(i);
     }
-    await this.saveScenario();
+    await this.saveTrial();
     injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: i });
   }
 
@@ -221,7 +221,7 @@ class ScenarioService extends RestService<IScenario> {
     if (this.current) {
       this.current.injects = this.current.injects.map(s => (s.id === i.id ? i : s));
     }
-    await this.saveScenario();
+    await this.saveTrial();
     injectsChannel.publish(TopicNames.ITEM_UPDATE, { cur: i });
   }
 
@@ -234,9 +234,9 @@ class ScenarioService extends RestService<IScenario> {
       //   }
       // });
     }
-    await this.saveScenario();
+    await this.saveTrial();
     injectsChannel.publish(TopicNames.ITEM_DELETE, { cur: i });
   }
 }
 
-export const ScenarioSvc = new ScenarioService();
+export const TrialSvc = new TrialService();

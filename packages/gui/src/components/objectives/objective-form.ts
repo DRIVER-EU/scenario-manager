@@ -1,14 +1,14 @@
 import m from 'mithril';
 import { TextInput, TextArea, Select, Button, Icon } from 'mithril-materialized';
-import { IScenario, IObjective, TopicNames, objectiveChannel } from '../../models';
+import { ITrial, IObjective, TopicNames, objectiveChannel } from '../../models';
 import { deepCopy, deepEqual } from '../../utils';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 
 const log = console.log;
 
 export const ObjectiveForm = () => {
   const state = {
-    scenario: undefined as IScenario | undefined,
+    trial: undefined as ITrial | undefined,
     parent: undefined as IObjective | undefined,
     objective: undefined as IObjective | undefined,
     original: undefined as IObjective | undefined,
@@ -19,11 +19,11 @@ export const ObjectiveForm = () => {
     }),
   };
 
-  const getParent = (id: string) => (ScenarioSvc.getObjectives() || []).filter(o => o.id === id).shift();
+  const getParent = (id: string) => (TrialSvc.getObjectives() || []).filter(o => o.id === id).shift();
 
   return {
     oninit: () => {
-      state.scenario = ScenarioSvc.getCurrent();
+      state.trial = TrialSvc.getCurrent();
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();
@@ -31,7 +31,7 @@ export const ObjectiveForm = () => {
     view: () => {
       const objective = state.objective;
       const hasChanged = !deepEqual(objective, state.original);
-      const stakeholders = ScenarioSvc.getStakeholders();
+      const stakeholders = TrialSvc.getStakeholders();
       const options = stakeholders
         ? stakeholders.map(u => ({
             id: u.id,
@@ -43,7 +43,7 @@ export const ObjectiveForm = () => {
         log('submitting...');
         if (objective) {
           objectiveChannel.publish(TopicNames.ITEM_UPDATE, { cur: objective });
-          ScenarioSvc.updateObjective(objective);
+          TrialSvc.updateObjective(objective);
         }
       };
       return m(
@@ -107,7 +107,7 @@ export const ObjectiveForm = () => {
                   m(Button, {
                     iconName: 'delete',
                     class: 'red',
-                    onclick: () => ScenarioSvc.deleteObjective(objective),
+                    onclick: () => TrialSvc.deleteObjective(objective),
                   }),
                 ]),
               ]

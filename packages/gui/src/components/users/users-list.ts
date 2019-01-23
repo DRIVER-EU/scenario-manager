@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { UsersForm } from './users-form';
 import { IPerson } from '../../models';
-import { ScenarioSvc } from '../../services/scenario-service';
+import { TrialSvc } from '../../services/scenario-service';
 import { usersChannel, TopicNames } from '../../models/channels';
 import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
 import { uniqueId } from '../../utils';
@@ -18,7 +18,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
   return {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
-      const users = ScenarioSvc.getUsers(state.filterValue);
+      const users = TrialSvc.getUsers(state.filterValue);
       return m('.row', [
         m(TextInput, {
           label: 'Filter',
@@ -46,11 +46,11 @@ const UsersList: FactoryComponent<IPerson> = () => {
                       },
                       [
                         m(Icon, {
-                          iconName: ScenarioSvc.userIcon(cur),
+                          iconName: TrialSvc.userIcon(cur),
                           class: 'circle yellow black-text',
                         }),
                         m('span.title', cur.name),
-                        m('p', ScenarioSvc.userRoleToString(cur.role)),
+                        m('p', TrialSvc.userRoleToString(cur.role)),
                       ]
                     )
                   )
@@ -68,7 +68,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
               role: UserRole.VIEWER,
             } as IPerson;
             state.currentUserId = user.id;
-            await ScenarioSvc.createUser(user);
+            await TrialSvc.createUser(user);
           },
         }),
       ]);

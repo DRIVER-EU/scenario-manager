@@ -1,14 +1,14 @@
 import m from 'mithril';
 import { TextInput, TextArea, EmailInput, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
-import { IScenario, IPerson, UserRole, TopicNames, usersChannel } from '../../models';
+import { ITrial, IPerson, UserRole, TopicNames, usersChannel } from '../../models';
 import { deepCopy, deepEqual, iterEnum } from '../../utils';
-import { ScenarioSvc } from '../../services';
+import { TrialSvc } from '../../services';
 
 const log = console.log;
 
 export const UsersForm = () => {
   const state = {
-    scenario: undefined as IScenario | undefined,
+    trial: undefined as ITrial | undefined,
     user: undefined as IPerson | undefined,
     original: undefined as IPerson | undefined,
     subscription: usersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
@@ -24,7 +24,7 @@ export const UsersForm = () => {
 
   return {
     oninit: () => {
-      state.scenario = ScenarioSvc.getCurrent();
+      state.trial = TrialSvc.getCurrent();
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();
@@ -36,7 +36,7 @@ export const UsersForm = () => {
         e.preventDefault();
         log('submitting...');
         if (user) {
-          ScenarioSvc.updateUser(user);
+          TrialSvc.updateUser(user);
         }
       };
       return m(
@@ -64,13 +64,13 @@ export const UsersForm = () => {
                       iconName: 'account_circle',
                     }),
                     m(Select, {
-                      iconName: ScenarioSvc.userIcon(user),
+                      iconName: TrialSvc.userIcon(user),
                       label: 'Role',
                       checkedId: user.role,
                       isMandatory: true,
                       options: iterEnum(UserRole).map(r => ({
                         id: +r,
-                        label: ScenarioSvc.userRoleToString(+r),
+                        label: TrialSvc.userRoleToString(+r),
                       })),
                       onchange: (id: unknown) => (user.role = +(id as number)),
                     }),
@@ -130,8 +130,8 @@ export const UsersForm = () => {
                       {
                         label: 'OK',
                         onclick: async () => {
-                          await ScenarioSvc.deleteUser(user);
-                          const contacts = ScenarioSvc.getUsers();
+                          await TrialSvc.deleteUser(user);
+                          const contacts = TrialSvc.getUsers();
                           const cur = contacts && contacts.length > 0 ? contacts[0] : undefined;
                           if (cur) {
                             usersChannel.publish(TopicNames.ITEM_SELECT, { cur });

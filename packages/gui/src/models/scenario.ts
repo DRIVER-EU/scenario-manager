@@ -11,7 +11,7 @@ import {
   IAsset,
 } from '.';
 
-export interface IScenario extends IContent {
+export interface ITrial extends IContent {
   /** When does the scenario start */
   startDate?: Date;
   /** When does the scenario end */
