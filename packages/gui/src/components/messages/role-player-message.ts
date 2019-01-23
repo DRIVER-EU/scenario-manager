@@ -1,8 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
 import { IInject, InjectType, UserRole } from '../../models';
-import { getMessage } from './../../utils/utils';
-import { TrialSvc } from './../../services/scenario-service';
+import { getMessage } from './../../utils';
+import { TrialSvc } from '../../services';
 
 export interface IRolePlayerMessage {
   /** Should be the same ID as the inject.id */

@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { UsersForm } from './users-form';
 import { IPerson } from '../../models';
-import { TrialSvc } from '../../services/scenario-service';
+import { TrialSvc } from '../../services';
 import { usersChannel, TopicNames } from '../../models/channels';
 import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
 import { uniqueId } from '../../utils';

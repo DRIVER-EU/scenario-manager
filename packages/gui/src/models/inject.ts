@@ -1,10 +1,5 @@
 import { IContent } from '.';
 
-export interface IInjectGroup extends IInject {
-  mainObjectiveId?: string;
-  secondaryObjectiveId?: string;
-}
-
 export enum InjectType {
   ROLE_PLAYER_MESSAGE = 'ROLE_PLAYER_MESSAGE',
   PHASE_MESSAGE = 'PHASE_MESSAGE',
@@ -91,4 +86,16 @@ export interface IInject extends IContent {
     /** Key is the the same as the InjectType */
     [key: string]: unknown;
   };
+}
+
+export interface IInjectGroup extends IInject {
+  mainObjectiveId?: string;
+  secondaryObjectiveId?: string;
+}
+
+export interface IScenario extends IInjectGroup {
+  /** When does the scenario start */
+  startDate?: Date;
+  /** When does the scenario end */
+  endDate?: Date;
 }

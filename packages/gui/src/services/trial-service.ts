@@ -1,6 +1,6 @@
 import { RestService } from './rest-service';
 import { ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models/channels';
-import { ITrial } from '../models/scenario';
+import { ITrial } from '../models/trial';
 import { IObjective, IPerson, IStakeholder, IInject, IAsset } from '../models';
 import { uniqueId } from '../utils';
 import { UserRole } from '../models/user-role';

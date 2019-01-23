@@ -2,7 +2,7 @@ import m from 'mithril';
 import { Button, TextArea, TextInput } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
 import { deepCopy, deepEqual } from '../../utils';
-import { DateTimeControl } from './date-time-control';
+import { DateTimeControl } from '../ui/date-time-control';
 import { ITrial } from '../../models';
 
 const log = console.log;
