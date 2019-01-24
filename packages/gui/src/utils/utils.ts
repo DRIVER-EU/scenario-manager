@@ -8,7 +8,7 @@ import { IContent, InjectLevel, IInject, InjectType } from '../models';
  */
 export const uniqueId = () => {
   // tslint:disable-next-line:no-bitwise
-  return 'idxxxxxxxx'.replace(/[x]/g, () => ((Math.random() * 16) | 0).toString(16));
+  return 'id_xxxxxxxx'.replace(/[x]/g, () => ((Math.random() * 16) | 0).toString(16));
 };
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
@@ -126,6 +126,8 @@ export const getInjectIcon = (type?: InjectLevel) => {
       return 'colorize';
     case InjectLevel.ACT:
       return 'call_to_action'; // 'chat';
+    case InjectLevel.SCENARIO:
+      return 'art_track';
     default:
       return 'import_contacts';
   }

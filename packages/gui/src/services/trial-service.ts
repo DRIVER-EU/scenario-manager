@@ -225,6 +225,7 @@ class TrialService extends RestService<ITrial> {
     injectsChannel.publish(TopicNames.ITEM_UPDATE, { cur: i });
   }
 
+  // TODO Delete inject, including all children
   public async deleteInject(i: IInject) {
     if (this.current) {
       this.current.injects = this.current.injects.filter(s => s.id !== i.id);

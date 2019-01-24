@@ -1,27 +1,31 @@
 import m from 'mithril';
 import { TextInput, RoundIconButton } from 'mithril-materialized';
-import { TrialSvc } from '../../services';
+import { TrialSvc, dashboardSvc } from '../../services';
 import { titleAndDescriptionFilter } from '../../utils';
+import { ITrial } from '../../models';
+import { Dashboards } from '../../models/dashboards';
 
-export const ScenarioList = () => {
+export const TrialList = () => {
   const state = {
     filterValue: undefined as string | undefined,
   };
   return {
     oninit: () => TrialSvc.loadList(),
     view: () => {
-      const scenarios = TrialSvc.getList();
+      const trials = TrialSvc.getList();
       const query = titleAndDescriptionFilter(state.filterValue);
-      const filteredScenarios = scenarios.filter(query);
+      const filteredScenarios = trials.filter(query);
       return m('.scenario-list', [
         m('.row', [
           m(RoundIconButton, {
             iconName: 'add',
             class: 'green input-field right',
-            href: '/new_scenario',
-            oncreate: m.route.link,
             onclick: () => {
-              TrialSvc.new();
+              TrialSvc.new({
+                title: 'New trial',
+                createdDate: new Date(),
+              } as ITrial);
+              dashboardSvc.switchTo(Dashboards.TRIAL_INFO);
             },
           }),
           m(TextInput, {

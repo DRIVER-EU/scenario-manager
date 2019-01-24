@@ -168,8 +168,8 @@ export class RestService<T extends { id?: string }> {
       });
   }
 
-  public new() {
-    this.setCurrent({} as T);
+  public new(item?: T) {
+    this.setCurrent(item || {} as T);
     return this.current;
   }
 

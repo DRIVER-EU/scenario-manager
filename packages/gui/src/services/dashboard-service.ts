@@ -1,10 +1,10 @@
 import m, { RouteDefs, ComponentTypes } from 'mithril';
 import { IDashboard } from '../models/dashboard';
 import { ISubscriptionDefinition } from './message-bus-service';
-import { TopicNames, scenarioChannel } from '../models/channels';
+import { TopicNames, scenarioChannel as trialChannel } from '../models/channels';
 import { ObjectivesView } from '../components/objectives/objective-view';
-import { ScenarioForm } from '../components/trials/trial-form';
-import { ScenarioList } from '../components/trials/trial-list';
+import { TrialForm } from '../components/trials/trial-form';
+import { TrialList } from '../components/trials/trial-list';
 import { Layout } from '../components/layout';
 import { InjectsView } from '../components/injects/injects-view';
 import { Dashboards } from '../models/dashboards';
@@ -55,15 +55,15 @@ class DashboardService {
   }
 
   private subscribe() {
-    this.subscription = scenarioChannel.subscribe(TopicNames.ITEM_UPDATE, ({ cur }) => {
+    this.subscription = trialChannel.subscribe(TopicNames.ITEM_UPDATE, ({ cur }) => {
       if (cur) {
         this.setList(
           this.dashboards.map(d => {
-            d.visible = d.id !== Dashboards.NEW_SCENARIO;
+            // d.visible = d.id !== Dashboards.NEW_TRIAL;
             return d;
           })
         );
-        this.switchTo(Dashboards.SCENARIO);
+        this.switchTo(Dashboards.TRIAL);
       } else {
         this.setList(
           this.dashboards.map(d => {
@@ -84,22 +84,22 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     title: 'Home',
     route: '/home',
     visible: true,
-    component: ScenarioList,
+    component: TrialList,
   },
   {
-    id: Dashboards.SCENARIO,
+    id: Dashboards.TRIAL,
     title: 'Edit',
     route: '/edit',
     visible: false,
-    component: ScenarioForm,
+    component: TrialForm,
   },
   {
-    id: Dashboards.SCENARIO_INFO,
+    id: Dashboards.TRIAL_INFO,
     title: 'Info',
     route: '/edit/info',
     visible: false,
-    component: ScenarioForm,
-    level: Dashboards.SCENARIO,
+    component: TrialForm,
+    level: Dashboards.TRIAL,
   },
   {
     id: Dashboards.USERS,
@@ -107,7 +107,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/edit/users',
     visible: false,
     component: UsersView,
-    level: Dashboards.SCENARIO,
+    level: Dashboards.TRIAL,
   },
   {
     id: Dashboards.STAKEHOLDERS,
@@ -115,7 +115,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/edit/stakeholders',
     visible: false,
     component: StakeholdersView,
-    level: Dashboards.SCENARIO,
+    level: Dashboards.TRIAL,
   },
   {
     id: Dashboards.OBJECTIVES,
@@ -123,7 +123,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/edit/objectives',
     visible: false,
     component: ObjectivesView,
-    level: Dashboards.SCENARIO,
+    level: Dashboards.TRIAL,
   },
   {
     id: Dashboards.OBJECTIVES,
@@ -131,7 +131,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/edit/storylines',
     visible: false,
     component: InjectsView,
-    level: Dashboards.SCENARIO,
+    level: Dashboards.TRIAL,
   },
   {
     id: Dashboards.EXECUTE,

@@ -9,7 +9,7 @@ export const ObjectivesList = () => {
   const state = {
     selected: undefined as IObjective | undefined,
     filterValue: '' as string | undefined,
-    scenarioId: '' as string | undefined,
+    trialId: '' as string | undefined,
     subscription: objectiveChannel.subscribe(TopicNames.LIST, m.redraw),
   };
 
@@ -67,8 +67,8 @@ export const ObjectivesList = () => {
     oninit: () => {
       console.log('Oninit objectives-view called...');
       const loadObjectives = async () => {
-        const scenario = TrialSvc.getCurrent();
-        state.scenarioId = scenario.id;
+        const trial = TrialSvc.getCurrent();
+        state.trialId = trial.id;
       };
       state.subscription = objectiveChannel.subscribe(TopicNames.LIST, m.redraw);
       loadObjectives();

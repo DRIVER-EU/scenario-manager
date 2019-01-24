@@ -9,7 +9,7 @@ export const InjectsList = () => {
   const state = {
     selected: undefined as IInject | undefined,
     filterValue: '' as string | undefined,
-    scenarioId: '' as string | undefined,
+    trialId: '' as string | undefined,
     subscription: injectsChannel.subscribe(TopicNames.LIST, m.redraw),
   };
 
@@ -52,10 +52,12 @@ export const InjectsList = () => {
     create: (parent?: IInject, depth?: number) => {
       const itemFactory: () => Partial<IInject> = () => {
         if (!parent) {
-          return { title: 'New storyline', level: InjectLevel.STORYLINE };
+          return { title: 'New scenario', level: InjectLevel.SCENARIO };
         }
         switch (depth) {
           case 0:
+            return { title: 'New storyline', level: InjectLevel.STORYLINE, parentId: parent.id };
+          case 1:
             return { title: 'New act', level: InjectLevel.ACT, parentId: parent.id };
           default:
             return { title: 'New inject', level: InjectLevel.INJECT, parentId: parent.id };
@@ -63,10 +65,11 @@ export const InjectsList = () => {
       };
       return {
         ...itemFactory(),
+        // TODO remove?
         scenarioId: TrialSvc.getCurrent().id,
       } as ITreeItem;
     },
-    maxDepth: 2,
+    maxDepth: 3,
     editable: { canCreate: true, canDelete: true, canUpdate: true, canDeleteParent: false },
   } as ITreeOptions;
 
@@ -78,11 +81,11 @@ export const InjectsList = () => {
   return {
     oninit: () => {
       console.log('Oninit objectives-view called...');
-      const loadStorylines = async () => {
-        const scenario = TrialSvc.getCurrent();
-        state.scenarioId = scenario.id;
+      const loadScenarios = async () => {
+        const trial = TrialSvc.getCurrent();
+        state.trialId = trial.id;
       };
-      loadStorylines();
+      loadScenarios();
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();

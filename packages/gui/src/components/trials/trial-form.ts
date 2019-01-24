@@ -13,113 +13,105 @@ const close = async (e: UIEvent) => {
   e.preventDefault();
 };
 
-export const ScenarioForm = () => {
+export const TrialForm = () => {
   const state = {
-    scenario: {} as ITrial,
+    trial: {} as ITrial,
   };
   const onsubmit = async (e: MouseEvent) => {
     log('submitting...');
     e.preventDefault();
-    if (state.scenario) {
-      await TrialSvc.saveTrial(state.scenario);
-      state.scenario = deepCopy(TrialSvc.getCurrent());
+    if (state.trial) {
+      await TrialSvc.saveTrial(state.trial);
+      state.trial = deepCopy(TrialSvc.getCurrent());
     }
   };
   return {
     oninit: () => {
       log('On INIT');
       log(state);
-      const scenario = TrialSvc.getCurrent();
-      if (!scenario || !scenario.id) {
-        log('On INIT: NEW');
-        state.scenario = deepCopy(TrialSvc.new());
-      } else {
-        state.scenario = deepCopy(scenario);
-      }
+      const trial = TrialSvc.getCurrent();
+      state.trial = deepCopy(trial);
     },
     view: () => {
-      const { scenario } = state;
-      const startDate = scenario.startDate || new Date();
-      const endDate = scenario.endDate || new Date(startDate.valueOf());
-      if (!scenario.endDate) {
+      const { trial } = state;
+      const startDate = trial.startDate || new Date();
+      const endDate = trial.endDate || new Date(startDate.valueOf());
+      if (!trial.endDate) {
         endDate.setHours(startDate.getHours() + 6);
-        scenario.endDate = endDate;
+        trial.endDate = endDate;
       }
-      const hasChanged = !deepEqual(scenario, TrialSvc.getCurrent());
+      const hasChanged = !deepEqual(trial, TrialSvc.getCurrent());
       return m(
         '.row.scenario-form',
         { style: 'color: black' },
-        m(
-          'form.col.s12',
-          [
-            m('.row', [
-              [
-                m(TextInput, {
-                  id: 'title',
-                  initialValue: scenario.title,
-                  onchange: (v: string) => (scenario.title = v),
-                  label: 'Title',
-                  iconName: 'title',
-                }),
-                m(TextArea, {
-                  id: 'desc',
-                  initialValue: scenario.description,
-                  onchange: (v: string) => (scenario.description = v),
-                  label: 'Description',
-                  iconName: 'description',
-                }),
-                m(DateTimeControl, {
-                  prefix: 'Start',
-                  dt: startDate,
-                  onchange: (d: Date) => {
-                    state.scenario.startDate = d;
-                    m.redraw();
-                  },
-                }),
-                m(DateTimeControl, {
-                  prefix: 'End',
-                  icon: 'timer_off',
-                  dt: endDate,
-                  onchange: (d: Date) => {
-                    state.scenario.endDate = d;
-                    m.redraw();
-                  },
-                }),
-              ],
-            ]),
-            m('row', [
-              m(Button, {
-                label: 'Undo',
-                iconName: 'undo',
-                class: `green ${hasChanged ? '' : 'disabled'}`,
-                onclick: () => (state.scenario = deepCopy(TrialSvc.getCurrent())),
+        m('form.col.s12', [
+          m('.row', [
+            [
+              m(TextInput, {
+                id: 'title',
+                initialValue: trial.title,
+                onchange: (v: string) => (trial.title = v),
+                label: 'Title',
+                iconName: 'title',
               }),
-              ' ',
-              m(Button, {
-                label: 'Save',
-                iconName: 'save',
-                class: `green ${hasChanged ? '' : 'disabled'}`,
-                onclick: onsubmit,
+              m(TextArea, {
+                id: 'desc',
+                initialValue: trial.description,
+                onchange: (v: string) => (trial.description = v),
+                label: 'Description',
+                iconName: 'description',
               }),
-              ' ',
-              m(Button, {
-                label: 'Close',
-                iconName: 'close',
-                onclick: (e: UIEvent) => close(e),
-              }),
-              ' ',
-              m(Button, {
-                label: 'Delete',
-                iconName: 'delete',
-                class: 'red',
-                onclick: (e: UIEvent) => {
-                  TrialSvc.delete(scenario.id);
-                  close(e);
+              m(DateTimeControl, {
+                prefix: 'Start',
+                dt: startDate,
+                onchange: (d: Date) => {
+                  state.trial.startDate = d;
+                  m.redraw();
                 },
               }),
-            ]),
-          ]
-        )
+              m(DateTimeControl, {
+                prefix: 'End',
+                icon: 'timer_off',
+                dt: endDate,
+                onchange: (d: Date) => {
+                  state.trial.endDate = d;
+                  m.redraw();
+                },
+              }),
+            ],
+          ]),
+          m('row', [
+            m(Button, {
+              label: 'Undo',
+              iconName: 'undo',
+              class: `green ${hasChanged ? '' : 'disabled'}`,
+              onclick: () => (state.trial = deepCopy(TrialSvc.getCurrent())),
+            }),
+            ' ',
+            m(Button, {
+              label: 'Save',
+              iconName: 'save',
+              class: `green ${hasChanged ? '' : 'disabled'}`,
+              onclick: onsubmit,
+            }),
+            ' ',
+            m(Button, {
+              label: 'Close',
+              iconName: 'close',
+              onclick: (e: UIEvent) => close(e),
+            }),
+            ' ',
+            m(Button, {
+              label: 'Delete',
+              iconName: 'delete',
+              class: 'red',
+              onclick: (e: UIEvent) => {
+                TrialSvc.delete(trial.id);
+                close(e);
+              },
+            }),
+          ]),
+        ])
       );
     },
   };
