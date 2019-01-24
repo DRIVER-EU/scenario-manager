@@ -37,6 +37,9 @@ For acts and storylines, which are at the beginning of a sequence
 export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
   return {
     view: ({ attrs: { inject } }) => {
+      if (!inject.type) {
+        return;
+      }
       if (!inject.condition) {
         inject.condition = {
           delayType: InjectConditionType.IMMEDIATELY,
@@ -97,32 +100,33 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
             ],
             onchange: (v: unknown) => (condition.delayType = +(v as number)),
           }),
-          condition.delayType === InjectConditionType.AT_TIME ? m(StartAt, { condition }) :
-          [
-            m(Delay, { condition }),
-            m('span.inline', ' after the '),
-            m(Select, {
-              contentClass: 'inline small',
-              checkedId: condition.injectLevel,
-              options: levelOptions,
-              onchange: (v: unknown) => (condition.injectLevel = v as InjectLevel),
-            }),
-            condition.injectLevel === InjectLevel.INJECT || condition.injectLevel === InjectLevel.SCENARIO
-              ? undefined
-              : m(Select, {
-                  contentClass: 'inline large',
-                  checkedId: condition.levelId,
-                  options: injects,
-                  onchange: (v: unknown) => (condition.levelId = v as string),
+          condition.delayType === InjectConditionType.AT_TIME
+            ? m(StartAt, { condition })
+            : [
+                m(Delay, { condition }),
+                m('span.inline', ' after the '),
+                m(Select, {
+                  contentClass: 'inline small',
+                  checkedId: condition.injectLevel,
+                  options: levelOptions,
+                  onchange: (v: unknown) => (condition.injectLevel = v as InjectLevel),
                 }),
-            m('span.inline', ' has '),
-            m(Select, {
-              contentClass: 'inline small',
-              checkedId: condition.levelState,
-              options: levelStateOptions,
-              onchange: (v: unknown) => (condition.levelState = v as InjectState),
-            }),
-          ],
+                condition.injectLevel === InjectLevel.INJECT || condition.injectLevel === InjectLevel.SCENARIO
+                  ? undefined
+                  : m(Select, {
+                      contentClass: 'inline large',
+                      checkedId: condition.levelId,
+                      options: injects,
+                      onchange: (v: unknown) => (condition.levelId = v as string),
+                    }),
+                m('span.inline', ' has '),
+                m(Select, {
+                  contentClass: 'inline small',
+                  checkedId: condition.levelState,
+                  options: levelStateOptions,
+                  onchange: (v: unknown) => (condition.levelState = v as InjectState),
+                }),
+              ],
           m('span.inline', '.'),
         ])
       );

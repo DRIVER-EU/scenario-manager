@@ -20,6 +20,19 @@ const UsersList: FactoryComponent<IPerson> = () => {
     view: () => {
       const users = TrialSvc.getUsers(state.filterValue);
       return m('.row', [
+        m(RoundIconButton, {
+          iconName: 'person_add',
+          class: 'green right',
+          onclick: async () => {
+            const user = {
+              id: uniqueId(),
+              name: 'New user',
+              role: UserRole.VIEWER,
+            } as IPerson;
+            state.currentUserId = user.id;
+            await TrialSvc.createUser(user);
+          },
+        }),
         m(TextInput, {
           label: 'Filter',
           id: 'filter',
@@ -58,19 +71,6 @@ const UsersList: FactoryComponent<IPerson> = () => {
               )
             )
           : undefined,
-        m(RoundIconButton, {
-          iconName: 'person_add',
-          class: 'green right',
-          onclick: async () => {
-            const user = {
-              id: uniqueId(),
-              name: 'New user',
-              role: UserRole.VIEWER,
-            } as IPerson;
-            state.currentUserId = user.id;
-            await TrialSvc.createUser(user);
-          },
-        }),
       ]);
     },
   };

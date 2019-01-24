@@ -13,7 +13,9 @@ export const uniqueId = () => {
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
-  Object.keys(e).filter((v, i, arr) => i < arr.length / 2).map(k => +k);
+  Object.keys(e)
+    .filter((v, i, arr) => i < arr.length / 2)
+    .map(k => +k);
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.
@@ -93,11 +95,11 @@ export const deepCopy = <T>(target: T): T => {
  */
 export const titleAndDescriptionFilter = (filterValue?: string) => {
   filterValue = filterValue && filterValue.toLowerCase();
-  return (content: IContent) =>
-    !filterValue ||
-    !content.title ||
-    content.title.toLowerCase().indexOf(filterValue) >= 0 ||
-    (content.description && content.description.toLowerCase().indexOf(filterValue) >= 0);
+  return !filterValue
+    ? () => true
+    : (content: IContent) =>
+        (content.title && content.title.toLowerCase().indexOf(filterValue as string) >= 0) ||
+        (content.description && content.description.toLowerCase().indexOf(filterValue as string) >= 0);
 };
 
 export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boolean => {

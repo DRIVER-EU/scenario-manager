@@ -10,4 +10,6 @@ export enum UserRole {
   ROLE_PLAYER = 3,
   /** A viewer is all the others */
   VIEWER = 4,
+  /** A participant in the trial */
+  PARTICIPANT = 5,
 }

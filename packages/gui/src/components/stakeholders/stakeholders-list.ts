@@ -18,6 +18,18 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
     view: () => {
       const stakeholders = TrialSvc.getStakeholders(state.filterValue);
       return m('.row', [
+        m(RoundIconButton, {
+          iconName: 'add',
+          class: 'green right',
+          onclick: async () => {
+            const sh = {
+              id: uniqueId(),
+              name: 'New stakeholder',
+            } as IStakeholder;
+            state.curStakeholderId = sh.id;
+            await TrialSvc.createStakeholder(sh);
+          },
+        }),
         m(TextInput, {
           label: 'Filter',
           id: 'filter',
@@ -64,18 +76,6 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
               )
             )
           : undefined,
-        m(RoundIconButton, {
-          iconName: 'add',
-          class: 'green right',
-          onclick: async () => {
-            const sh = {
-              id: uniqueId(),
-              name: 'New stakeholder',
-            } as IStakeholder;
-            state.curStakeholderId = sh.id;
-            await TrialSvc.createStakeholder(sh);
-          },
-        }),
       ]);
     },
   };
