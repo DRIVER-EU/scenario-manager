@@ -8,10 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
   const options = new DocumentBuilder()
-    .setTitle('Scenario manager service')
-    .setDescription('The scenario manager API description')
+    .setTitle('Trial manager service')
+    .setDescription('The Trial manager API description')
     .setVersion('0.1')
-    .addTag('Scenario manager service')
+    .addTag('Trial manager service')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
@@ -22,10 +22,10 @@ async function bootstrap() {
     // or whatever crash reporting service you use
   });
 
-  const port = process.env.SCENARIO_MANAGER_SERVER_PORT || 3000;
+  const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3000;
   await app.listen(port, () => {
     console.log(
-      `SCENARIO_MANAGER_REST_SERVICE is listening on port ${port}. Swagger documentation is available at 'http://localhost:${port}/api'.`,
+      `TRIAL_MANAGER_SERVER_PORT is listening on port ${port}. Swagger documentation is available at 'http://localhost:${port}/api'.`,
     );
   });
 

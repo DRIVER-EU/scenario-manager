@@ -1,6 +1,4 @@
-import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
-
-export interface IScenarioOverview {
+export interface ITrialOverview {
   /** Refers to the filename on disk */
   id: string;
   /** Title of the scenario */
@@ -15,13 +13,13 @@ export interface IScenarioOverview {
 }
 
 /** Brief summary of a scenario, the information you see before downloading */
-export class ScenarioOverview implements IScenarioOverview {
-  constructor(scenario: IScenarioOverview) {
-    this.id = scenario.id;
-    this.title = scenario.title;
-    this.description = scenario.description;
-    this.creationDate = scenario.creationDate;
-    this.lastEdit = scenario.lastEdit;
+export class TrialOverview implements ITrialOverview {
+  constructor(trial: ITrialOverview) {
+    this.id = trial.id;
+    this.title = trial.title;
+    this.description = trial.description;
+    this.creationDate = trial.creationDate;
+    this.lastEdit = trial.lastEdit;
   }
 
   /** Refers to the filename on disk */

@@ -22,17 +22,18 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ScenarioOverview, IUploadedFile } from '../../models';
-import { ScenarioService } from './scenario.service';
+import { TrialOverview, IUploadedFile } from '../../models';
+import { TrialService } from './trial.service';
 
-@ApiUseTags('scenarios')
-@Controller('scenarios')
-export class ScenarioController {
+@ApiUseTags('trials')
+@Controller('trials')
+export class TrialController {
   constructor(
-    @Inject('ScenarioService')
-    private readonly scenarioService: ScenarioService,
+    @Inject('TrialService')
+    private readonly trialService: TrialService,
   ) {}
 
+  @ApiOperation({ title: 'Get trials' })
   @ApiImplicitQuery({
     name: 'take',
     required: false,
@@ -45,37 +46,41 @@ export class ScenarioController {
     description: 'How many items to skip (default 0)',
     type: Number,
   })
-  @ApiResponse({ status: 200, isArray: true, type: ScenarioOverview })
+  @ApiResponse({ status: 200, isArray: true, type: TrialOverview })
   @Get()
   findSome(@Query('skip') skip = 0, @Query('take') take = 25) {
-    return this.scenarioService.findSome(skip, take);
+    return this.trialService.findSome(skip, take);
   }
 
+  @ApiOperation({ title: 'Create a trial' })
   @Post()
-  async create(@Body() newScenario: ScenarioOverview) {
-    return this.scenarioService.create(newScenario);
+  async create(@Body() newTrial: TrialOverview) {
+    return this.trialService.create(newTrial);
   }
 
-  @ApiResponse({ status: 200, type: ScenarioOverview })
+  @ApiOperation({ title: 'Find a trial by id' })
+  @ApiResponse({ status: 200, type: TrialOverview })
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.scenarioService.findOne(id);
+    return this.trialService.findOne(id);
   }
 
-  @ApiResponse({ status: 200, type: ScenarioOverview })
+  @ApiOperation({ title: 'Update a trial by id' })
+  @ApiResponse({ status: 200, type: TrialOverview })
   @Put(':id')
-  async update(@Param('id') id: string, @Body() scenario: ScenarioOverview) {
-    return this.scenarioService.update(id, scenario);
+  async update(@Param('id') id: string, @Body() scenario: TrialOverview) {
+    return this.trialService.update(id, scenario);
   }
 
-  @ApiOperation({ title: 'Delete a scenario by id' })
+  @ApiOperation({ title: 'Delete a trial by id' })
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
-      this.scenarioService.remove(id);
+      this.trialService.remove(id);
     } catch {}
   }
 
+  @ApiOperation({ title: 'Add an asset to a trial' })
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiImplicitFile({
@@ -86,11 +91,13 @@ export class ScenarioController {
   @Post(':id/assets')
   async createAsset(
     @Param('id') id: string,
+    @Body('alias') alias: string,
     @UploadedFile() file: IUploadedFile,
   ) {
-    this.scenarioService.createAsset(id, file);
+    return this.trialService.createAsset(id, file, alias);
   }
 
+  @ApiOperation({ title: 'Update an asset to a trial' })
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiImplicitFile({
@@ -102,24 +109,26 @@ export class ScenarioController {
   async updateAsset(
     @Param('id') id: string,
     @Param('asset') assetId: string,
+    @Body('alias') alias: string,
     @UploadedFile() file: IUploadedFile,
   ) {
-    this.scenarioService.updateAsset(id, assetId, file);
+    return this.trialService.updateAsset(id, assetId, file, alias);
   }
 
-  @ApiOperation({ title: 'Get all scenario assets' })
+  @ApiOperation({ title: 'Get all trial assets' })
   @Get(':id/assets')
   async getAssets(@Param('id') id: string) {
-    return await this.scenarioService.getAssets(id);
+    return await this.trialService.getAssets(id);
   }
 
+  @ApiOperation({ title: 'Get a trial asset by ID' })
   @Get(':id/assets/:asset')
   async getAsset(
     @Res() res: Response,
     @Param('id') id: string,
     @Param('asset') assetId: string,
   ) {
-    const { data, mimetype, filename } = await this.scenarioService.getAsset(
+    const { data, mimetype, filename } = await this.trialService.getAsset(
       id,
       assetId,
     );
@@ -131,8 +140,9 @@ export class ScenarioController {
     res.end(data);
   }
 
+  @ApiOperation({ title: 'Delete a trial asset by ID' })
   @Delete(':id/assets/:asset')
   async removeAsset(@Param('id') id: string, @Param('asset') assetId: string) {
-    this.scenarioService.removeAsset(id, assetId);
+    this.trialService.removeAsset(id, assetId);
   }
 }

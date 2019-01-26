@@ -1,19 +1,19 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Database } from 'sqlite3';
-import { ScenarioOverview, IUploadedFile } from '../../models';
+import { TrialOverview, IUploadedFile } from '../../models';
 import { uniqueId, logError } from '../../utils';
 
-const SCENARIO = 'scenario';
+const TRIAL = 'trial';
 const EXT = '.sqlite3';
 const ASSETS = 'asset';
 
-const sortScenarioByLastEdit = (a: ScenarioOverview, b: ScenarioOverview) =>
+const sortTrialsByLastEdit = (a: TrialOverview, b: TrialOverview) =>
   a.lastEdit > b.lastEdit ? -1 : 1;
 
-export class ScenarioRepository {
+export class TrialRepository {
   private databases: { [id: string]: { db: Database; filename: string } } = {};
-  private overview: ScenarioOverview[] = [];
+  private overview: TrialOverview[] = [];
 
   constructor(private folder: string) {
     const dbs = this.openAllDatabases();
@@ -21,15 +21,15 @@ export class ScenarioRepository {
     this.closeAllDatabasesOnExit();
   }
 
-  get scenarioList() {
+  get trialList() {
     return this.overview;
   }
 
-  async openScenario(id: string) {
-    return this.getScenario(id);
+  async openTrial(id: string) {
+    return this.getTrial(id);
   }
 
-  async getScenarioFilename(id: string) {
+  async getTrialFilename(id: string) {
     return new Promise<string>((resolve, reject) => {
       const dbi = this.databases.hasOwnProperty(id) ? this.databases[id] : undefined;
       if (!dbi) {
@@ -39,17 +39,17 @@ export class ScenarioRepository {
     });
   }
 
-  async createScenario(scenario: ScenarioOverview) {
-    scenario.id = uniqueId();
+  async createTrial(trial: TrialOverview) {
+    trial.id = uniqueId();
     const now = new Date();
-    scenario.creationDate = scenario.lastEdit = now;
-    this.overview.push(new ScenarioOverview(scenario));
-    this.overview.sort(sortScenarioByLastEdit);
-    await this.createDb(scenario);
-    return scenario;
+    trial.creationDate = trial.lastEdit = now;
+    this.overview.push(new TrialOverview(trial));
+    this.overview.sort(sortTrialsByLastEdit);
+    await this.createDb(trial);
+    return trial;
   }
 
-  async updateScenario(id: string, scenario: ScenarioOverview) {
+  async updateTrial(id: string, trial: TrialOverview) {
     return new Promise((resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
         ? this.databases[id].db
@@ -58,25 +58,25 @@ export class ScenarioRepository {
         reject(`Database with id ${id} does not exist!`);
       }
       const now = new Date();
-      scenario.lastEdit = now;
+      trial.lastEdit = now;
       db.get(
-        `UPDATE ${SCENARIO} SET data = ?`,
-        JSON.stringify(scenario),
+        `UPDATE ${TRIAL} SET data = ?`,
+        JSON.stringify(trial),
         err => {
           if (err) {
             console.error(err);
             return reject(err);
           }
           this.overview = this.overview.filter(s => s.id !== id);
-          this.overview.push(new ScenarioOverview(scenario));
-          this.overview.sort(sortScenarioByLastEdit);
+          this.overview.push(new TrialOverview(trial));
+          this.overview.sort(sortTrialsByLastEdit);
           resolve();
         },
       );
     });
   }
 
-  async removeScenario(id: string) {
+  async removeTrial(id: string) {
     return new Promise((resolve, reject) => {
       if (!this.databases.hasOwnProperty(id)) {
         return reject(`Error, no database with ID ${id} exists!`);
@@ -116,11 +116,12 @@ export class ScenarioRepository {
         return reject(`Error, no database with id ${id} found!`);
       }
       db.all(
-        `SELECT id, mimetype, filename FROM ${ASSETS}`,
+        `SELECT id, alias, mimetype, filename FROM ${ASSETS}`,
         (
           err: Error,
           row: Array<{
             id: number;
+            alias: string;
             mimetype: string;
             filename: string;
           }>,
@@ -149,12 +150,13 @@ export class ScenarioRepository {
         return reject(`Error, no database with id ${id} found!`);
       }
       db.get(
-        `SELECT id, mimetype, filename, data FROM ${ASSETS} WHERE id=?`,
+        `SELECT id, alias, mimetype, filename, data FROM ${ASSETS} WHERE id=?`,
         assetId,
         (
           err: Error,
           row: {
             id: number;
+            alias: string;
             mimetype: string;
             data: Uint8Array;
             filename: string;
@@ -170,7 +172,7 @@ export class ScenarioRepository {
     });
   }
 
-  async createAsset(id: string, file: IUploadedFile) {
+  async createAsset(id: string, file: IUploadedFile, alias: string) {
     return new Promise<number>(async (resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
         ? this.databases[id].db
@@ -186,7 +188,8 @@ export class ScenarioRepository {
       }
       const { originalname, mimetype, buffer } = file;
       db.run(
-        `INSERT INTO ${ASSETS}(filename, mimetype, data) VALUES(?, ?, ?)`,
+        `INSERT INTO ${ASSETS}(alias, filename, mimetype, data) VALUES(?, ?, ?, ?)`,
+        alias,
         originalname,
         mimetype,
         buffer,
@@ -195,7 +198,7 @@ export class ScenarioRepository {
     });
   }
 
-  async updateAsset(id: string, assetId: string | number, file: IUploadedFile) {
+  async updateAsset(id: string, assetId: string | number, file: IUploadedFile, alias: string) {
     return new Promise(async (resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
         ? this.databases[id].db
@@ -205,7 +208,8 @@ export class ScenarioRepository {
       }
       const { originalname, mimetype, buffer } = file;
       db.run(
-        `UPDATE ${ASSETS} SET filename = ?, mimetype = ?, data = ? WHERE id = ?`,
+        `UPDATE ${ASSETS} SET alias = ?, filename = ?, mimetype = ?, data = ? WHERE id = ?`,
+        alias,
         originalname,
         mimetype,
         buffer,
@@ -241,11 +245,11 @@ export class ScenarioRepository {
 
   /** Get an absolute path to the SQLITE database */
   private toFilename(id: string) {
-    return path.resolve(this.folder, `${SCENARIO}_${id}${EXT}`);
+    return path.resolve(this.folder, `${TRIAL}_${id}${EXT}`);
   }
 
-  private async getScenario(id: string | Database) {
-    return new Promise<ScenarioOverview>((resolve, reject) => {
+  private async getTrial(id: string | Database) {
+    return new Promise<TrialOverview>((resolve, reject) => {
       const db =
         typeof id === 'string'
           ? this.databases.hasOwnProperty(id)
@@ -255,7 +259,7 @@ export class ScenarioRepository {
       if (!db) {
         reject(`Database with id ${id} does not exist!`);
       }
-      db.get(`SELECT data FROM ${SCENARIO}`, (err, row) => {
+      db.get(`SELECT data FROM ${TRIAL}`, (err, row) => {
         if (err) {
           console.error(err);
           return reject(err);
@@ -278,24 +282,24 @@ export class ScenarioRepository {
   }
 
   private async createOverview(dbs: Array<{ db: Database; filename: string }>) {
-    const scenarios = await Promise.all<ScenarioOverview>(
+    const trials = await Promise.all<TrialOverview>(
       dbs.reduce((acc, db) => {
-        const scenario = this.getScenario(db.db);
-        acc.push(scenario);
+        const trial = this.getTrial(db.db);
+        acc.push(trial);
         return acc;
       }, []),
     );
-    this.databases = scenarios.reduce((acc, s, i) => {
+    this.databases = trials.reduce((acc, s, i) => {
       acc[s.id] = dbs[i];
       return acc;
     }, {});
-    scenarios.sort(sortScenarioByLastEdit);
-    console.log(`${scenarios.length} scenarios loaded...`);
-    this.overview = scenarios.map(s => new ScenarioOverview(s));
+    trials.sort(sortTrialsByLastEdit);
+    console.log(`${trials.length} scenarios loaded...`);
+    this.overview = trials.map(s => new TrialOverview(s));
   }
 
-  private async createDb(scenario: ScenarioOverview) {
-    const { id } = scenario;
+  private async createDb(trial: TrialOverview) {
+    const { id } = trial;
     return new Promise((resolve, reject) => {
       if (this.databases.hasOwnProperty(id)) {
         return reject(
@@ -309,16 +313,17 @@ export class ScenarioRepository {
       const db = new Database(filename, logError);
       this.databases[id] = { db, filename };
       db.serialize(() => {
-        db.run(`CREATE TABLE ${SCENARIO} (data TEXT)`, logError);
+        db.run(`CREATE TABLE ${TRIAL} (data TEXT)`, logError);
         db.run(
-          `INSERT INTO ${SCENARIO}(data) VALUES(?)`,
-          JSON.stringify(scenario),
+          `INSERT INTO ${TRIAL}(data) VALUES(?)`,
+          JSON.stringify(trial),
           logError,
         );
 
         db.run(
           `CREATE TABLE ${ASSETS} (
           id INTEGER PRIMARY KEY,
+          alias TEXT,
           filename TEXT,
           mimetype TEXT,
           data BLOB

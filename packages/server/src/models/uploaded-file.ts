@@ -1,4 +1,5 @@
 export interface IUploadedFile {
+  alias?: string;
   fieldname: string;
   mimetype: string;
   originalname: string;
