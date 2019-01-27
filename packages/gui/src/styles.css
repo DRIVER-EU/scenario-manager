@@ -12,6 +12,10 @@
   display: table;
 }
 
+body {
+  overflow-y: hidden;
+}
+
 .main {
   padding: 10px;
 }
@@ -161,4 +165,12 @@ span.inline {
 }
 .input-field.inline.large {
   width: 160px;
+}
+.row.sb {
+  height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.row.sb.large {
+  height: 84vh;
 }

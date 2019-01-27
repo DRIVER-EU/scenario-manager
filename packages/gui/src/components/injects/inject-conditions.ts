@@ -50,7 +50,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
         } as IInjectCondition;
       }
       const { level, id, condition } = inject;
-      const levelOptions = [] as ISelectOption[];
+      const levelOptions = [] as Array<ISelectOption<string>>;
       if (level === InjectLevel.INJECT) {
         condition.injectLevel = InjectLevel.INJECT;
         levelOptions.push({ id: InjectLevel.INJECT, label: 'previous', disabled: true });
@@ -62,7 +62,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
         levelOptions.push({ id: InjectLevel.STORYLINE, label: 'storyline' });
         levelOptions.push({ id: InjectLevel.SCENARIO, label: 'scenario' });
       }
-      const levelStateOptions: ISelectOption[] =
+      const levelStateOptions: Array<ISelectOption<string>> =
         condition.injectLevel !== InjectLevel.SCENARIO ? [{ id: InjectState.EXECUTED, label: 'finished' }] : [];
       levelStateOptions.push({
         id: InjectState.SCHEDULED,

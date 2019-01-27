@@ -17,29 +17,31 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
       const stakeholders = TrialSvc.getStakeholders(state.filterValue);
-      return m('.row', [
-        m(RoundIconButton, {
-          iconName: 'add',
-          class: 'green right',
-          onclick: async () => {
-            const sh = {
-              id: uniqueId(),
-              name: 'New stakeholder',
-            } as IStakeholder;
-            state.curStakeholderId = sh.id;
-            await TrialSvc.createStakeholder(sh);
-          },
-        }),
-        m(TextInput, {
-          label: 'Filter',
-          id: 'filter',
-          iconName: 'filter_list',
-          onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-          contentClass: 'right',
-        }),
+      return [
+        m('.row', [
+          m(RoundIconButton, {
+            iconName: 'add',
+            class: 'green right',
+            onclick: async () => {
+              const sh = {
+                id: uniqueId(),
+                name: 'New stakeholder',
+              } as IStakeholder;
+              state.curStakeholderId = sh.id;
+              await TrialSvc.createStakeholder(sh);
+            },
+          }),
+          m(TextInput, {
+            label: 'Filter',
+            id: 'filter',
+            iconName: 'filter_list',
+            onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+            contentClass: 'right',
+          }),
+        ]),
         stakeholders
           ? m(
-              '.row',
+              '.row.sb',
               m(
                 '.col.s12',
                 m(
@@ -76,7 +78,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
               )
             )
           : undefined,
-      ]);
+      ];
     },
   };
 };

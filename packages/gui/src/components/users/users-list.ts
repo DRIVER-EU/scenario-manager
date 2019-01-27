@@ -18,31 +18,33 @@ const UsersList: FactoryComponent<IPerson> = () => {
   return {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
-      const users = TrialSvc.getUsers(state.filterValue);
-      return m('.row', [
-        m(RoundIconButton, {
-          iconName: 'person_add',
-          class: 'green right',
-          onclick: async () => {
-            const user = {
-              id: uniqueId(),
-              name: 'New user',
-              role: UserRole.VIEWER,
-            } as IPerson;
-            state.currentUserId = user.id;
-            await TrialSvc.createUser(user);
-          },
-        }),
-        m(TextInput, {
-          label: 'Filter',
-          id: 'filter',
-          iconName: 'filter_list',
-          onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-          contentClass: 'right',
-        }),
-        users
+      const users = (TrialSvc.getUsers(state.filterValue) || []).sort((a, b) => (a.name > b.name ? 1 : -1));
+      return [
+        m('.row', [
+          m(RoundIconButton, {
+            iconName: 'person_add',
+            class: 'green right',
+            onclick: async () => {
+              const user = {
+                id: uniqueId(),
+                name: 'New user',
+                role: UserRole.VIEWER,
+              } as IPerson;
+              state.currentUserId = user.id;
+              await TrialSvc.createUser(user);
+            },
+          }),
+          m(TextInput, {
+            label: 'Filter',
+            id: 'filter',
+            iconName: 'filter_list',
+            onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+            contentClass: 'right',
+          }),
+        ]),
+        users.length > 0
           ? m(
-              '.row',
+              '.row.sb',
               m(
                 '.col.s12',
                 m(
@@ -51,6 +53,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
                     m(
                       'li.collection-item avatar',
                       {
+                        style: 'cursor: pointer;',
                         class: state.currentUserId === cur.id ? 'active' : undefined,
                         onclick: () => {
                           usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
@@ -71,7 +74,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
               )
             )
           : undefined,
-      ]);
+      ];
     },
   };
 };

@@ -13,7 +13,7 @@ export interface IGeoJsonMessage {
 
 export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   const trial = TrialSvc.getCurrent();
-  const assets = trial ? trial.assets || [] : [];
+  const assets = TrialSvc.assets;
   const options = assets
     .filter(a => a.mimetype === 'application/json' || a.filename.indexOf('json') >= 0)
     .map(a => ({ id: a.id, label: a.alias || a.filename }));
