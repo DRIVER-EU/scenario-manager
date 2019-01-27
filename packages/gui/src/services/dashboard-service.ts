@@ -10,6 +10,7 @@ import { InjectsView } from '../components/injects/injects-view';
 import { Dashboards } from '../models/dashboards';
 import { UsersView } from '../components/users/users-list';
 import { StakeholdersView } from '../components/stakeholders/stakeholders-list';
+import { AssetsView } from '../components/assets';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -99,6 +100,14 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/edit/info',
     visible: false,
     component: TrialForm,
+    level: Dashboards.TRIAL,
+  },
+  {
+    id: Dashboards.ASSETS,
+    title: 'Assets',
+    route: '/edit/assets',
+    visible: false,
+    component: AssetsView,
     level: Dashboards.TRIAL,
   },
   {

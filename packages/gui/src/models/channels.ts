@@ -1,5 +1,5 @@
 import { messageBus } from '../services/message-bus-service';
-import { ITrial, IObjective, IInject, IPerson, IStakeholder } from '.';
+import { ITrial, IObjective, IInject, IPerson, IStakeholder, IAsset } from '.';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
@@ -8,6 +8,7 @@ export const ChannelNames = {
   USERS: 'USERS',
   STAKEHOLDERS: 'STAKEHOLDERS',
   LOCATIONS: 'LOCATIONS',
+  ASSETS: 'ASSETS',
   POI: 'POI',
   OOI: 'OOI',
   INJECT: 'INJECT',
@@ -44,4 +45,8 @@ export const usersChannel = messageBus.channel<{ cur: IPerson; old?: IPerson }>(
 
 export const stakeholdersChannel = messageBus.channel<{ cur: IStakeholder; old?: IStakeholder }>(
   ChannelNames.STAKEHOLDERS
+);
+
+export const assetsChannel = messageBus.channel<{ cur: IAsset; old?: IAsset }>(
+  ChannelNames.ASSETS
 );
