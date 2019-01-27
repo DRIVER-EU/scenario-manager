@@ -249,14 +249,29 @@ class TrialService extends RestService<ITrial> {
   }
 
   /** Create or update an asset */
-  public async saveAsset(asset: IAsset, fd?: FormData) {
+  public async saveAsset(asset?: IAsset, files?: FileList) {
+    const files2formData = () => {
+      if (asset && files && files.length > 0) {
+        const data = new FormData();
+        const file = files[0];
+        asset.filename = file.name;
+        asset.mimetype = file.type;
+        if (asset.id) {
+          data.append('id', asset.id.toString());
+        }
+        data.append('file', file);
+        data.append('alias', asset.alias || '');
+        data.append('filename', asset.filename || '');
+        return data;
+      }
+    };
     if (!asset || !this.assetSvc) {
       return;
     }
+    const fd = files2formData();
     const cur = await this.assetSvc.save(asset, fd);
     if (!cur) { return; }
     this.assetSvc.addUrl(cur);
-    assetsChannel.publish(TopicNames.ITEM_UPDATE, { cur });
   }
 
   /** Delete an asset */

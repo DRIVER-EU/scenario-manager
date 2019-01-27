@@ -24,23 +24,7 @@ export const AssetsForm = () => {
   const onsubmit = (e: UIEvent) => {
     e.preventDefault();
     const { asset, files } = state;
-    if (files) {
-      if (!asset) { return; }
-      const fd = new FormData();
-      const file = files[0];
-      asset.filename = file.name;
-      asset.mimetype = file.type;
-      fd.append('file', file);
-      if (asset.id) {
-        fd.append('id', asset.id.toString());
-      }
-      fd.append('alias', asset.alias || '');
-      fd.append('filename', asset.alias || '');
-      TrialSvc.saveAsset(asset, fd);
-      assetsChannel.publish(TopicNames.ITEM_UPDATE, { cur: asset });
-    } else if (asset) {
-      TrialSvc.saveAsset(asset);
-    }
+    TrialSvc.saveAsset(asset, files);
   };
 
   return {
