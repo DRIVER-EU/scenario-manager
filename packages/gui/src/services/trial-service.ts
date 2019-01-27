@@ -272,6 +272,7 @@ class TrialService extends RestService<ITrial> {
     const cur = await this.assetSvc.save(asset, fd);
     if (!cur) { return; }
     this.assetSvc.addUrl(cur);
+    return cur;
   }
 
   /** Delete an asset */

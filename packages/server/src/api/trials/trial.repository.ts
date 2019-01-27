@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Database } from 'sqlite3';
 import { TrialOverview, IUploadedFile } from '../../models';
-import { uniqueId, logError } from '../../utils';
+import { uniqueId, logError, dbCallbackWrapper } from '../../utils';
 
 const TRIAL = 'trial';
 const EXT = '.sqlite3';
@@ -173,31 +173,31 @@ export class TrialRepository {
   }
 
   async createAsset(id: string, file?: IUploadedFile, alias?: string) {
-    return new Promise<number>(async (resolve, reject) => {
-      if (!file) {
-        return reject(`Error, no file attached!`);
-      }
-      const db = this.databases.hasOwnProperty(id)
-        ? this.databases[id].db
-        : undefined;
-      if (!db) {
-        return reject(`Error, no database with id ${id} found!`);
-      }
-      const { originalname, mimetype, buffer } = file;
-      db.run(
-        `INSERT INTO ${ASSETS}(alias, filename, mimetype, data) VALUES(?, ?, ?, ?)`,
-        alias,
-        originalname,
-        mimetype,
-        buffer,
-        (err: Error) => {
-          if (err) {
-            return reject(err.message);
-          }
-          resolve();
-        },
-      );
-    });
+    return new Promise<{ alias: string; filename: string; mimetype: string }>(
+      async (resolve, reject) => {
+        if (!file) {
+          return reject(`Error, no file attached!`);
+        }
+        const db = this.databases.hasOwnProperty(id)
+          ? this.databases[id].db
+          : undefined;
+        if (!db) {
+          return reject(`Error, no database with id ${id} found!`);
+        }
+        const { originalname, mimetype, buffer } = file;
+        db.run(
+          `INSERT INTO ${ASSETS}(alias, filename, mimetype, data) VALUES(?, ?, ?, ?)`,
+          alias,
+          originalname,
+          mimetype,
+          buffer,
+          dbCallbackWrapper((rowId: number) => {
+            const asset = { id: rowId, alias, filename: originalname, mimetype };
+            resolve(asset);
+          }, reject),
+        );
+      },
+    );
   }
 
   async updateAsset(
@@ -206,43 +206,35 @@ export class TrialRepository {
     file?: IUploadedFile,
     alias?: string,
   ) {
-    return new Promise(async (resolve, reject) => {
-      const db = this.databases.hasOwnProperty(id)
-        ? this.databases[id].db
-        : undefined;
-      if (!db) {
-        return reject(`Error, no database with id ${id} found!`);
-      }
-      if (file) {
-        const { originalname, mimetype, buffer } = file;
-        db.run(
-          `UPDATE ${ASSETS} SET alias = ?, filename = ?, mimetype = ?, data = ? WHERE id = ?`,
-          alias,
-          originalname,
-          mimetype,
-          buffer,
-          assetId,
-          (err: Error) => {
-            if (err) {
-              return reject(err);
-            }
-            resolve();
-          },
-        );
-      } else {
-        db.run(
-          `UPDATE ${ASSETS} SET alias = ? WHERE id = ?`,
-          alias,
-          assetId,
-          (err: Error) => {
-            if (err) {
-              return reject(err);
-            }
-            resolve();
-          },
-        );
-      }
-    });
+    return new Promise(
+      async (resolve, reject) => {
+        const db = this.databases.hasOwnProperty(id)
+          ? this.databases[id].db
+          : undefined;
+        if (!db) {
+          return reject(`Error, no database with id ${id} found!`);
+        }
+        if (file) {
+          const { originalname, mimetype, buffer } = file;
+          db.run(
+            `UPDATE ${ASSETS} SET alias = ?, filename = ?, mimetype = ?, data = ? WHERE id = ?`,
+            alias,
+            originalname,
+            mimetype,
+            buffer,
+            assetId,
+            dbCallbackWrapper(resolve, reject),
+          );
+        } else {
+          db.run(
+            `UPDATE ${ASSETS} SET alias = ? WHERE id = ?`,
+            alias,
+            assetId,
+            dbCallbackWrapper(resolve, reject),
+          );
+        }
+      },
+    );
   }
 
   async removeAsset(id: string, assetId: number | string) {
@@ -253,12 +245,11 @@ export class TrialRepository {
       if (!db) {
         return reject(`Error, no database with id ${id} found!`);
       }
-      db.run(`DELETE FROM ${ASSETS} WHERE id=?`, assetId, (err: Error) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve();
-      });
+      db.run(
+        `DELETE FROM ${ASSETS} WHERE id=?`,
+        assetId,
+        dbCallbackWrapper(resolve, reject),
+      );
     });
   }
 

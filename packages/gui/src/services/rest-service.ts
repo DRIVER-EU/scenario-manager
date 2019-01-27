@@ -33,7 +33,6 @@ export class RestService<T extends { id?: string | number }> {
   }
 
   public async create(item: T, fd?: FormData) {
-    log(`Creating...`);
     try {
       const result = await m.request<T>({
         method: 'POST',
@@ -41,7 +40,6 @@ export class RestService<T extends { id?: string | number }> {
         data: fd || item,
         withCredentials,
       });
-      log(`Created with id: ${result.id}.`);
       this.setCurrent(result);
       this.addItemToList(this.current);
       return this.current;
@@ -52,7 +50,7 @@ export class RestService<T extends { id?: string | number }> {
 
   public async update(item: T, fd?: FormData) {
     try {
-      await m.request<T>({
+      await m.request({
         method: 'PUT',
         url: this.baseUrl + item.id,
         data: fd || item,
