@@ -9,16 +9,13 @@ const withCredentials = false;
 const apiService = 'http://localhost:3000';
 
 // export class RestService<T extends IBaseModel> {
-export class RestService<T extends { id?: string }> {
+export class RestService<T extends { id?: string | number }> {
   protected current: T = {} as T;
   protected list: T[] = [];
   protected baseUrl: string;
   protected channel: IChannelDefinition<{ list: T[] } | { cur: T; old: T }>;
 
-  constructor(
-    protected urlFragment: string,
-    protected channelName?: string
-  ) {
+  constructor(protected urlFragment: string, protected channelName?: string) {
     this.baseUrl = `${apiService}/${urlFragment}/`;
     this.channel = messageBus.channel(channelName || urlFragment);
   }
@@ -31,57 +28,57 @@ export class RestService<T extends { id?: string }> {
     return this.current;
   }
 
-  public save(item: T) {
-    return item.id ? this.update(item) : this.create(item);
+  public save(item: T, fd?: FormData) {
+    return item.id ? this.update(item, fd) : this.create(item, fd);
   }
 
-  public create(data: T) {
+  public async create(item: T, fd?: FormData) {
     log(`Creating...`);
-    return m
-      .request<T>({
+    try {
+      const result = await m.request<T>({
         method: 'POST',
         url: this.baseUrl,
-        data,
+        data: fd || item,
         withCredentials,
-      })
-      .then(result => {
-        log(`Created with id: ${result.id}.`);
-        this.setCurrent(result);
-        this.addItemToList(this.current);
-        return this.current;
-      })
-      .catch(err => error(err));
+      });
+      log(`Created with id: ${result.id}.`);
+      this.setCurrent(result);
+      this.addItemToList(this.current);
+      return this.current;
+    } catch (err) {
+      return error(err.message);
+    }
   }
 
-  public update(data: T) {
-    return m
-      .request<T>({
+  public async update(item: T, fd?: FormData) {
+    try {
+      await m.request<T>({
         method: 'PUT',
-        url: this.baseUrl + data.id,
-        data,
+        url: this.baseUrl + item.id,
+        data: fd || item,
         withCredentials,
-      })
-      .then(() => {
-        // this.setCurrent(data);
-        this.current = data;
-        this.updateItemInList(data);
-        return this.current;
-      })
-      .catch(err => error(err));
+      });
+      // this.setCurrent(data);
+      this.current = item;
+      this.updateItemInList(item);
+      return this.current;
+    } catch (err) {
+      return error(err.message);
+    }
   }
 
-  public delete(id = this.current.id) {
-    return m
-      .request<T>({
+  public async delete(id = this.current.id) {
+    try {
+      await m.request<T>({
         method: 'DELETE',
         url: this.baseUrl + id,
         withCredentials,
-      })
-      .then(() => {
-        log(`Deleted with id: ${id}.`);
-        this.removeItemFromList(id);
-      })
-      .catch(err => error(err));
+      });
+      log(`Deleted with id: ${id}.`);
+      this.removeItemFromList(id);
+    } catch (err) {
+      return error(err.message);
+    }
   }
 
   /*
@@ -90,32 +87,26 @@ export class RestService<T extends { id?: string }> {
     ![My image]({{image1}}).
    */
 
-  public uploadFiles(fl: FileList, id = this.current.id) {
-    if (fl.length === 0 || !id) { return; }
-    log(`Uploading files...`);
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < fl.length; i++) {
-      const file = fl[i];
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent) => {
-        if (!e || !e.target) { return; }
-        const data = reader.result;
-      };
-      reader.readAsDataURL(file);
-    }
-    // return Promise.all((resolve, reject) => m
-    //   .request<T>({
-    //     method: 'POST',
-    //     url: this.baseUrl + id + '/assets',
-    //     data,
-    //     withCredentials,
-    //   })
-    //   .then(result => {
-    //     log(`Created with id: ${result.id}.`);
-    //     return this.current;
-    //   })
-    //   .catch(err => error(err));
-  }
+  // public uploadFiles(
+  //   fl: FileList | undefined,
+  //   cb: (item: { filename: string; size: number; mimetype: string; data: Blob }) => void
+  // ) {
+  //   if (!fl || fl.length === 0) {
+  //     return;
+  //   }
+  //   log(`Uploading files...`);
+  //   // tslint:disable-next-line:prefer-for-of
+  //   for (let i = 0; i < fl.length; i++) {
+  //     const file = fl[i];
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       const data = reader.result as ArrayBuffer;
+  //       const item = { filename: file.name, size: file.size, mimetype: file.type, data: new Blob([data]) };
+  //       cb(item);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // }
 
   public unload() {
     if (this.current) {
@@ -169,23 +160,23 @@ export class RestService<T extends { id?: string }> {
   }
 
   public new(item?: T) {
-    this.setCurrent(item || {} as T);
+    this.setCurrent(item || ({} as T));
     return this.current;
   }
 
-  protected async getAssets(id = this.current.id) {
-    return m
-      .request<IAsset[]>({
-        method: 'GET',
-        url: this.baseUrl + id + '/assets',
-        withCredentials,
-      })
-      .then(result => {
-        log(`Got assets.`);
-        return result;
-      })
-      .catch(err => error(err));
-  }
+  // protected async getAssets(id = this.current.id) {
+  //   return m
+  //     .request<IAsset[]>({
+  //       method: 'GET',
+  //       url: this.baseUrl + id + '/assets',
+  //       withCredentials,
+  //     })
+  //     .then(result => {
+  //       log(`Got assets.`);
+  //       return result;
+  //     })
+  //     .catch(err => error(err));
+  // }
 
   private setCurrent(value: T) {
     const old = this.current;
@@ -206,7 +197,7 @@ export class RestService<T extends { id?: string }> {
     this.setList(this.list.map(i => (i.id === item.id ? item : i)));
   }
 
-  private removeItemFromList(id?: string) {
+  private removeItemFromList(id?: string | number) {
     this.setList([...this.list.filter(i => i.id !== id)]);
   }
 }

@@ -1,35 +1,35 @@
-import { RestService } from './rest-service';
-import { ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models/channels';
-import { ITrial } from '../models/trial';
-import { IObjective, IPerson, IStakeholder, IInject, IAsset } from '../models';
+import { RestService, AssetService } from '.';
+import {
+  IObjective,
+  IPerson,
+  IStakeholder,
+  IInject,
+  IAsset,
+  assetsChannel,
+  ChannelNames,
+  usersChannel,
+  TopicNames,
+  stakeholdersChannel,
+  injectsChannel,
+  ITrial,
+  UserRole,
+} from '../models';
 import { uniqueId } from '../utils';
-import { UserRole } from '../models/user-role';
 
 class TrialService extends RestService<ITrial> {
+  private assetSvc?: AssetService;
+
   constructor() {
-    super('scenarios', ChannelNames.SCENARIO);
+    super('trials', ChannelNames.SCENARIO);
   }
 
-  public load(id?: string): Promise<ITrial> {
-    return super.load(id).then(async (s) => {
+  public load(id: string): Promise<ITrial> {
+    return super.load(id).then(async s => {
       s.startDate = s.startDate ? new Date(s.startDate) : new Date();
       s.endDate = s.endDate ? new Date(s.endDate) : new Date();
       this.current = s;
-      await super.getAssets().then(newAssets => {
-        if (!newAssets) {
-          return s;
-        }
-        if (!s.assets) {
-          s.assets = [];
-        }
-        const existing = s.assets as IAsset[];
-        newAssets.forEach(a => {
-          const exists = existing.some(e => e.id === a.id);
-          if (!exists) {
-            existing.push(a);
-          }
-        });
-      });
+      this.assetSvc = new AssetService(id);
+      await this.assetSvc.loadList();
       return s;
     });
   }
@@ -237,6 +237,43 @@ class TrialService extends RestService<ITrial> {
     }
     await this.saveTrial();
     injectsChannel.publish(TopicNames.ITEM_DELETE, { cur: i });
+  }
+
+  /* ASSETS */
+
+  public async newAsset() {
+    if (!this.current) {
+      return;
+    }
+    assetsChannel.publish(TopicNames.ITEM_CREATE, { cur: { alias: 'New asset' } as IAsset });
+  }
+
+  /** Create or update an asset */
+  public async saveAsset(asset: IAsset, fd?: FormData) {
+    if (!asset || !this.assetSvc) {
+      return;
+    }
+    const cur = await this.assetSvc.save(asset, fd);
+    if (!cur) { return; }
+    this.assetSvc.addUrl(cur);
+    assetsChannel.publish(TopicNames.ITEM_UPDATE, { cur });
+  }
+
+  /** Delete an asset */
+  public async deleteAsset(asset: IAsset | undefined) {
+    if (!asset || !this.assetSvc) {
+      return;
+    }
+    await this.assetSvc.delete(asset.id);
+    assetsChannel.publish(TopicNames.ITEM_DELETE, { cur: asset });
+  }
+
+  public get assets() {
+    return this.assetSvc ? this.assetSvc.getList() : [];
+  }
+
+  public get curAsset() {
+    return this.assetSvc ? this.assetSvc.getCurrent() : {};
   }
 }
 
