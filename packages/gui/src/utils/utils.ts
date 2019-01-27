@@ -144,3 +144,9 @@ export const getMessage = (inject: IInject, type: InjectType) => {
   }
   return inject.message[key] as { id: string; [key: string]: unknown };
 };
+
+export const eatSpaces = (ev: KeyboardEvent) => {
+  if (ev.key === ' ') {
+    ev.preventDefault();
+  }
+};
