@@ -3,7 +3,7 @@ import { TextInput, FileInput, Button, Icon, ModalPanel, MaterialBox } from 'mit
 import { ITrial, TopicNames, assetsChannel, IAsset } from '../../models';
 import { deepCopy, deepEqual } from '../../utils';
 import { TrialSvc } from '../../services';
-import { uniqueId } from './../../utils/utils';
+import { uniqueId, eatSpaces } from './../../utils/utils';
 
 export const AssetsForm = () => {
   const state = {
@@ -58,8 +58,10 @@ export const AssetsForm = () => {
                     id: 'name',
                     isMandatory: true,
                     initialValue: asset.alias,
+                    onkeydown: eatSpaces,
                     onchange: (v: string) => (asset.alias = v),
-                    label: 'Name',
+                    label: 'Alias',
+                    placeholder: 'No spaces allowed',
                     iconName: 'title',
                     contentClass: 'col s12 m6',
                   }),
@@ -113,15 +115,7 @@ export const AssetsForm = () => {
                     {
                       label: 'OK',
                       onclick: async () => {
-                        // TODO Delete asset
-                        // await TrialSvc.deleteAsset(asset);
-                        // const stakeholders = TrialSvc.getAssets();
-                        // const cur = stakeholders && stakeholders.length > 0 ? stakeholders[0] : undefined;
-                        // if (cur) {
-                        //   assetsChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                        // } else {
-                        //   assetsChannel.publish(TopicNames.ITEM_DELETE, { cur: asset });
-                        // }
+                        await TrialSvc.deleteAsset(asset);
                       },
                     },
                     {
