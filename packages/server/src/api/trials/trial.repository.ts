@@ -31,7 +31,9 @@ export class TrialRepository {
 
   async getTrialFilename(id: string) {
     return new Promise<string>((resolve, reject) => {
-      const dbi = this.databases.hasOwnProperty(id) ? this.databases[id] : undefined;
+      const dbi = this.databases.hasOwnProperty(id)
+        ? this.databases[id]
+        : undefined;
       if (!dbi) {
         return reject(`Error, no database with id ${id} found!`);
       }
@@ -59,20 +61,16 @@ export class TrialRepository {
       }
       const now = new Date();
       trial.lastEdit = now;
-      db.get(
-        `UPDATE ${TRIAL} SET data = ?`,
-        JSON.stringify(trial),
-        err => {
-          if (err) {
-            console.error(err);
-            return reject(err);
-          }
-          this.overview = this.overview.filter(s => s.id !== id);
-          this.overview.push(new TrialOverview(trial));
-          this.overview.sort(sortTrialsByLastEdit);
-          resolve();
-        },
-      );
+      db.get(`UPDATE ${TRIAL} SET data = ?`, JSON.stringify(trial), err => {
+        if (err) {
+          console.error(err);
+          return reject(err);
+        }
+        this.overview = this.overview.filter(s => s.id !== id);
+        this.overview.push(new TrialOverview(trial));
+        this.overview.sort(sortTrialsByLastEdit);
+        resolve();
+      });
     });
   }
 
@@ -104,11 +102,13 @@ export class TrialRepository {
   // Asset mgmt
 
   async getAssets(id: string) {
-    return new Promise<Array<{
-      id: number;
-      mimetype: string;
-      filename: string;
-    }>>(async (resolve, reject) => {
+    return new Promise<
+      Array<{
+        id: number;
+        mimetype: string;
+        filename: string;
+      }>
+    >(async (resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
         ? this.databases[id].db
         : undefined;
@@ -172,19 +172,16 @@ export class TrialRepository {
     });
   }
 
-  async createAsset(id: string, file: IUploadedFile, alias: string) {
+  async createAsset(id: string, file?: IUploadedFile, alias?: string) {
     return new Promise<number>(async (resolve, reject) => {
+      if (!file) {
+        return reject(`Error, no file attached!`);
+      }
       const db = this.databases.hasOwnProperty(id)
         ? this.databases[id].db
         : undefined;
       if (!db) {
         return reject(`Error, no database with id ${id} found!`);
-      }
-      function callback(err: Error) {
-        if (err) {
-          return reject(err);
-        }
-        resolve(this.lastID);
       }
       const { originalname, mimetype, buffer } = file;
       db.run(
@@ -193,12 +190,22 @@ export class TrialRepository {
         originalname,
         mimetype,
         buffer,
-        callback,
+        (err: Error) => {
+          if (err) {
+            return reject(err.message);
+          }
+          resolve();
+        },
       );
     });
   }
 
-  async updateAsset(id: string, assetId: string | number, file: IUploadedFile, alias: string) {
+  async updateAsset(
+    id: string,
+    assetId: string | number,
+    file?: IUploadedFile,
+    alias?: string,
+  ) {
     return new Promise(async (resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
         ? this.databases[id].db
@@ -206,21 +213,35 @@ export class TrialRepository {
       if (!db) {
         return reject(`Error, no database with id ${id} found!`);
       }
-      const { originalname, mimetype, buffer } = file;
-      db.run(
-        `UPDATE ${ASSETS} SET alias = ?, filename = ?, mimetype = ?, data = ? WHERE id = ?`,
-        alias,
-        originalname,
-        mimetype,
-        buffer,
-        assetId,
-        (err: Error) => {
-          if (err) {
-            return reject(err);
-          }
-          resolve();
-        },
-      );
+      if (file) {
+        const { originalname, mimetype, buffer } = file;
+        db.run(
+          `UPDATE ${ASSETS} SET alias = ?, filename = ?, mimetype = ?, data = ? WHERE id = ?`,
+          alias,
+          originalname,
+          mimetype,
+          buffer,
+          assetId,
+          (err: Error) => {
+            if (err) {
+              return reject(err);
+            }
+            resolve();
+          },
+        );
+      } else {
+        db.run(
+          `UPDATE ${ASSETS} SET alias = ? WHERE id = ?`,
+          alias,
+          assetId,
+          (err: Error) => {
+            if (err) {
+              return reject(err);
+            }
+            resolve();
+          },
+        );
+      }
     });
   }
 
