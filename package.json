@@ -1,7 +1,7 @@
 {
 	"scripts": {
 		"postinstall": "lerna bootstrap",
-		"start": "lerna run --parallel start:dev",
+		"start": "lerna run --parallel start",
 		"build": "lerna run build"
 	},
 	"devDependencies": {
