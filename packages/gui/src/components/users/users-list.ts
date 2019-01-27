@@ -81,6 +81,6 @@ const UsersList: FactoryComponent<IPerson> = () => {
 
 export const UsersView = () => {
   return {
-    view: () => m('.row', [m('.col.s12.m4', m(UsersList)), m('.col.s12.m8', m(UsersForm))]),
+    view: () => m('.row', [m('.col.s12.m4.l3', m(UsersList)), m('.col.s12.m8.l9', m(UsersForm))]),
   };
 };
