@@ -60,7 +60,7 @@ class DashboardService {
       if (cur) {
         this.setList(
           this.dashboards.map(d => {
-            // d.visible = d.id !== Dashboards.NEW_TRIAL;
+            d.visible = true;
             return d;
           })
         );
