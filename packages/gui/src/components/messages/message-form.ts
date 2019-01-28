@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
-import { TextArea, TextInput, Select } from 'mithril-materialized';
+import { Select } from 'mithril-materialized';
 import { IInject, InjectType, InjectLevel } from '../../models';
-import { RolePlayerMessageForm, PhaseMessageForm } from '.';
+import { RolePlayerMessageForm, PhaseMessageForm, ScenarioForm, DefaultMessageForm } from '.';
 import { GeoJsonMessageForm } from './geojson-message';
 
 export const MessageForm: FactoryComponent<{ inject: IInject }> = () => {
@@ -37,28 +37,8 @@ export const MessageForm: FactoryComponent<{ inject: IInject }> = () => {
             }),
             getMessageForm(inject),
           ]
+        : inject.level === InjectLevel.SCENARIO
+        ? m(ScenarioForm, { inject })
         : m(DefaultMessageForm, { inject }),
   };
 };
-
-/**
- * Default message form with a title and description.
- */
-export const DefaultMessageForm: FactoryComponent<{ inject: IInject }> = () => ({
-  view: ({ attrs: { inject } }) => [
-    m(TextInput, {
-      id: 'title',
-      initialValue: inject.title,
-      onchange: (v: string) => (inject.title = v),
-      label: 'Title',
-      iconName: 'title',
-    }),
-    m(TextArea, {
-      id: 'desc',
-      initialValue: inject.description,
-      onchange: (v: string) => (inject.description = v),
-      label: 'Description',
-      iconName: 'note',
-    }),
-  ],
-});

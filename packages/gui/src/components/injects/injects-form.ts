@@ -52,7 +52,7 @@ export const InjectsForm: FactoryComponent<{}> = () => {
                     }),
                     inject.level,
                   ]),
-                  [m(MessageForm, { inject }), m(InjectConditions, { inject }), m(SetConditions, { inject })],
+                  [m(MessageForm, { inject }), m(InjectConditions, { inject }), m(SetObjectives, { inject })],
                   m('row', [
                     m(Button, {
                       iconName: 'undo',
@@ -81,7 +81,8 @@ export const InjectsForm: FactoryComponent<{}> = () => {
   };
 };
 
-export const SetConditions: FactoryComponent<{ inject: IInject }> = () => {
+/** Allows to set the main and secondary objective */
+export const SetObjectives: FactoryComponent<{ inject: IInject }> = () => {
   return {
     view: ({ attrs: { inject } }) => {
       const isGroup = inject && inject.level !== InjectLevel.INJECT;

@@ -34,6 +34,7 @@ For acts and storylines, which are at the beginning of a sequence
 
 */
 
+/** Allows to set the inject conditions, i.e. when does the inject get executed. */
 export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
   return {
     view: ({ attrs: { inject } }) => {

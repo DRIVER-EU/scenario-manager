@@ -34,12 +34,6 @@ export const TrialForm = () => {
     },
     view: () => {
       const { trial } = state;
-      const startDate = trial.startDate || new Date();
-      const endDate = trial.endDate || new Date(startDate.valueOf());
-      if (!trial.endDate) {
-        endDate.setHours(startDate.getHours() + 6);
-        trial.endDate = endDate;
-      }
       const hasChanged = !deepEqual(trial, TrialSvc.getCurrent());
       return m(
         '.row.scenario-form',
@@ -60,23 +54,6 @@ export const TrialForm = () => {
                 onchange: (v: string) => (trial.description = v),
                 label: 'Description',
                 iconName: 'description',
-              }),
-              m(DateTimeControl, {
-                prefix: 'Start',
-                dt: startDate,
-                onchange: (d: Date) => {
-                  state.trial.startDate = d;
-                  m.redraw();
-                },
-              }),
-              m(DateTimeControl, {
-                prefix: 'End',
-                icon: 'timer_off',
-                dt: endDate,
-                onchange: (d: Date) => {
-                  state.trial.endDate = d;
-                  m.redraw();
-                },
               }),
             ],
           ]),

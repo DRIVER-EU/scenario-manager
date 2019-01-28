@@ -128,8 +128,10 @@ export const getInjectIcon = (type?: InjectLevel) => {
       return 'colorize';
     case InjectLevel.ACT:
       return 'call_to_action'; // 'chat';
-    case InjectLevel.SCENARIO:
+    case InjectLevel.STORYLINE:
       return 'art_track';
+    case InjectLevel.SCENARIO:
+      return 'import_contacts';
     default:
       return 'import_contacts';
   }

@@ -1,13 +1,6 @@
-import m, { Component, Attributes } from 'mithril';
+import m, { FactoryComponent, Attributes } from 'mithril';
 import { Icon, DatePicker, TimePicker } from 'mithril-materialized';
 import { padLeft } from '../../utils';
-
-interface ITimePickerTime {
-  /** Hours */
-  h: number;
-  /** Minutes */
-  m: number;
-}
 
 export interface IDateTimeControl extends Attributes {
   prefix: string;
@@ -16,7 +9,7 @@ export interface IDateTimeControl extends Attributes {
   onchange?: (date: Date) => void;
 }
 
-export const DateTimeControl = () => {
+export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
   const state = {
     time: '09:00',
     date: new Date(),
@@ -30,12 +23,12 @@ export const DateTimeControl = () => {
         state.time = `${padLeft(state.date.getHours())}:${padLeft(state.date.getMinutes())}`;
       }
       const changeTime = () => (onchange ? onchange(getTime()) : undefined);
-      return m('.input-field', { class: attrs.class || ' col s12', style: 'margin: 0 auto;' }, [
+      return m('.input-field', { class: attrs.class || 'col s12', style: 'margin: 0 auto;' }, [
         m(Icon, { iconName: icon || 'timer', class: 'prefix', style: 'margin-top: 0.8em;' }),
         m('label[for=tp]', `${prefix} time:`),
         m('.list-inline', { style: 'margin-left: 1.6rem; margin-top: 0.7em;' }, [
           m(
-            '.col.s6.m3.l2',
+            '.col.s5',
             m(TimePicker, {
               initialValue: state.time,
               twelveHour: false,
@@ -53,7 +46,7 @@ export const DateTimeControl = () => {
             })
           ),
           m(
-            '.col.s6.m3.l2',
+            '.col.s7',
             m(DatePicker, {
               initialValue: state.date,
               onchange: (d: Date) => {
@@ -65,5 +58,5 @@ export const DateTimeControl = () => {
         ]),
       ]);
     },
-  } as Component<IDateTimeControl>;
+  };
 };
