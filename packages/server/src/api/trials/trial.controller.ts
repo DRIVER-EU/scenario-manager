@@ -29,8 +29,7 @@ import { TrialService } from './trial.service';
 @Controller('trials')
 export class TrialController {
   constructor(
-    @Inject('TrialService')
-    private readonly trialService: TrialService,
+    @Inject('TrialService') private readonly trialService: TrialService,
   ) {}
 
   @ApiOperation({ title: 'Get trials' })

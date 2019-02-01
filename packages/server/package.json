@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "0.0.0",
-  "description": "REST service for the Scenario Manager backend",
+  "description": "REST service for the Trial Manager backend",
   "author": "Erik Vullings <erik.vullings@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -10,22 +10,26 @@
     "build": "rm -rf dist && tsc"
   },
   "dependencies": {
-    "@nestjs/common": "^5.5.0",
-    "@nestjs/core": "^5.5.0",
+    "@nestjs/common": "^5.6.2",
+    "@nestjs/core": "^5.6.2",
     "@nestjs/swagger": "^2.5.1",
+    "@nestjs/websockets": "^5.6.2",
     "express": "^4.16.4",
-    "reflect-metadata": "^0.1.12",
+    "nestjs-config": "^1.3.0",
+    "node-test-bed-adapter": "^0.7.4",
+    "reflect-metadata": "^0.1.13",
     "rxjs": "^6.3.3",
-    "sqlite3": "^4.0.6",
-    "typescript": "^3.2.2"
+    "sqlite3": "^4.0.6"
   },
   "devDependencies": {
-    "@types/express": "^4.16.0",
+    "@types/express": "^4.16.1",
     "@types/express-serve-static-core": "^4.16.1",
     "@types/node": "^10.12.18",
+    "@types/socket.io": "^2.1.2",
     "@types/sqlite3": "^3.1.3",
     "nodemon": "^1.18.9",
-    "ts-node": "^7.0.1",
-    "tsconfig-paths": "^3.7.0"
+    "ts-node": "^8.0.2",
+    "tsconfig-paths": "^3.7.0",
+    "typescript": "^3.2.4"
   }
 }
