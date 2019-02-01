@@ -5,6 +5,13 @@ import { AppModule } from './app.module';
 declare const module: any;
 
 async function bootstrap() {
+  process.on('uncaughtException', err => {
+    console.error('Caught exception: ' + err);
+  });
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection:', reason.stack || reason);
+  });
+
   const app = await NestFactory.create(AppModule, { cors: true });
 
   const options = new DocumentBuilder()
@@ -15,12 +22,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
-
-  process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection:', reason.stack || reason);
-    // Recommended: send the information to sentry.io
-    // or whatever crash reporting service you use
-  });
 
   const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3000;
   await app.listen(port, () => {

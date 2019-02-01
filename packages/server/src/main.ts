@@ -3,6 +3,13 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  process.on('uncaughtException', err => {
+    console.error('Caught exception: ' + err);
+  });
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection:', reason.stack || reason);
+  });
+
   const app = await NestFactory.create(AppModule, { cors: true });
 
   const options = new DocumentBuilder()
