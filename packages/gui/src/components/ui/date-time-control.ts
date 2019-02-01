@@ -20,7 +20,7 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
       const { prefix, icon, onchange, dt } = attrs;
       if (dt) {
         state.date = new Date(dt);
-        state.time = `${padLeft(state.date.getHours())}:${padLeft(state.date.getMinutes())}`;
+        state.time = `${padLeft(state.date.getUTCHours())}:${padLeft(state.date.getUTCMinutes())}`;
       }
       const changeTime = () => (onchange ? onchange(getTime()) : undefined);
       return m('.input-field', { class: attrs.class || 'col s12', style: 'margin: 0 auto;' }, [
@@ -40,7 +40,7 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
                 }
                 const hrs = +match[1];
                 const min = +match[2];
-                state.date.setHours(hrs, min, 0);
+                state.date.setUTCHours(hrs, min, 0, 0);
                 changeTime();
               },
             })

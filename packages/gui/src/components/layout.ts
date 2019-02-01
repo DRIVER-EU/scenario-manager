@@ -1,6 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
 import owl from '../assets/owl.svg';
 import { dashboardSvc } from '../services';
+import { Dashboards } from '../models/dashboards';
+import { StatusBar } from './status/status-bar';
 
 export const Layout: FactoryComponent<{}> = () => {
   return {
@@ -10,6 +12,10 @@ export const Layout: FactoryComponent<{}> = () => {
       const curDashboard = dashboardSvc.getCurrent(curRoute);
       const subDashboards = curDashboard ? dashboardSvc.getList(curDashboard.id) : [];
       const hasSubDashboards = subDashboards && subDashboards.length > 0;
+      const executeMode = curDashboard
+        ? curDashboard.id === Dashboards.EXECUTE || curDashboard.level === Dashboards.EXECUTE
+        : false;
+
       return m('container', [
         m('nav', { class: hasSubDashboards ? 'nav-extended' : '' }, [
           m('.nav-wrapper', [
@@ -39,6 +45,7 @@ export const Layout: FactoryComponent<{}> = () => {
             : undefined,
         ]),
         m('section.main', vnode.children),
+        executeMode ? m(StatusBar) : undefined,
       ]);
     },
   };

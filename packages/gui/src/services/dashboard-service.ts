@@ -11,6 +11,7 @@ import { Dashboards } from '../models/dashboards';
 import { UsersView } from '../components/users/users-list';
 import { StakeholdersView } from '../components/stakeholders/stakeholders-list';
 import { AssetsView } from '../components/assets';
+import { SessionControl } from '../components/session/session-control';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -135,9 +136,9 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     level: Dashboards.TRIAL,
   },
   {
-    id: Dashboards.OBJECTIVES,
-    title: 'Storylines',
-    route: '/edit/storylines',
+    id: Dashboards.SCENARIOS,
+    title: 'Scenarios',
+    route: '/edit/scenarios',
     visible: false,
     component: InjectsView,
     level: Dashboards.TRIAL,
@@ -147,6 +148,14 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     title: 'Run',
     route: '/execute',
     visible: false,
-    component: () => ({ view: () => m('span', 'TO DO' )}),
+    component: SessionControl,
+  },
+  {
+    id: Dashboards.SESSIONS,
+    title: 'Sessions',
+    route: '/execute/session',
+    visible: false,
+    level: Dashboards.EXECUTE,
+    component: SessionControl,
   },
 ]);

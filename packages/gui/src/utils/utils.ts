@@ -152,3 +152,18 @@ export const eatSpaces = (ev: KeyboardEvent) => {
     ev.preventDefault();
   }
 };
+/**
+ * Pad left, default with a '0'
+ *
+ * @see http://stackoverflow.com/a/10073788/319711
+ * @param {(string | number)} n
+ * @param {number} width
+ * @param {string} [z='0']
+ * @returns
+ */
+
+/** Convert a date to HH:mm */
+export const formatTime = (t: Date, includeSeconds = true) =>
+  includeSeconds
+    ? `${padLeft(t.getUTCHours(), 2)}:${padLeft(t.getUTCMinutes(), 2)}:${padLeft(t.getUTCSeconds(), 2)}`
+    : `${padLeft(t.getUTCHours(), 2)}:${padLeft(t.getUTCMinutes(), 2)}`;

@@ -8,4 +8,6 @@ export const enum Dashboards {
   ASSETS = 'ASSETS',
   OBJECTIVES = 'OBJECTIVES',
   EXECUTE = 'EXECUTE',
+  SCENARIOS = 'SCENARIOS',
+  SESSIONS = 'SESSIONS',
 }

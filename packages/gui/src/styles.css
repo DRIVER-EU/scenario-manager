@@ -34,6 +34,21 @@ body {
   margin: 0 2px;
 }
 
+.statusbar {
+  font-size: 1.5rem;
+  color: white;
+  height: 2.5rem;
+  position: fixed;
+  bottom: 0%;
+  width: 100%;
+  background-color: #ee6e73;
+  opacity: 1;
+  margin: 0;
+}
+.statusbar span {
+  padding: 0 2rem;
+}
+
 .collapse-expand-item {
   margin: 0 10px;
 }
