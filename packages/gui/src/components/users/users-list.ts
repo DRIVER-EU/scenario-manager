@@ -1,11 +1,10 @@
 import m, { FactoryComponent } from 'mithril';
 import { UsersForm } from './users-form';
-import { IPerson } from '../../models';
+import { IPerson, UserRole } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { usersChannel, TopicNames } from '../../models/channels';
 import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
 import { uniqueId } from '../../utils';
-import { UserRole } from '../../models/user-role';
 
 const UsersList: FactoryComponent<IPerson> = () => {
   const state = {

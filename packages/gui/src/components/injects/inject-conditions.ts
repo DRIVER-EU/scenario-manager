@@ -1,8 +1,15 @@
 import m, { FactoryComponent } from 'mithril';
-import { IInject, InjectLevel, InjectState, InjectConditionType, IInjectCondition } from '../../models';
+import {
+  IInject,
+  InjectLevel,
+  InjectState,
+  InjectConditionType,
+  IInjectCondition,
+  IScenario,
+} from 'trial-manager-models';
 import { Select, NumberInput, ISelectOption, Icon, TimePicker } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
-import { padLeft } from '../../utils';
+import { padLeft, getParent } from '../../utils';
 
 /*
 # Inject conditions
@@ -96,13 +103,13 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
               {
                 id: InjectConditionType.AT_TIME,
                 label: 'at',
-                disabled: !TrialSvc.getCurrent() || !TrialSvc.getCurrent().startDate,
+                disabled: !TrialSvc.getCurrent(),
               },
             ],
             onchange: (v: unknown) => (condition.delayType = +(v as number)),
           }),
           condition.delayType === InjectConditionType.AT_TIME
-            ? m(StartAt, { condition })
+            ? m(StartAt, { condition, inject })
             : [
                 m(Delay, { condition }),
                 m('span.inline', ' after the '),
@@ -161,17 +168,21 @@ const Delay: FactoryComponent<{ condition: IInjectCondition }> = () => {
   };
 };
 
-const StartAt: FactoryComponent<{ condition: IInjectCondition }> = () => {
+const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject }> = () => {
   return {
-    view: ({ attrs: { condition } }) => {
+    view: ({ attrs: { condition, inject } }) => {
       const { delay = 0, delayUnitType = 'seconds' } = condition;
       const trial = TrialSvc.getCurrent();
       if (!trial) {
         return;
       }
+      const scenario = getParent(trial.injects, inject.parentId) as IScenario;
+      if (!scenario) {
+        return;
+      }
       const sec = delayUnitType === 'seconds' ? 1 : delayUnitType === 'minutes' ? 60 : 3600;
       const delayInSeconds = delay * sec;
-      const trialStart = trial.startDate || new Date();
+      const trialStart = scenario.startDate || new Date();
       const atTime = new Date(trialStart.getTime() + delayInSeconds * 1000);
       return m(TimePicker, {
         contentClass: 'inline',

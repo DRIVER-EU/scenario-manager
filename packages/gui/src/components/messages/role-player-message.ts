@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
-import { IInject, InjectType, UserRole } from '../../models';
+import { IInject, InjectType, UserRole } from 'trial-manager-models';
 import { getMessage, iterEnum } from './../../utils';
 import { TrialSvc } from '../../services';
 

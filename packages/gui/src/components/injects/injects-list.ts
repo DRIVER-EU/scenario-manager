@@ -3,7 +3,8 @@ import { Icon, TextInput } from 'mithril-materialized';
 import { unflatten, titleAndDescriptionFilter, getInjectIcon } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { TrialSvc } from '../../services';
-import { TopicNames, injectsChannel, IInject, InjectLevel } from '../../models';
+import { IInject, InjectLevel } from 'trial-manager-models';
+import { TopicNames, injectsChannel } from '../../models';
 
 export const InjectsList = () => {
   const state = {

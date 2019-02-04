@@ -1,6 +1,6 @@
 import { RestService } from './rest-service';
 import { ChannelNames } from '../models/channels';
-import { IInject } from '../models/inject';
+import { IInject } from 'trial-manager-models';
 
 class InjectService extends RestService<IInject> {
   constructor() {

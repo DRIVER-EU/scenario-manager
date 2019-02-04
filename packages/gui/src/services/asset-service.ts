@@ -1,6 +1,6 @@
 import { RestService } from './rest-service';
 import { ChannelNames } from '../models/channels';
-import { IAsset } from '../models';
+import { IAsset } from 'trial-manager-models';
 
 export class AssetService extends RestService<IAsset> {
   constructor(trialId: string) {

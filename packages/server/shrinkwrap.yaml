@@ -3638,6 +3638,7 @@ specifiers:
   reflect-metadata: ^0.1.13
   rxjs: ^6.4.0
   sqlite3: ^4.0.6
+  trial-manager-models: ^0.0.1
   ts-node: ^8.0.2
   tsconfig-paths: ^3.7.0
   typescript: ^3.3.1

@@ -4553,6 +4553,7 @@ specifiers:
   mithril-tree-component: ^0.3.6
   socket.io-client: ^2.2.0
   style-loader: ^0.23.1
+  trial-manager-models: ^0.0.1
   typescript: ^3.2.4
   webpack: ^4.29.0
   webpack-cli: ^3.2.1

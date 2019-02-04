@@ -1,5 +1,5 @@
 import { messageBus } from '../services/message-bus-service';
-import { ITrial, IObjective, IInject, IPerson, IStakeholder, IAsset } from '.';
+import { ITrial, IObjective, IInject, IPerson, IStakeholder, IAsset } from 'trial-manager-models';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',

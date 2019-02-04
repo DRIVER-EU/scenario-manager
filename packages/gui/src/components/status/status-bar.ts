@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { SocketSvc } from '../../services';
-import { ITimeMessage } from '../../models';
+import { ITimeMessage } from 'trial-manager-models';
 import { deepCopy, formatTime } from '../../utils';
 
 export const StatusBar: FactoryComponent<null> = () => {

@@ -2,7 +2,7 @@ import m from 'mithril';
 import { TextInput, RoundIconButton } from 'mithril-materialized';
 import { TrialSvc, dashboardSvc } from '../../services';
 import { titleAndDescriptionFilter } from '../../utils';
-import { ITrial } from '../../models';
+import { ITrial } from 'trial-manager-models';
 import { Dashboards } from '../../models/dashboards';
 
 export const TrialList = () => {
@@ -23,7 +23,7 @@ export const TrialList = () => {
             onclick: () => {
               TrialSvc.new({
                 title: 'New trial',
-                createdDate: new Date(),
+                creationDate: new Date(),
               } as ITrial);
               dashboardSvc.switchTo(Dashboards.TRIAL_INFO);
             },

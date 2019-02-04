@@ -1,7 +1,6 @@
 import m from 'mithril';
 import { IChannelDefinition, messageBus } from './message-bus-service';
 import { TopicNames } from '../models/channels';
-import { IAsset } from '../models';
 
 const log = console.log;
 const error = console.error;

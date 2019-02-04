@@ -1,4 +1,4 @@
-import { IContent, InjectLevel, IInject, InjectType } from '../models';
+import { IContent, InjectLevel, IInject, InjectType } from 'trial-manager-models';
 
 /**
  * Create a unique ID
@@ -167,3 +167,22 @@ export const formatTime = (t: Date, includeSeconds = true) =>
   includeSeconds
     ? `${padLeft(t.getUTCHours(), 2)}:${padLeft(t.getUTCMinutes(), 2)}:${padLeft(t.getUTCSeconds(), 2)}`
     : `${padLeft(t.getUTCHours(), 2)}:${padLeft(t.getUTCMinutes(), 2)}`;
+
+export const getParent = (injects: IInject[], id?: string, level = InjectLevel.SCENARIO): IInject | undefined => {
+  if (!id) {
+    return undefined;
+  }
+  let found = {} as IInject;
+  injects.some(i => {
+    if (i.id !== id) {
+      return false;
+    }
+    found = i;
+    return true;
+  });
+  if (found.level === level) {
+    return found;
+  } else {
+    return getParent(injects, found.parentId, level);
+  }
+};

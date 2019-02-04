@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { IInject } from '../../models';
+import { IInject } from 'trial-manager-models';
 
 /**
  * Default message form with a title and description.

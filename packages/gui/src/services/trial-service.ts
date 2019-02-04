@@ -1,19 +1,6 @@
 import { RestService, AssetService } from '.';
-import {
-  IObjective,
-  IPerson,
-  IStakeholder,
-  IInject,
-  IAsset,
-  assetsChannel,
-  ChannelNames,
-  usersChannel,
-  TopicNames,
-  stakeholdersChannel,
-  injectsChannel,
-  ITrial,
-  UserRole,
-} from '../models';
+import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
+import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, UserRole } from 'trial-manager-models';
 import { uniqueId } from '../utils';
 
 class TrialService extends RestService<ITrial> {
@@ -25,8 +12,8 @@ class TrialService extends RestService<ITrial> {
 
   public load(id: string): Promise<ITrial> {
     return super.load(id).then(async s => {
-      s.startDate = s.startDate ? new Date(s.startDate) : new Date();
-      s.endDate = s.endDate ? new Date(s.endDate) : new Date();
+      // s.startDate = s.startDate ? new Date(s.startDate) : new Date();
+      // s.endDate = s.endDate ? new Date(s.endDate) : new Date();
       this.current = s;
       this.assetSvc = new AssetService(id);
       await this.assetSvc.loadList();
@@ -35,7 +22,7 @@ class TrialService extends RestService<ITrial> {
   }
 
   public async saveTrial(s: ITrial = this.current) {
-    s.updatedDate = new Date();
+    s.lastEdit = new Date();
     return super.save(s);
   }
 
@@ -270,7 +257,9 @@ class TrialService extends RestService<ITrial> {
     }
     const fd = files2formData();
     const cur = await this.assetSvc.save(asset, fd);
-    if (!cur) { return; }
+    if (!cur) {
+      return;
+    }
     this.assetSvc.addUrl(cur);
     return cur;
   }

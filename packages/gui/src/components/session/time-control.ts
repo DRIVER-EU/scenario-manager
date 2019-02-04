@@ -1,9 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimePicker, DatePicker, FlatButton, ModalPanel } from 'mithril-materialized';
-import { States, IScenario, ITimingControlMessage, TimingControlCommand } from '../../models';
+import { States, IScenario, ITimeMessage, ITimingControlMessage, TimingControlCommand } from 'trial-manager-models';
 import { SocketSvc } from '../../services';
 import { formatTime, padLeft } from '../../utils';
-import { ITimeMessage } from './../../models/time-message';
 
 const updateSpeed = (socket: SocketIOClient.Socket, trialTimeSpeed: number) =>
   socket.emit('time-control', {

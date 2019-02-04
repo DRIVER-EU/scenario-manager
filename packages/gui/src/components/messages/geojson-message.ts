@@ -1,9 +1,9 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, FileInput } from 'mithril-materialized';
-import { IInject, InjectType } from '../../models';
+import { IInject, InjectType } from 'trial-manager-models';
 import { getMessage, eatSpaces } from '../../utils';
 import { TrialSvc } from '../../services';
-import { IAsset } from './../../models/asset';
+import { IAsset } from 'trial-manager-models';
 
 export interface IGeoJsonMessage {
   /** Should be the same ID as the inject.id */

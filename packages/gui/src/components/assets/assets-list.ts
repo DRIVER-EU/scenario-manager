@@ -1,9 +1,9 @@
 import m, { FactoryComponent } from 'mithril';
 import { AssetsForm } from './assets-form';
 import { TrialSvc } from '../../services';
-import { IStakeholder, assetsChannel, TopicNames, IAsset, ITrial } from '../../models';
+import { IStakeholder, ITrial, IAsset } from 'trial-manager-models';
+import { assetsChannel, TopicNames } from '../../models';
 import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
-import { uniqueId } from '../../utils';
 
 const AssetsList: FactoryComponent<IStakeholder> = () => {
   const state = {

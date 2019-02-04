@@ -8,18 +8,31 @@ import {
   ILocation,
   IPersonOfInterest,
   IObjectOfInterest,
-  IAsset,
 } from '.';
 
-export interface ITrial extends IContent {
-  /** When does the scenario start */
-  startDate?: Date;
-  /** When does the scenario end */
-  endDate?: Date;
-  /** When is the scenario created */
-  createdDate: Date;
-  /** When is the scenario last updated */
-  updatedDate: Date;
+export interface ITrialOverview {
+  /** Refers to the filename on disk */
+  id: string;
+  /** Title of the scenario */
+  title: string;
+  /** Scenario description */
+  description?: string;
+  /** When the scenario was created */
+  creationDate?: Date;
+  /** When the scenario was edited */
+  lastEdit?: Date;
+  // boundingBox: number[];
+}
+
+export interface ITrial extends ITrialOverview {
+  // /** When does the scenario start */
+  // startDate?: Date;
+  // /** When does the scenario end */
+  // endDate?: Date;
+  // /** When is the scenario created */
+  // createdDate: Date;
+  // /** When is the scenario last updated */
+  // updatedDate: Date;
   /** Objects of interest that play a role in the scenario */
   objects: IObjectOfInterest[];
   /** Persons of interest that play a role in the scenario */

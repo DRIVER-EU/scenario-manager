@@ -1,16 +1,4 @@
-export interface ITrialOverview {
-  /** Refers to the filename on disk */
-  id: string;
-  /** Title of the scenario */
-  title: string;
-  /** Scenario description */
-  description?: string;
-  /** When the scenario was created */
-  creationDate?: Date;
-  /** When the scenario was edited */
-  lastEdit?: Date;
-  // boundingBox: number[];
-}
+import { ITrialOverview } from 'trial-manager-models';
 
 /** Brief summary of a scenario, the information you see before downloading */
 export class TrialOverview implements ITrialOverview {

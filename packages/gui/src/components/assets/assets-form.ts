@@ -1,9 +1,10 @@
 import m from 'mithril';
 import { TextInput, FileInput, Button, Icon, ModalPanel, MaterialBox } from 'mithril-materialized';
-import { ITrial, TopicNames, assetsChannel, IAsset } from '../../models';
+import { ITrial, IAsset } from 'trial-manager-models';
+import { assetsChannel, TopicNames } from '../../models';
 import { deepCopy, deepEqual } from '../../utils';
 import { TrialSvc } from '../../services';
-import { uniqueId, eatSpaces } from './../../utils/utils';
+import { eatSpaces } from './../../utils/utils';
 
 export const AssetsForm = () => {
   const state = {

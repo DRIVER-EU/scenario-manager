@@ -1,6 +1,5 @@
 import io from 'socket.io-client';
-import { States } from '../models/states';
-import { SimulationState, ITimeMessage } from '../models';
+import { States, SimulationState, ITimeMessage } from 'trial-manager-models';
 
 // tslint:disable-next-line:no-console
 const log = console.log;

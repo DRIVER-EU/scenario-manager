@@ -1,0 +1,15 @@
+{
+  "name": "trial-manager-models",
+  "private": true,
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "version": "0.0.1",
+  "description": "Trial manager interfaces.",
+  "scripts": {
+    "start": "tsc -w",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "Erik Vullings <erik.vullings@gmail.com>",
+  "license": "MIT"
+}

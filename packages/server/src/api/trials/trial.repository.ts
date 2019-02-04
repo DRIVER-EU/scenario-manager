@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Database } from 'sqlite3';
 import { TrialOverview, IUploadedFile } from '../../models';
+import { ITrial } from 'trial-manager-models';
 import { uniqueId, logError, dbCallbackWrapper } from '../../utils';
 
 const TRIAL = 'trial';
@@ -261,7 +262,7 @@ export class TrialRepository {
   }
 
   private async getTrial(id: string | Database) {
-    return new Promise<TrialOverview>((resolve, reject) => {
+    return new Promise<ITrial>((resolve, reject) => {
       const db =
         typeof id === 'string'
           ? this.databases.hasOwnProperty(id)

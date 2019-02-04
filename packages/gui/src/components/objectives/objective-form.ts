@@ -1,6 +1,7 @@
 import m from 'mithril';
 import { TextInput, TextArea, Select, Button, Icon } from 'mithril-materialized';
-import { ITrial, IObjective, TopicNames, objectiveChannel } from '../../models';
+import { ITrial, IObjective } from 'trial-manager-models';
+import { TopicNames, objectiveChannel } from '../../models';
 import { deepCopy, deepEqual } from '../../utils';
 import { TrialSvc } from '../../services';
 

@@ -1,8 +1,9 @@
 import m, { FactoryComponent } from 'mithril';
-import { Button, Icon, Dropdown, Select } from 'mithril-materialized';
+import { Button, Icon, Dropdown } from 'mithril-materialized';
 import { deepCopy, deepEqual, getInjectIcon } from '../../utils';
 import { TrialSvc } from '../../services';
-import { TopicNames, injectsChannel, IInject, InjectLevel, IInjectGroup, InjectType } from '../../models';
+import { IInject, InjectLevel, IInjectGroup } from 'trial-manager-models';
+import { TopicNames, injectsChannel } from '../../models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages/message-form';
 

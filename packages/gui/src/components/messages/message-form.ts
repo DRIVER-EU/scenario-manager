@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { Select } from 'mithril-materialized';
-import { IInject, InjectType, InjectLevel } from '../../models';
+import { IInject, InjectType, InjectLevel } from 'trial-manager-models';
 import { RolePlayerMessageForm, PhaseMessageForm, ScenarioForm, DefaultMessageForm } from '.';
 import { GeoJsonMessageForm } from './geojson-message';
 

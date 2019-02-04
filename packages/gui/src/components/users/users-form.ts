@@ -1,6 +1,7 @@
 import m from 'mithril';
 import { TextInput, TextArea, EmailInput, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
-import { ITrial, IPerson, UserRole, TopicNames, usersChannel } from '../../models';
+import { ITrial, IPerson, UserRole } from 'trial-manager-models';
+import { TopicNames, usersChannel } from '../../models';
 import { deepCopy, deepEqual, iterEnum } from '../../utils';
 import { TrialSvc } from '../../services';
 

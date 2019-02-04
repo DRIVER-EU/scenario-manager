@@ -1,9 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
 import { SocketSvc, TrialSvc } from '../../services';
-import { FlatButton, Icon, Select, ISelectOptions } from 'mithril-materialized';
-import { ITrial, IScenario, InjectLevel } from '../../models';
-import { ITimeMessage } from './../../models/time-message';
+import { FlatButton, Select, ISelectOptions } from 'mithril-materialized';
+import { ITrial, IScenario, InjectLevel, ITimeMessage } from 'trial-manager-models';
 
 export const SessionControl: FactoryComponent = () => {
   const socket = SocketSvc.socket;
