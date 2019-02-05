@@ -11,7 +11,7 @@
       "cwd": "${workspaceFolder}/packages/server/",
       "sourceMaps": true,
       "smartStep": true,
-      "program": "${workspaceFolder}/packages/server/src/main.ts",
+      "program": "${workspaceFolder}/packages/server/src/main.hmr.ts",
       "outFiles": [
         "${workspaceFolder}/packages/server/dist/**/*.js"
       ]

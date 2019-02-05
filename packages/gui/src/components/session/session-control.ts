@@ -41,7 +41,7 @@ export const SessionControl: FactoryComponent = () => {
           '.row',
           m('.col.s12.m6', [
             isConnecting
-              ? m('.progress', m('.indeterminate'))
+              ? m('.row', [m('span', 'Connecting...'), m('.progress', m('.indeterminate'))])
               : m(FlatButton, {
                   iconName: isConnected ? 'radio_button_checked' : 'radio_button_unchecked',
                   label: state.isConnected ? 'Connected' : 'Connect',

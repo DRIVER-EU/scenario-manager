@@ -6,10 +6,11 @@ import {
   InjectConditionType,
   IInjectCondition,
   IScenario,
+  getParent,
 } from 'trial-manager-models';
 import { Select, NumberInput, ISelectOption, Icon, TimePicker } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
-import { padLeft, getParent } from '../../utils';
+import { padLeft } from '../../utils';
 
 /*
 # Inject conditions

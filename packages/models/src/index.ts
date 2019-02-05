@@ -1,5 +1,7 @@
+export * from './utils';
 export * from './content';
 export * from './inject';
+export * from './session-message';
 export * from './trial';
 export * from './objective';
 export * from './location';
