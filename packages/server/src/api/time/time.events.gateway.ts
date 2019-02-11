@@ -45,8 +45,4 @@ export class TimeEventsGateway {
     return this.kafkaService.sendTimeControlMessage(data);
   }
 
-  @SubscribeMessage('identity')
-  async identity(data: number): Promise<number> {
-    return data;
-  }
 }
