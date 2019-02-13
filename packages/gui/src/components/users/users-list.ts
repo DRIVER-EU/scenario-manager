@@ -63,31 +63,6 @@ const UsersList: FactoryComponent<IPerson> = () => {
                     })),
                   }
                 )
-
-                // m(
-                //   'ul.collection',
-                //   users.map(cur =>
-                //     m(
-                //       'li.collection-item avatar',
-                //       {
-                //         style: 'cursor: pointer;',
-                //         class: state.currentUserId === cur.id ? 'active' : undefined,
-                //         onclick: () => {
-                //           usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                //           state.currentUserId = cur.id;
-                //         },
-                //       },
-                //       [
-                //         m(Icon, {
-                //           iconName: TrialSvc.userIcon(cur),
-                //           class: 'circle yellow black-text',
-                //         }),
-                //         m('span.title', cur.name),
-                //         m('p', TrialSvc.userRoleToString(cur.role)),
-                //       ]
-                //     )
-                //   )
-                // )
               )
             )
           : undefined,
@@ -98,6 +73,6 @@ const UsersList: FactoryComponent<IPerson> = () => {
 
 export const UsersView = () => {
   return {
-    view: () => m('.row', [m('.col.s12.m4.l3', m(UsersList)), m('.col.s12.m8.l9', m(UsersForm))]),
+    view: () => m('.row', [m('.col.s12.m5.l4', m(UsersList)), m('.col.s12.m7.l8', m(UsersForm))]),
   };
 };

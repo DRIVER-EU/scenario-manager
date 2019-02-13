@@ -105,6 +105,6 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
 
 export const AssetsView = () => {
   return {
-    view: () => m('.row', [m('.col.s12.m4.l3', m(AssetsList)), m('.col.s12.m8.l9', m(AssetsForm))]),
+    view: () => m('.row', [m('.col.s12.m5.l4', m(AssetsList)), m('.col.s12.m7.l8', m(AssetsForm))]),
   };
 };

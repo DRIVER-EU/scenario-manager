@@ -80,6 +80,6 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
 
 export const StakeholdersView = () => {
   return {
-    view: () => m('.row', [m('.col.s12.m4.l3', m(StakeholdersList)), m('.col.s12.m8.l9', m(StakeholdersForm))]),
+    view: () => m('.row', [m('.col.s12.m5.l4', m(StakeholdersList)), m('.col.s12.m7.l8', m(StakeholdersForm))]),
   };
 };
