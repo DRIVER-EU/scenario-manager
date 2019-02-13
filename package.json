@@ -1,15 +1,11 @@
 {
 	"scripts": {
-		"ignore postinstall": "lerna bootstrap",
+		"bootstrap": "lerna bootstrap",
 		"start": "lerna run --parallel start",
 		"build": "lerna run build"
 	},
 	"devDependencies": {
 		"lerna": "^3.10.8"
 	},
-	"name": "scenario-manager",
-	"dependencies": {
-		"link": "^0.1.5",
-		"recursive": "^0.0.2"
-	}
+	"name": "scenario-manager"
 }
