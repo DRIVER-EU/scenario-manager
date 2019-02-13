@@ -2,15 +2,17 @@ import { ApiUseTags, ApiOperation, ApiImplicitBody } from '@nestjs/swagger';
 import {
   Controller,
   Get,
+  Put,
   Post,
   Inject,
+  Param,
   Body,
   HttpStatus,
   HttpException,
 } from '@nestjs/common';
-import { ISessionMessage } from 'trial-manager-models';
 import { RunService } from './run.service';
 import { SessionMessage } from '../../adapters/models';
+import { StateTransitionRequest } from '../../adapters/models/state-transition-request';
 
 @ApiUseTags('run')
 @Controller('run')
@@ -39,7 +41,7 @@ export class RunController {
   }
 
   @ApiOperation({ title: 'Deactivate trial scenario' })
-  @Get('deactivate')
+  @Get('unload')
   async unload() {
     if (!this.runService.activeSession) {
       throw new HttpException(
@@ -55,28 +57,40 @@ export class RunController {
     name: 'Session message',
     type: SessionMessage,
   })
-  @Post('activate')
-  async load(@Body() session: ISessionMessage) {
+  @Post('load')
+  async load(@Body() session: SessionMessage) {
     if (this.isLoading) {
       throw new HttpException(
         'Already loading a new scenario',
         HttpStatus.PRECONDITION_FAILED,
       );
     }
-    this.isLoading = true;
     if (this.runService.activeSession) {
       throw new HttpException(
         'First deactivate current scenario',
         HttpStatus.PRECONDITION_FAILED,
       );
     }
-    const ok = await this.runService.init(session);
-    this.isLoading = false;
-    if (!ok) {
+    try {
+      this.isLoading = true;
+      this.runService.init(session);
+    } catch (err) {
+      this.isLoading = false;
       throw new HttpException(
         'Could not load trial or scenario',
         HttpStatus.BAD_REQUEST,
       );
     }
+    this.isLoading = false;
+  }
+
+  @ApiOperation({ title: 'Request a state transition which may fail.' })
+  @ApiImplicitBody({
+    name: 'State transition request',
+    type: StateTransitionRequest,
+  })
+  @Put('transition')
+  async stateTransitionRequest(@Body() tr: StateTransitionRequest) {
+    this.runService.stateTransitionRequest(tr);
   }
 }

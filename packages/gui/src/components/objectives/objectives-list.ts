@@ -1,6 +1,6 @@
 import m, { Component } from 'mithril';
-import { TextInput } from 'mithril-materialized';
-import { unflatten, titleAndDescriptionFilter } from '../../utils';
+import { TextInput, Collection, ICollectionItem } from 'mithril-materialized';
+import { titleAndDescriptionFilter } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { TrialSvc } from '../../services';
 import { IObjective } from 'trial-manager-models';
@@ -11,6 +11,7 @@ export const ObjectivesList = () => {
     selected: undefined as IObjective | undefined,
     filterValue: '' as string | undefined,
     trialId: '' as string | undefined,
+    objectives: undefined as IObjective[] | undefined,
     subscription: objectiveChannel.subscribe(TopicNames.LIST, m.redraw),
   };
 
@@ -40,12 +41,17 @@ export const ObjectivesList = () => {
     },
     onBeforeUpdate: (ti, action, newParent) =>
       console.log(`On before ${action} update ${ti.title} to ${newParent ? newParent.title : ''}.`),
-    onUpdate: ti => {
+    onUpdate: (ti, action) => {
       console.log(`On update ${ti.title}`);
       if (!ti.parentId) {
         ti.parentId = '';
       }
-      TrialSvc.updateObjective(ti as IObjective);
+      if (action === 'edit') {
+        TrialSvc.updateObjective(ti as IObjective);
+      } else {
+        TrialSvc.setObjectives(state.objectives);
+        TrialSvc.saveTrial();
+      }
     },
     create: (parent?: IObjective) => {
       const item = {
@@ -80,22 +86,36 @@ export const ObjectivesList = () => {
     view: () => {
       const query = titleAndDescriptionFilter(state.filterValue);
       const objectives = TrialSvc.getObjectives();
-      const filteredObjectives = objectives && objectives.filter(query);
-      const tree = unflatten(filteredObjectives);
-      return m('.row.objectives-list', [
-        m(
-          '.col.s12',
-          m(TextInput, {
-            label: 'Filter',
-            id: 'filter',
-            iconName: 'filter_list',
-            initialValue: state.filterValue,
-            onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-            contentClass: 'right',
-          })
-        ),
-        m('.col.s12', m(TreeContainer, { tree, options })),
-      ]);
+      const tree = objectives && objectives.filter(query);
+      state.objectives = tree;
+      return tree
+        ? m('.row.objectives-list', [
+            m(
+              '.col.s12',
+              m(TextInput, {
+                label: 'Filter',
+                id: 'filter',
+                iconName: 'filter_list',
+                initialValue: state.filterValue,
+                onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+                contentClass: 'right',
+              })
+            ),
+            m(
+              '.col.s12',
+              state.filterValue
+                ? m(Collection, {
+                    items: tree.map(cur => ({
+                      title: cur.title,
+                      content: cur.description,
+                      iconName: 'my_location',
+                      onclick: (i: ICollectionItem) => objectiveChannel.publish(TopicNames.ITEM_SELECT, { cur }),
+                    })),
+                  })
+                : m(TreeContainer, { tree, options })
+            ),
+          ])
+        : undefined;
     },
   };
 };

@@ -1,8 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
 import { Button, Icon, Dropdown } from 'mithril-materialized';
-import { deepCopy, deepEqual, getInjectIcon } from '../../utils';
+import { getInjectIcon, findPreviousInjects } from '../../utils';
 import { TrialSvc } from '../../services';
-import { IInject, InjectLevel, IInjectGroup } from 'trial-manager-models';
+import { IInject, InjectType, IInjectGroup, deepCopy, deepEqual, getInject } from 'trial-manager-models';
 import { TopicNames, injectsChannel } from '../../models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages/message-form';
@@ -15,16 +15,14 @@ export const InjectsForm: FactoryComponent<{}> = () => {
     inject: undefined as IInject | undefined,
     original: undefined as IInject | undefined,
     subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
-      state.inject = cur && cur.id ? deepCopy(cur) : undefined;
-      state.original = cur && cur.id ? deepCopy(cur) : undefined;
-      state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
+      state.inject = cur ? deepCopy(cur) : undefined;
+      state.original = cur ? deepCopy(cur) : undefined;
+      state.parent = cur.parentId ? getInject(cur.parentId, TrialSvc.getInjects()) : undefined;
     }),
   };
 
-  const getParent = (id: string) => (TrialSvc.getInjects() || []).filter(o => o.id === id).shift();
-
   return {
-    onbeforeremove: () => {
+    onremove: () => {
       state.subscription.unsubscribe();
     },
     view: () => {
@@ -34,9 +32,13 @@ export const InjectsForm: FactoryComponent<{}> = () => {
         e.preventDefault();
         log('submitting...');
         if (inject) {
+          // const copy = deepCopy(inject);
+          // HACK Remove children from tree
+          // delete (inject as any).children;
           TrialSvc.updateInject(inject);
         }
       };
+      const previousInjects = findPreviousInjects(inject, TrialSvc.getInjects());
 
       return m(
         '.injects-form',
@@ -48,12 +50,16 @@ export const InjectsForm: FactoryComponent<{}> = () => {
                 m('.col.s12', [
                   m('h4', [
                     m(Icon, {
-                      iconName: getInjectIcon(inject.level),
+                      iconName: getInjectIcon(inject.type),
                       style: 'margin-right: 12px;',
                     }),
-                    inject.level,
+                    inject.type,
                   ]),
-                  [m(MessageForm, { inject }), m(InjectConditions, { inject }), m(SetObjectives, { inject })],
+                  [
+                    m(MessageForm, { inject }),
+                    m(InjectConditions, { inject, previousInjects }),
+                    m(SetObjectives, { inject }),
+                  ],
                   m('row', [
                     m(Button, {
                       iconName: 'undo',
@@ -70,7 +76,7 @@ export const InjectsForm: FactoryComponent<{}> = () => {
                     m(Button, {
                       iconName: 'delete',
                       class: 'red',
-                      onclick: () => TrialSvc.delete(inject.id),
+                      onclick: () => TrialSvc.deleteInject(inject),
                     }),
                   ]),
                 ])
@@ -86,7 +92,7 @@ export const InjectsForm: FactoryComponent<{}> = () => {
 export const SetObjectives: FactoryComponent<{ inject: IInject }> = () => {
   return {
     view: ({ attrs: { inject } }) => {
-      const isGroup = inject && inject.level !== InjectLevel.INJECT;
+      const isGroup = inject && inject.type !== InjectType.INJECT;
       const objectives = [{ id: '', title: 'Pick one' }, ...(TrialSvc.getObjectives() || [])].map(o => ({
         id: o.id,
         label: o.title,

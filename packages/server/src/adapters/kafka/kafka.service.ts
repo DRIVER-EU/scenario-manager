@@ -86,6 +86,8 @@ export class KafkaService extends EventEmitter implements TimeService {
     });
   }
 
+  public get trialTime() { return this.adapter.trialTime; }
+
   private handleMessage(message: IAdapterMessage) {
     switch (message.topic) {
       default:

@@ -3,7 +3,7 @@ import { UsersForm } from './users-form';
 import { IPerson, UserRole } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { usersChannel, TopicNames } from '../../models/channels';
-import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
+import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
 import { uniqueId } from '../../utils';
 
 const UsersList: FactoryComponent<IPerson> = () => {
@@ -27,7 +27,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
               const user = {
                 id: uniqueId(),
                 name: 'New user',
-                role: UserRole.VIEWER,
+                role: UserRole.STAKEHOLDER,
               } as IPerson;
               state.currentUserId = user.id;
               await TrialSvc.createUser(user);
@@ -47,29 +47,47 @@ const UsersList: FactoryComponent<IPerson> = () => {
               m(
                 '.col.s12',
                 m(
-                  'ul.collection',
-                  users.map(cur =>
-                    m(
-                      'li.collection-item avatar',
-                      {
-                        style: 'cursor: pointer;',
-                        class: state.currentUserId === cur.id ? 'active' : undefined,
-                        onclick: () => {
-                          usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                          state.currentUserId = cur.id;
-                        },
+                  Collection,
+                  {
+                    mode: CollectionMode.AVATAR,
+                    items: users.map(cur => ({
+                      title: cur.name || '?',
+                      avatar: 'person_outline',
+                      className: 'yellow black-text',
+                      active: state.currentUserId === cur.id,
+                      content: TrialSvc.userRoleToString(cur.role) + (cur.notes ? `<br><i>${cur.notes}</i>` : ''),
+                      onclick: () => {
+                        usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
+                        state.currentUserId = cur.id;
                       },
-                      [
-                        m(Icon, {
-                          iconName: TrialSvc.userIcon(cur),
-                          class: 'circle yellow black-text',
-                        }),
-                        m('span.title', cur.name),
-                        m('p', TrialSvc.userRoleToString(cur.role)),
-                      ]
-                    )
-                  )
+                    })),
+                  }
                 )
+
+                // m(
+                //   'ul.collection',
+                //   users.map(cur =>
+                //     m(
+                //       'li.collection-item avatar',
+                //       {
+                //         style: 'cursor: pointer;',
+                //         class: state.currentUserId === cur.id ? 'active' : undefined,
+                //         onclick: () => {
+                //           usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
+                //           state.currentUserId = cur.id;
+                //         },
+                //       },
+                //       [
+                //         m(Icon, {
+                //           iconName: TrialSvc.userIcon(cur),
+                //           class: 'circle yellow black-text',
+                //         }),
+                //         m('span.title', cur.name),
+                //         m('p', TrialSvc.userRoleToString(cur.role)),
+                //       ]
+                //     )
+                //   )
+                // )
               )
             )
           : undefined,

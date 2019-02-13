@@ -1,6 +1,6 @@
 import { IContent } from '.';
 
-export enum InjectType {
+export enum MessageType {
   ROLE_PLAYER_MESSAGE = 'ROLE_PLAYER_MESSAGE',
   PHASE_MESSAGE = 'PHASE_MESSAGE',
   POST_MESSAGE = 'POST_MESSAGE',
@@ -28,7 +28,7 @@ export enum InjectState {
   CANCELLED = 'CANCELLED',
 }
 
-export enum InjectLevel {
+export enum InjectType {
   INJECT = 'INJECT',
   ACT = 'ACT',
   STORYLINE = 'STORYLINE',
@@ -47,25 +47,24 @@ export enum InjectConditionType {
   MANUALLY,
 }
 
+export type UnitType = 'seconds' | 'minutes' | 'hours';
+
 export interface IInjectCondition {
   /** Type of delay that rules this condition */
-  delayType?: InjectConditionType;
+  type?: InjectConditionType;
   /** When the delay type is a DELAY, i.e. a timespan, specifies the units */
   delay?: number;
   /** When the delay type is a DELAY, i.e. a timespan, specifies the unit type */
-  delayUnitType?: 'seconds' | 'minutes' | 'hours';
+  delayUnitType?: UnitType;
   /**
    * By default, for injects, the conditions is based on the previous inject.
    * However, it may also depend on the start or finish of another act, storyline or scenario.
    */
-  injectLevel?: InjectLevel;
-  /** In case the level is set, specify its ID */
-  levelId?: string;
-  /**
-   * In most cases, an inject starts when something else has finished.
-   * However, you may also start at the same time as another inject.
-   */
-  levelState?: InjectState;
+  injectLevel?: InjectType;
+  /** ID of the inject you depend upon */
+  injectId?: string;
+  /** State of the inject you depend upon */
+  injectState?: InjectState;
 }
 
 export interface IInject extends IContent {
@@ -73,14 +72,15 @@ export interface IInject extends IContent {
   actorId?: string;
   /** Who is the recipient/receiver of the action/message */
   recipientId?: string;
+  // TODO Convert to array
   /** Conditions that will start this inject */
   condition?: IInjectCondition;
   /** Only relevant when executing, declares the state of the inject */
   state?: InjectState;
   /** Is it a storyline, act or inject */
-  level: InjectLevel;
+  type: InjectType;
   /** What kind of message are we sending */
-  type?: InjectType;
+  messageType?: MessageType;
   /** Inject message */
   message?: {
     /** Key is the the same as the InjectType */

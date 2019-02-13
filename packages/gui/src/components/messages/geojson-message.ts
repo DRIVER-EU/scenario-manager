@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, FileInput } from 'mithril-materialized';
-import { IInject, InjectType } from 'trial-manager-models';
+import { IInject, MessageType } from 'trial-manager-models';
 import { getMessage, eatSpaces } from '../../utils';
 import { TrialSvc } from '../../services';
 import { IAsset } from 'trial-manager-models';
@@ -30,7 +30,7 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
 
   return {
     view: ({ attrs: { inject } }) => {
-      const pm = getMessage(inject, InjectType.GEOJSON_MESSAGE) as IGeoJsonMessage;
+      const pm = getMessage(inject, MessageType.GEOJSON_MESSAGE) as IGeoJsonMessage;
       const assets = TrialSvc.assets;
       const options = assets
         .filter(a => a.mimetype === 'application/json' || jsonExt.test(a.filename))

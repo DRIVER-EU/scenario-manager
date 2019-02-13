@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
-import { IInject, InjectType, UserRole } from 'trial-manager-models';
+import { IInject, MessageType, UserRole } from 'trial-manager-models';
 import { getMessage, iterEnum } from './../../utils';
 import { TrialSvc } from '../../services';
 
@@ -31,7 +31,7 @@ export interface IRolePlayerMessage {
 export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   return {
     view: ({ attrs: { inject } }) => {
-      const rpm = getMessage(inject, InjectType.ROLE_PLAYER_MESSAGE) as IRolePlayerMessage;
+      const rpm = getMessage(inject, MessageType.ROLE_PLAYER_MESSAGE) as IRolePlayerMessage;
       const rolePlayers = (TrialSvc.getUsers() || [])
         .filter(u => u.role === UserRole.ROLE_PLAYER)
         .map(rp => ({ id: rp.id, label: rp.name }));

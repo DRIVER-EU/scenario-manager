@@ -1,12 +1,13 @@
 import m, { FactoryComponent } from 'mithril';
 import {
   IInject,
-  InjectLevel,
+  InjectType,
   InjectState,
   InjectConditionType,
   IInjectCondition,
   IScenario,
   getParent,
+  getInject,
 } from 'trial-manager-models';
 import { Select, NumberInput, ISelectOption, Icon, TimePicker } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
@@ -43,47 +44,31 @@ For acts and storylines, which are at the beginning of a sequence
 */
 
 /** Allows to set the inject conditions, i.e. when does the inject get executed. */
-export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
+export const InjectConditions: FactoryComponent<{ inject: IInject, previousInjects: IInject[] }> = () => {
   return {
-    view: ({ attrs: { inject } }) => {
-      if (!inject.type) {
-        return;
+    view: ({ attrs: { inject, previousInjects } }) => {
+      if (inject.type === InjectType.SCENARIO) {
+        return undefined;
       }
       if (!inject.condition) {
         inject.condition = {
-          delayType: InjectConditionType.IMMEDIATELY,
+          type: InjectConditionType.IMMEDIATELY,
           delay: 0,
           delayUnitType: 'seconds',
-          injectLevel: InjectLevel.INJECT,
+          injectLevel: InjectType.INJECT,
           levelState: InjectState.EXECUTED,
         } as IInjectCondition;
       }
-      const { level, id, condition } = inject;
-      const levelOptions = [] as Array<ISelectOption<string>>;
-      if (level === InjectLevel.INJECT) {
-        condition.injectLevel = InjectLevel.INJECT;
-        levelOptions.push({ id: InjectLevel.INJECT, label: 'previous', disabled: true });
-      } else {
-        if (condition.injectLevel === InjectLevel.INJECT) {
-          condition.injectLevel = InjectLevel.ACT;
-        }
-        levelOptions.push({ id: InjectLevel.ACT, label: 'act' });
-        levelOptions.push({ id: InjectLevel.STORYLINE, label: 'storyline' });
-        levelOptions.push({ id: InjectLevel.SCENARIO, label: 'scenario' });
-      }
-      const levelStateOptions: Array<ISelectOption<string>> =
-        condition.injectLevel !== InjectLevel.SCENARIO ? [{ id: InjectState.EXECUTED, label: 'finished' }] : [];
-      levelStateOptions.push({
+      const { condition } = inject;
+      const dependency = getInject(condition.injectId, TrialSvc.getInjects());
+      const levelOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
+      const injectStateOptions: Array<ISelectOption<string>> =
+        dependency && dependency.type !== InjectType.SCENARIO ? [{ id: InjectState.EXECUTED, label: 'finished' }] : [];
+      injectStateOptions.push({
         id: InjectState.SCHEDULED,
-        disabled: condition.injectLevel === InjectLevel.SCENARIO,
+        disabled: dependency && dependency.type === InjectType.SCENARIO,
         label: 'started',
       });
-      const injects =
-        condition.injectLevel === InjectLevel.INJECT
-          ? []
-          : (TrialSvc.getInjects() || [])
-              .filter(i => i.level === condition.injectLevel && i.id !== id)
-              .map(i => ({ id: i.id, label: `"${i.title}"` }));
 
       return m(
         '.row',
@@ -96,7 +81,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
             contentClass: 'inline medium',
             placeholder: 'Pick one',
             isMandatory: true,
-            checkedId: condition.delayType,
+            checkedId: condition.type,
             options: [
               { id: InjectConditionType.MANUALLY, label: 'manually' },
               { id: InjectConditionType.IMMEDIATELY, label: 'immediately' },
@@ -107,33 +92,25 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
                 disabled: !TrialSvc.getCurrent(),
               },
             ],
-            onchange: (v: unknown) => (condition.delayType = +(v as number)),
+            onchange: (v: unknown) => (condition.type = +(v as number)),
           }),
-          condition.delayType === InjectConditionType.AT_TIME
+          condition.type === InjectConditionType.AT_TIME
             ? m(StartAt, { condition, inject })
             : [
                 m(Delay, { condition }),
                 m('span.inline', ' after the '),
                 m(Select, {
                   contentClass: 'inline small',
-                  checkedId: condition.injectLevel,
+                  checkedId: condition.injectId,
                   options: levelOptions,
-                  onchange: (v: unknown) => (condition.injectLevel = v as InjectLevel),
+                  onchange: (v: unknown) => (condition.injectId = v as string),
                 }),
-                condition.injectLevel === InjectLevel.INJECT || condition.injectLevel === InjectLevel.SCENARIO
-                  ? undefined
-                  : m(Select, {
-                      contentClass: 'inline large',
-                      checkedId: condition.levelId,
-                      options: injects,
-                      onchange: (v: unknown) => (condition.levelId = v as string),
-                    }),
                 m('span.inline', ' has '),
                 m(Select, {
                   contentClass: 'inline small',
-                  checkedId: condition.levelState,
-                  options: levelStateOptions,
-                  onchange: (v: unknown) => (condition.levelState = v as InjectState),
+                  checkedId: condition.injectState,
+                  options: injectStateOptions,
+                  onchange: (v: unknown) => (condition.injectState = v as InjectState),
                 }),
               ],
           m('span.inline', '.'),
@@ -146,7 +123,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject }> = () => {
 const Delay: FactoryComponent<{ condition: IInjectCondition }> = () => {
   return {
     view: ({ attrs: { condition } }) =>
-      condition.delayType === InjectConditionType.DELAY
+      condition.type === InjectConditionType.DELAY
         ? [
             m(NumberInput, {
               contentClass: 'inline xs',

@@ -1,6 +1,6 @@
 import { RestService, AssetService } from '.';
 import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
-import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, UserRole } from 'trial-manager-models';
+import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, UserRole, deepCopy } from 'trial-manager-models';
 import { uniqueId } from '../utils';
 
 class TrialService extends RestService<ITrial> {
@@ -61,6 +61,12 @@ class TrialService extends RestService<ITrial> {
     await this.saveTrial();
   }
 
+  public async setObjectives(objectives?: IObjective[]) {
+    if (this.current && objectives) {
+      this.current.objectives = objectives;
+    }
+    await this.saveTrial();
+  }
   /** USERS */
 
   /** Get a user by ID */
@@ -120,7 +126,7 @@ class TrialService extends RestService<ITrial> {
       case UserRole.ROLE_PLAYER:
         return 'ROLE PLAYER';
     }
-  }
+  };
 
   public userIcon = (user: IPerson) => {
     switch (user.role) {
@@ -131,7 +137,7 @@ class TrialService extends RestService<ITrial> {
       case UserRole.ADMIN:
         return 'supervisor_account';
     }
-  }
+  };
 
   /** STAKEHOLDERS */
 
@@ -194,6 +200,14 @@ class TrialService extends RestService<ITrial> {
       : this.current.injects;
   }
 
+  public async setInjects(injects?: IInject[]) {
+    if (this.current && injects) {
+      this.current.injects = injects;
+    }
+    await this.saveTrial();
+  }
+
+  /** Create a new inject and save it */
   public async createInject(i: IInject) {
     const injects = this.getInjects();
     if (injects) {
@@ -204,7 +218,11 @@ class TrialService extends RestService<ITrial> {
     injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: i });
   }
 
+  /** Update an existing inject and save it */
   public async updateInject(i: IInject) {
+    if (!i.id) {
+      return this.createInject(i);
+    }
     if (this.current) {
       this.current.injects = this.current.injects.map(s => (s.id === i.id ? i : s));
     }
@@ -212,16 +230,17 @@ class TrialService extends RestService<ITrial> {
     injectsChannel.publish(TopicNames.ITEM_UPDATE, { cur: i });
   }
 
-  // TODO Delete inject, including all children
+  // Delete inject, including all children
   public async deleteInject(i: IInject) {
-    if (this.current) {
-      this.current.injects = this.current.injects.filter(s => s.id !== i.id);
-      // this.current.objectives.forEach(s => {
-      //   if (s.stakeholderIds) {
-      //     s.stakeholderIds = s.stakeholderIds.filter(id => id !== i.id);
-      //   }
-      // });
-    }
+    let injects = this.current ? this.current.injects : [];
+    const findChildren = (inject: IInject) => injects.filter(s => s.parentId === inject.id);
+    const deleteOne = (inject: IInject) => {
+      injects = injects.filter(s => s.id !== inject.id);
+      findChildren(inject).forEach(deleteOne);
+    };
+    deleteOne(i);
+    this.current.injects = injects;
+
     await this.saveTrial();
     injectsChannel.publish(TopicNames.ITEM_DELETE, { cur: i });
   }
@@ -232,7 +251,7 @@ class TrialService extends RestService<ITrial> {
     if (!this.current) {
       return;
     }
-    assetsChannel.publish(TopicNames.ITEM_CREATE, { cur: { alias: 'New asset' } as IAsset });
+    assetsChannel.publish(TopicNames.ITEM_CREATE, { cur: { alias: 'New_asset' } as IAsset });
   }
 
   /** Create or update an asset */

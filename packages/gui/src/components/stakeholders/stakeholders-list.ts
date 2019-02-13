@@ -3,7 +3,7 @@ import { StakeholdersForm } from './stakeholders-form';
 import { TrialSvc } from '../../services';
 import { IStakeholder } from 'trial-manager-models';
 import { stakeholdersChannel, TopicNames } from '../../models';
-import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
+import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
 import { uniqueId } from '../../utils';
 
 const StakeholdersList: FactoryComponent<IStakeholder> = () => {
@@ -46,35 +46,29 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
               m(
                 '.col.s12',
                 m(
-                  'ul.collection',
-                  stakeholders.map(cur =>
-                    m(
-                      'li.collection-item avatar',
-                      {
-                        class: state.curStakeholderId === cur.id ? 'active' : undefined,
-                        onclick: () => {
-                          stakeholdersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                          state.curStakeholderId = cur.id;
-                        },
+                  Collection,
+                  {
+                    mode: CollectionMode.AVATAR,
+                    items: stakeholders.map(cur => ({
+                      title: cur.name || '?',
+                      avatar: 'person_outline',
+                      className: 'yellow black-text',
+                      active: state.curStakeholderId === cur.id,
+                      content:
+                        cur.notes +
+                        '<br>' +
+                        (cur.contactIds
+                          ? cur.contactIds
+                              .map(id => TrialSvc.getUserById(id))
+                              .map(c => c && c.name)
+                              .join(', ')
+                          : ''),
+                      onclick: () => {
+                        stakeholdersChannel.publish(TopicNames.ITEM_SELECT, { cur });
+                        state.curStakeholderId = cur.id;
                       },
-                      [
-                        m(Icon, {
-                          iconName: 'person_outline',
-                          class: 'circle yellow black-text',
-                        }),
-                        m('span.title', cur.name),
-                        cur.contactIds
-                          ? m(
-                              'p',
-                              cur.contactIds
-                                .map(id => TrialSvc.getUserById(id))
-                                .map(c => c && c.name)
-                                .join(', ')
-                            )
-                          : undefined,
-                      ]
-                    )
-                  )
+                    })),
+                  }
                 )
               )
             )

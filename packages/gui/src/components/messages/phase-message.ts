@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, Switch } from 'mithril-materialized';
-import { IInject, InjectType } from 'trial-manager-models';
+import { IInject, MessageType } from 'trial-manager-models';
 import { getMessage, iterEnum } from '../../utils';
 
 export enum TrialPhase {
@@ -30,7 +30,7 @@ export const PhaseMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   };
   return {
     view: ({ attrs: { inject } }) => {
-      const pm = getMessage(inject, InjectType.PHASE_MESSAGE) as IPhaseMessage;
+      const pm = getMessage(inject, MessageType.PHASE_MESSAGE) as IPhaseMessage;
       const options = iterEnum(TrialPhase).map(p => ({ id: p, label: TrialPhase[p] }));
 
       return [

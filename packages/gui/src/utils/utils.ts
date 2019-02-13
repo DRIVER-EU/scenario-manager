@@ -1,4 +1,4 @@
-import { IContent, InjectLevel, IInject, InjectType } from 'trial-manager-models';
+import { IContent, InjectType, IInject, MessageType, getParent } from 'trial-manager-models';
 
 /**
  * Create a unique ID
@@ -57,39 +57,6 @@ export const padLeft = (n: string | number, width = 2, z = '0') => {
 };
 
 /**
- * Deep copy function for TypeScript.
- * @param T Generic type of target/copied value.
- * @param target Target value to be copied.
- * @see Source project, ts-deepcopy https://github.com/ykdr2017/ts-deepcopy
- * @see Code pen https://codepen.io/erikvullings/pen/ejyBYg
- */
-export const deepCopy = <T>(target: T): T => {
-  if (target === null) {
-    return target;
-  }
-  if (target instanceof Date) {
-    return new Date(target.getTime()) as any;
-  }
-  if (target instanceof Array) {
-    const cp = [] as any[];
-    (target as any[]).forEach(v => {
-      cp.push(v);
-    });
-    return cp.map((n: any) => deepCopy<any>(n)) as any;
-  }
-  if (typeof target === 'object' && target !== {}) {
-    const cp = { ...(target as { [key: string]: any }) } as {
-      [key: string]: any;
-    };
-    Object.keys(cp).forEach(k => {
-      cp[k] = deepCopy<any>(cp[k]);
-    });
-    return cp as T;
-  }
-  return target;
-};
-
-/**
  * Function to filter case-insensitive title and description.
  * @param filterValue Filter text
  */
@@ -102,16 +69,6 @@ export const titleAndDescriptionFilter = (filterValue?: string) => {
         (content.description && content.description.toLowerCase().indexOf(filterValue as string) >= 0);
 };
 
-export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boolean => {
-  const tx = typeof x;
-  const ty = typeof y;
-  return x instanceof Date && y instanceof Date
-    ? x.getTime() === y.getTime()
-    : x && y && tx === 'object' && tx === ty
-    ? Object.keys(x).length === Object.keys(y).length && Object.keys(x).every(key => deepEqual(x[key], y[key]))
-    : x === y;
-};
-
 // let i = 0;
 // console.log(`${++i}: ${deepEqual([1, 2, 3], [1, 2, 3])}`);
 // console.log(`${++i}: ${deepEqual([1, 2, 3], [1, 2, 3, 4])}`);
@@ -122,24 +79,22 @@ export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boole
  * Represent the inject with an icon.
  * @param type inject type
  */
-export const getInjectIcon = (type?: InjectLevel) => {
+export const getInjectIcon = (type?: InjectType) => {
   switch (type) {
-    case InjectLevel.INJECT:
-      return 'colorize';
-    case InjectLevel.ACT:
+    case InjectType.INJECT:
+      return 'message';
+    case InjectType.ACT:
       return 'call_to_action'; // 'chat';
-    case InjectLevel.STORYLINE:
+    case InjectType.STORYLINE:
       return 'art_track';
-    case InjectLevel.SCENARIO:
-      return 'import_contacts';
     default:
       return 'import_contacts';
   }
 };
 
 /** Gets and optionally creates the inject message */
-export const getMessage = (inject: IInject, type: InjectType) => {
-  const key = InjectType[type];
+export const getMessage = (inject: IInject, type: MessageType) => {
+  const key = MessageType[type];
   if (!inject.message || !inject.message.hasOwnProperty(key)) {
     inject.message = {};
     inject.message[key] = { id: inject.id };
@@ -149,21 +104,38 @@ export const getMessage = (inject: IInject, type: InjectType) => {
 
 export const eatSpaces = (ev: KeyboardEvent) => {
   if (ev.key === ' ') {
-    ev.preventDefault();
+    // ev.preventDefault();
+    return false;
   }
+  return true;
 };
-/**
- * Pad left, default with a '0'
- *
- * @see http://stackoverflow.com/a/10073788/319711
- * @param {(string | number)} n
- * @param {number} width
- * @param {string} [z='0']
- * @returns
- */
 
 /** Convert a date to HH:mm */
 export const formatTime = (t: Date, includeSeconds = true) =>
   includeSeconds
     ? `${padLeft(t.getUTCHours(), 2)}:${padLeft(t.getUTCMinutes(), 2)}:${padLeft(t.getUTCSeconds(), 2)}`
     : `${padLeft(t.getUTCHours(), 2)}:${padLeft(t.getUTCMinutes(), 2)}`;
+
+/**
+ * For injects, find injects in the same act that have been executed earlier, including the parent act itself.
+ * For acts, find other acts in the same storyline that have been executed earlier, including the parent storyline.
+ * For storylines, find other storylines in the same scenario that have been executed earlier, including the scenario.
+ */
+export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
+  if (!injects || !inject) { return []; }
+  const olderSiblings = (id: string) => {
+    let found = false;
+    return injects
+      .filter(i => i.parentId === id)
+      .filter(i => {
+        found = i.id === inject.id;
+        return !found;
+      });
+  };
+  const type = inject.type === InjectType.INJECT
+    ? InjectType.ACT : inject.type === InjectType.ACT
+    ? InjectType.STORYLINE : InjectType.SCENARIO;
+  const parent = getParent(injects, inject.id || inject.parentId, type);
+  if (!parent) { return []; }
+  return [parent, ...olderSiblings(parent.id)];
+};

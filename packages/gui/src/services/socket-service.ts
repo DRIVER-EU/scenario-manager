@@ -19,8 +19,8 @@ const setupSocket = () => {
 
   socket.on('connect', () => {
     log('Connected');
-    socket.emit('time-events', { test: 'test' });
-    socket.emit('identity', 42, (response: number) => console.log('Identity:', response));
+    // socket.emit('time-events', { test: 'test' });
+    // socket.emit('identity', 42, (response: number) => console.log('Identity:', response));
   });
   socket.on('time-events', (data: unknown) => {
     console.log('time-events: ', data);

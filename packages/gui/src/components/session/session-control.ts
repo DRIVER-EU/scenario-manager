@@ -2,7 +2,7 @@ import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
 import { SocketSvc, TrialSvc } from '../../services';
 import { FlatButton, Select, ISelectOptions } from 'mithril-materialized';
-import { ITrial, IScenario, InjectLevel, ITimeMessage } from 'trial-manager-models';
+import { ITrial, IScenario, InjectType, ITimeMessage, IStateUpdate } from 'trial-manager-models';
 
 export const SessionControl: FactoryComponent = () => {
   const socket = SocketSvc.socket;
@@ -18,7 +18,7 @@ export const SessionControl: FactoryComponent = () => {
   return {
     oninit: () => {
       state.trial = TrialSvc.getCurrent();
-      state.scenarios = state.trial.injects.filter(i => i.level === InjectLevel.SCENARIO);
+      state.scenarios = state.trial.injects.filter(i => i.type === InjectType.SCENARIO);
 
       socket.on('stateUpdated', () => m.redraw());
       socket.on('is-connected', (data: boolean) => {
@@ -31,6 +31,8 @@ export const SessionControl: FactoryComponent = () => {
         state.time = time;
         m.redraw();
       });
+      // TODO display the inject states
+      socket.on('injectStates', (data: IStateUpdate[]) => console.log(data));
     },
     view: () => {
       const { isConnected, isConnecting } = state;

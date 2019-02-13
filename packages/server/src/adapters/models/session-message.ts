@@ -10,8 +10,7 @@ export class SessionMessage implements ISessionMessage {
   public sessionId: number;
   @ApiModelProperty()
   public sessionName: string;
-  @ApiModelProperty()
-  public status?: ExecutionStatus | undefined;
+  public status?: ExecutionStatus;
 
   constructor(session: ISessionMessage) {
     this.trialId = session.trialId;

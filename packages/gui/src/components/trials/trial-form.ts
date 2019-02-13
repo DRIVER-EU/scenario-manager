@@ -1,9 +1,7 @@
 import m from 'mithril';
 import { Button, TextArea, TextInput } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
-import { deepCopy, deepEqual } from '../../utils';
-import { DateTimeControl } from '../ui/date-time-control';
-import { ITrial } from 'trial-manager-models';
+import { ITrial, deepCopy, deepEqual } from 'trial-manager-models';
 
 const log = console.log;
 const close = async (e: UIEvent) => {
