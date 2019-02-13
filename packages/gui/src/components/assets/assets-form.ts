@@ -1,10 +1,8 @@
 import m from 'mithril';
 import { TextInput, FileInput, Button, Icon, ModalPanel, MaterialBox } from 'mithril-materialized';
-import { ITrial, IAsset } from 'trial-manager-models';
+import { ITrial, IAsset, deepCopy, deepEqual } from 'trial-manager-models';
 import { assetsChannel, TopicNames } from '../../models';
-import { deepCopy, deepEqual } from '../../utils';
 import { TrialSvc } from '../../services';
-import { eatSpaces } from './../../utils/utils';
 
 export const AssetsForm = () => {
   const state = {
@@ -59,8 +57,8 @@ export const AssetsForm = () => {
                     id: 'name',
                     isMandatory: true,
                     initialValue: asset.alias,
-                    onkeydown: eatSpaces,
-                    onchange: (v: string) => (asset.alias = v),
+                    // onkeydown: eatSpaces,
+                    onchange: (v: string) => (asset.alias = v.replace(/\s/g, '')),
                     label: 'Alias',
                     placeholder: 'No spaces allowed',
                     iconName: 'title',
@@ -78,7 +76,7 @@ export const AssetsForm = () => {
                     placeholder: 'Select or replace the file',
                     onchange: (fl: FileList) => (state.files = fl),
                   }),
-                  asset.mimetype.indexOf('image/') === 0 && asset.url
+                  asset.mimetype && asset.mimetype.indexOf('image/') === 0 && asset.url
                     ? m(
                         '.col.s12',
                         { style: 'margin: 10px;' },

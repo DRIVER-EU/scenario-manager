@@ -22,7 +22,9 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
       : () => true;
   };
   const assetToIcon = (asset: IAsset) =>
-    asset.mimetype.indexOf('image/') === 0
+    !asset.mimetype
+      ? ''
+      : asset.mimetype.indexOf('image/') === 0
       ? 'image'
       : asset.mimetype.indexOf('application/pdf') === 0
       ? 'picture_as_pdf'
