@@ -43,11 +43,11 @@ export const unflatten = <T extends { id?: string; parentId?: string }>(
 };
 
 /**
- * Pad left, default with a '0'
+ * Pad left, default width 2 with a '0'
  *
  * @see http://stackoverflow.com/a/10073788/319711
  * @param {(string | number)} n
- * @param {number} width
+ * @param {number} [width=2]
  * @param {string} [z='0']
  * @returns
  */
@@ -110,11 +110,14 @@ export const eatSpaces = (ev: KeyboardEvent) => {
   return true;
 };
 
-/** Convert a date to HH:mm */
-export const formatTime = (t: Date, includeSeconds = true) =>
+const formatHHmm = (t: Date) => `${padLeft(t.getUTCHours())}:${padLeft(t.getUTCMinutes())}`;
+const formatDate = (t: Date) => `${t.getUTCDate() > 1 ? `${t.getUTCDate() - 1}d ` : ''}`;
+
+/** Convert a date to HH:mm, optionally including seconds and date */
+export const formatTime = (t: Date, includeSeconds = true, includeDate = false) =>
   includeSeconds
-    ? `${padLeft(t.getUTCHours(), 2)}:${padLeft(t.getUTCMinutes(), 2)}:${padLeft(t.getUTCSeconds(), 2)}`
-    : `${padLeft(t.getUTCHours(), 2)}:${padLeft(t.getUTCMinutes(), 2)}`;
+    ? `${includeDate ? formatDate(t) : ''}${formatHHmm(t)}:${padLeft(t.getUTCSeconds())}`
+    : `${includeDate ? formatDate(t) : ''}${formatHHmm(t)}`;
 
 /**
  * For injects, find injects in the same act that have been executed earlier, including the parent act itself.
