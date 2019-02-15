@@ -2,7 +2,7 @@ dependencies:
   material-icons: 0.3.0
   materialize-css: 1.0.0
   mithril: 2.0.0-rc.4
-  mithril-materialized: 0.9.0
+  mithril-materialized: 0.9.1
   mithril-tree-component: 0.4.0
   recursive: 0.0.2
   socket.io-client: 2.2.0
@@ -2700,10 +2700,10 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-x471SsVjUtBRtcvd4BzKE9kFC+/2TeWgKCgw0bZcw1b9l2X3QX5vCWgF+KaZaYm87Ss//rHnWryupDrgLvmSkA==
-  /mithril-materialized/0.9.0:
+  /mithril-materialized/0.9.1:
     dev: false
     resolution:
-      integrity: sha512-3oco/nQAPpzQrjqWrUhYOSOPCnu61lXoYjqeyNEDiB1kCjujubKAfQIAJc4tJCQgJhsD3O9EQbJMxmkRwtZ2FA==
+      integrity: sha512-bSt8VhpXrCBpZb9rT1rvSZVd/g8TDzXOyg1gmCzi+vOga3NX4dlnFycMEf7ujata9rzUagtE0GlRJ98g4eCOkQ==
   /mithril-tree-component/0.4.0:
     dev: false
     resolution:
@@ -4544,7 +4544,7 @@ specifiers:
   material-icons: ^0.3.0
   materialize-css: ^1.0.0
   mithril: ^2.0.0-rc.4
-  mithril-materialized: ^0.9.0
+  mithril-materialized: ^0.9.1
   mithril-tree-component: ^0.4.0
   recursive: ^0.0.2
   socket.io-client: ^2.2.0
