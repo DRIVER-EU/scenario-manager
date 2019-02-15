@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimePicker, DatePicker, FlatButton, ModalPanel } from 'mithril-materialized';
-import { States, IScenario, ITimeMessage, ITimingControlMessage, TimingControlCommand } from 'trial-manager-models';
+import { TimeState, IScenario, ITimeMessage, ITimingControlMessage, TimingControlCommand } from 'trial-manager-models';
 import { SocketSvc } from '../../services';
 import { formatTime, padLeft } from '../../utils';
 
@@ -31,7 +31,7 @@ const MediaControls: FactoryComponent<{
         m(FlatButton, {
           modalId: 'stopPanel',
           iconName: 'stop',
-          disabled: time.state === States.Initialized,
+          disabled: time.state === TimeState.Initialized,
         }),
         isPaused
           ? m(FlatButton, {
@@ -86,7 +86,7 @@ const MediaStateControl: FactoryComponent<{
 
       switch (time.state) {
         default:
-        case States.Idle:
+        case TimeState.Idle:
           return [
             m(
               '.row',
@@ -127,7 +127,7 @@ const MediaStateControl: FactoryComponent<{
               })
             ),
           ];
-        case States.Initialized:
+        case TimeState.Initialized:
           return m('.row', [
             m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time }),
             m(FlatButton, {
@@ -139,7 +139,7 @@ const MediaStateControl: FactoryComponent<{
                 } as ITimingControlMessage),
             }),
           ]);
-        case States.Paused:
+        case TimeState.Paused:
           return m('.row', [
             m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time }),
             m('.row.left', [
@@ -169,7 +169,7 @@ const MediaStateControl: FactoryComponent<{
               }),
             ]),
           ]);
-        case States.Started:
+        case TimeState.Started:
           return m('.row', [
             m(MediaControls, { socket, isPaused: false, canChangeSpeed: true, time: state.time }),
             m('em', `Speed: ${state.time.trialTimeSpeed}x`),
@@ -177,7 +177,7 @@ const MediaStateControl: FactoryComponent<{
               ? m(FlatButton, { iconName: 'restore', onclick: () => updateSpeed(socket, 1) })
               : undefined,
           ]);
-        case States.Stopped:
+        case TimeState.Stopped:
           return m(
             '.row',
             m(FlatButton, {

@@ -5,8 +5,9 @@ import {
   IAdapterMessage,
   ProduceRequest,
   ITestBedOptions,
+  ITimeMessage,
 } from 'node-test-bed-adapter';
-import { ITimingControlMessage, ITimeMessage } from '../models';
+import { ITimingControlMessage } from 'trial-manager-models';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 
@@ -19,16 +20,6 @@ export class KafkaService extends EventEmitter implements TimeService {
   private adapter: TestBedAdapter;
   private log = Logger.instance;
 
-  /**
-   * The fictive date and time of the simulation / trial as the number of milliseconds
-   * from the UNIX epoch, 1 January 1970 00:00:00.000 UTC.
-   */
-  private _trialTime?: number;
-  /** Current speed of the simulation in number of times real-time */
-  private trialTimeSpeed: number;
-
-  // private _state: TimeServiceState;
-
   constructor(config: ConfigService) {
     super();
     const options = config.get('kafka') as ITestBedOptions;
@@ -38,7 +29,6 @@ export class KafkaService extends EventEmitter implements TimeService {
       options.produce.push(TestBedAdapter.TimeControlTopic);
     }
     console.table(options);
-    this.trialTimeSpeed = 0;
 
     this.adapter = new TestBedAdapter(options);
     this.adapter.on('ready', () => {
@@ -84,6 +74,16 @@ export class KafkaService extends EventEmitter implements TimeService {
         }
       });
     });
+  }
+
+  public get timeMessage() {
+    return {
+      updatedAt: Date.now(),
+      trialTime: this.trialTime.valueOf(),
+      timeElapsed: this.adapter.timeElapsed.valueOf(),
+      trialTimeSpeed: this.adapter.trialTimeSpeed,
+      state: this.adapter.state,
+    } as ITimeMessage;
   }
 
   public get trialTime() { return this.adapter.trialTime; }

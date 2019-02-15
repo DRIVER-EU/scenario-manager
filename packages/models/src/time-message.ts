@@ -1,4 +1,4 @@
-import { States } from '.';
+import { TimeState } from '.';
 
 export interface ITimeMessage {
   /**
@@ -23,5 +23,5 @@ export interface ITimeMessage {
   /**
    * Current active state
    */
-  state: States;
+  state: TimeState;
 }

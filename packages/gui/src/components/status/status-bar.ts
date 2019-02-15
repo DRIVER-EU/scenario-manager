@@ -1,35 +1,33 @@
 import m, { FactoryComponent } from 'mithril';
-import { SocketSvc } from '../../services';
-import { ITimeMessage, deepCopy } from 'trial-manager-models';
+import { AppState, SocketSvc } from '../../services';
+import { ITimeMessage, TimeState, deepCopy } from 'trial-manager-models';
 import { formatTime } from '../../utils';
 
 export const StatusBar: FactoryComponent<null> = () => {
   const socket = SocketSvc.socket;
   const sbState = {
     receivedTime: Date.now(),
-    time: {} as ITimeMessage,
     progressTimeHandler: -1,
   };
   const updateTime = (time: ITimeMessage) => {
     sbState.receivedTime = Date.now(),
-    sbState.time = deepCopy(time);
-    // m.redraw();
+    AppState.time = deepCopy(time);
   };
   const progressTime = (dom: Element) => () => {
     const now = Date.now();
-    if (!sbState.time || !sbState.time.trialTime) { return; }
-    if (typeof sbState.time.trialTimeSpeed !== undefined) {
+    if (!AppState.time || !AppState.time.trialTime) { return; }
+    if (typeof AppState.time.trialTimeSpeed !== undefined) {
       const delta = now - sbState.receivedTime;
-      sbState.time.timeElapsed += delta;
-      sbState.time.trialTime += delta * sbState.time.trialTimeSpeed;
+      AppState.time.timeElapsed += delta;
+      AppState.time.trialTime += delta * AppState.time.trialTimeSpeed;
     }
     sbState.receivedTime = now;
     m.render(dom, render());
   };
 
   const render = () => {
-    const { trialTime, trialTimeSpeed, timeElapsed, state } = sbState.time;
-    if (typeof state === 'undefined') {
+    const { trialTime, trialTimeSpeed, timeElapsed, state } = AppState.time;
+    if (typeof state === 'undefined' || state === TimeState.Idle) {
       return undefined;
     }
     const dt = new Date(trialTime);
@@ -54,7 +52,7 @@ export const StatusBar: FactoryComponent<null> = () => {
     },
     oncreate: ({ dom }) => {
       const timer = progressTime(dom);
-      sbState.progressTimeHandler = setInterval(timer, 500);
+      sbState.progressTimeHandler = setInterval(timer, 500) as unknown as number;
     },
     view: () => m('div'),
   };

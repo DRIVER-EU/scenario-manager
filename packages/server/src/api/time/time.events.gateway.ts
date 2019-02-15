@@ -6,13 +6,15 @@ import {
 import { Inject } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { KafkaService } from '../../adapters/kafka';
-import { ITimingControlMessage } from './../../adapters/models';
+import { IConnectMessage, ITimingControlMessage } from 'trial-manager-models';
 
 @WebSocketGateway()
 export class TimeEventsGateway {
   @WebSocketServer() server: Server;
 
-  constructor(@Inject('KafkaService') private readonly kafkaService: KafkaService) {
+  constructor(
+    @Inject('KafkaService') private readonly kafkaService: KafkaService,
+  ) {
     kafkaService.on('time', time => {
       this.server.emit('time', time);
     });
@@ -35,7 +37,13 @@ export class TimeEventsGateway {
 
   @SubscribeMessage('is-connected')
   async isConnected() {
-    return { event: 'is-connected', data: this.kafkaService.isConnected() };
+    return {
+      event: 'is-connected',
+      data: {
+        isConnected: this.kafkaService.isConnected(),
+        time: this.kafkaService.timeMessage,
+      } as IConnectMessage,
+    };
   }
 
   @SubscribeMessage('time-control')
@@ -44,5 +52,4 @@ export class TimeEventsGateway {
     // console.table(data);
     return this.kafkaService.sendTimeControlMessage(data);
   }
-
 }

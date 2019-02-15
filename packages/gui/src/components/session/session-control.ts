@@ -1,20 +1,23 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
-import { SocketSvc, TrialSvc } from '../../services';
+import { SocketSvc, TrialSvc, AppState } from '../../services';
 import { FlatButton, Select, ISelectOptions, NumberInput, TextInput, TextArea } from 'mithril-materialized';
-import { ITrial, IScenario, InjectType, ITimeMessage, IStateUpdate } from 'trial-manager-models';
+import {
+  ITrial,
+  IScenario,
+  InjectType,
+  ITimeMessage,
+  IStateUpdate,
+  IConnectMessage,
+  ISessionMessage,
+} from 'trial-manager-models';
 import { getInjectIcon } from '../../utils';
 
-interface ISessionSettings {
-  id: number;
-  name: string;
-  comments: string;
-}
-
-const isComplete = ({ id, name }: ISessionSettings) => id >= 0 && name && name.length > 1 ? true : false;
+const isComplete = ({ id: sessionId, name: sessionName }: ISessionMessage) =>
+  sessionId >= 0 && sessionName && sessionName.length > 1 ? true : false;
 
 /** Helper component to specify the session id, name, comments */
-const SessionSettings: FactoryComponent<{ session: ISessionSettings }> = () => {
+const SessionSettings: FactoryComponent<{ session: ISessionMessage }> = () => {
   return {
     view: ({ attrs: { session } }) => {
       return [
@@ -45,9 +48,9 @@ const SessionSettings: FactoryComponent<{ session: ISessionSettings }> = () => {
           m(
             '.col.s12',
             m(TextArea, {
-              initialValue: session.comments,
+              initialValue: session.comment,
               label: 'Comments',
-              onchange: (v: string) => (session.comments = v),
+              onchange: (v: string) => (session.comment = v),
               iconName: 'note',
             })
           )
@@ -65,12 +68,6 @@ export const SessionControl: FactoryComponent = () => {
     scenario: undefined as IScenario | undefined,
     isConnected: false,
     isConnecting: false,
-    session: {
-      id: 1,
-      name: '',
-      comments: '',
-    } as ISessionSettings,
-    time: {} as ITimeMessage,
   };
 
   return {
@@ -78,10 +75,15 @@ export const SessionControl: FactoryComponent = () => {
       state.trial = TrialSvc.getCurrent();
       state.scenarios = state.trial.injects.filter(i => i.type === InjectType.SCENARIO);
 
-      socket.on('stateUpdated', () => m.redraw());
-      socket.on('is-connected', (data: boolean) => {
-        state.isConnected = data;
+      socket.on('time', (tm: ITimeMessage) => {
+        if (AppState.time.state !== tm.state || AppState.time.trialTimeSpeed !== tm.trialTimeSpeed) {
+          m.redraw();
+        }
+      });
+      socket.on('is-connected', (data: IConnectMessage) => {
         state.isConnecting = false;
+        state.isConnected = data.isConnected;
+        AppState.time = data.time;
         m.redraw();
       });
       socket.emit('is-connected');
@@ -91,7 +93,7 @@ export const SessionControl: FactoryComponent = () => {
     view: () => {
       const { isConnected, isConnecting } = state;
       const scenarios = state.scenarios.map(s => ({ id: s.id, label: s.title }));
-      const canStart = isComplete(state.session);
+      const canStart = isComplete(AppState.session);
       state.scenario = state.scenarios[0];
       return [
         m(
@@ -121,10 +123,10 @@ export const SessionControl: FactoryComponent = () => {
             } as ISelectOptions<string>)
           )
         ),
-        m(SessionSettings, { session: state.session }),
+        m(SessionSettings, { session: AppState.session }),
         m(
           '.row',
-          m('.col.s12.m6', m(TimeControl, { scenario: state.scenario, isConnected, time: state.time, canStart }))
+          m('.col.s12.m6', m(TimeControl, { scenario: state.scenario, isConnected, time: AppState.time, canStart }))
         ),
       ];
     },

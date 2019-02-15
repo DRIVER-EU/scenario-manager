@@ -49,7 +49,7 @@ export class RunService {
 
   /** Initialize the new trial and scenario */
   public async init(session: ISessionMessage) {
-    const { trialId, scenarioId, sessionId, sessionName } = session;
+    const { trialId, scenarioId, id: sessionId, name: sessionName } = session;
 
     console.log(`Starting trial, session ${sessionId}: ${sessionName}.`);
 

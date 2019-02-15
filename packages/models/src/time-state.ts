@@ -1,4 +1,4 @@
-export enum States {
+export enum TimeState {
   Idle = 'Idle',
   Initialized = 'Initialized',
   Started = 'Started',

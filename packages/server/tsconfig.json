@@ -15,7 +15,7 @@
     "baseUrl": "./src"
   },
   "include": [
-    "src/**/*"
+    "src/**/*", "../models/src/connect-message.ts"
   ],
   "exclude": [
     "**/node_modules/*",

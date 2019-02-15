@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { States, SimulationState, ITimeMessage } from 'trial-manager-models';
+import { TimeState, SimulationState, ITimeMessage } from 'trial-manager-models';
 
 // tslint:disable-next-line:no-console
 const log = console.log;
@@ -29,7 +29,7 @@ const setupSocket = () => {
     console.log('event', data);
   });
   socket.on('disconnect', () => log('Disconnected'));
-  socket.on('stateUpdated', (state: States) => {
+  socket.on('stateUpdated', (state: TimeState) => {
     SimulationState.state = state;
   });
   let handler = -1;
