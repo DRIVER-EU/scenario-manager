@@ -57,6 +57,7 @@ const MediaStateControl: FactoryComponent<{
   startTime: string;
   startDate: Date;
   time: ITimeMessage;
+  canStart: boolean;
 }> = () => {
   const state = {
     startTime: '00:00',
@@ -71,19 +72,14 @@ const MediaStateControl: FactoryComponent<{
 
   const timeHasNotChanged = () => {
     const d = new Date(state.time.trialTime);
-    return (
-      state.startTime === formatTime(d, false) &&
-      state.startDate.getUTCFullYear() === d.getUTCFullYear() &&
-      state.startDate.getUTCMonth() === d.getUTCMonth() &&
-      state.startDate.getUTCDate() === d.getUTCDate()
-    );
+    return state.startTime === formatTime(d, false) && state.startDate.valueOf() === d.valueOf();
   };
   const onSelect = (hrs: number, min: number) => {
-    state.startTime = `${padLeft(hrs, 2)}:${padLeft(min, 2)}`;
+    state.startTime = `${padLeft(hrs)}:${padLeft(min)}`;
   };
 
   return {
-    view: ({ attrs: { socket, startTime, startDate, time } }) => {
+    view: ({ attrs: { socket, startTime, startDate, time, canStart } }) => {
       state.startTime = startTime;
       state.startDate = startDate;
       state.time = time;
@@ -94,10 +90,34 @@ const MediaStateControl: FactoryComponent<{
           return [
             m(
               '.row',
+              m(
+                '.col.s6',
+                m(TimePicker, {
+                  label: 'Start time:',
+                  iconName: 'timer',
+                  container: '#main',
+                  initialValue: state.startTime,
+                  twelveHour: false,
+                  onSelect,
+                })
+              ),
+              m(
+                '.col.s6',
+                m(DatePicker, {
+                  label: 'Start date:',
+                  initialValue: state.startDate,
+                  container: document.getElementById('main') as Element,
+                  onchange: (d: Date) => (state.startDate = d),
+                })
+              )
+            ),
+            m(
+              '.row',
               m(FlatButton, {
-                label: 'Initialise time',
+                label: 'Initialize scenario',
                 contentClass: 'btn-flat-large',
                 iconName: 'timer',
+                disabled: !canStart,
                 onclick: () =>
                   socket.emit('time-control', {
                     trialTime: newTime(),
@@ -105,24 +125,6 @@ const MediaStateControl: FactoryComponent<{
                     command: TimingControlCommand.Init,
                   } as ITimingControlMessage),
               })
-            ),
-            m(
-              '.row',
-              m('.col', [
-                m(TimePicker, {
-                  label: 'Start time:',
-                  container: '#main',
-                  initialValue: state.startTime,
-                  twelveHour: false,
-                  onSelect,
-                }),
-                m(DatePicker, {
-                  label: 'Start date:',
-                  initialValue: state.startDate,
-                  container: document.getElementById('main') as Element,
-                  onchange: (d: Date) => (state.startDate = d),
-                }),
-              ])
             ),
           ];
         case States.Initialized:
@@ -170,7 +172,7 @@ const MediaStateControl: FactoryComponent<{
         case States.Started:
           return m('.row', [
             m(MediaControls, { socket, isPaused: false, canChangeSpeed: true, time: state.time }),
-            m('em', 'Trial Time Speed Factor: ' + state.time.trialTimeSpeed),
+            m('em', `Speed: ${state.time.trialTimeSpeed}x`),
             state.time.trialTimeSpeed !== 1
               ? m(FlatButton, { iconName: 'restore', onclick: () => updateSpeed(socket, 1) })
               : undefined,
@@ -189,17 +191,23 @@ const MediaStateControl: FactoryComponent<{
   };
 };
 
-export const TimeControl: FactoryComponent<{ scenario?: IScenario; isConnected: boolean; time: ITimeMessage }> = () => {
+export interface ITimeControlOptions {
+  scenario?: IScenario;
+  isConnected: boolean;
+  time: ITimeMessage;
+  canStart: boolean;
+}
+
+export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
   const state = {
     socket: SocketSvc.socket,
     startTime: '00:00',
     startDate: new Date(),
     time: {} as ITimeMessage,
+    canStart: false,
   };
 
-  const updateStart: ((
-    vnode: m.Vnode<{ scenario?: IScenario | undefined; isConnected: boolean; time: ITimeMessage }, {}>
-  ) => any) = ({ attrs: { scenario } }) => {
+  const updateStart: (vnode: m.Vnode<ITimeControlOptions, {}>) => void = ({ attrs: { scenario } }) => {
     const start = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
     state.startTime = formatTime(start);
     state.startDate = start;
@@ -208,8 +216,9 @@ export const TimeControl: FactoryComponent<{ scenario?: IScenario; isConnected: 
   return {
     oninit: updateStart,
     onupdate: updateStart,
-    view: ({ attrs: { isConnected, time } }) => {
+    view: ({ attrs: { isConnected, time, canStart } }) => {
       state.time = time;
+      state.canStart = canStart;
       return [
         m('.button-group', isConnected ? m(MediaStateControl, state) : m('span', 'NO CONNECTION AVAILABLE')),
         m(ModalPanel, {
