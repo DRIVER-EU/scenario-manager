@@ -43,16 +43,16 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () =
 
       return [
         m(Select, {
-          iconName: 'person',
-          contentClass: 'col s12 m6 l3',
-          placeholder: 'Select your role player',
+          iconName: 'record_voice_over',
+          contentClass: 'col s12 m4',
+          placeholder: 'Pick role player',
           options: rolePlayers,
           checkedId: rpm.rolePlayerId,
           onchange: (v: unknown) => (rpm.rolePlayerId = v as string),
         }),
         m(Select, {
-          iconName: 'message',
-          contentClass: 'col s12 m6 l3',
+          iconName: rpm.type === RolePlayerMessageType.CALL ? 'phone' : 'fiber_smart_record',
+          contentClass: 'col s12 m4',
           placeholder: 'Select action type',
           options: types,
           checkedId: rpm.type,
@@ -62,8 +62,8 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () =
           ? undefined
           : m(Select, {
               iconName: 'person',
-              contentClass: 'col s12 m6 l3',
-              placeholder: 'Select participant(s)',
+              contentClass: 'col s12 m4',
+              placeholder: 'Participant',
               multiple: true,
               options: participants,
               checkedId: rpm.participantIds,

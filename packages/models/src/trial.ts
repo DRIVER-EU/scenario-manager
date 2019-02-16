@@ -1,5 +1,5 @@
 import {
-  IContent,
+  IMessageTopic,
   IObjective,
   IStakeholder,
   IInjectGroup,
@@ -25,14 +25,8 @@ export interface ITrialOverview {
 }
 
 export interface ITrial extends ITrialOverview {
-  // /** When does the scenario start */
-  // startDate?: Date;
-  // /** When does the scenario end */
-  // endDate?: Date;
-  // /** When is the scenario created */
-  // createdDate: Date;
-  // /** When is the scenario last updated */
-  // updatedDate: Date;
+  /** Specifies relation between message types and topics */
+  messageTopics: IMessageTopic[];
   /** Objects of interest that play a role in the scenario */
   objects: IObjectOfInterest[];
   /** Persons of interest that play a role in the scenario */

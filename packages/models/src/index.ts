@@ -1,6 +1,7 @@
 export * from './utils';
 export * from './content';
 export * from './inject';
+export * from './message-topic';
 export * from './session-message';
 export * from './connect-message';
 export * from './state-transition-request';

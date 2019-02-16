@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, FileInput } from 'mithril-materialized';
 import { IInject, MessageType } from 'trial-manager-models';
-import { getMessage, eatSpaces } from '../../utils';
+import { getMessage, eatSpaces, getMessageSubjects } from '../../utils';
 import { TrialSvc } from '../../services';
 import { IAsset } from 'trial-manager-models';
 
@@ -12,6 +12,8 @@ export interface IGeoJsonMessage {
   assetId?: number;
   /** Alias for the file */
   alias?: string;
+  /** Message subject id, to map to a  */
+  subjectId?: string;
 }
 
 export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
@@ -31,21 +33,38 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   return {
     view: ({ attrs: { inject } }) => {
       const pm = getMessage(inject, MessageType.GEOJSON_MESSAGE) as IGeoJsonMessage;
+      const subjects = getMessageSubjects(MessageType.GEOJSON_MESSAGE);
+      if (!pm.subjectId && subjects.length === 1) {
+        pm.subjectId = subjects[0].id;
+      }
       const assets = TrialSvc.assets;
       const options = assets
         .filter(a => a.mimetype === 'application/json' || jsonExt.test(a.filename))
         .map(a => ({ id: a.id, label: a.alias || a.filename }));
 
       return [
-        m(TextInput, {
-          id: 'title',
-          initialValue: inject.title,
-          onchange: (v: string) => {
-            inject.title = v;
-          },
-          label: 'Title',
-          iconName: 'title',
-        }),
+        m('.row', [
+          m(
+            '.col.s12.m6',
+            m(TextInput, {
+              id: 'title',
+              initialValue: inject.title,
+              onchange: (v: string) => {
+                inject.title = v;
+              },
+              label: 'Title',
+              iconName: 'title',
+            })
+          ),
+          m('.col.s12.m6', m(Select, {
+            placeholder: subjects.length === 0 ? 'First create a subject' : 'Select a subject',
+            label: 'Subject',
+            isMandatory: true,
+            options: subjects,
+            checkedId: pm.subjectId,
+            onchange: (v: unknown) => (pm.subjectId = v as string),
+          })),
+        ]),
         m(TextArea, {
           id: 'desc',
           initialValue: inject.description,

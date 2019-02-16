@@ -1,8 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
-import { Button, Icon, Dropdown } from 'mithril-materialized';
-import { getInjectIcon, findPreviousInjects } from '../../utils';
+import { Button, Icon, Dropdown, Select } from 'mithril-materialized';
+import { getInjectIcon, findPreviousInjects, getMessageIcon } from '../../utils';
 import { TrialSvc } from '../../services';
-import { IInject, InjectType, IInjectGroup, deepCopy, deepEqual, getInject } from 'trial-manager-models';
+import { IInject, InjectType, IInjectGroup, deepCopy, deepEqual, getInject, MessageType } from 'trial-manager-models';
 import { TopicNames, injectsChannel } from '../../models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages/message-form';
@@ -48,13 +48,27 @@ export const InjectsForm: FactoryComponent<{}> = () => {
               m(
                 '.row',
                 m('.col.s12', [
-                  m('h4', [
-                    m(Icon, {
-                      iconName: getInjectIcon(inject.type),
-                      style: 'margin-right: 12px;',
-                    }),
-                    inject.type,
-                  ]),
+                  inject.type === InjectType.INJECT
+                    ? m(Select, {
+                        iconName: getMessageIcon(inject.messageType),
+                        placeholder: 'Select the message type',
+                        checkedId: inject.messageType,
+                        options: [
+                          { id: MessageType.ROLE_PLAYER_MESSAGE, label: 'ROLE PLAYER MESSAGE' },
+                          { id: MessageType.POST_MESSAGE, label: 'POST A MESSAGE' },
+                          { id: MessageType.GEOJSON_MESSAGE, label: 'SEND A GEOJSON FILE' },
+                          { id: MessageType.PHASE_MESSAGE, label: 'PHASE MESSAGE' },
+                          { id: MessageType.AUTOMATED_ACTION, label: 'AUTOMATED ACTION' },
+                        ],
+                        onchange: (v: unknown) => (inject.messageType = v as MessageType),
+                      })
+                    : m('h4', [
+                        m(Icon, {
+                          iconName: getInjectIcon(inject.type),
+                          style: 'margin-right: 12px;',
+                        }),
+                        inject.type,
+                      ]),
                   [
                     m(MessageForm, { inject }),
                     m(InjectConditions, { inject, previousInjects }),

@@ -1,4 +1,5 @@
 import { IContent, InjectType, IInject, MessageType, getParent } from 'trial-manager-models';
+import { TrialSvc } from '../services';
 
 /**
  * Create a unique ID
@@ -92,6 +93,26 @@ export const getInjectIcon = (type?: InjectType) => {
   }
 };
 
+/**
+ * Represent the message with an icon.
+ * @param type message type
+ */
+export const getMessageIcon = (type?: MessageType) => {
+  switch (type) {
+    case MessageType.GEOJSON_MESSAGE:
+      return 'map';
+    case MessageType.PHASE_MESSAGE:
+      return 'flag'; // 'chat';
+    case MessageType.ROLE_PLAYER_MESSAGE:
+      return 'record_voice_over';
+    default:
+      return 'message';
+  }
+};
+
+export const getIcon = (inject: IInject) =>
+  inject.type === InjectType.INJECT ? getMessageIcon(inject.messageType) : getInjectIcon(inject.type);
+
 /** Gets and optionally creates the inject message */
 export const getMessage = (inject: IInject, type: MessageType) => {
   const key = MessageType[type];
@@ -141,4 +162,17 @@ export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
   const parent = getParent(injects, inject.id || inject.parentId, type);
   if (!parent) { return []; }
   return [parent, ...olderSiblings(parent.id)];
+};
+
+/**
+ * Most messages must be published to Kafka, perhaps in different topics.
+ * A direct relationship from message to topic is restrictive, and difficult to manage.
+ * Therefore, we publish to a subject, which is linked to a topic.
+ */
+export const getMessageSubjects = (mt: MessageType) => {
+  const trial = TrialSvc.getCurrent();
+  const messageTopics = trial.messageTopics;
+  const messageTopic = messageTopics.filter(t => t.messageType === mt).shift();
+  return messageTopic ? messageTopic.topics.map(t => ({ id: t.id, label: t.subject })) : [];
+
 };

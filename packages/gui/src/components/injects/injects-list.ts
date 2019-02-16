@@ -1,6 +1,6 @@
 import m, { Vnode, Component } from 'mithril';
 import { Icon, TextInput } from 'mithril-materialized';
-import { titleAndDescriptionFilter, getInjectIcon } from '../../utils';
+import { titleAndDescriptionFilter, getIcon } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { TrialSvc } from '../../services';
 import { IInject, InjectType } from 'trial-manager-models';
@@ -21,7 +21,7 @@ export const InjectsList = () => {
     // name: 'title',
     treeItemView: {
       view: ({ attrs }: Vnode<ITreeItemViewComponent>) => {
-        return m('div.icon-label', [m(Icon, { iconName: getInjectIcon(attrs.treeItem.type) }), attrs.treeItem.title]);
+        return m('div.icon-label', [m(Icon, { iconName: getIcon(attrs.treeItem as IInject) }), attrs.treeItem.title]);
       },
     } as Component<ITreeItemViewComponent>,
     onSelect: (ti, isSelected) => injectSelected(ti as IInject, isSelected),

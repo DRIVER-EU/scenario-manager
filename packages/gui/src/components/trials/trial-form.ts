@@ -2,6 +2,7 @@ import m from 'mithril';
 import { Button, TextArea, TextInput } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
 import { ITrial, deepCopy, deepEqual } from 'trial-manager-models';
+import { TopicsSettings } from './../configuration/topics/topics-settings';
 
 const log = console.log;
 const close = async (e: UIEvent) => {
@@ -33,11 +34,9 @@ export const TrialForm = () => {
     view: () => {
       const { trial } = state;
       const hasChanged = !deepEqual(trial, TrialSvc.getCurrent());
-      return m(
-        '.row.scenario-form',
-        { style: 'color: black' },
-        m('form.col.s12', [
-          m('.row', [
+      return m('.row', [
+        m('.col.s12', [
+          m('.row.trial-form', [
             [
               m(TextInput, {
                 id: 'title',
@@ -55,7 +54,8 @@ export const TrialForm = () => {
               }),
             ],
           ]),
-          m('row', [
+          m('.row.topics', m(TopicsSettings, { trial })),
+          m('.row.buttons', [
             m(Button, {
               label: 'Undo',
               iconName: 'undo',
@@ -86,8 +86,8 @@ export const TrialForm = () => {
               },
             }),
           ]),
-        ])
-      );
+        ]),
+      ]);
     },
   };
 };

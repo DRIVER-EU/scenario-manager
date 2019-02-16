@@ -29,17 +29,17 @@ const SessionSettings: FactoryComponent<{ session: ISessionMessage }> = () => {
               label: 'ID',
               isMandatory: true,
               min: 0,
-              onchange: (v: number) => (session.id = v),
+              onchange: (v: number) => (AppState.session.id = v),
               iconName: 'title',
             })
           ),
           m(
             '.col.s9',
             m(TextInput, {
-              // initialValue: session.name,
+              initialValue: session.name,
               label: 'Session name',
               isMandatory: true,
-              onchange: (v: string) => (session.name = v),
+              onchange: (v: string) => (AppState.session.name = v),
             })
           ),
         ]),
@@ -50,7 +50,7 @@ const SessionSettings: FactoryComponent<{ session: ISessionMessage }> = () => {
             m(TextArea, {
               initialValue: session.comment,
               label: 'Comments',
-              onchange: (v: string) => (session.comment = v),
+              onchange: (v: string) => (AppState.session.comment = v),
               iconName: 'note',
             })
           )
