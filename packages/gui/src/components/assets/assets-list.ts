@@ -29,7 +29,7 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
       : asset.mimetype.indexOf('application/pdf') === 0
       ? 'picture_as_pdf'
       : asset.mimetype.indexOf('application/json') === 0
-      ? 'code'
+      ? 'map'
       : 'short_text';
   return {
     oninit: () => {
