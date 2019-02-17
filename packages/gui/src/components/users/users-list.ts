@@ -4,7 +4,7 @@ import { IPerson, UserRole } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { usersChannel, TopicNames } from '../../models/channels';
 import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
-import { uniqueId } from '../../utils';
+import { uniqueId, userIcon, userRolesToString } from '../../utils';
 
 const UsersList: FactoryComponent<IPerson> = () => {
   const state = {
@@ -17,7 +17,20 @@ const UsersList: FactoryComponent<IPerson> = () => {
   return {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
-      const users = (TrialSvc.getUsers(state.filterValue) || []).sort((a, b) => (a.name > b.name ? 1 : -1));
+      const users = (TrialSvc.getUsers(state.filterValue) || [])
+        .sort((a, b) => (a.name > b.name || a.id > b.id ? 1 : -1));
+      const items = users.map(cur => ({
+        title: cur.name || '?',
+        avatar: userIcon(cur),
+        className: 'yellow black-text',
+        active: state.currentUserId === cur.id,
+        content: userRolesToString(cur) + (cur.notes ? `<br><i>${cur.notes}</i>` : ''),
+        onclick: () => {
+          usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
+          state.currentUserId = cur.id;
+        },
+      }));
+
       return [
         m('.row', [
           m(RoundIconButton, {
@@ -27,7 +40,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
               const user = {
                 id: uniqueId(),
                 name: 'New user',
-                role: UserRole.STAKEHOLDER,
+                roles: [UserRole.STAKEHOLDER],
               } as IPerson;
               state.currentUserId = user.id;
               await TrialSvc.createUser(user);
@@ -42,29 +55,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
           }),
         ]),
         users.length > 0
-          ? m(
-              '.row.sb',
-              m(
-                '.col.s12',
-                m(
-                  Collection,
-                  {
-                    mode: CollectionMode.AVATAR,
-                    items: users.map(cur => ({
-                      title: cur.name || '?',
-                      avatar: 'person_outline',
-                      className: 'yellow black-text',
-                      active: state.currentUserId === cur.id,
-                      content: TrialSvc.userRoleToString(cur.role) + (cur.notes ? `<br><i>${cur.notes}</i>` : ''),
-                      onclick: () => {
-                        usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                        state.currentUserId = cur.id;
-                      },
-                    })),
-                  }
-                )
-              )
-            )
+          ? m('.row.sb', m('.col.s12', m(Collection, { mode: CollectionMode.AVATAR, items })))
           : undefined,
       ];
     },

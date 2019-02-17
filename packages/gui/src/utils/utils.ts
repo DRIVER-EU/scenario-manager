@@ -1,4 +1,4 @@
-import { IContent, InjectType, IInject, MessageType, getParent } from 'trial-manager-models';
+import { IContent, InjectType, IInject, MessageType, getParent, IPerson, UserRole } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 
 /**
@@ -113,6 +113,43 @@ export const getMessageIcon = (type?: MessageType) => {
 export const getIcon = (inject: IInject) =>
   inject.type === InjectType.INJECT ? getMessageIcon(inject.messageType) : getInjectIcon(inject.type);
 
+export const userIcon = (user: IPerson) => {
+  switch (user.roles[0]) {
+    default:
+      return 'person';
+    case UserRole.EDITOR:
+      return 'edit';
+    case UserRole.PARTICIPANT:
+      return 'face';
+    case UserRole.ROLE_PLAYER:
+      return 'record_voice_over';
+    case UserRole.STAKEHOLDER:
+      return 'attach_money';
+    case UserRole.ADMIN:
+      return 'supervisor_account';
+  }
+};
+
+export const userRoleToString = (role: UserRole) => {
+  switch (role) {
+    default:
+      return UserRole[role];
+    case UserRole.ROLE_PLAYER:
+      return 'ROLE PLAYER';
+  }
+};
+
+export const userRolesToString = (user: IPerson) => {
+  const { roles } = user;
+  return roles.map(userRoleToString).join(', ');
+};
+
+/** Returns true if the user's roles contains the requested role */
+export const userRolesFilter = (user: IPerson, role: UserRole) => {
+  const { roles } = user;
+  return roles.filter(r => r === role).length > 0;
+};
+
 /** Gets and optionally creates the inject message */
 export const getMessage = (inject: IInject, type: MessageType) => {
   const key = MessageType[type];
@@ -146,7 +183,9 @@ export const formatTime = (t: Date, includeSeconds = true, includeDate = false) 
  * For storylines, find other storylines in the same scenario that have been executed earlier, including the scenario.
  */
 export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
-  if (!injects || !inject) { return []; }
+  if (!injects || !inject) {
+    return [];
+  }
   const olderSiblings = (id: string) => {
     let found = false;
     return injects
@@ -156,11 +195,16 @@ export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
         return !found;
       });
   };
-  const type = inject.type === InjectType.INJECT
-    ? InjectType.ACT : inject.type === InjectType.ACT
-    ? InjectType.STORYLINE : InjectType.SCENARIO;
+  const type =
+    inject.type === InjectType.INJECT
+      ? InjectType.ACT
+      : inject.type === InjectType.ACT
+      ? InjectType.STORYLINE
+      : InjectType.SCENARIO;
   const parent = getParent(injects, inject.id || inject.parentId, type);
-  if (!parent) { return []; }
+  if (!parent) {
+    return [];
+  }
   return [parent, ...olderSiblings(parent.id)];
 };
 
@@ -174,5 +218,4 @@ export const getMessageSubjects = (mt: MessageType) => {
   const messageTopics = trial.messageTopics;
   const messageTopic = messageTopics.filter(t => t.messageType === mt).shift();
   return messageTopic ? messageTopic.topics.map(t => ({ id: t.id, label: t.subject })) : [];
-
 };

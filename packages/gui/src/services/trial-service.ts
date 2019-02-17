@@ -119,26 +119,6 @@ class TrialService extends RestService<ITrial> {
     usersChannel.publish(TopicNames.ITEM_DELETE, { cur: user });
   }
 
-  public userRoleToString = (role: UserRole) => {
-    switch (role) {
-      default:
-        return UserRole[role];
-      case UserRole.ROLE_PLAYER:
-        return 'ROLE PLAYER';
-    }
-  };
-
-  public userIcon = (user: IPerson) => {
-    switch (user.role) {
-      default:
-        return 'person';
-      case UserRole.ROLE_PLAYER:
-        return 'record_voice_over';
-      case UserRole.ADMIN:
-        return 'supervisor_account';
-    }
-  };
-
   /** STAKEHOLDERS */
 
   /** Get all contacts (or filter by name) */

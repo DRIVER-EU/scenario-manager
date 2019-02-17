@@ -4,7 +4,7 @@ import { UserRole } from './user-role';
 export interface IPerson {
   id: string;
   name: string;
-  role: UserRole;
+  roles: UserRole[];
   email?: string;
   mobile?: string;
   phone?: string;

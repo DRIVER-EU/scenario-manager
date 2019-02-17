@@ -51,7 +51,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
                     mode: CollectionMode.AVATAR,
                     items: stakeholders.map(cur => ({
                       title: cur.name || '?',
-                      avatar: 'person_outline',
+                      avatar: 'attach_money',
                       className: 'yellow black-text',
                       active: state.curStakeholderId === cur.id,
                       content:

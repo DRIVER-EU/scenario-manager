@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
 import { IInject, MessageType, UserRole } from 'trial-manager-models';
-import { getMessage, iterEnum } from './../../utils';
+import { getMessage, iterEnum, userRolesFilter } from './../../utils';
 import { TrialSvc } from '../../services';
 
 export enum RolePlayerMessageType {
@@ -33,10 +33,10 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () =
     view: ({ attrs: { inject } }) => {
       const rpm = getMessage(inject, MessageType.ROLE_PLAYER_MESSAGE) as IRolePlayerMessage;
       const rolePlayers = (TrialSvc.getUsers() || [])
-        .filter(u => u.role === UserRole.ROLE_PLAYER)
+        .filter(u => userRolesFilter(u, UserRole.ROLE_PLAYER))
         .map(rp => ({ id: rp.id, label: rp.name }));
       const participants = (TrialSvc.getUsers() || [])
-        .filter(u => u.role === UserRole.PARTICIPANT)
+        .filter(u => userRolesFilter(u, UserRole.PARTICIPANT))
         .map(rp => ({ id: rp.id, label: rp.name }));
       const types = iterEnum(RolePlayerMessageType).map(t => ({ id: t, label: RolePlayerMessageType[t] }));
       const isAction = rpm.type === RolePlayerMessageType.ACTION;

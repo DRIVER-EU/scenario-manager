@@ -3,7 +3,7 @@ import { TextInput, TextArea, EmailInput, Button, Icon, Select, ModalPanel } fro
 import { ITrial, IPerson, UserRole, deepCopy, deepEqual } from 'trial-manager-models';
 import { TopicNames, usersChannel } from '../../models';
 import { TrialSvc } from '../../services';
-import { iterEnum } from '../../utils';
+import { iterEnum, userIcon, userRoleToString } from '../../utils';
 
 const log = console.log;
 
@@ -65,15 +65,17 @@ export const UsersForm = () => {
                       iconName: 'account_circle',
                     }),
                     m(Select, {
-                      iconName: TrialSvc.userIcon(user),
+                      iconName: userIcon(user),
                       label: 'Role',
-                      checkedId: user.role,
+                      placeholder: 'Pick your role',
+                      checkedId: user.roles,
                       isMandatory: true,
+                      multiple: true,
                       options: iterEnum(UserRole).map(r => ({
                         id: +r,
-                        label: TrialSvc.userRoleToString(+r),
+                        label: userRoleToString(+r),
                       })),
-                      onchange: (id: unknown) => (user.role = +(id as number)),
+                      onchange: (v: unknown) => (user.roles = (v as number[]).sort()),
                     }),
                     m(EmailInput, {
                       id: 'email',
