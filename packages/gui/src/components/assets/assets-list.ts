@@ -3,7 +3,8 @@ import { AssetsForm } from './assets-form';
 import { TrialSvc } from '../../services';
 import { IStakeholder, ITrial, IAsset } from 'trial-manager-models';
 import { assetsChannel, TopicNames } from '../../models';
-import { RoundIconButton, TextInput, Icon } from 'mithril-materialized';
+import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
+import { assetIcon } from '../../utils';
 
 const AssetsList: FactoryComponent<IStakeholder> = () => {
   const state = {
@@ -21,16 +22,11 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
           (a.alias && a.alias.toLowerCase().indexOf(f) >= 0) || (a.filename && a.filename.toLowerCase().indexOf(f) >= 0)
       : () => true;
   };
-  const assetToIcon = (asset: IAsset) =>
-    !asset.mimetype
-      ? ''
-      : asset.mimetype.indexOf('image/') === 0
-      ? 'image'
-      : asset.mimetype.indexOf('application/pdf') === 0
-      ? 'picture_as_pdf'
-      : asset.mimetype.indexOf('application/json') === 0
-      ? 'map'
-      : 'short_text';
+  const selectAsset = (cur: IAsset) => () => {
+    assetsChannel.publish(TopicNames.ITEM_SELECT, { cur });
+    state.curAssetId = cur.id;
+  };
+
   return {
     oninit: () => {
       state.trial = TrialSvc.getCurrent();
@@ -43,6 +39,23 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
         return;
       }
       const filteredAssets = TrialSvc.assets.filter(aliasAndFilenameFilter());
+      if (!state.curAssetId && filteredAssets.length > 0) {
+        setTimeout(() => {
+          selectAsset(filteredAssets[0])();
+          m.redraw();
+        }, 0);
+      }
+      const items = filteredAssets.map(cur => ({
+        title: cur.alias || cur.filename,
+        avatar: assetIcon(cur),
+        iconName: 'file_download',
+        className: 'yellow black-text',
+        active: state.curAssetId === cur.id,
+        href: cur.url,
+        // content: (cur. ? `<br><i>${cur.notes}</i>` : ''),
+        onclick: selectAsset(cur),
+      }));
+
       return [
         m('.row', [
           m(RoundIconButton, {
@@ -65,36 +78,34 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
               '.row.sb',
               m(
                 '.col.s12',
-                m(
-                  'ul.collection',
-                  filteredAssets.map(cur =>
-                    m(
-                      'li.collection-item avatar',
-                      {
-                        class: state.curAssetId === cur.id ? 'active' : undefined,
-                        onclick: () => {
-                          assetsChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                          state.curAssetId = cur.id;
-                        },
-                      },
-                      [
-                        m(Icon, {
-                          iconName: assetToIcon(cur),
-                          class: 'circle yellow black-text',
-                        }),
-                        m('span.title', cur.alias || cur.filename),
-                        m(
-                          'p',
-                          m(
-                            'a.secondary-content[target=_blank]',
-                            { href: cur.url },
-                            m(Icon, { iconName: 'file_download' })
-                          )
-                        ),
-                      ]
-                    )
-                  )
-                )
+                m(Collection, { mode: CollectionMode.AVATAR, items })
+                // m(
+                //   'ul.collection',
+                //   filteredAssets.map(cur =>
+                //     m(
+                //       'li.collection-item avatar',
+                //       {
+                //         class: state.curAssetId === cur.id ? 'active' : undefined,
+                //         onclick: selectAsset(cur),
+                //       },
+                //       [
+                //         m(Icon, {
+                //           iconName: assetIcon(cur),
+                //           class: 'circle yellow black-text',
+                //         }),
+                //         m('span.title', cur.alias || cur.filename),
+                //         m(
+                //           'p',
+                //           m(
+                //             'a.secondary-content[target=_blank]',
+                //             { href: cur.url },
+                //             m(Icon, { iconName: 'file_download' })
+                //           )
+                //         ),
+                //       ]
+                //     )
+                //   )
+                // )
               )
             )
           : undefined,

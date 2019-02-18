@@ -89,7 +89,8 @@ export const InjectsList = () => {
     editable: { canCreate: true, canDelete: false, canUpdate: true, canDeleteParent: false },
   } as ITreeOptions;
 
-  const injectSelected = (selected: IInject, isSelected: boolean) => {
+  const injectSelected = (selected?: IInject, isSelected?: boolean) => {
+    if (!selected) { return; }
     state.selected = selected;
     injectsChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as IInject });
   };
@@ -108,9 +109,15 @@ export const InjectsList = () => {
     view: () => {
       const query = titleAndDescriptionFilter(state.filterValue);
       const injects = TrialSvc.getInjects();
-      const tree = injects && injects.filter(query);
-      state.injects = tree;
-      return tree
+      const filteredInjects = injects && injects.filter(query);
+      state.injects = filteredInjects;
+      if (!state.selected && filteredInjects && filteredInjects.length > 0) {
+        setTimeout(() => {
+          injectSelected(filteredInjects.filter(i => !i.parentId).shift(), true);
+          m.redraw();
+        }, 0)
+      }
+      return filteredInjects
         ? m('.row.injects-list', [
             m(
               '.col.s12',
@@ -123,7 +130,7 @@ export const InjectsList = () => {
                 contentClass: 'right',
               })
             ),
-            m('.col.s12', m(TreeContainer, { tree, options })),
+            m('.col.s12', m(TreeContainer, { tree: filteredInjects, options })),
           ])
         : undefined;
     },

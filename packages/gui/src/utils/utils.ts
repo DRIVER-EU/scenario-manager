@@ -1,4 +1,4 @@
-import { IContent, InjectType, IInject, MessageType, getParent, IPerson, UserRole } from 'trial-manager-models';
+import { IContent, InjectType, IInject, MessageType, getParent, IPerson, UserRole, IAsset } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 
 /**
@@ -112,6 +112,17 @@ export const getMessageIcon = (type?: MessageType) => {
 
 export const getIcon = (inject: IInject) =>
   inject.type === InjectType.INJECT ? getMessageIcon(inject.messageType) : getInjectIcon(inject.type);
+
+export const assetIcon = (asset: IAsset) =>
+  !asset.mimetype
+    ? ''
+    : asset.mimetype.indexOf('image/') === 0
+    ? 'image'
+    : asset.mimetype.indexOf('application/pdf') === 0
+    ? 'picture_as_pdf'
+    : asset.mimetype.indexOf('application/json') === 0
+    ? 'map'
+    : 'short_text';
 
 export const userIcon = (user: IPerson) => {
   switch (user.roles[0]) {

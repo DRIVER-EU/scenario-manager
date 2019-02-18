@@ -65,7 +65,8 @@ export const ObjectivesList = () => {
     editable: { canCreate: true, canDelete: true, canUpdate: true, canDeleteParent: false },
   } as ITreeOptions;
 
-  const objectiveSelected = (selected: IObjective, isSelected: boolean) => {
+  const objectiveSelected = (selected?: IObjective, isSelected?: boolean) => {
+    if (!selected) { return; }
     state.selected = selected;
     objectiveChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as IObjective });
   };
@@ -86,9 +87,15 @@ export const ObjectivesList = () => {
     view: () => {
       const query = titleAndDescriptionFilter(state.filterValue);
       const objectives = TrialSvc.getObjectives();
-      const tree = objectives && objectives.filter(query);
-      state.objectives = tree;
-      return tree
+      if (!state.selected && objectives && objectives.length > 0) {
+        setTimeout(() => {
+          objectiveSelected(objectives.filter(o => !o.parentId).shift(), true);
+          m.redraw();
+        }, 0);
+      }
+      const selectedObjectives = objectives && objectives.filter(query);
+      state.objectives = selectedObjectives;
+      return selectedObjectives
         ? m('.row.objectives-list', [
             m(
               '.col.s12',
@@ -105,14 +112,14 @@ export const ObjectivesList = () => {
               '.col.s12',
               state.filterValue
                 ? m(Collection, {
-                    items: tree.map(cur => ({
+                    items: selectedObjectives.map(cur => ({
                       title: cur.title,
                       content: cur.description,
                       iconName: 'my_location',
                       onclick: (i: ICollectionItem) => objectiveChannel.publish(TopicNames.ITEM_SELECT, { cur }),
                     })),
                   })
-                : m(TreeContainer, { tree, options })
+                : m(TreeContainer, { tree: selectedObjectives, options })
             ),
           ])
         : undefined;

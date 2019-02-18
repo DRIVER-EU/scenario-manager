@@ -14,21 +14,29 @@ const UsersList: FactoryComponent<IPerson> = () => {
       state.currentUserId = cur.id;
     }),
   };
+  const selectUser = (cur: IPerson) => () => {
+    usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
+    state.currentUserId = cur.id;
+  };
+
   return {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
       const users = (TrialSvc.getUsers(state.filterValue) || [])
         .sort((a, b) => (a.name > b.name || a.id > b.id ? 1 : -1));
+      if (!state.currentUserId && users.length > 0) {
+        setTimeout(() => {
+          selectUser(users[0])();
+          m.redraw();
+        }, 0);
+      }
       const items = users.map(cur => ({
         title: cur.name || '?',
         avatar: userIcon(cur),
         className: 'yellow black-text',
         active: state.currentUserId === cur.id,
         content: userRolesToString(cur) + (cur.notes ? `<br><i>${cur.notes}</i>` : ''),
-        onclick: () => {
-          usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-          state.currentUserId = cur.id;
-        },
+        onclick: selectUser(cur),
       }));
 
       return [

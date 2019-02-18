@@ -14,10 +14,21 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
       state.curStakeholderId = cur.id;
     }),
   };
+  const selectStakeholder = (cur: IStakeholder) => () => {
+    stakeholdersChannel.publish(TopicNames.ITEM_SELECT, { cur });
+    state.curStakeholderId = cur.id;
+  };
+
   return {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
       const stakeholders = TrialSvc.getStakeholders(state.filterValue);
+      if (!state.curStakeholderId && stakeholders && stakeholders.length > 0) {
+        setTimeout(() => {
+          selectStakeholder(stakeholders[0])();
+          m.redraw();
+        }, 0);
+      }
       return [
         m('.row', [
           m(RoundIconButton, {
@@ -63,10 +74,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
                               .map(c => c && c.name)
                               .join(', ')
                           : ''),
-                      onclick: () => {
-                        stakeholdersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                        state.curStakeholderId = cur.id;
-                      },
+                      onclick: selectStakeholder(cur),
                     })),
                   }
                 )
