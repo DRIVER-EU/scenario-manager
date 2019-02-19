@@ -1,27 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, Switch } from 'mithril-materialized';
-import { IInject, MessageType } from 'trial-manager-models';
+import { IInject, MessageType, IPhaseMessage, TrialPhase } from 'trial-manager-models';
 import { getMessage, iterEnum } from '../../utils';
-
-export enum TrialPhase {
-  PROPER_NAME = 1,
-  INITIALIZATION,
-  PREPARATION,
-  PRE_INCIDENT,
-  INCIDENT,
-  POST_INCIDENT,
-}
-
-export interface IPhaseMessage {
-  /** Should be the same ID as the inject.id */
-  id: string;
-  /** Phase of the Trial */
-  phase: TrialPhase;
-  /** If the phase is starting or ending */
-  isStarting?: boolean;
-  /** In case you want to use an alternative name for your phase */
-  alternativeName?: string;
-}
 
 export const PhaseMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   const setTitle = (inject: IInject, pm: IPhaseMessage) => {

@@ -3,6 +3,7 @@ import { TimePicker, DatePicker, FlatButton, ModalPanel } from 'mithril-material
 import { TimeState, IScenario, ITimeMessage, ITimingControlMessage, TimingControlCommand } from 'trial-manager-models';
 import { SocketSvc } from '../../services';
 import { formatTime, padLeft } from '../../utils';
+import { timeControlChannel, TopicNames } from '../../models';
 
 const updateSpeed = (socket: SocketIOClient.Socket, trialTimeSpeed: number) =>
   socket.emit('time-control', {
@@ -118,12 +119,15 @@ const MediaStateControl: FactoryComponent<{
                 contentClass: 'btn-flat-large',
                 iconName: 'timer',
                 disabled: !canStart,
-                onclick: () =>
-                  socket.emit('time-control', {
+                onclick: () => {
+                  const tm = {
                     trialTime: newTime(),
                     trialTimeSpeed: 1,
                     command: TimingControlCommand.Init,
-                  } as ITimingControlMessage),
+                  } as ITimingControlMessage;
+                  socket.emit('time-control', tm);
+                  timeControlChannel.publish(TopicNames.CMD, { cmd: tm });
+                },
               })
             ),
           ];
@@ -227,7 +231,14 @@ export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
           description: 'After stopping the time service, you will not be able to continue anymore.',
           buttons: [
             { label: 'No, bring me back to safety' },
-            { label: 'Yes, I am sure!', onclick: () => sendCmd(state.socket, TimingControlCommand.Stop) },
+            {
+              label: 'Yes, I am sure!',
+              onclick: () => {
+                const tm = { command: TimingControlCommand.Stop } as ITimingControlMessage;
+                timeControlChannel.publish(TopicNames.CMD, { cmd: tm });
+                sendCmd(state.socket, TimingControlCommand.Stop);
+              },
+            },
           ],
         }),
       ];

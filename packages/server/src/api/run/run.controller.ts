@@ -1,9 +1,15 @@
-import { ApiUseTags, ApiOperation, ApiImplicitBody, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiUseTags,
+  ApiOperation,
+  ApiImplicitBody,
+  ApiResponse,
+} from '@nestjs/swagger';
 import {
   Controller,
   Get,
   Put,
   Post,
+  Delete,
   Inject,
   Body,
   HttpStatus,
@@ -21,7 +27,11 @@ export class RunController {
   constructor(@Inject('RunService') private readonly runService: RunService) {}
 
   @ApiOperation({ title: 'Get active trial scenario' })
-  @ApiResponse({ status: 200, description: 'Session message', type: SessionMessage })
+  @ApiResponse({
+    status: 200,
+    description: 'Session message',
+    type: SessionMessage,
+  })
   @ApiResponse({ status: 503, description: 'Error message', type: String })
   @Get('active')
   loaded() {
@@ -42,7 +52,7 @@ export class RunController {
   }
 
   @ApiOperation({ title: 'Deactivate trial scenario' })
-  @Get('unload')
+  @Delete('unload')
   async unload() {
     if (!this.runService.activeSession) {
       throw new HttpException(

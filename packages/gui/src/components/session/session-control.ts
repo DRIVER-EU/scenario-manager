@@ -1,17 +1,22 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
-import { SocketSvc, TrialSvc, AppState } from '../../services';
+import { SocketSvc, TrialSvc, RunSvc } from '../../services';
+import { AppState, timeControlChannel, TopicNames } from '../../models';
 import { FlatButton, Select, ISelectOptions, NumberInput, TextInput, TextArea } from 'mithril-materialized';
 import {
   ITrial,
   IScenario,
   InjectType,
   ITimeMessage,
-  IStateUpdate,
   IConnectMessage,
   ISessionMessage,
+  ITestbedSessionMessage,
+  TimingControlCommand,
+  TimeState,
+  SessionState,
 } from 'trial-manager-models';
 import { getInjectIcon } from '../../utils';
+import { ITimingControlMessage } from './../../../../models/dist/timing-control-message.d';
 
 const isComplete = ({ id: sessionId, name: sessionName }: ISessionMessage) =>
   sessionId >= 0 && sessionName && sessionName.length > 1 ? true : false;
@@ -20,6 +25,9 @@ const isComplete = ({ id: sessionId, name: sessionName }: ISessionMessage) =>
 const SessionSettings: FactoryComponent<{ session: ISessionMessage }> = () => {
   return {
     view: ({ attrs: { session } }) => {
+      if (session && !session.name) {
+        (session.id = 1), (session.name = 'New session');
+      }
       return [
         m('.row', [
           m(
@@ -68,6 +76,39 @@ export const SessionControl: FactoryComponent = () => {
     scenario: undefined as IScenario | undefined,
     isConnected: false,
     isConnecting: false,
+    subscription: timeControlChannel.subscribe(TopicNames.CMD, ({ cmd }) => handleTimeControlMessages(cmd)),
+  };
+
+  const handleTimeControlMessages = (cmd: ITimingControlMessage) => {
+    const createSessionMsg = (sessionState: SessionState) => {
+      const { trial, scenario } = state;
+      if (trial && scenario) {
+        const session = {
+          trialId: trial.id,
+          trialName: trial.title,
+          scenarioId: scenario.id,
+          scenarioName: scenario.title,
+          sessionId: AppState.session.id.toString(),
+          sessionName: AppState.session.name,
+          sessionState,
+          comment: AppState.session.comment,
+        } as ITestbedSessionMessage;
+        return session;
+      }
+      return undefined;
+    };
+    switch (cmd.command) {
+      case TimingControlCommand.Init: {
+        const s = createSessionMsg(SessionState.START);
+        if (s) {
+          RunSvc.load(s).catch(e => console.warn(e));
+        }
+        break;
+      }
+      case TimingControlCommand.Stop: {
+        RunSvc.unload().catch(e => console.warn(e));
+      }
+    }
   };
 
   return {
@@ -84,11 +125,22 @@ export const SessionControl: FactoryComponent = () => {
         state.isConnecting = false;
         state.isConnected = data.isConnected;
         AppState.time = data.time;
+        if (state.isConnected) {
+          RunSvc.active()
+            .then(session => (AppState.session = session))
+            .catch(e => console.log(e));
+        }
         m.redraw();
       });
+      // Check whether we are connected
       socket.emit('is-connected');
       // TODO display the inject states
-      socket.on('injectStates', (data: IStateUpdate[]) => console.log(data));
+      // socket.on('injectStates', (data: IStateUpdate[]) => console.log(data));
+    },
+    onremove: () => {
+      state.subscription.unsubscribe();
+      socket.off('time');
+      socket.off('is-connected');
     },
     view: () => {
       const { isConnected, isConnecting } = state;

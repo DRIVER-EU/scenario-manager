@@ -1,5 +1,13 @@
 import { messageBus } from '../services/message-bus-service';
-import { ITrial, IObjective, IInject, IPerson, IStakeholder, IAsset } from 'trial-manager-models';
+import {
+  ITrial,
+  IObjective,
+  IInject,
+  IPerson,
+  IStakeholder,
+  IAsset,
+  ITimingControlMessage,
+} from 'trial-manager-models';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
@@ -12,6 +20,7 @@ export const ChannelNames = {
   POI: 'POI',
   OOI: 'OOI',
   INJECT: 'INJECT',
+  TIME_CONTROL: 'TIME_CONTROL',
 };
 
 export const TopicNames = {
@@ -25,28 +34,21 @@ export const TopicNames = {
   LIST_CREATE: 'LIST.CREATE',
   LIST_DELETE: 'LIST.DELETE',
   LIST_UPDATE: 'LIST.UPDATE',
+  CMD: 'CMD',
 };
 
-export const scenarioChannel = messageBus.channel<{ cur: ITrial; old?: ITrial }>(
-  ChannelNames.SCENARIO
-);
+export const scenarioChannel = messageBus.channel<{ cur: ITrial; old?: ITrial }>(ChannelNames.SCENARIO);
 
-export const objectiveChannel = messageBus.channel<{ cur: IObjective; old?: IObjective }>(
-  ChannelNames.OBJECTIVE
-);
+export const objectiveChannel = messageBus.channel<{ cur: IObjective; old?: IObjective }>(ChannelNames.OBJECTIVE);
 
-export const injectsChannel = messageBus.channel<{ cur: IInject; old?: IInject }>(
-  ChannelNames.INJECT
-);
+export const injectsChannel = messageBus.channel<{ cur: IInject; old?: IInject }>(ChannelNames.INJECT);
 
-export const usersChannel = messageBus.channel<{ cur: IPerson; old?: IPerson }>(
-  ChannelNames.USERS
-);
+export const usersChannel = messageBus.channel<{ cur: IPerson; old?: IPerson }>(ChannelNames.USERS);
 
 export const stakeholdersChannel = messageBus.channel<{ cur: IStakeholder; old?: IStakeholder }>(
   ChannelNames.STAKEHOLDERS
 );
 
-export const assetsChannel = messageBus.channel<{ cur: IAsset; old?: IAsset }>(
-  ChannelNames.ASSETS
-);
+export const assetsChannel = messageBus.channel<{ cur: IAsset; old?: IAsset }>(ChannelNames.ASSETS);
+
+export const timeControlChannel = messageBus.channel<{ cmd: ITimingControlMessage }>(ChannelNames.TIME_CONTROL);

@@ -20,7 +20,7 @@ export default {
   wrapUnions: 'auto',
   schemaFolder: './data/schemas',
   // consume: [],
-  // produce: [],
+  produce: ['system_request_change_of_trial_stage', 'phase_message', 'role_player', 'session_mgmt'],
   logging: {
     logToConsole: LogLevel.Info,
     logToKafka: LogLevel.Warn,

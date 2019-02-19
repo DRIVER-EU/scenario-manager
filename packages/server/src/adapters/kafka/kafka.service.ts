@@ -7,7 +7,13 @@ import {
   ITestBedOptions,
   ITimeMessage,
 } from 'node-test-bed-adapter';
-import { ITimingControlMessage } from 'trial-manager-models';
+import {
+  ITimingControlMessage,
+  IPhaseMessage,
+  ITestbedSessionMessage,
+  IOstStageChangeMessage,
+  IRolePlayerMessage,
+} from 'trial-manager-models';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 
@@ -76,6 +82,22 @@ export class KafkaService extends EventEmitter implements TimeService {
     });
   }
 
+  public sendSessionMessage(sm: ITestbedSessionMessage) {
+    return this.sendMessage(sm, 'session_mgmt');
+  }
+
+  public sendPhaseMessage(pm: IPhaseMessage) {
+    return this.sendMessage(pm, 'phase_message');
+  }
+
+  public sendOstStageChangeRequestMessage(om: IOstStageChangeMessage) {
+    return this.sendMessage(om, 'system_request_change_of_trial_stage');
+  }
+
+  public sendRolePlayerMessage(rpm: IRolePlayerMessage) {
+    return this.sendMessage(rpm, 'role_player');
+  }
+
   public get timeMessage() {
     return {
       updatedAt: Date.now(),
@@ -86,7 +108,30 @@ export class KafkaService extends EventEmitter implements TimeService {
     } as ITimeMessage;
   }
 
-  public get trialTime() { return this.adapter.trialTime; }
+  public get trialTime() {
+    return this.adapter.trialTime;
+  }
+
+  private sendMessage<T>(m: T, topic: string) {
+    return new Promise<boolean>((resolve, reject) => {
+      console.table(m);
+      const payload = {
+        topic,
+        messages: m,
+        attributes: 1, // Gzip
+      } as ProduceRequest;
+
+      this.adapter.send(payload, (err, data) => {
+        if (err) {
+          this.log.error(err);
+          reject(err);
+        } else if (data) {
+          this.log.info(data);
+          resolve(true);
+        }
+      });
+    });
+  }
 
   private handleMessage(message: IAdapterMessage) {
     switch (message.topic) {

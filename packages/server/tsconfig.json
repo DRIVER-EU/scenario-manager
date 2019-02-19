@@ -10,12 +10,11 @@
     "experimentalDecorators": true,
     "target": "es6",
     "sourceMap": true,
-    "allowJs": true,
-    "outDir": "./dist",
-    "baseUrl": "./src"
+    "allowJs": false,
+    "outDir": "./dist"
   },
   "include": [
-    "src/**/*", "../models/src/connect-message.ts"
+    "src/**/*"
   ],
   "exclude": [
     "**/node_modules/*",

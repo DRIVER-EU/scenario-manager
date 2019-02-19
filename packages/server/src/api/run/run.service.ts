@@ -7,7 +7,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import {
   ITrial,
   IScenario,
-  ISessionMessage,
+  ITestbedSessionMessage,
   getParent,
   IInjectGroup,
   IInject,
@@ -17,8 +17,7 @@ import {
   toMsec,
   InjectType,
   MessageType,
-  deepCopy,
-  deepEqual,
+  SessionState,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -28,13 +27,12 @@ import { StateTransitionRequest } from '../../adapters/models';
 @WebSocketGateway()
 export class RunService {
   @WebSocketServer() private server: Server;
-  private session: ISessionMessage;
+  private session: ITestbedSessionMessage;
   private readonly transitionQueue: StateTransitionRequest[] = [];
   private trial: ITrial;
   private scenario: IScenario;
   private injects: Array<IInject | IInjectGroup> = [];
   private states: { [id: string]: IStateUpdate } = {};
-  private oldStates: { [id: string]: IStateUpdate } = {};
   private isRunning = false;
   private trialTime: Date;
 
@@ -48,8 +46,8 @@ export class RunService {
   }
 
   /** Initialize the new trial and scenario */
-  public async init(session: ISessionMessage) {
-    const { trialId, scenarioId, id: sessionId, name: sessionName } = session;
+  public async init(session: ITestbedSessionMessage) {
+    const { trialId, scenarioId, sessionId, sessionName } = session;
 
     console.log(`Starting trial, session ${sessionId}: ${sessionName}.`);
 
@@ -74,6 +72,7 @@ export class RunService {
       } as IStateUpdate;
       return acc;
     }, {});
+    this.kafkaService.sendSessionMessage(this.session);
     this.isRunning = true;
     this.updateLoop();
     return true;
@@ -81,6 +80,8 @@ export class RunService {
 
   /** Close the active scenario */
   public async close() {
+    this.session.sessionState = SessionState.STOP;
+    this.kafkaService.sendSessionMessage(this.session);
     this.isRunning = false;
     this.session = undefined;
     this.trial = undefined;
@@ -206,8 +207,6 @@ export class RunService {
 
   /** Send a state update message to all connected clients */
   private sendStateUpdate() {
-    if (deepEqual(this.states, this.oldStates)) { return; }
-    this.oldStates = deepCopy(this.states);
     this.server.emit('injectStates', this.states);
   }
 }

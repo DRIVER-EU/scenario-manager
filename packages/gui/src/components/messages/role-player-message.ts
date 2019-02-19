@@ -1,32 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
-import { IInject, MessageType, UserRole } from 'trial-manager-models';
+import { IInject, MessageType, UserRole, IRolePlayerMessage, RolePlayerMessageType } from 'trial-manager-models';
 import { getMessage, iterEnum, userRolesFilter } from './../../utils';
 import { TrialSvc } from '../../services';
-
-export enum RolePlayerMessageType {
-  CALL = 1,
-  ACTION,
-}
-
-export interface IRolePlayerMessage {
-  /** Should be the same ID as the inject.id */
-  id: string;
-  /** Type of role player action */
-  type: RolePlayerMessageType;
-  /** Same as the inject title */
-  title: string;
-  /** Same as the inject description */
-  headline?: string;
-  /** Message body */
-  description?: string;
-  /** The role player's ID assigned to perform the role */
-  rolePlayerId?: string;
-  /** The partipants' IDs assigned to the message */
-  participantIds?: string[];
-  /** Attachment or images */
-  urls?: Array<{ href: string; name: string; size: number }>;
-}
 
 export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   return {
