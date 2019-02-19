@@ -17,9 +17,9 @@ export interface IRolePlayerMessage {
   /** Same as the inject title */
   title: string;
   /** Same as the inject description */
-  description?: string;
+  headline?: string;
   /** Message body */
-  body?: string;
+  description?: string;
   /** The role player's ID assigned to perform the role */
   rolePlayerId?: string;
   /** The partipants' IDs assigned to the message */
@@ -79,15 +79,15 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () =
         }),
         m(TextArea, {
           id: 'desc',
-          initialValue: rpm.description,
-          onchange: (v: string) => (inject.description = rpm.description = v),
+          initialValue: rpm.headline,
+          onchange: (v: string) => (inject.description = rpm.headline = v),
           label: 'Description',
           iconName: 'note',
         }),
         m(TextArea, {
           id: 'body',
-          initialValue: rpm.body as string,
-          onchange: (v: string) => (rpm.body = v),
+          initialValue: rpm.description as string,
+          onchange: (v: string) => (rpm.description = v),
           label: 'Body',
           iconName: 'description',
         }),
