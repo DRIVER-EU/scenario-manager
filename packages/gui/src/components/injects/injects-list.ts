@@ -115,7 +115,7 @@ export const InjectsList = () => {
         setTimeout(() => {
           injectSelected(filteredInjects.filter(i => !i.parentId).shift(), true);
           m.redraw();
-        }, 0)
+        }, 0);
       }
       return filteredInjects
         ? m('.row.injects-list', [
