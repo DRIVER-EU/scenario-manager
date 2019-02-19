@@ -1,11 +1,10 @@
-import { ApiUseTags, ApiOperation, ApiImplicitBody } from '@nestjs/swagger';
+import { ApiUseTags, ApiOperation, ApiImplicitBody, ApiResponse } from '@nestjs/swagger';
 import {
   Controller,
   Get,
   Put,
   Post,
   Inject,
-  Param,
   Body,
   HttpStatus,
   HttpException,
@@ -22,6 +21,8 @@ export class RunController {
   constructor(@Inject('RunService') private readonly runService: RunService) {}
 
   @ApiOperation({ title: 'Get active trial scenario' })
+  @ApiResponse({ status: 200, description: 'Session message', type: SessionMessage })
+  @ApiResponse({ status: 503, description: 'Error message', type: String })
   @Get('active')
   loaded() {
     if (this.isLoading) {
