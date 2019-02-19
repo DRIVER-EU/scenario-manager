@@ -220,7 +220,7 @@ export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
       state.time = time;
       state.canStart = canStart;
       return [
-        m('.button-group', isConnected ? m(MediaStateControl, state) : m('span', 'NO CONNECTION AVAILABLE')),
+        m('.button-group', isConnected ? m(MediaStateControl, state) : undefined),
         m(ModalPanel, {
           id: 'stopPanel',
           title: 'Are you certain you want to stop?',
