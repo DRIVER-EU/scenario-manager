@@ -36,22 +36,38 @@ export const TrialForm = () => {
       const hasChanged = !deepEqual(trial, TrialSvc.getCurrent());
       return m('.row', [
         m('.col.s12', [
-          m('.row.trial-form', [
+          m('.row', [
             [
-              m(TextInput, {
-                id: 'title',
-                initialValue: trial.title,
-                onchange: (v: string) => (trial.title = v),
-                label: 'Title',
-                iconName: 'title',
-              }),
-              m(TextArea, {
-                id: 'desc',
-                initialValue: trial.description,
-                onchange: (v: string) => (trial.description = v),
-                label: 'Description',
-                iconName: 'description',
-              }),
+              m(
+                '.col.s6.l4',
+                m(TextInput, {
+                  id: 'id',
+                  initialValue: trial.id,
+                  label: 'ID',
+                  iconName: 'label',
+                  disabled: true,
+                })
+              ),
+              m(
+                '.col.s6.l8',
+                m(TextInput, {
+                  id: 'title',
+                  initialValue: trial.title,
+                  onchange: (v: string) => (trial.title = v),
+                  label: 'Title',
+                  iconName: 'title',
+                })
+              ),
+              m(
+                '.col.s12',
+                m(TextArea, {
+                  id: 'desc',
+                  initialValue: trial.description,
+                  onchange: (v: string) => (trial.description = v),
+                  label: 'Description',
+                  iconName: 'description',
+                })
+              ),
             ],
           ]),
           m('.row.topics', m(TopicsSettings, { trial })),
