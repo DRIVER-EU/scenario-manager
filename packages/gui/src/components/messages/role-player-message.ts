@@ -78,17 +78,17 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () =
           contentClass: 'col s12',
         }),
         m(TextArea, {
-          id: 'desc',
+          id: 'headline',
           initialValue: rpm.headline,
           onchange: (v: string) => (inject.description = rpm.headline = v),
-          label: 'Description',
+          label: 'Headline',
           iconName: 'note',
         }),
         m(TextArea, {
-          id: 'body',
+          id: 'desc',
           initialValue: rpm.description as string,
           onchange: (v: string) => (rpm.description = v),
-          label: 'Body',
+          label: 'Description',
           iconName: 'description',
         }),
       ];
