@@ -28,18 +28,20 @@ export const StatusBar: FactoryComponent<null> = () => {
 
   const render = () => {
     const { trialTime, trialTimeSpeed, timeElapsed, state } = AppState.time;
-    if (typeof state === 'undefined' || state === TimeState.Idle) {
+    if (typeof state === 'undefined') {
       return undefined;
     }
+    const hasTimeInfo = state === TimeState.Paused || state === TimeState.Started || state === TimeState.Stopped;
+
     const dt = new Date(trialTime);
     return m('.statusbar.center-align', [
       m('span', state),
       m('span', '|'),
-      m('span', `${trialTimeSpeed}x`),
+      m('span', hasTimeInfo ? `${trialTimeSpeed}x` : ''),
       m('span', '|'),
-      m('span', `${formatTime(dt)}, ${dt.toDateString()}`),
+      m('span', hasTimeInfo ? `${formatTime(dt)}, ${dt.toDateString()}` : ''),
       m('span', '|'),
-      m('span', `Elapsed ${formatTime(new Date(timeElapsed), true, true)}`),
+      m('span', hasTimeInfo ? `Elapsed ${formatTime(new Date(timeElapsed), true, true)}` : ''),
     ]);
   };
 
