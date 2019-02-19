@@ -12,6 +12,7 @@ import { UsersView } from '../components/users/users-list';
 import { StakeholdersView } from '../components/stakeholders/stakeholders-list';
 import { AssetsView } from '../components/assets';
 import { SessionControl } from '../components/session/session-control';
+import { SessionState } from '../components/session/session-state';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -157,5 +158,13 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     visible: false,
     level: Dashboards.EXECUTE,
     component: SessionControl,
+  },
+  {
+    id: Dashboards.SESSION_STATE,
+    title: 'Status',
+    route: '/execute/state',
+    visible: false,
+    level: Dashboards.EXECUTE,
+    component: SessionState,
   },
 ]);
