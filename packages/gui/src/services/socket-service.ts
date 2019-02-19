@@ -26,7 +26,7 @@ const setupSocket = () => {
     console.log('time-events: ', data);
   });
   socket.on('exception', (data: unknown) => {
-    console.log('event', data);
+    console.error('event', data);
   });
   socket.on('disconnect', () => log('Disconnected'));
   socket.on('stateUpdated', (state: TimeState) => {

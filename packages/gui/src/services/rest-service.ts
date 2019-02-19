@@ -1,11 +1,11 @@
 import m from 'mithril';
 import { IChannelDefinition, messageBus } from './message-bus-service';
 import { TopicNames } from '../models/channels';
+import { AppState } from '../models';
 
 const log = console.log;
 const error = console.error;
 const withCredentials = false;
-const apiService = 'http://localhost:3000';
 
 // export class RestService<T extends IBaseModel> {
 export class RestService<T extends { id?: string | number }> {
@@ -15,7 +15,7 @@ export class RestService<T extends { id?: string | number }> {
   protected channel: IChannelDefinition<{ list: T[] } | { cur: T; old: T }>;
 
   constructor(protected urlFragment: string, protected channelName?: string) {
-    this.baseUrl = `${apiService}/${urlFragment}/`;
+    this.baseUrl = `${AppState.apiService}/${urlFragment}/`;
     this.channel = messageBus.channel(channelName || urlFragment);
   }
 

@@ -1,5 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
-import { AppState, SocketSvc } from '../../services';
+import { AppState } from '../../models';
+import { SocketSvc } from '../../services';
 import { ITimeMessage, TimeState, deepCopy } from 'trial-manager-models';
 import { formatTime } from '../../utils';
 
