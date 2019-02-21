@@ -1,20 +1,9 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, FileInput } from 'mithril-materialized';
-import { IInject, MessageType } from 'trial-manager-models';
+import { IInject, MessageType, IGeoJsonMessage } from 'trial-manager-models';
 import { getMessage, eatSpaces, getMessageSubjects } from '../../utils';
 import { TrialSvc } from '../../services';
 import { IAsset } from 'trial-manager-models';
-
-export interface IGeoJsonMessage {
-  /** Should be the same ID as the inject.id */
-  id: string;
-  /** Link to the asset that holds the GeoJSON file */
-  assetId?: number;
-  /** Alias for the file */
-  alias?: string;
-  /** Message subject id, to map to a  */
-  subjectId?: string;
-}
 
 export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   const jsonExt = /json$/i;

@@ -1,4 +1,5 @@
 export * from './utils';
+export * from './messages';
 export * from './content';
 export * from './inject';
 export * from './message-topic';

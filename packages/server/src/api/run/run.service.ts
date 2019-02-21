@@ -22,6 +22,7 @@ import {
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
 import { StateTransitionRequest } from '../../adapters/models';
+import { ExecutionService } from './execution.service';
 
 @Injectable()
 @WebSocketGateway()
@@ -39,6 +40,7 @@ export class RunService {
   constructor(
     @Inject('TrialService') private readonly trialService: TrialService,
     @Inject('KafkaService') private readonly kafkaService: KafkaService,
+    @Inject('ExecutionService') private readonly executionService: ExecutionService,
   ) {}
 
   public get activeSession() {
@@ -130,17 +132,17 @@ export class RunService {
     this.executeInjects();
     this.sendStateUpdate();
     if (this.isRunning) {
-      setTimeout(() => this.updateLoop(), 500);
+      setTimeout(() => this.updateLoop(), 1000);
     }
   }
 
   /** Process all manual requests to transition a state. */
   private processTransitionQueue() {
     while (this.transitionQueue.length > 0) {
-      const t = this.transitionQueue.shift();
-      const state = this.states[t.id];
-      if (state && state.state === t.from) {
-        state.state = t.to;
+      const tr = this.transitionQueue.shift();
+      const state = this.states[tr.id];
+      if (state && state.state === tr.from) {
+        state.state = tr.to;
       }
     }
   }
@@ -150,10 +152,10 @@ export class RunService {
     this.processTransitionQueue();
 
     const trialTimeValue = this.trialTime.valueOf();
-    const onHoldFilter = (i: IInject) =>
+    const onHoldInjects = (i: IInject) =>
       this.states[i.id].state === InjectState.ON_HOLD &&
       this.states[i.parentId].state === InjectState.IN_PROGRESS;
-    const scheduledFilter = (i: IInject) =>
+    const scheduledInjects = (i: IInject) =>
       this.states[i.id].state === InjectState.SCHEDULED;
     const conditionFilter = (i: IInject) => {
       if (!i.condition) {
@@ -182,25 +184,26 @@ export class RunService {
       (this.states[i.id] = { state: is, lastTransitionAt: this.trialTime });
 
     this.injects
-      .filter(onHoldFilter)
+      .filter(onHoldInjects)
       .forEach(i => transitionTo(i, InjectState.SCHEDULED));
 
     this.injects
-      .filter(scheduledFilter)
+      .filter(scheduledInjects)
       .filter(conditionFilter)
       .forEach(i => transitionTo(i, InjectState.IN_PROGRESS));
   }
 
   /** Execute each inject that is IN_PROGRESS */
   private executeInjects() {
-    const actionableInjectsFilter = (i: IInject) =>
+    const actionableInjects = (i: IInject) =>
       i.type === InjectType.INJECT &&
       i.messageType !== MessageType.ROLE_PLAYER_MESSAGE &&
       this.states[i.id].state === InjectState.IN_PROGRESS;
     this.injects
-      .filter(actionableInjectsFilter)
+      .filter(actionableInjects)
       .forEach(i => {
         // TODO Add actual implementation based.
+        this.executionService.execute(i, this.trial);
         console.log(`Executing ${i.title}...`);
       });
   }

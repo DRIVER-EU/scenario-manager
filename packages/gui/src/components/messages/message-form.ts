@@ -1,8 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
-import { Select } from 'mithril-materialized';
 import { IInject, MessageType, InjectType } from 'trial-manager-models';
-import { RolePlayerMessageForm, PhaseMessageForm, ScenarioForm, DefaultMessageForm } from '.';
+import { RolePlayerMessageForm, PhaseMessageForm, ScenarioForm, DefaultMessageForm, NamedGeoJsonMessageForm } from '.';
 import { GeoJsonMessageForm } from './geojson-message';
+import { OstChangeStageMessageForm } from './ost-change-stage-message';
 
 export const MessageForm: FactoryComponent<{ inject: IInject }> = () => {
   const getMessageForm = (inject: IInject) => {
@@ -13,6 +13,10 @@ export const MessageForm: FactoryComponent<{ inject: IInject }> = () => {
         return m(PhaseMessageForm, { inject });
       case MessageType.GEOJSON_MESSAGE:
         return m(GeoJsonMessageForm, { inject });
+      case MessageType.NAMED_GEOJSON_MESSAGE:
+        return m(NamedGeoJsonMessageForm, { inject });
+      case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
+        return m(OstChangeStageMessageForm, { inject });
       default:
         return m('.row', 'TODO');
     }
