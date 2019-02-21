@@ -25,6 +25,8 @@ export interface IMapEditor extends Attributes {
   labelValue?: string;
   /** If true, the item cannot be edited */
   disabled?: boolean;
+  /** If true, do not parse arrays like [1, 2, 3] */
+  disallowArrays?: boolean;
   /** The actual map of key-value pairs */
   properties: { [key: string]: number | string | boolean | Array<string | number> };
   /** Optional component to use to render the key-value pair in a Collection */
@@ -33,26 +35,39 @@ export interface IMapEditor extends Attributes {
 
 /** A simple editor for a Map (i.e. key - value pairs) */
 export const MapEditor: FactoryComponent<IMapEditor> = () => {
-  const parseArray = (v?: string) => {
+  const parseArray = (v?: string, disallowArrays = false) => {
+    if (disallowArrays) {
+      return v;
+    }
     const extractArrayData = /\s*\[(.*)\]\s*/gi;
-    if (!v || !extractArrayData.test(v)) { return undefined; }
+    if (!v) {
+      return undefined;
+    }
     const match = extractArrayData.exec(v);
-    return match && match.length === 2 ? match[1] : undefined;
+    if (!match || match.length !== 2) {
+      return undefined;
+    }
+    return match[1]
+      .split(',')
+      .map(i => i.trim())
+      .map(i => (/^\d+$/g.test(i) ? +i : i));
   };
 
   const kvc = (key: string, value: number | string | boolean | Array<string | number>) => {
     const displayValue = value instanceof Array ? value.join(', ') : value.toString();
-    const title = `${key} ⇒ ${displayValue}`;
+    // const title = m('.row', [m('.col.s6', key), m('.col.s6', displayValue)]);
+    const title = `${key}: ${displayValue}`;
     return {
       title,
     } as ICollectionItem;
   };
 
-  const onclick = (key: string) => (state.curKey = key);
+  const onclick = (key: string) => (state.curKey = state.id = key);
 
   const kvcWrapper = (key: string, item: ICollectionItem) => {
     const clickHandler = item.onclick;
-    (item.id = item.id || key), (item.active = key === state.curKey);
+    item.id = item.id || key;
+    item.active = key === state.curKey;
     item.onclick = clickHandler ? () => onclick(key) && clickHandler(item) : () => onclick(key);
     return item;
   };
@@ -63,8 +78,14 @@ export const MapEditor: FactoryComponent<IMapEditor> = () => {
       .map(item => kvcWrapper(item.key, state.kvc(item.key, item.value)));
 
   const state = {
+    id: '',
     curKey: '',
     kvc,
+  };
+
+  const resetInputs = () => {
+    state.id = '';
+    state.curKey = '';
   };
 
   return {
@@ -73,26 +94,33 @@ export const MapEditor: FactoryComponent<IMapEditor> = () => {
         state.kvc = keyValueConverter;
       }
     },
-    view: ({ attrs: { header, disabled, properties, labelKey, labelValue } }) => {
+    view: ({
+      attrs: { header, disabled, disallowArrays, properties, labelKey = 'Key', labelValue: label = 'Value' },
+    }) => {
       const items = toCollectionArray(properties);
       const key = state.curKey;
       const prop = properties[key];
-      const value = prop ? (prop instanceof Array ? `[${prop.join(', ')}]` : prop) : '';
+      const value =
+        typeof prop === 'boolean' ? prop : prop ? (prop instanceof Array ? `[${prop.join(', ')}]` : prop) : '';
+      console.table(items);
 
       return [
-        m('.row', m(Collection, { items, mode: CollectionMode.LINKS, header })),
+        m('.row.map-editor-collection', m('.col.s12', m(Collection, { items, mode: CollectionMode.LINKS, header }))),
         disabled
           ? undefined
-          : m('.row', [
+          : m('.row.map-editor-edit', [
               m(
                 '.col.s12.m6',
                 m(TextInput, {
-                  label: labelKey || 'Key',
-                  initialValue: state.curKey,
-                  disabled: !key,
+                  label: labelKey,
+                  initialValue: key,
                   onchange: (v: string) => {
-                    properties[v] = prop;
-                    delete properties[key];
+                    state.curKey = v;
+                    if (state.id) {
+                      delete properties[state.id];
+                      properties[v] = prop;
+                      state.id = v;
+                    }
                   },
                 })
               ),
@@ -100,23 +128,25 @@ export const MapEditor: FactoryComponent<IMapEditor> = () => {
                 '.col.s12.m6',
                 typeof value === 'string'
                   ? m(TextArea, {
-                      label: labelValue || 'Value',
+                      label,
                       initialValue: value,
-                      disabled: !value,
                       onchange: (v: string) => {
-                        properties[key] = parseArray(v) || v;
+                        const b = /false/i.test(v) ? false : /true/i.test(v) ? true : undefined;
+                        const n = typeof b === 'undefined' ? (/^\s*\d+\s*$/i.test(v) ? +v : undefined) : undefined;
+                        properties[key] =
+                          typeof b === 'boolean' ? b : typeof n === 'number' ? n : parseArray(v, disallowArrays) || v;
                       },
                     })
                   : typeof value === 'number'
                   ? m(NumberInput, {
-                      label: labelValue || 'Value',
+                      label,
                       initialValue: value,
-                      disabled: !value,
                       onchange: (v: number) => {
                         properties[key] = v;
                       },
                     })
                   : m(Switch, {
+                      label,
                       checked: value,
                       onchange: (v: boolean) => {
                         properties[key] = v;
@@ -126,15 +156,14 @@ export const MapEditor: FactoryComponent<IMapEditor> = () => {
               m('.col.s12', [
                 m(FlatButton, {
                   iconName: 'add',
-                  onclick: () => {
-                    state.curKey = 'newKey';
-                  },
+                  onclick: resetInputs,
                 }),
                 m(FlatButton, {
                   iconName: 'delete',
                   disabled: !key,
                   onclick: () => {
                     delete properties[key];
+                    resetInputs();
                   },
                 }),
               ]),

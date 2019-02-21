@@ -9,10 +9,13 @@ export const NamedGeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = ()
   return {
     view: ({ attrs: { inject } }) => {
       const pm = getMessage(inject, MessageType.NAMED_GEOJSON_MESSAGE) as INamedGeoJsonMessage;
+      if (!pm.properties) {
+        pm.properties = {};
+      }
 
       return [
-        m(GeoJsonMessageForm, { inject }),
-        m(MapEditor, { header: 'Properties', properties: pm.properties }),
+        // m(GeoJsonMessageForm, { inject }),
+        m(MapEditor, { header: 'Properties', disallowArrays: true, properties: pm.properties }),
       ];
     },
   };
