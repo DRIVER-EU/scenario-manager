@@ -78,7 +78,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject, previousInjec
           m('span.inline', 'Start '),
           m(Select, {
             style: 'width: 70px',
-            contentClass: 'inline medium',
+            className: 'inline medium',
             placeholder: 'Pick one',
             isMandatory: true,
             checkedId: condition.type,
@@ -100,14 +100,14 @@ export const InjectConditions: FactoryComponent<{ inject: IInject, previousInjec
                 m(Delay, { condition }),
                 m('span.inline', ' after the '),
                 m(Select, {
-                  contentClass: 'inline small',
+                  className: 'inline small',
                   checkedId: condition.injectId,
                   options: levelOptions,
                   onchange: (v: unknown) => (condition.injectId = v as string),
                 }),
                 m('span.inline', ' has '),
                 m(Select, {
-                  contentClass: 'inline small',
+                  className: 'inline small',
                   checkedId: condition.injectState,
                   options: injectStateOptions,
                   onchange: (v: unknown) => (condition.injectState = v as InjectState),
@@ -126,13 +126,13 @@ const Delay: FactoryComponent<{ condition: IInjectCondition }> = () => {
       condition.type === InjectConditionType.DELAY
         ? [
             m(NumberInput, {
-              contentClass: 'inline xs',
+              className: 'inline xs',
               min: 0,
               initialValue: condition.delay,
               onchange: (v: number) => (condition.delay = v),
             }),
             m(Select, {
-              contentClass: 'inline small',
+              className: 'inline small',
               checkedId: condition.delayUnitType,
               options: [
                 { id: 'seconds', label: condition.delay === 1 ? 'second' : 'seconds' },
@@ -163,7 +163,7 @@ const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject }
       const trialStart = scenario.startDate || new Date();
       const atTime = new Date(trialStart.getTime() + delayInSeconds * 1000);
       return m(TimePicker, {
-        contentClass: 'inline',
+        className: 'inline',
         initialValue: `${padLeft(atTime.getHours(), 2)}:${padLeft(atTime.getMinutes(), 2)}`,
         prefix: 'Start',
         dt: atTime,

@@ -48,7 +48,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
             id: 'filter',
             iconName: 'filter_list',
             onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-            contentClass: 'right',
+            className: 'right',
           }),
         ]),
         stakeholders

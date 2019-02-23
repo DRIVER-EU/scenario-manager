@@ -172,11 +172,9 @@ export const getMessage = (inject: IInject, type: MessageType) => {
 };
 
 export const eatSpaces = (ev: KeyboardEvent) => {
-  if (ev.key === ' ') {
-    // ev.preventDefault();
+  if (ev.which === 32) {
     return false;
   }
-  return true;
 };
 
 const formatHHmm = (t: Date) => `${padLeft(t.getUTCHours())}:${padLeft(t.getUTCMinutes())}`;

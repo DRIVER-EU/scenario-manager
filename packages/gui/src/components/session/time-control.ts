@@ -116,7 +116,7 @@ const MediaStateControl: FactoryComponent<{
               '.row',
               m(FlatButton, {
                 label: 'Initialize scenario',
-                contentClass: 'btn-flat-large',
+                className: 'btn-flat-large',
                 iconName: 'timer',
                 disabled: !canStart,
                 onclick: () => {

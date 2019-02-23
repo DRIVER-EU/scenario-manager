@@ -181,6 +181,9 @@ span.inline {
 .input-field.inline.large {
   width: 160px;
 }
+.row {
+  margin-bottom: 0;
+}
 .row.sb {
   height: 70vh;
   overflow-y: auto;
@@ -188,4 +191,9 @@ span.inline {
 }
 .row.sb.large {
   height: 84vh;
+}
+.input-field .prefix ~.collection {
+  margin-left: 3rem;
+  width: 92%;
+  width: calc(100% - 3rem);
 }

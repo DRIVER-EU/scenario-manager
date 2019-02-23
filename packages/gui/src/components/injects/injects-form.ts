@@ -57,7 +57,6 @@ export const InjectsForm: FactoryComponent<{}> = () => {
                           { id: MessageType.ROLE_PLAYER_MESSAGE, label: 'ROLE PLAYER MESSAGE' },
                           { id: MessageType.POST_MESSAGE, label: 'POST A MESSAGE' },
                           { id: MessageType.GEOJSON_MESSAGE, label: 'SEND A GEOJSON FILE' },
-                          { id: MessageType.NAMED_GEOJSON_MESSAGE, label: 'SEND A GEOJSON FILE (EXTRA PROPERTIES)' },
                           { id: MessageType.PHASE_MESSAGE, label: 'PHASE MESSAGE' },
                           { id: MessageType.CHANGE_OBSERVER_QUESTIONNAIRES, label: 'CHANGE OBSERVER QUESTIONNAIRES' },
                           { id: MessageType.AUTOMATED_ACTION, label: 'AUTOMATED ACTION' },
@@ -117,7 +116,7 @@ export const SetObjectives: FactoryComponent<{ inject: IInject }> = () => {
       return isGroup
         ? m('.row', [
             m(Dropdown, {
-              contentClass: 'col s6',
+              className: 'col s6',
               helperText: 'Main objective',
               checkedId: (inject as IInjectGroup).mainObjectiveId,
               items: objectives,
@@ -125,7 +124,7 @@ export const SetObjectives: FactoryComponent<{ inject: IInject }> = () => {
             }),
             (inject as IInjectGroup).mainObjectiveId
               ? m(Dropdown, {
-                  contentClass: 'col s6',
+                  className: 'col s6',
                   helperText: 'Secondary objective',
                   checkedId: (inject as IInjectGroup).secondaryObjectiveId,
                   items: objectives,

@@ -59,7 +59,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
             id: 'filter',
             iconName: 'filter_list',
             onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-            contentClass: 'right',
+            className: 'right',
           }),
         ]),
         users.length > 0

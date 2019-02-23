@@ -105,7 +105,7 @@ export const ObjectivesList = () => {
                 iconName: 'filter_list',
                 initialValue: state.filterValue,
                 onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-                contentClass: 'right',
+                className: 'right',
               })
             ),
             m(

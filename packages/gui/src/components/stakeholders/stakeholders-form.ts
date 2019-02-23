@@ -46,6 +46,7 @@ export const StakeholdersForm = () => {
           TrialSvc.updateStakeholder(stakeholder);
         }
       };
+
       return m(
         '.row',
         { style: 'color: black' },

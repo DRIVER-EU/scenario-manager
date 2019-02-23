@@ -62,7 +62,7 @@ export const AssetsForm = () => {
                     label: 'Alias',
                     placeholder: 'No spaces allowed',
                     iconName: 'title',
-                    contentClass: 'col s12 m6',
+                    className: 'col s12 m6',
                   }),
                   m(TextInput, {
                     id: 'file',
@@ -70,7 +70,7 @@ export const AssetsForm = () => {
                     disabled: true,
                     label: 'File',
                     iconName: 'attach_file',
-                    contentClass: 'col s12 m6',
+                    className: 'col s12 m6',
                   }),
                   m(FileInput, {
                     placeholder: 'Select or replace the file',

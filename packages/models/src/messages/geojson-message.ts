@@ -7,10 +7,8 @@ export interface IGeoJsonMessage {
   alias?: string;
   /** Message subject id, to map to a  */
   subjectId?: string;
-}
-
-export interface INamedGeoJsonMessage extends IGeoJsonMessage {
-  properties: {
+  /** If defined, generates a NamedGeoJSON message with a map of key-value pairs */
+  properties?: {
     [key: string]: boolean | string | number;
   };
 }

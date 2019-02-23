@@ -34,7 +34,7 @@ export const TrialList = () => {
             iconName: 'filter_list',
             onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
             style: 'margin-right:100px',
-            contentClass: 'right',
+            className: 'right',
           }),
         ]),
         m(
