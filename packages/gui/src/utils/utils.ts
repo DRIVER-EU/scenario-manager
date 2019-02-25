@@ -105,6 +105,8 @@ export const getMessageIcon = (type?: MessageType) => {
       return 'flag'; // 'chat';
     case MessageType.ROLE_PLAYER_MESSAGE:
       return 'record_voice_over';
+    case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
+      return 'speaker_notes';
     default:
       return 'message';
   }

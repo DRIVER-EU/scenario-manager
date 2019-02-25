@@ -1,9 +1,9 @@
 import m, { FactoryComponent } from 'mithril';
-import { TextArea, TextInput, Select, FlatButton, ModalPanel } from 'mithril-materialized';
+import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
 import { IAsset, IInject, MessageType, IGeoJsonMessage } from 'trial-manager-models';
 import { getMessage, getMessageSubjects } from '../../utils';
 import { TrialSvc } from '../../services';
-import { UploadAsset, MapEditor } from '../ui';
+import { UploadAsset } from '../ui';
 
 export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
   const jsonExt = /json$/i;
