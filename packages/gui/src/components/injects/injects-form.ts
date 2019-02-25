@@ -112,23 +112,26 @@ export const SetObjectives: FactoryComponent<{ inject: IInject }> = () => {
         id: o.id,
         label: o.title,
       }));
+      const injectGroup = inject as IInjectGroup;
 
       return isGroup
         ? m('.row', [
             m(Dropdown, {
+              id: 'primary',
               className: 'col s6',
               helperText: 'Main objective',
-              checkedId: (inject as IInjectGroup).mainObjectiveId,
+              checkedId: injectGroup.mainObjectiveId,
               items: objectives,
-              onchange: (id: string | number) => ((inject as IInjectGroup).mainObjectiveId = id as string),
+              onchange: (id: string | number) => (injectGroup.mainObjectiveId = id as string),
             }),
-            (inject as IInjectGroup).mainObjectiveId
+            injectGroup.mainObjectiveId
               ? m(Dropdown, {
+                  id: 'secondary',
                   className: 'col s6',
                   helperText: 'Secondary objective',
-                  checkedId: (inject as IInjectGroup).secondaryObjectiveId,
+                  checkedId: injectGroup.secondaryObjectiveId,
                   items: objectives,
-                  onchange: (id: string | number) => ((inject as IInjectGroup).secondaryObjectiveId = id as string),
+                  onchange: (id: string | number) => (injectGroup.secondaryObjectiveId = id as string),
                 })
               : undefined,
           ])
