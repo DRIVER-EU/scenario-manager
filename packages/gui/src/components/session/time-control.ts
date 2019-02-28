@@ -4,6 +4,7 @@ import { TimeState, IScenario, ITimeMessage, ITimingControlMessage, TimingContro
 import { SocketSvc } from '../../services';
 import { formatTime, padLeft } from '../../utils';
 import { timeControlChannel, TopicNames } from '../../models';
+import { RunSvc } from './../../services/run-service';
 
 const updateSpeed = (socket: SocketIOClient.Socket, trialTimeSpeed: number) =>
   socket.emit('time-control', {
@@ -137,10 +138,12 @@ const MediaStateControl: FactoryComponent<{
             m(FlatButton, {
               label: 'Reset time',
               iconName: 'timer_off',
-              onclick: () =>
+              onclick: async () => {
+                await RunSvc.unload();
                 socket.emit('time-control', {
                   command: TimingControlCommand.Reset,
-                } as ITimingControlMessage),
+                } as ITimingControlMessage);
+              },
             }),
           ]);
         case TimeState.Paused:
@@ -237,6 +240,7 @@ export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
                 const tm = { command: TimingControlCommand.Stop } as ITimingControlMessage;
                 timeControlChannel.publish(TopicNames.CMD, { cmd: tm });
                 sendCmd(state.socket, TimingControlCommand.Stop);
+                m.redraw();
               },
             },
           ],
