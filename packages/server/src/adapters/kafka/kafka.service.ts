@@ -63,23 +63,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public sendTimeControlMessage(timeCtrlMsg: ITimingControlMessage) {
-    return new Promise<boolean>((resolve, reject) => {
-      const payload = {
-        topic: TestBedAdapter.TimeControlTopic,
-        messages: timeCtrlMsg,
-        attributes: 1, // Gzip
-      } as ProduceRequest;
-
-      this.adapter.send(payload, (err, data) => {
-        if (err) {
-          this.log.error(err);
-          reject(err);
-        } else if (data) {
-          this.log.info(data);
-          resolve(true);
-        }
-      });
-    });
+    return this.sendMessage(timeCtrlMsg, TestBedAdapter.TimeControlTopic);
   }
 
   public sendSessionMessage(sm: ITestbedSessionMessage) {
@@ -112,7 +96,7 @@ export class KafkaService extends EventEmitter implements TimeService {
     return this.adapter.trialTime;
   }
 
-  private sendMessage<T>(m: T, topic: string) {
+  public sendMessage<T>(m: T, topic: string) {
     return new Promise<boolean>((resolve, reject) => {
       console.table(m);
       const payload = {
