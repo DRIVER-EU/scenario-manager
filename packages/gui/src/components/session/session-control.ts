@@ -12,7 +12,6 @@ import {
   ISessionMessage,
   ITestbedSessionMessage,
   TimingControlCommand,
-  TimeState,
   SessionState,
 } from 'trial-manager-models';
 import { getInjectIcon } from '../../utils';
@@ -22,12 +21,15 @@ const isComplete = ({ id: sessionId, name: sessionName }: ISessionMessage) =>
   sessionId >= 0 && sessionName && sessionName.length > 1 ? true : false;
 
 /** Helper component to specify the session id, name, comments */
-const SessionSettings: FactoryComponent<{ session: ISessionMessage }> = () => {
+const SessionSettings: FactoryComponent = () => {
   return {
-    view: ({ attrs: { session } }) => {
+    view: () => {
+      const session = AppState.session;
       if (session && !session.name) {
-        (session.id = 1), (session.name = 'New session');
+        session.id = 1;
+        session.name = 'New session';
       }
+      console.table(AppState.session);
       return [
         m('.row', [
           m(
@@ -146,6 +148,7 @@ export const SessionControl: FactoryComponent = () => {
       const { isConnected, isConnecting } = state;
       const scenarios = state.scenarios.map(s => ({ id: s.id, label: s.title }));
       const canStart = isComplete(AppState.session);
+      const session = { ...AppState.session };
       state.scenario = state.scenarios[0];
       return [
         m(
@@ -175,7 +178,7 @@ export const SessionControl: FactoryComponent = () => {
             } as ISelectOptions<string>)
           )
         ),
-        m(SessionSettings, { session: AppState.session }),
+        m(SessionSettings),
         m(
           '.row',
           m('.col.s12.m6', m(TimeControl, { scenario: state.scenario, isConnected, time: AppState.time, canStart }))
