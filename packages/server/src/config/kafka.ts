@@ -20,7 +20,15 @@ export default {
   wrapUnions: 'auto',
   schemaFolder: './data/schemas',
   // consume: [],
-  produce: ['system_request_change_of_trial_stage', 'phase_message', 'role_player', 'session_mgmt'],
+  produce: [
+    'system_request_change_of_trial_stage',
+    'phase_message',
+    'role_player',
+    'session_mgmt',
+    'standard_geojson',
+    'standard_geojson_sim',
+    'standard_named_geojson',
+  ],
   logging: {
     logToConsole: LogLevel.Info,
     logToKafka: LogLevel.Warn,
