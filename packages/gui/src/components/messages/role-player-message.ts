@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
-import { IInject, MessageType, UserRole, IRolePlayerMessage, RolePlayerMessageType } from 'trial-manager-models';
-import { getMessage, iterEnum, userRolesFilter } from './../../utils';
+import { getMessage, IInject, MessageType, UserRole, IRolePlayerMessage, RolePlayerMessageType } from 'trial-manager-models';
+import { iterEnum, userRolesFilter } from './../../utils';
 import { TrialSvc } from '../../services';
 
 export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () => {

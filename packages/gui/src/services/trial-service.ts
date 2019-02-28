@@ -1,7 +1,6 @@
 import { RestService, AssetService } from '.';
 import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
-import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, UserRole, deepCopy } from 'trial-manager-models';
-import { uniqueId } from '../utils';
+import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, uniqueId } from 'trial-manager-models';
 
 class TrialService extends RestService<ITrial> {
   private assetSvc?: AssetService;

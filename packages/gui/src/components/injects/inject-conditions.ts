@@ -44,7 +44,7 @@ For acts and storylines, which are at the beginning of a sequence
 */
 
 /** Allows to set the inject conditions, i.e. when does the inject get executed. */
-export const InjectConditions: FactoryComponent<{ inject: IInject, previousInjects: IInject[] }> = () => {
+export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjects: IInject[] }> = () => {
   return {
     view: ({ attrs: { inject, previousInjects } }) => {
       if (inject.type === InjectType.SCENARIO) {
@@ -98,8 +98,9 @@ export const InjectConditions: FactoryComponent<{ inject: IInject, previousInjec
             ? m(StartAt, { condition, inject })
             : [
                 m(Delay, { condition }),
-                m('span.inline', ' after the '),
+                m('span.inline', ' after '),
                 m(Select, {
+                  placeholder: 'Pick one',
                   className: 'inline small',
                   checkedId: condition.injectId,
                   options: levelOptions,
@@ -107,6 +108,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject, previousInjec
                 }),
                 m('span.inline', ' has '),
                 m(Select, {
+                  placeholder: 'Pick one',
                   className: 'inline small',
                   checkedId: condition.injectState,
                   options: injectStateOptions,
@@ -132,6 +134,7 @@ const Delay: FactoryComponent<{ condition: IInjectCondition }> = () => {
               onchange: (v: number) => (condition.delay = v),
             }),
             m(Select, {
+              placeholder: 'Pick one',
               className: 'inline small',
               checkedId: condition.delayUnitType,
               options: [

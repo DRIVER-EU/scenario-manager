@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { Collection, CollectionMode, TextInput, FlatButton } from 'mithril-materialized';
-import { IMessageTopic, ITopicSubject, MessageType, ITrial } from 'trial-manager-models';
-import { iterEnum, uniqueId } from '../../../utils';
+import { IMessageTopic, ITopicSubject, MessageType, ITrial, uniqueId } from 'trial-manager-models';
+import { iterEnum } from '../../../utils';
 
 /**
  * Configure the required topics, verify that they are available (via the adapter - TODO),

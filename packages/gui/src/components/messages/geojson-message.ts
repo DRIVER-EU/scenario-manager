@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
-import { IAsset, IInject, MessageType, IGeoJsonMessage } from 'trial-manager-models';
-import { getMessage, getMessageSubjects } from '../../utils';
+import { getMessage, IAsset, IInject, MessageType, IGeoJsonMessage } from 'trial-manager-models';
+import { getMessageSubjects } from '../../utils';
 import { TrialSvc } from '../../services';
 import { UploadAsset } from '../ui';
 

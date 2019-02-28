@@ -7,7 +7,7 @@ export interface ITopicSubject {
   subject: string;
 }
 
-/** A message type is related to a list of topics to which is may publish (or subscribe) */
+/** A message type is related to a list of topics to which it  may publish (or subscribe) */
 export interface IMessageTopic {
   messageType: MessageType;
   topics: ITopicSubject[];

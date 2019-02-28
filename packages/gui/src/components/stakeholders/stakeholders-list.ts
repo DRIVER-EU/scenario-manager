@@ -1,10 +1,9 @@
 import m, { FactoryComponent } from 'mithril';
 import { StakeholdersForm } from './stakeholders-form';
 import { TrialSvc } from '../../services';
-import { IStakeholder } from 'trial-manager-models';
+import { IStakeholder, uniqueId } from 'trial-manager-models';
 import { stakeholdersChannel, TopicNames } from '../../models';
 import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
-import { uniqueId } from '../../utils';
 
 const StakeholdersList: FactoryComponent<IStakeholder> = () => {
   const state = {

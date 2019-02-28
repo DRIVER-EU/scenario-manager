@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Database } from 'sqlite3';
 import { TrialOverview, IUploadedFile } from '../../models';
-import { ITrial } from 'trial-manager-models';
-import { uniqueId, logError, dbCallbackWrapper } from '../../utils';
+import { ITrial, uniqueId } from 'trial-manager-models';
+import { logError, dbCallbackWrapper } from '../../utils';
 
 const TRIAL = 'trial';
 const EXT = '.sqlite3';

@@ -1,17 +1,6 @@
 import { IContent, InjectType, IInject, MessageType, getParent, IPerson, UserRole, IAsset } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 
-/**
- * Create a unique ID
- * @see https://stackoverflow.com/a/2117523/319711
- *
- * @returns id followed by 8 hexadecimal characters.
- */
-export const uniqueId = () => {
-  // tslint:disable-next-line:no-bitwise
-  return 'id_xxxxxxxx'.replace(/[x]/g, () => ((Math.random() * 16) | 0).toString(16));
-};
-
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
   Object.keys(e)
@@ -161,16 +150,6 @@ export const userRolesToString = (user: IPerson) => {
 export const userRolesFilter = (user: IPerson, role: UserRole) => {
   const { roles } = user;
   return roles.filter(r => r === role).length > 0;
-};
-
-/** Gets and optionally creates the inject message */
-export const getMessage = (inject: IInject, type: MessageType) => {
-  const key = MessageType[type];
-  if (!inject.message || !inject.message.hasOwnProperty(key)) {
-    inject.message = {};
-    inject.message[key] = { id: inject.id };
-  }
-  return inject.message[key] as { id: string; [key: string]: unknown };
 };
 
 export const eatSpaces = (ev: KeyboardEvent) => {

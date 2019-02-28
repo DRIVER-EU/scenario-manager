@@ -1,7 +1,4 @@
-import {
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Injectable, Inject } from '@nestjs/common';
 import {
@@ -18,11 +15,12 @@ import {
   InjectType,
   MessageType,
   SessionState,
+  IStateTransitionRequest,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
-import { StateTransitionRequest } from '../../adapters/models';
 import { ExecutionService } from './execution.service';
+import { StateTransitionRequest } from '../../adapters/models';
 
 @Injectable()
 @WebSocketGateway()
@@ -40,7 +38,8 @@ export class RunService {
   constructor(
     @Inject('TrialService') private readonly trialService: TrialService,
     @Inject('KafkaService') private readonly kafkaService: KafkaService,
-    @Inject('ExecutionService') private readonly executionService: ExecutionService,
+    @Inject('ExecutionService')
+    private readonly executionService: ExecutionService,
   ) {}
 
   public get activeSession() {
@@ -57,6 +56,7 @@ export class RunService {
     if (!trial) {
       return false;
     }
+    this.executionService.init(trial);
     const scenario = getParent(trial.injects, scenarioId) as IScenario;
     if (!scenario) {
       return false;
@@ -71,6 +71,7 @@ export class RunService {
       acc[i.id] = {
         state: i.condition ? InjectState.ON_HOLD : InjectState.IN_PROGRESS,
         lastTransitionAt: trialTime,
+        title: `${i.type}: ${i.title}`,
       } as IStateUpdate;
       return acc;
     }, {});
@@ -129,6 +130,7 @@ export class RunService {
     }
     this.trialTime = time;
     this.transitionInjects();
+    this.processTransitionQueue();
     this.executeInjects();
     this.sendStateUpdate();
     if (this.isRunning) {
@@ -138,10 +140,12 @@ export class RunService {
 
   /** Process all manual requests to transition a state. */
   private processTransitionQueue() {
+    const t = this.trialTime;
     while (this.transitionQueue.length > 0) {
       const tr = this.transitionQueue.shift();
       const state = this.states[tr.id];
       if (state && state.state === tr.from) {
+        state.lastTransitionAt = t;
         state.state = tr.to;
       }
     }
@@ -149,8 +153,6 @@ export class RunService {
 
   /** Transition all injects when the conditions are satisfied */
   private transitionInjects() {
-    this.processTransitionQueue();
-
     const trialTimeValue = this.trialTime.valueOf();
     const onHoldInjects = (i: IInject) =>
       this.states[i.id].state === InjectState.ON_HOLD &&
@@ -180,32 +182,37 @@ export class RunService {
       }
     };
 
-    const transitionTo = (i: IInject, is: InjectState) =>
-      (this.states[i.id] = { state: is, lastTransitionAt: this.trialTime });
-
     this.injects
       .filter(onHoldInjects)
-      .forEach(i => transitionTo(i, InjectState.SCHEDULED));
+      .forEach(i => this.transitionTo(i, InjectState.SCHEDULED));
 
     this.injects
       .filter(scheduledInjects)
       .filter(conditionFilter)
-      .forEach(i => transitionTo(i, InjectState.IN_PROGRESS));
+      .forEach(i => this.transitionTo(i, InjectState.IN_PROGRESS));
   }
 
   /** Execute each inject that is IN_PROGRESS */
   private executeInjects() {
     const actionableInjects = (i: IInject) =>
       i.type === InjectType.INJECT &&
-      i.messageType !== MessageType.ROLE_PLAYER_MESSAGE &&
       this.states[i.id].state === InjectState.IN_PROGRESS;
-    this.injects
-      .filter(actionableInjects)
-      .forEach(i => {
-        // TODO Add actual implementation based.
-        this.executionService.execute(i, this.trial);
-        console.log(`Executing ${i.title}...`);
-      });
+    this.injects.filter(actionableInjects).forEach(i => {
+      // TODO Add actual implementation based.
+      this.executionService.execute(i);
+      this.transitionTo(i, InjectState.EXECUTED);
+      console.log(`Executing ${i.title}...`);
+    });
+  }
+
+  private transitionTo(i: IInject, is: InjectState) {
+    this.stateTransitionRequest(
+      new StateTransitionRequest(
+        i.id,
+        this.states[i.id].state,
+        is,
+      ),
+    );
   }
 
   /** Send a state update message to all connected clients */
