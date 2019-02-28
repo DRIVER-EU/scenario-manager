@@ -55,8 +55,8 @@ export class TrialService {
     return this.repo.getAssets(id);
   }
 
-  async getAsset(id: string, assetId: string) {
-    return this.repo.getAsset(id, assetId);
+  async getAsset(trialId: string, assetId: string | number) {
+    return this.repo.getAsset(trialId, assetId);
   }
 
   async createAsset(id: string, file: IUploadedFile, alias: string) {
