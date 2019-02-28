@@ -11,5 +11,8 @@
   },
   "keywords": [],
   "author": "Erik Vullings <erik.vullings@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@types/geojson": "^7946.0.6"
+  }
 }
