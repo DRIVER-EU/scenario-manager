@@ -31,7 +31,7 @@ export class ExecutionService {
         this.sendGeoJSON(i);
       default:
         console.warn(
-          `${messageType} is not yet supported by the execution service.`,
+          `${MessageType[messageType]} is not yet supported by the execution service.`,
         );
     }
   }
