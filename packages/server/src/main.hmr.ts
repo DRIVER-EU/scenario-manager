@@ -6,7 +6,8 @@ declare const module: any;
 
 async function bootstrap() {
   process.on('uncaughtException', err => {
-    console.error('Caught exception: ' + err);
+    console.error('Caught exception: ' + err.message);
+    console.error('Stack trace: ' + err.stack);
   });
   process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection:', reason.stack || reason);
