@@ -26,8 +26,8 @@ export const InjectsForm: FactoryComponent<{}> = () => {
       state.subscription.unsubscribe();
     },
     view: () => {
-      const { inject } = state;
-      const hasChanged = !deepEqual(inject, state.original);
+      const { inject, original } = state;
+      const hasChanged = !deepEqual(inject, original);
       const onsubmit = (e: UIEvent) => {
         e.preventDefault();
         log('submitting...');
