@@ -1,5 +1,5 @@
-import { IInject, InjectType, UnitType, MessageType, ICAPAlert } from '..';
 import { FeatureCollection } from 'geojson';
+import { IInject, InjectType, MessageType, UnitType } from '..';
 
 /**
  * Create a unique ID
@@ -31,6 +31,15 @@ export const getParent = (injects: IInject[], id?: string, level = InjectType.SC
     return getParent(injects, found.parentId, level);
   }
 };
+
+/** Get the children of an inject */
+export const getChildren = (injects: IInject[], id?: string) => {
+  if (!id) {
+    return undefined;
+  }
+  return injects.filter(i => i.parentId === id);
+};
+
 
 /** Find an inject by ID */
 export const getInject = (id?: string, injects?: IInject[]) =>
