@@ -21,6 +21,14 @@ export interface TimeService {
   on(event: 'time', listener: (time: ITimeMessage) => void): this;
 }
 
+export interface KafkaService {
+  // on(event: 'ready' | 'reconnect', listener: () => void): this;
+  // on(event: 'error' | 'offsetOutOfRange', listener: (error: string) => void): this;
+  // on(event: 'message', listener: (message: IAdapterMessage) => void): this;
+  once(event: 'time', listener: (message: ITimeMessage) => void): this;
+  on(event: 'time', listener: (message: ITimeMessage) => void): this;
+}
+
 @Injectable()
 export class KafkaService extends EventEmitter implements TimeService {
   private adapter: TestBedAdapter;
