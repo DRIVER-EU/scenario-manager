@@ -29,7 +29,6 @@ const SessionSettings: FactoryComponent = () => {
         session.id = 1;
         session.name = 'New session';
       }
-      console.table(AppState.session);
       return [
         m('.row', [
           m(
