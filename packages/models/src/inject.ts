@@ -37,15 +37,15 @@ export enum InjectType {
 }
 
 export enum InjectConditionType {
-  UNKNOWN,
+  UNKNOWN = 'UNKNOWN',
   /** Delay for a certain amount of time */
-  DELAY,
+  DELAY = 'DELAY',
   /** Delay for 0 seconds */
-  IMMEDIATELY,
+  IMMEDIATELY = 'IMMEDIATELY',
   /** Delay based on the scenario start time */
-  AT_TIME,
+  AT_TIME = 'AT_TIME',
   /** Wait for manual confirmation to start */
-  MANUALLY,
+  MANUALLY = 'MANUALLY',
 }
 
 export type UnitType = 'seconds' | 'minutes' | 'hours';
@@ -57,11 +57,6 @@ export interface IInjectCondition {
   delay?: number;
   /** When the delay type is a DELAY, i.e. a timespan, specifies the unit type */
   delayUnitType?: UnitType;
-  /**
-   * By default, for injects, the conditions is based on the previous inject.
-   * However, it may also depend on the start or finish of another act, storyline or scenario.
-   */
-  injectLevel?: InjectType;
   /** ID of the inject you depend upon */
   injectId?: string;
   /** State of the inject you depend upon */
