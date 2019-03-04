@@ -9,7 +9,7 @@ import {
   getParent,
   getInject,
 } from 'trial-manager-models';
-import { Select, NumberInput, ISelectOption, Icon, TimePicker } from 'mithril-materialized';
+import { Select, NumberInput, ISelectOption, Icon, TimePicker, ISelectOptions } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
 import { padLeft } from '../../utils';
 
@@ -55,21 +55,26 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
           type: InjectConditionType.IMMEDIATELY,
           delay: 0,
           delayUnitType: 'seconds',
-          injectLevel: InjectType.INJECT,
-          levelState: InjectState.EXECUTED,
+          injectState: InjectState.EXECUTED,
         } as IInjectCondition;
       }
       const { condition } = inject;
+      console.table(inject);
       const dependency = getInject(condition.injectId, TrialSvc.getInjects());
-      const levelOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
+      const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
       const injectStateOptions: Array<ISelectOption<string>> =
         dependency && dependency.type !== InjectType.SCENARIO ? [{ id: InjectState.EXECUTED, label: 'finished' }] : [];
       injectStateOptions.push({
-        id: InjectState.SCHEDULED,
-        disabled: dependency && dependency.type === InjectType.SCENARIO,
+        id: InjectState.IN_PROGRESS,
+        // disabled: dependency && dependency.type === InjectType.SCENARIO,
         label: 'started',
       });
-
+      if (!condition.injectId && previousInjectOptions.length > 0) {
+        condition.injectId = previousInjectOptions[previousInjectOptions.length - 1].id;
+      }
+      if (injectStateOptions.filter(iso => iso.id === condition.injectState).length === 0) {
+        condition.injectState = injectStateOptions[0].id as InjectState;
+      }
       return m(
         '.row',
         m('.col.s12', [
@@ -92,8 +97,8 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
                 disabled: !TrialSvc.getCurrent(),
               },
             ],
-            onchange: (v: unknown) => (condition.type = +(v as number)),
-          }),
+            onchange: v => (condition.type = v as InjectConditionType),
+          } as ISelectOptions<InjectConditionType>),
           condition.type === InjectConditionType.AT_TIME
             ? m(StartAt, { condition, inject })
             : [
@@ -103,9 +108,9 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
                   placeholder: 'Pick one',
                   className: 'inline small',
                   checkedId: condition.injectId,
-                  options: levelOptions,
-                  onchange: (v: unknown) => (condition.injectId = v as string),
-                }),
+                  options: previousInjectOptions,
+                  onchange: (v: string) => (condition.injectId = v),
+                } as ISelectOptions<string>),
                 m('span.inline', ' has '),
                 m(Select, {
                   placeholder: 'Pick one',
