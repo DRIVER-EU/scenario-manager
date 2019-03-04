@@ -16,6 +16,7 @@ import {
   MessageType,
   SessionState,
   IStateTransitionRequest,
+  getChildren,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -66,18 +67,27 @@ export class RunService {
     this.scenario = scenario;
 
     this.injects = this.pruneInjects();
-    const trialTime = this.kafkaService.trialTime;
-    this.states = this.injects.reduce((acc, i) => {
-      acc[i.id] = {
-        state: i.condition ? InjectState.ON_HOLD : InjectState.IN_PROGRESS,
-        lastTransitionAt: trialTime,
-        title: `${i.type}: ${i.title}`,
-      } as IStateUpdate;
-      return acc;
-    }, {});
-    this.kafkaService.sendSessionMessage(this.session);
-    this.isRunning = true;
-    this.updateLoop();
+
+    const startUpdateLoop = () => {
+      this.trialTime = this.kafkaService.trialTime;
+      this.states = this.injects.reduce((acc, i) => {
+        acc[i.id] = {
+          state: i.condition ? InjectState.ON_HOLD : InjectState.IN_PROGRESS,
+          lastTransitionAt: this.trialTime,
+          title: `${i.type}: ${i.title}`,
+        } as IStateUpdate;
+        return acc;
+      }, {});
+      this.kafkaService.sendSessionMessage(this.session);
+      this.isRunning = true;
+      this.updateLoop();
+    };
+
+    if (this.kafkaService.once('time', time => {
+      if (time.state === 'Initialized' || time.state === 'Started') {
+        startUpdateLoop();
+      }
+    }))
     return true;
   }
 
@@ -124,8 +134,11 @@ export class RunService {
 
   /** Process all injects and update the states */
   private updateLoop() {
+    if (this.isRunning) {
+      setTimeout(() => this.updateLoop(), 1000);
+    }
     const time = this.kafkaService.trialTime;
-    if (time === this.trialTime) {
+    if (time.valueOf() === this.trialTime.valueOf()) {
       return;
     }
     this.trialTime = time;
@@ -133,9 +146,6 @@ export class RunService {
     this.processTransitionQueue();
     this.executeInjects();
     this.sendStateUpdate();
-    if (this.isRunning) {
-      setTimeout(() => this.updateLoop(), 1000);
-    }
   }
 
   /** Process all manual requests to transition a state. */
@@ -143,53 +153,84 @@ export class RunService {
     const t = this.trialTime;
     while (this.transitionQueue.length > 0) {
       const tr = this.transitionQueue.shift();
-      const state = this.states[tr.id];
-      if (state && state.state === tr.from) {
-        state.lastTransitionAt = t;
-        state.state = tr.to;
-      }
+      this.transition(tr, t);
     }
   }
 
-  /** Transition all injects when the conditions are satisfied */
+  /** Perform a transition */
+  private transition(tr: StateTransitionRequest, t: Date) {
+    const state = this.states[tr.id];
+    if (state && state.state === tr.from) {
+      state.lastTransitionAt = t;
+      state.state = tr.to;
+    }
+  }
+
+  /** Transition all injects when the conditions are satisfied, until no more state is changed. */
   private transitionInjects() {
-    const trialTimeValue = this.trialTime.valueOf();
-    const onHoldInjects = (i: IInject) =>
-      this.states[i.id].state === InjectState.ON_HOLD &&
-      this.states[i.parentId].state === InjectState.IN_PROGRESS;
-    const scheduledInjects = (i: IInject) =>
-      this.states[i.id].state === InjectState.SCHEDULED;
+    let done = true;
+    const trialTime = this.trialTime;
+    const trialTimeValue = trialTime.valueOf();
+    const transitionNow = (id: string, to: InjectState) => {
+      done = false;
+      const state = this.states[id];
+      state.lastTransitionAt = trialTime;
+      state.state = to;
+    };
+    const groupInjects = (i: IInject) => i.type !== InjectType.INJECT;
+    const inProgressInjects = (i: IInject) => this.states[i.id].state === InjectState.IN_PROGRESS;
+    const childInjectsExecuted = (i: IInject) => getChildren(this.injects, i.id)
+      .reduce((acc, cur) => acc && this.states[cur.id].state === InjectState.EXECUTED, true);
+    const onHoldInjects = (i: IInject) => this.states[i.id].state === InjectState.ON_HOLD;
+    const parentInProgress = (i: IInject) => this.states[i.parentId].state === InjectState.IN_PROGRESS;
+    const scheduledInjects = (i: IInject) => this.states[i.id].state === InjectState.SCHEDULED;
     const conditionFilter = (i: IInject) => {
       if (!i.condition) {
         return true;
       }
       const { type, delay, delayUnitType, injectId, injectState } = i.condition;
-      if (type === InjectConditionType.IMMEDIATELY) {
-        return true;
-      }
       if (type === InjectConditionType.AT_TIME) {
         const time =
           this.scenario.startDate.valueOf() + toMsec(delay, delayUnitType);
         return trialTimeValue >= time;
       }
+      const { state, lastTransitionAt } = this.states[injectId];
+      if (state !== injectState) {
+        return false;
+      }
+      if (type === InjectConditionType.IMMEDIATELY) {
+        return true;
+      }
       if (type === InjectConditionType.DELAY) {
-        const { state, lastTransitionAt } = this.states[injectId];
-        if (state !== injectState) {
-          return false;
-        }
         const time = lastTransitionAt.valueOf() + toMsec(delay, delayUnitType);
         return trialTimeValue >= time;
       }
     };
 
-    this.injects
-      .filter(onHoldInjects)
-      .forEach(i => this.transitionTo(i, InjectState.SCHEDULED));
+    do {
+      done = true;
 
-    this.injects
-      .filter(scheduledInjects)
-      .filter(conditionFilter)
-      .forEach(i => this.transitionTo(i, InjectState.IN_PROGRESS));
+      // Injects that are ON_HOLD and whose parent is IN_PROGRESS, transition them to SCHEDULED.
+      this.injects
+        .filter(onHoldInjects)
+        .filter(parentInProgress)
+        .forEach(i => transitionNow(i.id, InjectState.SCHEDULED));
+
+      // Injects that are SCHEDULED and pass all conditions, transition them to IN_PROGRESS
+      this.injects
+        .filter(scheduledInjects)
+        .filter(conditionFilter)
+        .forEach(i => transitionNow(i.id, InjectState.IN_PROGRESS));
+
+      // Injects that are a group (scenario, storyline and act), that are still in progress,
+      // and whose children are all executed, transition them too to EXECUTED.
+      this.injects
+        .filter(groupInjects)
+        .filter(inProgressInjects)
+        .filter(childInjectsExecuted)
+        .forEach(i => transitionNow(i.id, InjectState.EXECUTED));
+
+    } while (!done);
   }
 
   /** Execute each inject that is IN_PROGRESS */
@@ -207,16 +248,13 @@ export class RunService {
 
   private transitionTo(i: IInject, is: InjectState) {
     this.stateTransitionRequest(
-      new StateTransitionRequest(
-        i.id,
-        this.states[i.id].state,
-        is,
-      ),
+      new StateTransitionRequest(i.id, this.states[i.id].state, is),
     );
   }
 
   /** Send a state update message to all connected clients */
   private sendStateUpdate() {
+    console.table(this.states);
     this.server.emit('injectStates', this.states);
   }
 }
