@@ -20,6 +20,29 @@ body {
   padding: 10px;
 }
 
+
+/* Set theme color */
+.btn,
+.btn-floating,
+.page-footer,
+.nav-wrapper,
+.statusbar,
+.nav-content {
+  background-color: #fdb836;
+}
+.input-field,
+.input-field > label,
+.input-field > .material-icons,
+.dropdown-content > li > a,
+.secondary-content > .material-icons {
+  color: #b4790c;
+}
+.tabs.tabs-transparent .tab a,
+nav ul a {
+  /* font-weight: bold; */
+  color: black;
+}
+
 .tree-container {
   padding-left: 0;
   margin: 0.5rem 0 1rem 0;
@@ -35,13 +58,14 @@ body {
 }
 
 .statusbar {
-  font-size: 1.5rem;
-  color: white;
-  height: 2.5rem;
+  font-size: 14px;
+  text-transform: uppercase;
+  /* color: white; */
+  height: 26px;
   position: fixed;
   bottom: 0%;
   width: 100%;
-  background-color: #ee6e73;
+  /* background-color: #ee6e73; */
   opacity: 1;
   margin: 0;
 }
@@ -192,29 +216,7 @@ span.inline {
 .row.sb.large {
   height: 84vh;
 }
-.map-editor .input-field .prefix ~.collection {
-  margin-left: 3rem;
-  width: 92%;
-  width: calc(100% - 3rem);
-}
-.map-editor .active .checkbox-in-collection label > input[type=checkbox]:checked + span:before {
-  top: -4px;
-  left: -3px;
-  width: 12px;
-  height: 22px;
-  border-top: 2px solid transparent;
-  border-left: 2px solid transparent;
-  border-right: 2px solid white; /* You need to change the colour here */
-  border-bottom: 2px solid white; /* And here */
-  -webkit-transform: rotate(40deg);
-  -moz-transform: rotate(40deg);
-  -ms-transform: rotate(40deg);
-  -o-transform: rotate(40deg);
-  transform: rotate(40deg);
-  -webkit-backface-visibility: hidden;
-  -webkit-transform-origin: 100% 100%;
-  -moz-transform-origin: 100% 100%;
-  -ms-transform-origin: 100% 100%;
-  -o-transform-origin: 100% 100%;
-  transform-origin: 100% 100%;
+.mm_label > ul.collection > li.collection-item {
+  background: transparent;
+  color: black;
 }
