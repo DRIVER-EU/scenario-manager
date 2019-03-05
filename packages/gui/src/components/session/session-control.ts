@@ -13,9 +13,9 @@ import {
   ITestbedSessionMessage,
   TimingControlCommand,
   SessionState,
+  ITimingControlMessage,
 } from 'trial-manager-models';
 import { getInjectIcon } from '../../utils';
-import { ITimingControlMessage } from './../../../../models/dist/timing-control-message.d';
 
 const isComplete = ({ id: sessionId, name: sessionName }: ISessionMessage) =>
   sessionId >= 0 && sessionName && sessionName.length > 1 ? true : false;
