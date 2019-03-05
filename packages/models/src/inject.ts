@@ -71,8 +71,6 @@ export interface IInject extends IContent {
   // TODO Convert to array
   /** Conditions that will start this inject */
   condition?: IInjectCondition;
-  /** Only relevant when executing, declares the state of the inject */
-  state?: InjectState;
   /** Is it a storyline, act or inject */
   type: InjectType;
   /** What kind of message are we sending */
