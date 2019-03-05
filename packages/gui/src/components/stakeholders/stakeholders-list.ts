@@ -28,6 +28,26 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
           m.redraw();
         }, 0);
       }
+      const items = stakeholders
+        ? stakeholders.map(cur => ({
+            title: cur.name || '?',
+            avatar: 'attach_money',
+            iconName: 'create',
+            className: 'yellow black-text',
+            active: state.curStakeholderId === cur.id,
+            content:
+              cur.notes +
+              '<br>' +
+              (cur.contactIds
+                ? cur.contactIds
+                    .map(id => TrialSvc.getUserById(id))
+                    .map(c => c && c.name)
+                    .join(', ')
+                : ''),
+            onclick: selectStakeholder(cur),
+          }))
+        : undefined;
+
       return [
         m('.row', [
           m(RoundIconButton, {
@@ -50,33 +70,15 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
             className: 'right',
           }),
         ]),
-        stakeholders
+        items
           ? m(
               '.row.sb',
               m(
                 '.col.s12',
-                m(
-                  Collection,
-                  {
-                    mode: CollectionMode.AVATAR,
-                    items: stakeholders.map(cur => ({
-                      title: cur.name || '?',
-                      avatar: 'attach_money',
-                      className: 'yellow black-text',
-                      active: state.curStakeholderId === cur.id,
-                      content:
-                        cur.notes +
-                        '<br>' +
-                        (cur.contactIds
-                          ? cur.contactIds
-                              .map(id => TrialSvc.getUserById(id))
-                              .map(c => c && c.name)
-                              .join(', ')
-                          : ''),
-                      onclick: selectStakeholder(cur),
-                    })),
-                  }
-                )
+                m(Collection, {
+                  mode: CollectionMode.AVATAR,
+                  items,
+                })
               )
             )
           : undefined,

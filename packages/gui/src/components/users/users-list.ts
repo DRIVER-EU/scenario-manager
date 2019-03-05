@@ -3,7 +3,7 @@ import { UsersForm } from './users-form';
 import { IPerson, UserRole, uniqueId } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { usersChannel, TopicNames } from '../../models/channels';
-import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
+import { RoundIconButton, TextInput, Collection, CollectionMode, ICollectionItem } from 'mithril-materialized';
 import { userIcon, userRolesToString } from '../../utils';
 
 const UsersList: FactoryComponent<IPerson> = () => {
@@ -32,12 +32,13 @@ const UsersList: FactoryComponent<IPerson> = () => {
       }
       const items = users.map(cur => ({
         title: cur.name || '?',
+        iconName: 'create',
         avatar: userIcon(cur),
         className: 'yellow black-text',
         active: state.currentUserId === cur.id,
         content: userRolesToString(cur) + (cur.notes ? `<br><i>${cur.notes}</i>` : ''),
         onclick: selectUser(cur),
-      }));
+      } as ICollectionItem));
 
       return [
         m('.row', [
