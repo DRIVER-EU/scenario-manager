@@ -1,5 +1,17 @@
-import { IContent, InjectType, IInject, MessageType, getParent, IPerson, UserRole, IAsset } from 'trial-manager-models';
+import {
+  IContent,
+  InjectType,
+  IInject,
+  MessageType,
+  getParent,
+  IPerson,
+  UserRole,
+  IAsset,
+  InjectState,
+  InjectConditionType,
+} from 'trial-manager-models';
 import { TrialSvc } from '../services';
+import { IExecutingInject } from '../models';
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
@@ -101,8 +113,25 @@ export const getMessageIcon = (type?: MessageType) => {
   }
 };
 
+/** Get the icon for an inject, either a scenario/storyline/act icon, or a message icon */
 export const getIcon = (inject: IInject) =>
   inject.type === InjectType.INJECT ? getMessageIcon(inject.messageType) : getInjectIcon(inject.type);
+
+/** Get the icon representing the execution state */
+export const executionIcon = (inject: IExecutingInject) => {
+  switch (inject.state) {
+    case InjectState.EXECUTED:
+      return 'stop';
+    case InjectState.IN_PROGRESS:
+      return inject.condition && inject.condition.type === InjectConditionType.MANUALLY ? 'access_alarm' : 'play_arrow';
+    case InjectState.ON_HOLD:
+      return 'pause';
+    case InjectState.SCHEDULED:
+      return 'schedule';
+    default:
+      return 'stop';
+  }
+};
 
 export const assetIcon = (asset: IAsset) =>
   !asset.mimetype
