@@ -10,5 +10,6 @@ export const enum Dashboards {
   EXECUTE = 'EXECUTE',
   SCENARIOS = 'SCENARIOS',
   SESSIONS = 'SESSIONS',
+  SETTINGS = 'SETTINGS',
   SESSION_STATE = 'SESSION_STATE',
 }

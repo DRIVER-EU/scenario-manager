@@ -13,6 +13,7 @@ import { StakeholdersView } from '../components/stakeholders/stakeholders-list';
 import { AssetsView } from '../components/assets';
 import { SessionControl } from '../components/session/session-control';
 import { SessionState } from '../components/session/session-state';
+import { TrialSettings } from '../components/configuration/trial-settings';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -92,9 +93,24 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.TRIAL,
     title: 'Edit',
-    route: '/edit',
+    route: '/edit/scenarios',
     visible: false,
-    component: TrialForm,
+    component: InjectsView,
+  },
+  {
+    id: Dashboards.EXECUTE,
+    title: 'Run',
+    route: '/execute/session',
+    visible: false,
+    component: SessionControl,
+  },
+  {
+    id: Dashboards.SETTINGS,
+    title: 'Settings',
+    iconName: 'settings',
+    route: '/settings',
+    visible: false,
+    component: TrialSettings,
   },
   {
     id: Dashboards.TRIAL_INFO,
@@ -106,19 +122,27 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   },
   {
     id: Dashboards.ASSETS,
+    title: 'Topics',
+    route: '/settings/topics',
+    visible: false,
+    component: TrialSettings,
+    level: Dashboards.SETTINGS,
+  },
+  {
+    id: Dashboards.ASSETS,
     title: 'Assets',
-    route: '/edit/assets',
+    route: '/settings/assets',
     visible: false,
     component: AssetsView,
-    level: Dashboards.TRIAL,
+    level: Dashboards.SETTINGS,
   },
   {
     id: Dashboards.USERS,
     title: 'Users',
-    route: '/edit/users',
+    route: '/settings/users',
     visible: false,
     component: UsersView,
-    level: Dashboards.TRIAL,
+    level: Dashboards.SETTINGS,
   },
   {
     id: Dashboards.STAKEHOLDERS,
@@ -143,13 +167,6 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     visible: false,
     component: InjectsView,
     level: Dashboards.TRIAL,
-  },
-  {
-    id: Dashboards.EXECUTE,
-    title: 'Run',
-    route: '/execute',
-    visible: false,
-    component: SessionControl,
   },
   {
     id: Dashboards.SESSIONS,
