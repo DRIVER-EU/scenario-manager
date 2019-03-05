@@ -3,6 +3,7 @@ import owl from '../assets/owl.svg';
 import { dashboardSvc } from '../services';
 import { Dashboards } from '../models/dashboards';
 import { StatusBar } from './status/status-bar';
+import { Icon } from 'mithril-materialized';
 
 export const Layout: FactoryComponent<{}> = () => {
   return {
@@ -29,7 +30,16 @@ export const Layout: FactoryComponent<{}> = () => {
               dashboardSvc
                 .getList()
                 .filter(d => d.visible)
-                .map(d => m(`li${isActive(d.route)}`, m('a', { href: d.route, oncreate: m.route.link }, d.title)))
+                .map(d =>
+                  m(
+                    `li${isActive(d.route)}`,
+                    m(
+                      'a',
+                      { href: d.route, oncreate: m.route.link },
+                      d.iconName ? m(Icon, { iconName: d.iconName }) : d.title
+                    )
+                  )
+                )
             ),
           ]),
           hasSubDashboards
@@ -45,6 +55,7 @@ export const Layout: FactoryComponent<{}> = () => {
             : undefined,
         ]),
         m('section.main', vnode.children),
+        // m('section.main', { style: 'height: 80vh; overflow-y: auto;' }, vnode.children),
         executeMode ? m(StatusBar) : undefined,
       ]);
     },
