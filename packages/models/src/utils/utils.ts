@@ -12,6 +12,22 @@ export const uniqueId = () => {
   return 'id_xxxxxxxx'.replace(/[x]/g, () => ((Math.random() * 16) | 0).toString(16));
 };
 
+/** Get all ancestors of an inject */
+export const getAncestors = (injects: IInject[], inject: IInject) => {
+  let current = inject;
+  const ancestors = [] as IInject[];
+  while (current.parentId) {
+    const ancestor = injects.filter(i => i.id === current.parentId).shift();
+    if (ancestor) {
+      ancestors.push(ancestor);
+      current = ancestor;
+    } else {
+      break;
+    }
+  }
+  return ancestors;
+};
+
 /** Get the parent of an inject, specifying the inject level */
 export const getParent = (injects: IInject[], id?: string, level = InjectType.SCENARIO): IInject | undefined => {
   if (!id) {
