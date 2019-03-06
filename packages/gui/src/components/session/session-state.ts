@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { SocketSvc, TrialSvc } from '../../services';
-import { IStateUpdate, InjectState, IInject, InjectType } from 'trial-manager-models';
+import { IStateUpdate, InjectState, IInject, InjectType, deepEqual, getAncestors } from 'trial-manager-models';
 import { Timeline, ITimelineItem, Collection, CollectionMode, ICollectionItem } from 'mithril-materialized';
 import { padLeft } from '../../utils';
 import { IExecutingInject } from '../../models/executing-inject';
@@ -15,23 +15,41 @@ export const SessionState: FactoryComponent = () => {
     is === InjectState.SCHEDULED || is === InjectState.EXECUTED || is === InjectState.IN_PROGRESS;
 
   const injectSelected = (selected?: IInject, isSelected?: boolean) => {
-    if (!selected) { return; }
+    if (!selected) {
+      return;
+    }
     state.selected = selected;
     injectsChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as IInject });
   };
 
   const state = {
+    injects: [] as IInject[],
+    injectNames: {} as { [key: string]: string },
     selected: undefined as IInject | undefined,
     socket: SocketSvc.socket,
     injectStates: {} as { [id: string]: IStateUpdate },
   };
 
+  // TODO What do we do when the user opened the wrong trial, i.e. not the one that is running?
+  // Automatically load it for him?
+
   return {
     oninit: () => {
       const { socket } = state;
+      const injects = TrialSvc.getInjects() || [];
+      state.injects = injects.filter(isNoGroupInject);
+      state.injectNames = state.injects.reduce((acc, cur) => {
+        const ancestors = getAncestors(injects, cur);
+        ancestors.pop(); // Remove scenario
+        acc[cur.id] = ancestors.reverse().map(i => i.title).join(' > ');
+        return acc;
+      }, {} as { [key: string]: string });
       socket.on('injectStates', (injectStates: { [id: string]: IStateUpdate }) => {
+        if (deepEqual(state.injectStates, injectStates)) {
+          return;
+        }
         state.injectStates = injectStates;
-        // console.table(injectStates);
+        console.table(injectStates);
         m.redraw();
       });
     },
@@ -40,9 +58,8 @@ export const SessionState: FactoryComponent = () => {
       socket.off('injectStates');
     },
     view: () => {
-      const { injectStates } = state;
-      const injects = (TrialSvc.getInjects() || [])
-        .filter(isNoGroupInject)
+      const { injectStates, injects, injectNames } = state;
+      const exe = injects
         .filter(i => injectStates.hasOwnProperty(i.id) && activeInjectState(injectStates[i.id].state))
         .map(
           i =>
@@ -52,7 +69,7 @@ export const SessionState: FactoryComponent = () => {
             } as IExecutingInject)
         )
         .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1));
-      const items = injects
+      const items = exe
         .reduce(
           (acc, cur) => {
             const { lastTransitionAt } = cur;
@@ -82,7 +99,7 @@ export const SessionState: FactoryComponent = () => {
                       title: i.title,
                       avatar: getIcon(i),
                       iconName: executionIcon(i),
-                      content: i.state,
+                      content: injectNames[i.id],
                       onclick: injectSelected(i),
                     } as ICollectionItem)
                 ),
