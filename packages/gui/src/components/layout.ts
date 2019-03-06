@@ -11,7 +11,7 @@ export const Layout: FactoryComponent<{}> = () => {
       const curRoute = m.route.get();
       const isActive = (path: string) => (curRoute.indexOf(path) >= 0 ? '.active' : '');
       const curDashboard = dashboardSvc.getCurrent(curRoute);
-      const subDashboards = curDashboard ? dashboardSvc.getList(curDashboard.id) : [];
+      const subDashboards = curDashboard ? dashboardSvc.getList(curDashboard.level || curDashboard.id) : [];
       const hasSubDashboards = subDashboards && subDashboards.length > 0;
       const executeMode = curDashboard
         ? curDashboard.id === Dashboards.EXECUTE || curDashboard.level === Dashboards.EXECUTE
