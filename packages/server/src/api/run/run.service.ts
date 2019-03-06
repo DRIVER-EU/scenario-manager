@@ -198,7 +198,7 @@ export class RunService {
       if (state !== injectState) {
         return false;
       }
-      if (type === InjectConditionType.IMMEDIATELY) {
+      if (type === InjectConditionType.IMMEDIATELY || type === InjectConditionType.MANUALLY) {
         return true;
       }
       if (type === InjectConditionType.DELAY) {
@@ -239,10 +239,11 @@ export class RunService {
       i.type === InjectType.INJECT &&
       this.states[i.id].state === InjectState.IN_PROGRESS;
     this.injects.filter(actionableInjects).forEach(i => {
-      // TODO Add actual implementation based.
-      this.executionService.execute(i);
-      this.transitionTo(i, InjectState.EXECUTED);
-      console.log(`Executing ${i.title}...`);
+      if (i.condition && i.condition.type !== InjectConditionType.MANUALLY) {
+        this.executionService.execute(i);
+        this.transitionTo(i, InjectState.EXECUTED);
+        console.log(`Executing ${i.title}...`);
+      }
     });
   }
 
@@ -254,7 +255,7 @@ export class RunService {
 
   /** Send a state update message to all connected clients */
   private sendStateUpdate() {
-    console.table(this.states);
+    // console.table(this.states);
     this.server.emit('injectStates', this.states);
   }
 }
