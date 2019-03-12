@@ -50,7 +50,15 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
             m(DatePicker, {
               initialValue: state.date,
               onchange: (d: Date) => {
-                state.date = d;
+                state.date = new Date(
+                  Date.UTC(
+                    d.getFullYear(),
+                    d.getMonth(),
+                    d.getDate(),
+                    state.date.getUTCHours(),
+                    state.date.getUTCMinutes()
+                  )
+                );
                 changeTime();
               },
             })
