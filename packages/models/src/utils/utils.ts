@@ -51,20 +51,29 @@ export const getParent = (injects: IInject[], id?: string, level = InjectType.SC
 /** Get the children of an inject */
 export const getChildren = (injects: IInject[], id?: string) => {
   if (!id) {
-    return undefined;
+    return [];
   }
   return injects.filter(i => i.parentId === id);
 };
 
-
-/** Find an inject by ID */
+/**
+ * Find an inject by ID
+ *
+ * @param id id of the inject you are looking for
+ * @param injects list of all injects
+ */
 export const getInject = (id?: string, injects?: IInject[]) =>
   injects && id ? injects.filter(i => i.id === id).shift() : undefined;
 
-/** Transform a time in SI units to msec */
-export const toMsec = (u: number, si: UnitType) =>
+/**
+ * Transform a time in SI units to msec
+ * @param u units
+ * @param si SI unit type
+ */
+export const toMsec = (u = 0, si = 'seconds' as UnitType) =>
   si === 'seconds' ? u * 1000 : si === 'minutes' ? u * 60000 : u * 3600000;
 
+/** Compare two objects, recursively exploring subtrees */
 export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boolean => {
   const tx = typeof x;
   const ty = typeof y;
@@ -118,8 +127,10 @@ export const getMessage = (inject: IInject, type: MessageType) => {
   return inject.message[key] as { id: string; [key: string]: unknown };
 };
 
+/** Returns true if the input is an integer */
 export const isInt = (n: number | string | boolean) => Number(n) === n && n % 1 === 0;
 
+/** Returns true if the input is a float */
 export const isFloat = (n: number | string | boolean) => Number(n) === n && n % 1 !== 0;
 
 /** Convert a GeoJSON to an AVRO representation */

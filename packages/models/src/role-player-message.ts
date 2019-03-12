@@ -7,12 +7,12 @@ export enum RolePlayerMessageType {
 }
 
 export enum RolePlayState {
-  SCHEDULED,
-  ON_HOLD,
-  IN_PROGRESS,
-  EXECUTED,
-  CANCELLED,
-  TIMEOUT,
+  SCHEDULED = 'SCHEDULED',
+  ON_HOLD = 'ON_HOLD',
+  IN_PROGRESS = 'IN_PROGRESS',
+  EXECUTED = 'EXECUTED',
+  CANCELLED = 'CANCELLED',
+  TIMEOUT = 'TIMEOUT',
 }
 
 export interface IRolePlayerMessage {
@@ -63,7 +63,8 @@ export const rolePlayerMessageToTestbed = (
   rpm: IRolePlayerMessage,
   state: RolePlayState,
   rolePlayerName: string,
-  participantsName?: string[]
+  participantsName?: string[],
+  comment = ''
 ) => ({
   id: rpm.id,
   type: rpm.type,
@@ -73,4 +74,5 @@ export const rolePlayerMessageToTestbed = (
   rolePlayerName,
   participantsName,
   state,
-});
+  comment,
+} as ITestbedRolePlayerMessage);

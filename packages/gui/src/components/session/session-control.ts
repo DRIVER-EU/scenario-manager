@@ -147,7 +147,6 @@ export const SessionControl: FactoryComponent = () => {
       const { isConnected, isConnecting } = state;
       const scenarios = state.scenarios.map(s => ({ id: s.id, label: s.title }));
       const canStart = isComplete(AppState.session);
-      const session = { ...AppState.session };
       state.scenario = state.scenarios[0];
       return [
         m(

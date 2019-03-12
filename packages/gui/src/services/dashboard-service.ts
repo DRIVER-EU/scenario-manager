@@ -14,6 +14,7 @@ import { AssetsView } from '../components/assets';
 import { SessionControl } from '../components/session/session-control';
 import { SessionState } from '../components/session/session-state';
 import { TrialSettings } from '../components/configuration/trial-settings';
+import { SimulationView } from '../components/simulation';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -166,6 +167,14 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/edit/scenarios',
     visible: false,
     component: InjectsView,
+    level: Dashboards.TRIAL,
+  },
+  {
+    id: Dashboards.SIMULATION,
+    title: 'simulation',
+    route: '/edit/simulation',
+    visible: false,
+    component: SimulationView,
     level: Dashboards.TRIAL,
   },
   {

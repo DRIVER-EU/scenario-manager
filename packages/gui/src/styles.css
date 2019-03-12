@@ -208,11 +208,13 @@ span.inline {
 .row {
   margin-bottom: 0;
 }
+.col.sb,
 .row.sb {
   height: 70vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
+.col.sb.large,
 .row.sb.large {
   height: 84vh;
 }
