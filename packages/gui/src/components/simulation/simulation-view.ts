@@ -21,7 +21,7 @@ export const SimulationView: FactoryComponent = () => {
   const state = {
     trial: {} as ITrial,
     // injects: [] as IInject[],
-    // injectNames: {} as { [key: string]: string },
+    injectNames: {} as { [key: string]: string },
     scenarios: [] as IScenario[],
   };
 
@@ -31,26 +31,9 @@ export const SimulationView: FactoryComponent = () => {
       if (!trial) {
         return;
       }
-      const scenarios = trial.injects.filter(i => i.type === InjectType.SCENARIO);
-      if (!scenarios || scenarios.length === 0) {
-        return;
-      }
-      const scenarioId = AppState.simulationView.scenarioId || scenarios[0].id;
-      state.trial = trial;
-      state.scenarios = scenarios;
-      AppState.simulationView.scenarioId = scenarioId;
-    },
-    view: () => {
-      const { trial, scenarios } = state;
-      const { scenarioId } = AppState.simulationView;
-      const scenario = scenarios.filter(s => s.id === scenarioId).shift();
-      if (!scenario) {
-        return undefined;
-      }
-      const injects = pruneInjects(scenario, trial.injects) || [];
-      const injectNames = injects.reduce(
+      const injectNames = trial.injects.reduce(
         (acc, cur) => {
-          const ancestors = getAncestors(injects, cur);
+          const ancestors = getAncestors(trial.injects, cur);
           ancestors.pop(); // Remove scenario
           acc[cur.id] = ancestors
             .reverse()
@@ -60,6 +43,24 @@ export const SimulationView: FactoryComponent = () => {
         },
         {} as { [key: string]: string }
       );
+      const scenarios = trial.injects.filter(i => i.type === InjectType.SCENARIO);
+      if (!scenarios || scenarios.length === 0) {
+        return;
+      }
+      const scenarioId = AppState.simulationView.scenarioId || scenarios[0].id;
+      state.trial = trial;
+      state.injectNames = injectNames;
+      state.scenarios = scenarios;
+      AppState.simulationView.scenarioId = scenarioId;
+    },
+    view: () => {
+      const { trial, scenarios, injectNames } = state;
+      const { scenarioId } = AppState.simulationView;
+      const scenario = scenarios.filter(s => s.id === scenarioId).shift();
+      if (!scenario) {
+        return undefined;
+      }
+      const injects = pruneInjects(scenario, trial.injects) || [];
       const options = scenarios.map(s => ({ id: s.id, label: s.title }));
       const autoTransitions = injects
         .filter(i => i.condition && i.condition.type === InjectConditionType.MANUALLY)
