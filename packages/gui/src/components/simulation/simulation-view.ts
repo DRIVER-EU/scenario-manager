@@ -10,16 +10,9 @@ import {
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { simulationEngine } from './simulation-engine';
-import {
-  Select,
-  ISelectOptions,
-  ICollectionItem,
-  CollectionMode,
-  Collection,
-  ITimelineItem,
-} from 'mithril-materialized';
-import { getInjectIcon, getIcon, executionIcon, padLeft } from '../../utils';
-import { IExecutingInject } from '../../models';
+import { Select, ISelectOptions, ITimelineItem } from 'mithril-materialized';
+import { getInjectIcon, getIcon, padLeft } from '../../utils';
+import { IExecutingInject, AppState } from '../../models';
 import { Timeline } from 'mithril-materialized';
 
 export const SimulationView: FactoryComponent = () => {
@@ -27,10 +20,9 @@ export const SimulationView: FactoryComponent = () => {
     `${padLeft(d.getUTCHours())}:${padLeft(d.getUTCMinutes())}:${padLeft(d.getUTCSeconds())}`;
   const state = {
     trial: {} as ITrial,
-    injects: [] as IInject[],
-    injectNames: {} as { [key: string]: string },
+    // injects: [] as IInject[],
+    // injectNames: {} as { [key: string]: string },
     scenarios: [] as IScenario[],
-    scenarioId: '',
   };
 
   return {
@@ -43,7 +35,14 @@ export const SimulationView: FactoryComponent = () => {
       if (!scenarios || scenarios.length === 0) {
         return;
       }
-      const scenarioId = scenarios[0].id;
+      const scenarioId = AppState.simulationView.scenarioId || scenarios[0].id;
+      state.trial = trial;
+      state.scenarios = scenarios;
+      AppState.simulationView.scenarioId = scenarioId;
+    },
+    view: () => {
+      const { trial, scenarios } = state;
+      const { scenarioId } = AppState.simulationView;
       const scenario = scenarios.filter(s => s.id === scenarioId).shift();
       if (!scenario) {
         return undefined;
@@ -61,14 +60,6 @@ export const SimulationView: FactoryComponent = () => {
         },
         {} as { [key: string]: string }
       );
-      state.trial = trial;
-      state.injects = injects;
-      state.injectNames = injectNames;
-      state.scenarios = scenarios;
-      state.scenarioId = scenarioId;
-    },
-    view: () => {
-      const { trial, scenarioId, scenarios, injects, injectNames } = state;
       const options = scenarios.map(s => ({ id: s.id, label: s.title }));
       const autoTransitions = injects
         .filter(i => i.condition && i.condition.type === InjectConditionType.MANUALLY)
@@ -104,16 +95,16 @@ export const SimulationView: FactoryComponent = () => {
         m(
           '.row',
           m(
-            '.col.s12.l3',
+            '.col.s12.l3.xl2',
             m(Select, {
               options,
               checkedId: scenarioId,
               iconName: getInjectIcon(InjectType.SCENARIO),
-              onchange: (id: string) => (state.scenarioId = id),
+              onchange: (id: string) => (AppState.simulationView.scenarioId = id),
             } as ISelectOptions<string>)
           ),
           m(
-            '.col.s12.l9.sb.large',
+            '.col.s12.l9.xl10.sb.large',
             m(Timeline, {
               timeFormatter,
               items,

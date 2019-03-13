@@ -11,4 +11,7 @@ export const AppState = {
     scenarioId: '',
     comments: '',
   } as ISessionMessage,
+  simulationView: {
+    scenarioId: '',
+  },
 };
