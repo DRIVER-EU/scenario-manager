@@ -79,7 +79,8 @@ export const SimulationView: FactoryComponent = () => {
         return undefined;
       }
 
-      const exe = injects
+      const items = injects
+        .filter(i => i.type === InjectType.INJECT)
         .filter(i => simStates.hasOwnProperty(i.id))
         .map(
           i =>
@@ -88,43 +89,14 @@ export const SimulationView: FactoryComponent = () => {
               ...i,
             } as IExecutingInject)
         )
-        .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1));
-
-      const items = exe
-        .reduce(
-          (acc, cur) => {
-            const { lastTransitionAt } = cur;
-            const joinWithLast = acc.length > 0 && acc[acc.length - 1].lastTransitionAt === lastTransitionAt;
-            const item = joinWithLast ? acc[acc.length - 1] : { lastTransitionAt, injects: [cur] };
-            if (!joinWithLast) {
-              acc.push(item);
-            }
-            return acc;
-          },
-          [] as Array<{
-            lastTransitionAt: Date;
-            injects: IExecutingInject[];
-          }>
-        )
+        .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1))
         .map(
-          li =>
+          i =>
             ({
-              datetime: new Date(li.lastTransitionAt),
-              iconName: 'play_arrow',
-              content: m(Collection, {
-                style: 'color: black;',
-                mode: CollectionMode.AVATAR,
-                items: li.injects.map(
-                  i =>
-                    ({
-                      title: i.title,
-                      avatar: getIcon(i),
-                      iconName: executionIcon(i),
-                      className: 'yellow black-text',
-                      content: injectNames[i.id],
-                    } as ICollectionItem)
-                ),
-              }),
+              datetime: new Date(i.lastTransitionAt),
+              iconName: getIcon(i),
+              title: `${i.title} from ${injectNames[i.id]}`,
+              content: i.description,
             } as ITimelineItem)
         );
 
