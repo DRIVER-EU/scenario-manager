@@ -35,3 +35,34 @@ pnpm m i
 ```console
 npm start
 ```
+
+## TODO
+
+- Add simulation-state views for all messages upon selection.
+- Add role-player message with manual confirmation (when done).
+  - Execute these messages, with an optional comment.
+- Add markdown editor (using marked) for inject description.
+- Add simple map editor (mapbox?) for editing/viewing locations.
+- Add CAP message.
+- Add Tactical Simulation Object (EMSI) message.
+- Add settings/locations e.g. address and WGS84. May also be a route or area. Has alias, title, description.
+  - Single GeoJSON feature for now.
+- Add settings/items (e.g. buildings, vehicles, weapons, etc.)
+  - Properties: Alias, title, description, picture.
+  - Buildings may have occupants
+  - Vehicles may have occupants
+  - Items may have a location. This location can change in time.
+- Add settings/actors (non-playing characters, NPG, or personas), which may carry items (but not buildings and vehicles).
+  - May have a picture, age, home/work location, length, nickname, and other properties (bag).
+  - May own/carry items.
+- Add script message: An info message, not necessarily sent to the Test-bed, to tell the story.
+  - May have a location | building, vehicles, items | actors
+  - Buildings can contain vehicles, vehicles can transport actors, actors can carry items.
+  - Use markdown to edit the text
+  - Uses special mark-up to denote items, actors, etc. in the text, 
+- Add map component to simulation view: show the state of all actors on the map when selecting an item:
+  - When a message is selected, compute the current state of all actors/vehicles on the map.
+  - This map may be shared using the test-bed (for the white cell).
+- Manual actions are always simulated and carried out after 30 seconds. Make this customizable.
+- Scenario selection and, optional, filtering, should be hidden when requested (kind of side menu).
+- The session may run in a shorter time frame than the scenario. How to deal with the messages outside the current time frame? For example, the VENARI script is a couple of days long, whereas the action only takes place during certain hours.

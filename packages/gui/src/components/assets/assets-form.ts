@@ -87,7 +87,7 @@ export const AssetsForm = () => {
                       )
                     : undefined,
                 ],
-                m('row', [
+                m('.row.buttons', [
                   m(Button, {
                     iconName: 'undo',
                     class: `green ${hasChanged ? '' : 'disabled'}`,
