@@ -1,5 +1,12 @@
 // import * as fs from 'fs';
-import { LogLevel, ITestBedOptions } from 'node-test-bed-adapter';
+import {
+  LogLevel,
+  ITestBedOptions,
+  RequestChangeOfTrialStage,
+  TrialManagementPhaseMessageTopic,
+  TrialManagementRolePlayerTopic,
+  TrialManagementSessionMgmtTopic,
+} from 'node-test-bed-adapter';
 
 export default {
   kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
@@ -12,7 +19,7 @@ export default {
   //   ca: fs.readFileSync('certs/test-ca.pem'),
   //   rejectUnauthorized: true,
   // },
-  clientId: 'TrialManager',
+  clientId: 'TB-TrialMgmt',
   fetchAllSchemas: false,
   fetchAllVersions: false,
   // autoRegisterSchemas: true,
@@ -21,10 +28,10 @@ export default {
   schemaFolder: './data/schemas',
   // consume: [],
   produce: [
-    'system_request_change_of_trial_stage',
-    'phase_message',
-    'role_player',
-    'session_mgmt',
+    RequestChangeOfTrialStage,
+    TrialManagementPhaseMessageTopic,
+    TrialManagementRolePlayerTopic,
+    TrialManagementSessionMgmtTopic,
     'standard_geojson',
     'standard_geojson_sim',
     'standard_named_geojson',
