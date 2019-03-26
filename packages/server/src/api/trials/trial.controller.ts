@@ -18,9 +18,9 @@ import {
   Body,
   UploadedFile,
   UseInterceptors,
-  FileInterceptor,
   Inject,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { TrialOverview, IUploadedFile } from '../../models';
 import { TrialService } from './trial.service';
