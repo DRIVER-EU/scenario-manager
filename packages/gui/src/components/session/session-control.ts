@@ -2,53 +2,52 @@ import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
 import { SocketSvc, TrialSvc, RunSvc } from '../../services';
 import { AppState, timeControlChannel, TopicNames } from '../../models';
-import { FlatButton, Select, ISelectOptions, NumberInput, TextInput, TextArea } from 'mithril-materialized';
+import { FlatButton, Select, ISelectOptions, TextInput, TextArea } from 'mithril-materialized';
 import {
   ITrial,
   IScenario,
   InjectType,
   ITimeMessage,
   IConnectMessage,
-  ISessionMessage,
-  ITestbedSessionMessage,
+  ISessionMgmt,
   TimingControlCommand,
   SessionState,
   ITimingControlMessage,
 } from 'trial-manager-models';
 import { getInjectIcon } from '../../utils';
 
-const isComplete = ({ id: sessionId, name: sessionName }: ISessionMessage) =>
-  sessionId >= 0 && sessionName && sessionName.length > 1 ? true : false;
+const isComplete = ({ sessionId, sessionName }: Partial<ISessionMgmt>) =>
+  sessionId && sessionId.length && sessionName && sessionName.length > 1 ? true : false;
 
 /** Helper component to specify the session id, name, comments */
 const SessionSettings: FactoryComponent = () => {
   return {
     view: () => {
       const session = AppState.session;
-      if (session && !session.name) {
-        session.id = 1;
-        session.name = 'New session';
+      if (session && !session.sessionName) {
+        session.sessionId = '1';
+        session.sessionName = 'New session';
       }
       return [
         m('.row', [
           m(
             '.col.s3',
-            m(NumberInput, {
-              initialValue: session.id,
+            m(TextInput, {
+              initialValue: session.sessionId,
               label: 'ID',
               isMandatory: true,
               min: 0,
-              onchange: (v: number) => (AppState.session.id = v),
+              onchange: (v: string) => (AppState.session.sessionId = v),
               iconName: 'title',
             })
           ),
           m(
             '.col.s9',
             m(TextInput, {
-              initialValue: session.name,
+              initialValue: session.sessionName,
               label: 'Session name',
               isMandatory: true,
-              onchange: (v: string) => (AppState.session.name = v),
+              onchange: (v: string) => (AppState.session.sessionName = v),
             })
           ),
         ]),
@@ -57,7 +56,7 @@ const SessionSettings: FactoryComponent = () => {
           m(
             '.col.s12',
             m(TextArea, {
-              initialValue: session.comment,
+              initialValue: session.comment || undefined,
               label: 'Comments',
               onchange: (v: string) => (AppState.session.comment = v),
               iconName: 'note',
@@ -89,11 +88,11 @@ export const SessionControl: FactoryComponent = () => {
           trialName: trial.title,
           scenarioId: scenario.id,
           scenarioName: scenario.title,
-          sessionId: AppState.session.id.toString(),
-          sessionName: AppState.session.name,
+          sessionId: AppState.session.sessionId,
+          sessionName: AppState.session.sessionName,
           sessionState,
           comment: AppState.session.comment,
-        } as ITestbedSessionMessage;
+        } as ISessionMgmt;
         return session;
       }
       return undefined;
