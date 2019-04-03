@@ -59,7 +59,7 @@ npm start
   - May have a location | building, vehicles, items | actors
   - Buildings can contain vehicles, vehicles can transport actors, actors can carry items.
   - Use markdown to edit the text
-  - Uses special mark-up to denote items, actors, etc. in the text, 
+  - Uses special mark-up to denote items, actors, etc. in the text, e.g. ITEM.weapon1 or ACTOR.bad_guy. In the generated HTML, they will be replaced by their title.
 - Add map component to simulation view: show the state of all actors on the map when selecting an item:
   - When a message is selected, compute the current state of all actors/vehicles on the map.
   - This map may be shared using the test-bed (for the white cell).
