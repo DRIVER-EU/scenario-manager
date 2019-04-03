@@ -118,13 +118,13 @@ export const deepCopy = <T>(target: T): T => {
 };
 
 /** Gets and optionally creates the inject message */
-export const getMessage = (inject: IInject, type: MessageType) => {
+export const getMessage = <T>(inject: IInject, type: MessageType) => {
   const key = MessageType[type];
   if (!inject.message || !inject.message.hasOwnProperty(key)) {
     inject.message = {};
     inject.message[key] = { id: inject.id };
   }
-  return inject.message[key] as { id: string; [key: string]: unknown };
+  return inject.message[key] as T;
 };
 
 /** Returns true if the input is an integer */
