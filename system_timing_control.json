@@ -1,0 +1,44 @@
+[
+  {
+    "topic": "system_timing_control",
+    "offset": 0,
+    "partition": 0,
+    "highWaterOffset": 2,
+    "value": {
+      "command": "Init",
+      "trialTime": {
+        "long": 1551340800000
+      },
+      "trialTimeSpeed": {
+        "float": 1
+      }
+    },
+    "key": {
+      "distributionID": "a55c271e-f8b7-46bf-9b02-8d05d791b0e7",
+      "senderID": "TrialManager",
+      "dateTimeSent": 1553632215095,
+      "dateTimeExpires": 0,
+      "distributionStatus": "Test",
+      "distributionKind": "Unknown"
+    }
+  },
+  {
+    "topic": "system_timing_control",
+    "offset": 0,
+    "partition": 0,
+    "highWaterOffset": 2,
+    "value": {
+      "command": "Start",
+      "trialTime": null,
+      "trialTimeSpeed": null
+    },
+    "key": {
+      "distributionID": "52aba4ca-8c5b-49fa-bd31-eaf235f30e92",
+      "senderID": "TrialManager",
+      "dateTimeSent": 1553632224968,
+      "dateTimeExpires": 0,
+      "distributionStatus": "Test",
+      "distributionKind": "Unknown"
+    }
+  }
+]

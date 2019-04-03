@@ -12,7 +12,6 @@ export * from './objective';
 export * from './ost-stage-change-message';
 export * from './person-of-interest';
 export * from './person';
-export * from './phase-message';
 export * from './role-player-message';
 export * from './session-message';
 export * from './stakeholder';
