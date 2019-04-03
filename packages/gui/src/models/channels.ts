@@ -8,6 +8,7 @@ import {
   IAsset,
   ITimingControlMessage,
 } from 'trial-manager-models';
+import { IExecutingInject } from './executing-inject';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
@@ -20,6 +21,7 @@ export const ChannelNames = {
   POI: 'POI',
   OOI: 'OOI',
   INJECT: 'INJECT',
+  EXECUTING: 'EXECUTING',
   TIME_CONTROL: 'TIME_CONTROL',
 };
 
@@ -42,6 +44,10 @@ export const scenarioChannel = messageBus.channel<{ cur: ITrial; old?: ITrial }>
 export const objectiveChannel = messageBus.channel<{ cur: IObjective; old?: IObjective }>(ChannelNames.OBJECTIVE);
 
 export const injectsChannel = messageBus.channel<{ cur: IInject; old?: IInject }>(ChannelNames.INJECT);
+
+export const executingChannel = messageBus.channel<{ cur: IExecutingInject; old?: IExecutingInject }>(
+  ChannelNames.EXECUTING
+);
 
 export const usersChannel = messageBus.channel<{ cur: IPerson; old?: IPerson }>(ChannelNames.USERS);
 

@@ -1,11 +1,9 @@
 import m, { FactoryComponent } from 'mithril';
-import { TextInput, Select, Collection, CollectionMode } from 'mithril-materialized';
+import { Collection, CollectionMode } from 'mithril-materialized';
 import {
   getMessage,
   IInject,
   MessageType,
-  UserRole,
-  IRolePlayerMessage,
   RolePlayerMessageType,
   IPerson,
   IRolePlayerMsg,
@@ -52,7 +50,7 @@ const CallMessage: FactoryComponent<{
   participants: IPerson[];
 }> = () => {
   return {
-    view: ({ attrs: { rolePlayer, msg, participants } }) => [
+    view: ({ attrs: { msg, participants } }) => [
       m('h5', 'CALL: ' + msg.title),
       m('h6', msg.headline),
       m('p', msg.description),
@@ -68,15 +66,3 @@ const CallMessage: FactoryComponent<{
     ],
   };
 };
-
-// const CallMessage: FactoryComponent<{
-//   rolePlayer: IPerson;
-//   msg: MessageType.ROLE_PLAYER_MESSAGE;
-//   participants: IPerson[];
-// }> = () => {
-//   return {
-//     view: ({ attrs: { rolePlayer, msg, participants } }) => {
-
-//     },
-//   };
-// };

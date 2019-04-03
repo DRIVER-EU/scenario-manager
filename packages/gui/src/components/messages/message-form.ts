@@ -3,6 +3,7 @@ import { IInject, MessageType, InjectType } from 'trial-manager-models';
 import { RolePlayerMessageForm, PhaseMessageForm, ScenarioForm, DefaultMessageForm } from '.';
 import { GeoJsonMessageForm } from './geojson-message';
 import { OstChangeStageMessageForm } from './ost-change-stage-message';
+import { CapMessageForm } from './cap-message';
 
 export const MessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
   const getMessageForm = (inject: IInject, onChange: () => void) => {
@@ -13,6 +14,8 @@ export const MessageForm: FactoryComponent<{ inject: IInject, onChange: () => vo
         return m(PhaseMessageForm, { inject, onChange });
       case MessageType.GEOJSON_MESSAGE:
         return m(GeoJsonMessageForm, { inject, onChange });
+      case MessageType.CAP_MESSAGE:
+        return m(CapMessageForm, { inject, onChange });
       case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
         return m(OstChangeStageMessageForm, { inject, onChange });
       default:
