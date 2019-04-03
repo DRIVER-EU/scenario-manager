@@ -1,19 +1,4 @@
-import { IContent } from '.';
-
-export enum MessageType {
-  ROLE_PLAYER_MESSAGE,
-  PHASE_MESSAGE,
-  POST_MESSAGE,
-  GEOJSON_MESSAGE,
-  AUTOMATED_ACTION,
-  CHANGE_OBSERVER_QUESTIONNAIRES,
-  // PARTICIPANT_MESSAGE = 'PARTICIPANT_MESSAGE',
-  // OBSERVER_MESSAGE = 'OBSERVER_MESSAGE',
-  // OPERATOR_MESSAGE = 'OPERATOR_MESSAGE',
-  // AUTOMATED_ACTION = 'AUTOMATED_ACTION',
-  // BRANCH = 'BRANCH',
-  // WAIT_FOR_OPERATOR_INPUT = 'WAIT_FOR_OPERATOR_INPUT',
-}
+import { IContent, MessageType } from '.';
 
 /** The inject state communicates the state of an inject during execution of a scenario. */
 export enum InjectState {
@@ -89,7 +74,7 @@ export interface IInjectGroup extends IInject {
 
 export interface IScenario extends IInjectGroup {
   /** When does the scenario start */
-  startDate?: Date;
+  startDate?: string;
   /** When does the scenario end */
-  endDate?: Date;
+  endDate?: string;
 }
