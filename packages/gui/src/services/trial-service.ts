@@ -1,6 +1,7 @@
 import { RestService, AssetService } from '.';
 import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
-import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, uniqueId } from 'trial-manager-models';
+import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, uniqueId, UserRole } from 'trial-manager-models';
+import { userRolesFilter } from '../utils';
 
 class TrialService extends RestService<ITrial> {
   private assetSvc?: AssetService;
@@ -77,7 +78,7 @@ class TrialService extends RestService<ITrial> {
   /** Get all contacts (or filter by name) */
   public getUsers(filter?: string) {
     if (!this.current) {
-      return undefined;
+      return [];
     }
     if (!this.current.users) {
       this.current.users = [];
@@ -85,6 +86,10 @@ class TrialService extends RestService<ITrial> {
     return filter
       ? this.current.users.filter(u => u.name && u.name.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
       : this.current.users;
+  }
+
+  public getUsersByRole(role: UserRole) {
+    return this.getUsers().filter(u => userRolesFilter(u, role));
   }
 
   public async createUser(user: IPerson) {
