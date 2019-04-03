@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { TextArea, TextInput, Select, FlatButton, ModalPanel, ISelectOption } from 'mithril-materialized';
+import { TextArea, TextInput, Select, MapEditor, ISelectOption } from 'mithril-materialized';
 import {
   IInject,
   getMessage,
@@ -15,6 +15,7 @@ import {
   Urgency,
   Severity,
   Certainty,
+  IValueNamePair,
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { enumToOptions } from '../../utils';
@@ -23,6 +24,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
   const state = {} as {
     alert: IAlert;
     alertInfo: IInfo;
+    parameters: IValueNamePair[];
     participants: IPerson[];
     statusOptions: Array<ISelectOption<string>>;
     msgTypeOptions: Array<ISelectOption<string>>;
@@ -49,7 +51,10 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
       } else {
         state.alertInfo = alert.info instanceof Array ? alert.info[0] : alert.info;
       }
-      // .map(rp => ({ id: rp.id, label: rp.name }));
+      if (!state.alertInfo.parameter) {
+        state.alertInfo.parameter = [] as IValueNamePair[];
+      }
+      state.parameters = state.alertInfo.parameter as IValueNamePair[];
       state.alertInfo.headline = inject.title = inject.title || 'New CAP message';
       state.alert = alert;
       state.participants = participants;
@@ -65,6 +70,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
       const {
         alert,
         alertInfo,
+        parameters,
         participants,
         statusOptions,
         msgTypeOptions,
@@ -98,6 +104,13 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
             alert.sender = v as string;
             alertInfo.senderName = (participants.filter(p => p.email === v).shift() || ({} as IPerson)).name;
           },
+        }),
+        m(TextArea, {
+          id: 'desc',
+          initialValue: inject.description,
+          onchange: (v: string) => (inject.description = alertInfo.description = v),
+          label: 'Description',
+          iconName: 'note',
         }),
         m(Select, {
           label: 'Status',
@@ -177,12 +190,25 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
             alertInfo.category = v as Category | Category[];
           },
         }),
-        m(TextArea, {
-          id: 'desc',
-          initialValue: inject.description,
-          onchange: (v: string) => (inject.description = alertInfo.description = v),
-          label: 'Description',
-          iconName: 'note',
+        m(MapEditor, {
+          label: 'Parameters',
+          labelKey: 'Section',
+          labelValue: 'HTML text',
+          disallowArrays: true,
+          keyClass: '.col.s4.m3',
+          valueClass: '.col.s8.m9',
+          properties: parameters.reduce(
+            (acc, cur) => {
+              acc[cur.valueName] = cur.value;
+              return acc;
+            },
+            {} as { [key: string]: string }
+          ),
+          onchange: (props: { [key: string]: string | number | boolean | Array<string | number> }) => {
+            alertInfo.parameter = state.parameters = Object.keys(props).map(
+              p => ({ valueName: p, value: props[p] } as IValueNamePair)
+            );
+          },
         }),
       ];
     },
