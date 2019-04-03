@@ -1,3 +1,4 @@
+import { IValueNamePair } from './standard_cap-value';
 import { uniqueId } from '../utils';
 
 export interface ICAPObject {
@@ -35,10 +36,10 @@ export interface ICAPInfo {
   parameter?: IValueNamePair;
 }
 
-export interface IValueNamePair {
-  valueName: string;
-  value: string;
-}
+// export interface IValueNamePair {
+//   valueName: string;
+//   value: string;
+// }
 
 export interface ICAPArea {
   areaDesc: string;

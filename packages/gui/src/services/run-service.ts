@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { AppState } from '../models';
-import { IStateTransitionRequest, ISessionMessage, ITestbedSessionMessage } from 'trial-manager-models';
+import { IStateTransitionRequest, ISessionMgmt } from 'trial-manager-models';
 
 const withCredentials = false;
 
@@ -13,7 +13,7 @@ class RunService {
 
   /** Get the active trial */
   public async active() {
-    return m.request<ISessionMessage>({
+    return m.request<ISessionMgmt>({
       method: 'GET',
       url: this.baseUrl + 'active',
       withCredentials,
@@ -30,7 +30,7 @@ class RunService {
   }
 
   /** Load a new scenario: can only be done when no other scenario is loaded. */
-  public async load(sm: ITestbedSessionMessage) {
+  public async load(sm: ISessionMgmt) {
     return m.request<void>({
       method: 'POST',
       url: this.baseUrl + 'load',

@@ -5,23 +5,20 @@ import {
   IInject,
   MessageType,
   UserRole,
-  IRolePlayerMessage,
+  IRolePlayerMsg,
   RolePlayerMessageType,
 } from 'trial-manager-models';
-import { iterEnum, userRolesFilter } from './../../utils';
 import { TrialSvc } from '../../services';
 
-export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () => {
+export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
   return {
     view: ({ attrs: { inject } }) => {
-      const rpm = getMessage(inject, MessageType.ROLE_PLAYER_MESSAGE) as IRolePlayerMessage;
-      const rolePlayers = (TrialSvc.getUsers() || [])
-        .filter(u => userRolesFilter(u, UserRole.ROLE_PLAYER))
+      const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
+      const rolePlayers = TrialSvc.getUsersByRole(UserRole.ROLE_PLAYER)
         .map(rp => ({ id: rp.id, label: rp.name }));
-      const participants = (TrialSvc.getUsers() || [])
-        .filter(u => userRolesFilter(u, UserRole.PARTICIPANT))
+      const participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT)
         .map(rp => ({ id: rp.id, label: rp.name }));
-      const types = iterEnum(RolePlayerMessageType).map(t => ({ id: t, label: RolePlayerMessageType[t] }));
+      const types = Object.keys(RolePlayerMessageType).map(t => ({ id: t, label: t }));
       const isAction = rpm.type === RolePlayerMessageType.ACTION;
 
       return [
@@ -39,7 +36,7 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject }> = () =
           placeholder: 'Select action type',
           options: types,
           checkedId: rpm.type,
-          onchange: (v: unknown) => (rpm.type = +(v as RolePlayerMessageType)),
+          onchange: (v: unknown) => (rpm.type = v as RolePlayerMessageType),
         }),
         isAction
           ? undefined

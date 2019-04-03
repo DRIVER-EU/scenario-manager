@@ -3,7 +3,7 @@ import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, IOstStageChangeMessage } from 'trial-manager-models';
 
 /** Request the Observer Support Tool to change the list of questions for the observers */
-export const OstChangeStageMessageForm: FactoryComponent<{ inject: IInject }> = () => {
+export const OstChangeStageMessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
   return {
     view: ({ attrs: { inject } }) => {
       const pm = getMessage(inject, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES) as IOstStageChangeMessage;

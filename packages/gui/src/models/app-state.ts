@@ -1,4 +1,4 @@
-import { ITimeMessage, ISessionMessage } from 'trial-manager-models';
+import { ITimeMessage, ISessionMgmt } from 'trial-manager-models';
 
 /** Application state */
 export const AppState = {
@@ -10,7 +10,7 @@ export const AppState = {
     trialId: '',
     scenarioId: '',
     comments: '',
-  } as ISessionMessage,
+  } as Partial<ISessionMgmt>,
   simulationView: {
     scenarioId: '',
   },

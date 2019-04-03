@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { TextArea, TextInput, Select, Collection, CollectionMode } from 'mithril-materialized';
+import { TextInput, Select, Collection, CollectionMode } from 'mithril-materialized';
 import {
   getMessage,
   IInject,
@@ -8,12 +8,12 @@ import {
   IRolePlayerMessage,
   RolePlayerMessageType,
   IPerson,
-  ITestbedRolePlayerMessage,
+  IRolePlayerMsg,
+  rolePlayerMessageToTestbed
 } from 'trial-manager-models';
-import { iterEnum, userRolesFilter, userIcon } from '../../utils';
+import { userIcon } from '../../utils';
 import { TrialSvc } from '../../services';
 import { injectsChannel, TopicNames } from './../../models';
-import { rolePlayerMessageToTestbed, RolePlayState } from './../../../../models/src/role-player-message';
 
 export const RolePlayerExeMessageForm: FactoryComponent = () => {
   const state = {
@@ -28,15 +28,14 @@ export const RolePlayerExeMessageForm: FactoryComponent = () => {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
       const { inject } = state;
-      const rpm = getMessage(inject, MessageType.ROLE_PLAYER_MESSAGE) as IRolePlayerMessage;
+      const rpm = getMessage(inject, MessageType.ROLE_PLAYER_MESSAGE) as IRolePlayerMsg;
       const rolePlayer = (TrialSvc.getUsers() || []).filter(u => u.id === rpm.rolePlayerId).shift();
       const participants = (TrialSvc.getUsers() || []).filter(
         u => rpm.participantIds && rpm.participantIds.indexOf(u.id) >= 0
       );
       const msg = rolePlayerMessageToTestbed(
         rpm,
-        RolePlayState.IN_PROGRESS,
-        rolePlayer ? rolePlayer.name : '',
+        rolePlayer ? rolePlayer.name : 'UNKNOWN',
         participants.map(p => p.name)
       );
       return [
@@ -49,7 +48,7 @@ export const RolePlayerExeMessageForm: FactoryComponent = () => {
 
 const CallMessage: FactoryComponent<{
   rolePlayer?: IPerson;
-  msg: ITestbedRolePlayerMessage;
+  msg: IRolePlayerMsg;
   participants: IPerson[];
 }> = () => {
   return {
