@@ -6,6 +6,7 @@ export * from './inject-sim-state';
 export * from './inject';
 export * from './location';
 export * from './message-topic';
+export * from './message-type';
 export * from './messages';
 export * from './object-of-interest';
 export * from './objective';
