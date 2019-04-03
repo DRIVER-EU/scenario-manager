@@ -10,7 +10,10 @@ async function bootstrap() {
     console.error('Stack trace: ' + err.stack);
   });
   process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection:', reason.stack || reason);
+    console.error('Unhandled Rejection:', reason);
+    if ((reason as any).stack) {
+      console.error((reason as any).stack);
+    }
   });
 
   const app = await NestFactory.create(AppModule, { cors: true });

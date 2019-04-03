@@ -7,7 +7,10 @@ async function bootstrap() {
     console.error('Caught exception: ' + err);
   });
   process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection:', reason.stack || reason);
+    console.error('Unhandled Rejection:', reason);
+    if ((reason as any).stack) {
+      console.error((reason as any).stack);
+    }
   });
 
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -22,16 +25,15 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection:', reason.stack || reason);
+    console.error('Unhandled Rejection:', reason);
     // Recommended: send the information to sentry.io
     // or whatever crash reporting service you use
   });
 
   const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3000;
   await app.listen(port, () => {
-    console.log(
-      `TRIAL_MANAGER_SERVER_PORT is listening on port ${port}. Swagger documentation is available at 'http://localhost:${port}/api'.`,
-    );
+    console.log(`TRIAL_MANAGER_SERVER_PORT is listening on port ${port}.`);
+    console.log(`Swagger documentation is available at 'http://localhost:${port}/api'.`);
   });
 }
 bootstrap();
