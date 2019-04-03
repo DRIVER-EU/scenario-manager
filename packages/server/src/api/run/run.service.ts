@@ -144,7 +144,7 @@ export class RunService {
 
   /** Transition all injects when the conditions are satisfied, until no more state is changed. */
   private transitionInjects() {
-    transitionInjects(this.trialTime, this.states, this.injects, this.scenario.startDate);
+    transitionInjects(this.trialTime, this.states, this.injects, new Date(this.scenario.startDate));
   }
 
   /** Execute each inject that is IN_PROGRESS */
