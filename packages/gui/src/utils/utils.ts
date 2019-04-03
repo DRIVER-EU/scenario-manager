@@ -9,6 +9,7 @@ import {
   IAsset,
   InjectState,
   InjectConditionType,
+  RolePlayerMessageType,
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 import { IExecutingInject } from '../models';
@@ -18,6 +19,11 @@ export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
   Object.keys(e)
     .filter((v, i, arr) => i < arr.length / 2)
     .map(k => +k);
+
+/** Map a string enum to a list of options */
+export const enumToOptions = <E extends { [P in keyof E]: string }>(e: E) =>
+  Object.keys(e)
+    .map(id => ({ id, label: id }));
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.
@@ -102,12 +108,58 @@ export const getMessageIcon = (type?: MessageType) => {
   switch (type) {
     case MessageType.GEOJSON_MESSAGE:
       return 'map';
+    case MessageType.CAP_MESSAGE:
+      return 'add_alert';
     case MessageType.PHASE_MESSAGE:
       return 'flag'; // 'chat';
     case MessageType.ROLE_PLAYER_MESSAGE:
       return 'record_voice_over';
     case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
       return 'speaker_notes';
+    default:
+      return 'message';
+  }
+};
+
+/**
+ * Represent the role player message with an icon.
+ * @param type message type
+ */
+export const getRolePlayerMessageIcon = (type?: RolePlayerMessageType) => {
+  switch (type) {
+    case RolePlayerMessageType.MAIL:
+      return 'email';
+    case RolePlayerMessageType.CALL:
+      return 'phone'; // 'chat';
+    case RolePlayerMessageType.ACTION:
+      return 'directions_run';
+    case RolePlayerMessageType.TWEET:
+      return 'message';
+    default:
+      return 'message';
+  }
+};
+
+/**
+ * Represent the message with a title.
+ * @param type message type
+ */
+export const getMessageTitle = (type?: MessageType) => {
+  switch (type) {
+    case MessageType.GEOJSON_MESSAGE:
+      return 'MAP OVERLAY';
+    case MessageType.CAP_MESSAGE:
+      return 'CAP';
+    case MessageType.PHASE_MESSAGE:
+      return 'NEW PHASE';
+    case MessageType.POST_MESSAGE:
+      return 'POST A MESSAGE';
+    case MessageType.ROLE_PLAYER_MESSAGE:
+      return 'ROLE PLAYER MESSAGE';
+    case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
+      return 'CHANGE OBSERVER QUESTIONNAIRES';
+    case MessageType.AUTOMATED_ACTION:
+      return 'AUTOMATED ACTION';
     default:
       return 'message';
   }
@@ -238,3 +290,17 @@ export const getMessageSubjects = (mt: MessageType) => {
   const messageTopic = messageTopics.filter(t => t.messageType === mt).shift();
   return messageTopic ? messageTopic.topics.map(t => ({ id: t.id, label: t.subject })) : [];
 };
+
+/** Create an email link */
+export const createEmailLink = (emails: string | Array<string | undefined>, subject?: string, body?: string) => {
+  const addresses = emails instanceof Array ? emails.join(',') : emails;
+  return `mailto:${addresses}${subject || body ? '?' : ''}${subject ? `subject=${subject}` : ''}${
+    subject && body ? '&' : ''
+  }${body ? `body=${body}` : ''}`;
+};
+
+/**
+ * Create a phone call link
+ * @param phone Phone number
+ */
+export const createPhoneLink = (phone?: string) => phone ? `tel:${phone}` : '';
