@@ -234,7 +234,7 @@ export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
  */
 export const getMessageSubjects = (mt: MessageType) => {
   const trial = TrialSvc.getCurrent();
-  const messageTopics = trial.messageTopics;
+  const messageTopics = trial.messageTopics || [];
   const messageTopic = messageTopics.filter(t => t.messageType === mt).shift();
   return messageTopic ? messageTopic.topics.map(t => ({ id: t.id, label: t.subject })) : [];
 };
