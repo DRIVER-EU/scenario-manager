@@ -32,8 +32,8 @@ export default {
     TrialManagementPhaseMessageTopic,
     TrialManagementRolePlayerTopic,
     TrialManagementSessionMgmtTopic,
+    'system_tm_session_mgmt',
     'standard_geojson',
-    'standard_geojson_sim',
     'standard_named_geojson',
   ],
   logging: {
