@@ -23,7 +23,7 @@ export const Layout: FactoryComponent<{}> = () => {
             m(
               'a.brand-logo',
               { style: 'margin-left: 20px' },
-              m(`img[width=45][height=45][src=${owl}]`, { style: 'margin-top: 10px; margin-left: -10px;' })
+              m(`img[width=32][height=32][src=${owl}]`, { style: 'margin-top: 5px; margin-left: -5px;' })
             ),
             m(
               'ul.right',
