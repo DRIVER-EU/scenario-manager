@@ -5,8 +5,8 @@ import {
 } from '@nestjs/websockets';
 import { Inject } from '@nestjs/common';
 import { Server } from 'socket.io';
-import { KafkaService } from '../../adapters/kafka';
-import { IConnectMessage, ITimingControlMessage } from 'trial-manager-models';
+import { KafkaService, ITimingControl } from '../../adapters/kafka';
+import { IConnectMessage } from 'trial-manager-models';
 
 @WebSocketGateway()
 export class TimeEventsGateway {
@@ -47,7 +47,7 @@ export class TimeEventsGateway {
   }
 
   @SubscribeMessage('time-control')
-  timeControl(_client, data: ITimingControlMessage) {
+  timeControl(_client, data: ITimingControl) {
     // console.log('time-control');
     // console.table(data);
     return this.kafkaService.sendTimeControlMessage(data);
