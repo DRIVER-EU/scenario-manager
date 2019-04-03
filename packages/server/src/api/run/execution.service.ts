@@ -9,9 +9,10 @@ import {
   IGeoJsonMessage,
   InjectState,
   rolePlayerMessageToTestbed,
-  IRolePlayerMessage,
-  RolePlayState,
+  IRolePlayerMsg,
   IExecutionService,
+  IPhaseMessage,
+  IOstStageChangeMessage,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -29,17 +30,26 @@ export class ExecutionService implements IExecutionService {
     this.trial = trial;
   }
 
-  public execute(i: IInject, state = InjectState.EXECUTED, comment?: string) {
+  public execute(i: IInject, _state = InjectState.EXECUTED, comment?: string) {
     const { messageType } = i;
     switch (messageType) {
       case MessageType.GEOJSON_MESSAGE:
         this.sendGeoJSON(i);
+        break;
       case MessageType.ROLE_PLAYER_MESSAGE:
-        const rps = state === InjectState.IN_PROGRESS ? RolePlayState.IN_PROGRESS : RolePlayState.EXECUTED;
-        this.sendRolePlayerMessage(i, rps, comment);
+        this.sendRolePlayerMessage(i, comment);
+        break;
+      case MessageType.PHASE_MESSAGE:
+        this.sendPhaseMessage(i, comment);
+        break;
+      case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
+        this.sendChangeObserverQuestionnairesMessage(i, comment);
+        break;
       default:
         console.warn(
-          `${MessageType[messageType]} is not yet supported by the execution service.`,
+          `${
+            MessageType[messageType]
+          } is not yet supported by the execution service.`,
         );
     }
   }
@@ -72,19 +82,37 @@ export class ExecutionService implements IExecutionService {
     this.kafkaService.sendMessage(msg, topic);
   }
 
-  private async sendRolePlayerMessage(i: IInject, state: RolePlayState, comment?: string) {
+  private async sendRolePlayerMessage(i: IInject, comment?: string) {
     const rpm = getMessage(
       i,
       MessageType.ROLE_PLAYER_MESSAGE,
-    ) as IRolePlayerMessage;
-    const topic = 'SYSTEM_ROLE_PLAYER';
-    const rolePlayer = this.trial.users.filter(u => u.id === rpm.rolePlayerId).shift();
+    ) as IRolePlayerMsg;
+    const rolePlayer = this.trial.users
+      .filter(u => u.id === rpm.rolePlayerId)
+      .shift();
     const rolePlayerName = rolePlayer ? rolePlayer.name : 'Unknown';
-    const participants = this.trial.users
-      .filter(u => rpm.participantIds.indexOf(u.id) >= 0)
-      .map(u => u.name);
-    const msg = rolePlayerMessageToTestbed(rpm, state, rolePlayerName, participants, comment);
-    this.kafkaService.sendMessage(msg, topic);
+    const participants = rpm.participantIds
+      ? this.trial.users
+          .filter(u => rpm.participantIds.indexOf(u.id) >= 0)
+          .map(u => u.name)
+      : [];
+    const msg = rolePlayerMessageToTestbed(
+      rpm,
+      rolePlayerName,
+      participants,
+      comment,
+    );
+    this.kafkaService.sendRolePlayerMessage(msg);
+  }
+
+  private async sendPhaseMessage(i: IInject, comment?: string) {
+    const msg = getMessage(i, MessageType.PHASE_MESSAGE) as IPhaseMessage;
+    this.kafkaService.sendPhaseMessage(msg);
+  }
+
+  private async sendChangeObserverQuestionnairesMessage(i: IInject, comment?: string) {
+    const msg = getMessage(i, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES) as IOstStageChangeMessage;
+    this.kafkaService.sendOstStageChangeRequestMessage(msg);
   }
 
   /** Find the topic that should be used for publishing. */
