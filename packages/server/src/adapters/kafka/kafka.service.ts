@@ -5,28 +5,30 @@ import {
   IAdapterMessage,
   ProduceRequest,
   ITestBedOptions,
-  ITimeMessage,
-} from 'node-test-bed-adapter';
-import {
-  ITimingControlMessage,
+  ITiming,
+  TimeControlTopic,
+  ITimingControl,
   IPhaseMessage,
-  ITestbedSessionMessage,
-  IOstStageChangeMessage,
-  IRolePlayerMessage,
-} from 'trial-manager-models';
+  IRequestChangeOfTrialStage,
+  ISessionMgmt,
+  TrialManagementPhaseMessageTopic,
+  TrialManagementRolePlayerTopic,
+  TrialManagementSessionMgmtTopic,
+} from 'node-test-bed-adapter';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
+export { ITimingControl } from 'node-test-bed-adapter';
 
 export interface TimeService {
-  on(event: 'time', listener: (time: ITimeMessage) => void): this;
+  on(event: 'time', listener: (time: ITiming) => void): this;
 }
 
 export interface KafkaService {
   // on(event: 'ready' | 'reconnect', listener: () => void): this;
   // on(event: 'error' | 'offsetOutOfRange', listener: (error: string) => void): this;
   // on(event: 'message', listener: (message: IAdapterMessage) => void): this;
-  once(event: 'time', listener: (message: ITimeMessage) => void): this;
-  on(event: 'time', listener: (message: ITimeMessage) => void): this;
+  once(event: 'time', listener: (message: ITiming) => void): this;
+  on(event: 'time', listener: (message: ITiming) => void): this;
 }
 
 @Injectable()
@@ -38,9 +40,9 @@ export class KafkaService extends EventEmitter implements TimeService {
     super();
     const options = config.get('kafka') as ITestBedOptions;
     if (!options.produce) {
-      options.produce = [TestBedAdapter.TimeControlTopic];
-    } else if (options.produce.indexOf(TestBedAdapter.TimeControlTopic) < 0) {
-      options.produce.push(TestBedAdapter.TimeControlTopic);
+      options.produce = [TimeControlTopic];
+    } else if (options.produce.indexOf(TimeControlTopic) < 0) {
+      options.produce.push(TimeControlTopic);
     }
     console.table(options);
 
@@ -65,29 +67,29 @@ export class KafkaService extends EventEmitter implements TimeService {
     this.adapter.on('error', err =>
       this.log.error(`Consumer received an error: ${err}`),
     );
-    this.adapter.on('offsetOutOfRange', err =>
-      this.log.error(`Consumer received an offsetOutOfRange error: ${err}`),
-    );
+    // this.adapter.on('offsetOutOfRange', err =>
+    //   this.log.error(`Consumer received an offsetOutOfRange error: ${err.topic}`),
+    // );
   }
 
-  public sendTimeControlMessage(timeCtrlMsg: ITimingControlMessage) {
-    return this.sendMessage(timeCtrlMsg, TestBedAdapter.TimeControlTopic);
+  public sendTimeControlMessage(timeCtrlMsg: ITimingControl) {
+    return this.sendMessage(timeCtrlMsg, TimeControlTopic);
   }
 
-  public sendSessionMessage(sm: ITestbedSessionMessage) {
-    return this.sendMessage(sm, 'session_mgmt');
+  public sendSessionMessage(sm: ISessionMgmt) {
+    return this.sendMessage(sm, TrialManagementSessionMgmtTopic);
   }
 
   public sendPhaseMessage(pm: IPhaseMessage) {
-    return this.sendMessage(pm, 'phase_message');
+    return this.sendMessage(pm, TrialManagementPhaseMessageTopic);
   }
 
-  public sendOstStageChangeRequestMessage(om: IOstStageChangeMessage) {
+  public sendOstStageChangeRequestMessage(om: IRequestChangeOfTrialStage) {
     return this.sendMessage(om, 'system_request_change_of_trial_stage');
   }
 
-  public sendRolePlayerMessage(rpm: IRolePlayerMessage) {
-    return this.sendMessage(rpm, 'role_player');
+  public sendRolePlayerMessage<ITestbedRolePlayerMessage>(rpm: ITestbedRolePlayerMessage) {
+    return this.sendMessage(rpm, TrialManagementRolePlayerTopic);
   }
 
   public get timeMessage() {
@@ -97,7 +99,7 @@ export class KafkaService extends EventEmitter implements TimeService {
       timeElapsed: this.adapter.timeElapsed.valueOf(),
       trialTimeSpeed: this.adapter.trialTimeSpeed,
       state: this.adapter.state,
-    } as ITimeMessage;
+    } as ITiming;
   }
 
   public get trialTime() {
