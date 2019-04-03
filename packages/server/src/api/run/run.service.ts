@@ -4,7 +4,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import {
   ITrial,
   IScenario,
-  ITestbedSessionMessage,
+  ISessionMgmt,
   getParent,
   IInjectGroup,
   IInject,
@@ -24,7 +24,7 @@ import { StateTransitionRequest } from '../../adapters/models';
 @WebSocketGateway()
 export class RunService {
   @WebSocketServer() private server: Server;
-  private session: ITestbedSessionMessage;
+  private session: ISessionMgmt;
   private readonly transitionQueue: StateTransitionRequest[] = [];
   private trial: ITrial;
   private scenario: IScenario;
@@ -45,7 +45,7 @@ export class RunService {
   }
 
   /** Initialize the new trial and scenario */
-  public async init(session: ITestbedSessionMessage) {
+  public async init(session: ISessionMgmt) {
     const { trialId, scenarioId, sessionId, sessionName } = session;
 
     console.log(`Starting trial, session ${sessionId}: ${sessionName}.`);
@@ -104,18 +104,24 @@ export class RunService {
 
   /** Process all injects and update the states */
   private updateLoop() {
-    if (this.isRunning) {
-      setTimeout(() => this.updateLoop(), 1000);
-    }
+    const scheduleRestart = () => {
+      if (this.isRunning) {
+        const at = Date.now();
+        setTimeout(() => this.updateLoop(), Math.max(0, 1000 - (at - now)));
+      }
+    };
+
+    const now = Date.now();
     const time = this.kafkaService.trialTime;
     if (time.valueOf() === this.trialTime.valueOf()) {
-      return;
+      scheduleRestart();
     }
     this.trialTime = time;
     this.transitionInjects();
     this.processTransitionQueue();
     this.executeInjects();
     this.sendStateUpdate();
+    scheduleRestart();
   }
 
   /** Process all manual requests to transition a state. */
