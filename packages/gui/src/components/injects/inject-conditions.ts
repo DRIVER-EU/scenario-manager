@@ -168,7 +168,7 @@ const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject }
       }
       const sec = delayUnitType === 'seconds' ? 1 : delayUnitType === 'minutes' ? 60 : 3600;
       const delayInSeconds = delay * sec;
-      const trialStart = scenario.startDate || new Date();
+      const trialStart = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const atTime = new Date(trialStart.getTime() + delayInSeconds * 1000);
       return m(TimePicker, {
         className: 'inline',
