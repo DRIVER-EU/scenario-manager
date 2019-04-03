@@ -1,8 +1,8 @@
 dependencies:
   material-icons: 0.3.0
   materialize-css: 1.0.0
-  mithril: 2.0.0-rc.4
-  mithril-materialized: 0.11.4
+  mithril: 1.1.6
+  mithril-materialized: 0.11.5
   mithril-tree-component: 0.4.0
   recursive: 0.0.2
   socket.io-client: 2.2.0
@@ -17,7 +17,7 @@ devDependencies:
   file-loader: 3.0.1
   html-webpack-plugin: 3.2.0
   style-loader: 0.23.1
-  typescript: 3.3.4000
+  typescript: 3.4.1
   webpack: 4.29.6
   webpack-cli: 3.3.0
   webpack-dev-server: 3.2.1
@@ -2627,19 +2627,19 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-x471SsVjUtBRtcvd4BzKE9kFC+/2TeWgKCgw0bZcw1b9l2X3QX5vCWgF+KaZaYm87Ss//rHnWryupDrgLvmSkA==
-  /mithril-materialized/0.11.4:
+  /mithril-materialized/0.11.5:
     dev: false
     resolution:
-      integrity: sha512-+g7xs0uXBC/Xd+DLg6rNUwMfc/AT3BaXs8nFfynBEI75kqU3jqNXYkP0dcVuydzWjBey8AMnI/VLGPMlCL1CkA==
+      integrity: sha512-7r09bqBFOPmEf+yIDuYxk3ZkppiHh5HkselVRKDm6st+GBcV2oVfxSwQLJ8ngLkHR/sYPi5G6BYPWn6izc9vxQ==
   /mithril-tree-component/0.4.0:
     dev: false
     resolution:
       integrity: sha512-cjYvjvBEvhKBQ0Ju+SDbVDMgIEWQfA2pR9gHCm5i0zw2YhIO96kKbglOrj1QGxVZbPEUectSsqPBQXaMYRcEaw==
-  /mithril/2.0.0-rc.4:
+  /mithril/1.1.6:
     dev: false
     hasBin: true
     resolution:
-      integrity: sha512-Vea5rnb4Z7RUuQgB3/LSltZlYwR9dbuXwxTOlNyyfGu5FNC/FvfteR3Je5u95v8GGSgGN2mzmVrPXETOHOaOtA==
+      integrity: sha512-fWcUrQTCqu8M916rj1MFGlHaPh65rznPu6U/N2U9g81H89klDCIptSK5bnkNkC+jyi3sJIXjyGhSQjUnR8jzZA==
   /mixin-deep/1.3.1:
     dependencies:
       for-in: 1.0.2
@@ -4013,13 +4013,13 @@ packages:
     dev: true
     resolution:
       integrity: sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
-  /typescript/3.3.4000:
+  /typescript/3.4.1:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-jjOcCZvpkl2+z7JFn0yBOoLQyLoIkNZAs/fYJkUG6VKy6zLPHJGfQJYFHzibB6GJaF/8QrcECtlQ5cpvRHSMEA==
+      integrity: sha512-3NSMb2VzDQm8oBTLH6Nj55VVtUEpe/rgkIzMir0qVoLyjDZlnMBva0U6vDiV3IH+sl/Yu6oP5QwsAQtHPmDd2Q==
   /uglify-js/3.4.10:
     dependencies:
       commander: 2.19.0
@@ -4450,14 +4450,14 @@ specifiers:
   html-webpack-plugin: ^3.2.0
   material-icons: ^0.3.0
   materialize-css: ^1.0.0
-  mithril: ^2.0.0-rc.4
-  mithril-materialized: ^0.11.4
+  mithril: ^1.1.6
+  mithril-materialized: ^0.11.5
   mithril-tree-component: ^0.4.0
   recursive: ^0.0.2
   socket.io-client: ^2.2.0
   style-loader: ^0.23.1
   trial-manager-models: ^0.0.1
-  typescript: ^3.3.4000
+  typescript: ^3.4.1
   webpack: ^4.29.6
   webpack-cli: ^3.3.0
   webpack-dev-server: ^3.2.1
