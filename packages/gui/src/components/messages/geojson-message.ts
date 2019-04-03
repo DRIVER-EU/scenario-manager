@@ -5,7 +5,7 @@ import { getMessageSubjects } from '../../utils';
 import { TrialSvc } from '../../services';
 import { UploadAsset } from '../ui';
 
-export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject }> = () => {
+export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
   const jsonExt = /json$/i;
 
   return {

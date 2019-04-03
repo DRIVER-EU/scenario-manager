@@ -4,28 +4,28 @@ import { RolePlayerMessageForm, PhaseMessageForm, ScenarioForm, DefaultMessageFo
 import { GeoJsonMessageForm } from './geojson-message';
 import { OstChangeStageMessageForm } from './ost-change-stage-message';
 
-export const MessageForm: FactoryComponent<{ inject: IInject }> = () => {
-  const getMessageForm = (inject: IInject) => {
+export const MessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
+  const getMessageForm = (inject: IInject, onChange: () => void) => {
     switch (inject.messageType) {
       case MessageType.ROLE_PLAYER_MESSAGE:
-        return m(RolePlayerMessageForm, { inject });
+        return m(RolePlayerMessageForm, { inject, onChange });
       case MessageType.PHASE_MESSAGE:
-        return m(PhaseMessageForm, { inject });
+        return m(PhaseMessageForm, { inject, onChange });
       case MessageType.GEOJSON_MESSAGE:
-        return m(GeoJsonMessageForm, { inject });
+        return m(GeoJsonMessageForm, { inject, onChange });
       case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
-        return m(OstChangeStageMessageForm, { inject });
+        return m(OstChangeStageMessageForm, { inject, onChange });
       default:
         return m('.row', 'TODO');
     }
   };
 
   return {
-    view: ({ attrs: { inject } }) =>
+    view: ({ attrs: { inject, onChange } }) =>
       inject.type === InjectType.INJECT
-        ? getMessageForm(inject)
+        ? getMessageForm(inject, onChange)
         : inject.type === InjectType.SCENARIO
-        ? m(ScenarioForm, { inject })
+        ? m(ScenarioForm, { inject, onChange })
         : m(DefaultMessageForm, { inject }),
   };
 };

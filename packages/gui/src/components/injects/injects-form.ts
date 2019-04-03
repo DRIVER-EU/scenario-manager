@@ -27,14 +27,15 @@ export const InjectsForm: FactoryComponent<{}> = () => {
     },
     view: () => {
       const { inject, original } = state;
+      const onChange = () => {
+        state.inject = inject;
+        m.redraw();
+      };
       const hasChanged = !deepEqual(inject, original);
       const onsubmit = (e: UIEvent) => {
         e.preventDefault();
         log('submitting...');
         if (inject) {
-          // const copy = deepCopy(inject);
-          // HACK Remove children from tree
-          // delete (inject as any).children;
           TrialSvc.updateInject(inject);
         }
       };
@@ -71,7 +72,7 @@ export const InjectsForm: FactoryComponent<{}> = () => {
                         inject.type,
                       ]),
                   [
-                    m(MessageForm, { inject }),
+                    m(MessageForm, { inject, onChange }),
                     m(InjectConditions, { inject, previousInjects }),
                     m(SetObjectives, { inject }),
                   ],
