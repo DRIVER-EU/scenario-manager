@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { Button, Icon, Dropdown, Select } from 'mithril-materialized';
-import { getInjectIcon, findPreviousInjects, getMessageIcon } from '../../utils';
+import { getInjectIcon, findPreviousInjects, getMessageIcon, getMessageTitle, iterEnum } from '../../utils';
 import { TrialSvc } from '../../services';
 import { IInject, InjectType, IInjectGroup, deepCopy, deepEqual, getInject, MessageType } from 'trial-manager-models';
 import { TopicNames, injectsChannel } from '../../models';
@@ -9,7 +9,7 @@ import { MessageForm } from '../messages/message-form';
 
 const log = console.log;
 
-export const InjectsForm: FactoryComponent<{}> = () => {
+export const InjectsForm: FactoryComponent = () => {
   const state = {
     parent: undefined as IInject | IInjectGroup | undefined,
     inject: undefined as IInject | undefined,
@@ -40,6 +40,7 @@ export const InjectsForm: FactoryComponent<{}> = () => {
         }
       };
       const previousInjects = findPreviousInjects(inject, TrialSvc.getInjects());
+      const options = iterEnum(MessageType).map(id => ({ id, label: getMessageTitle(id) }));
 
       return m(
         '.injects-form',
@@ -47,21 +48,14 @@ export const InjectsForm: FactoryComponent<{}> = () => {
         inject
           ? [
               m(
-                '.row',
+                '.row.sb.large', { style: 'padding-bottom: 10px;' }, 
                 m('.col.s12', [
                   inject.type === InjectType.INJECT
                     ? m(Select, {
                         iconName: getMessageIcon(inject.messageType),
                         placeholder: 'Select the message type',
                         checkedId: inject.messageType,
-                        options: [
-                          { id: MessageType.ROLE_PLAYER_MESSAGE, label: 'ROLE PLAYER MESSAGE' },
-                          { id: MessageType.POST_MESSAGE, label: 'POST A MESSAGE' },
-                          { id: MessageType.GEOJSON_MESSAGE, label: 'SEND A GEOJSON FILE' },
-                          { id: MessageType.PHASE_MESSAGE, label: 'PHASE MESSAGE' },
-                          { id: MessageType.CHANGE_OBSERVER_QUESTIONNAIRES, label: 'CHANGE OBSERVER QUESTIONNAIRES' },
-                          { id: MessageType.AUTOMATED_ACTION, label: 'AUTOMATED ACTION' },
-                        ],
+                        options,
                         onchange: (v: unknown) => (inject.messageType = v as MessageType),
                       })
                     : m('h4', [
