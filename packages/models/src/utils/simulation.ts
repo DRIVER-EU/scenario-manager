@@ -87,7 +87,7 @@ export const transitionInjects = (
     }
     if (injectId) {
       const { state, lastTransitionAt } = states[injectId];
-      if (state !== injectState) {
+      if (injectState !== state && !(injectState === InjectState.IN_PROGRESS && state === InjectState.EXECUTED)) {
         return false;
       }
       if (type === InjectConditionType.IMMEDIATELY) {
@@ -132,7 +132,8 @@ export const transitionInjects = (
 };
 
 /**
- * Filter to only select those injects that are actionable.
+ * Filter to only select those injects that are actionable, i.e.
+ * non-group injects that are IN_PROGRESS.
  *
  * @param states State of all active injects
  */
@@ -159,7 +160,9 @@ export const executeInjects = (
     const state = states[inject.id];
     state.lastTransitionAt = trialTime;
     state.state = InjectState.EXECUTED;
+    console.log(`${new Date(trialTime).toUTCString()}: Executed ${inject.title}...`);
   };
+
   injects
     .filter(actionableInjectFilter)
     .filter(nonManualInjects)
@@ -168,6 +171,5 @@ export const executeInjects = (
         executionService.execute(i);
       }
       transitionToExecuted(i);
-      console.log(`Executing ${i.title}...`);
     });
 };
