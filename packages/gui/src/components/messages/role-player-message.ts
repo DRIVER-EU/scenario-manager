@@ -13,9 +13,13 @@ import { TrialSvc } from '../../services';
 import { IExecutingInject } from '../../models';
 import { createEmailLink, createPhoneLink, getMessageIcon, getRolePlayerMessageIcon } from '../../utils';
 
-export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject; onChange: () => void }> = () => {
+export const RolePlayerMessageForm: FactoryComponent<{
+  inject: IInject;
+  onChange?: () => void;
+  disabled?: boolean;
+}> = () => {
   return {
-    view: ({ attrs: { inject } }) => {
+    view: ({ attrs: { inject, disabled } }) => {
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayers = TrialSvc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
       const participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name }));
@@ -24,6 +28,7 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject; onChange
 
       return [
         m(Select, {
+          disabled,
           iconName: 'record_voice_over',
           className: 'col s12 m4',
           placeholder: 'Pick role player',
@@ -32,7 +37,8 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject; onChange
           onchange: (v: unknown) => (rpm.rolePlayerId = v as string),
         }),
         m(Select, {
-          iconName: rpm.type === RolePlayerMessageType.CALL ? 'phone' : 'fiber_smart_record',
+          disabled,
+          iconName: getRolePlayerMessageIcon(rpm.type),
           className: 'col s12 m4',
           placeholder: 'Select action type',
           options: types,
@@ -42,6 +48,7 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject; onChange
         isAction
           ? undefined
           : m(Select, {
+              disabled,
               iconName: 'person',
               className: 'col s12 m4',
               placeholder: 'Participant',
@@ -51,6 +58,7 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject; onChange
               onchange: (v: unknown) => (rpm.participantIds = v as string[]),
             }),
         m(TextInput, {
+          disabled,
           id: 'title',
           initialValue: rpm.title,
           onchange: (v: string) => (inject.title = rpm.title = v),
@@ -59,6 +67,7 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject; onChange
           className: 'col s12',
         }),
         m(TextArea, {
+          disabled,
           id: 'headline',
           initialValue: rpm.headline,
           onchange: (v: string) => (inject.description = rpm.headline = v),
@@ -66,6 +75,7 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject; onChange
           iconName: 'note',
         }),
         m(TextArea, {
+          disabled,
           id: 'desc',
           initialValue: rpm.description as string,
           onchange: (v: string) => (rpm.description = v),
@@ -78,7 +88,7 @@ export const RolePlayerMessageForm: FactoryComponent<{ inject: IInject; onChange
 };
 
 /** A static view on a role player message, i.e. without the possibility to change it */
-export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject }> = () => {
+export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject; disabled?: boolean }> = () => {
   const msgDetails = (rpm: IRolePlayerMsg, rolePlayer: IPerson, participants?: IPerson[]) => {
     switch (rpm.type) {
       case RolePlayerMessageType.ACTION:
@@ -129,7 +139,7 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject 
   };
 
   return {
-    view: ({ attrs: { inject } }) => {
+    view: ({ attrs: { inject, disabled } }) => {
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayer =
         TrialSvc.getUsers()
@@ -138,15 +148,35 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject 
       const participants = TrialSvc.getUsers().filter(u =>
         rpm.participantIds && rpm.participantIds.indexOf(u.id) >= 0 ? true : false
       );
-      return m('.row', [
-        m('h5', [
-          m(Icon, { iconName: getRolePlayerMessageIcon(rpm.type) }),
-          `${rpm.title} [${rolePlayer.name}]`,
-        ]),
-        rpm.headline ? m('p', m('i', rpm.headline)) : undefined,
-        rpm.description ? m('p', rpm.description) : undefined,
-        msgDetails(rpm, rolePlayer, participants),
-      ]);
+      return m(
+        '.row',
+        m('.col.s12', [
+          m('h5', [
+            m(Icon, { iconName: getRolePlayerMessageIcon(rpm.type) }),
+            `${rpm.title} [${rolePlayer.name}]`,
+          ]),
+          rpm.headline ? [m('h6', 'Headline'), m('p', m('i', rpm.headline))] : undefined,
+          rpm.description ? [m('h6', 'Description'), m('p', rpm.description)] : undefined,
+          msgDetails(rpm, rolePlayer, participants),
+          // TODO Where do we store the comments, and can we retrieve them afterwards.
+          disabled
+            ? undefined
+            : [
+                m('h6', 'Comments'),
+                m(TextArea, {
+                  id: 'comments',
+                  // initialValue: ,
+                  // onchange: (v: string) => (inject.description = rpm.headline = v),
+                  label: 'Comments',
+                  iconName: 'note',
+                }),
+                m(FlatButton, {
+                  label: 'Done',
+                  onclick: () => alert(`TODO, transition to EXECUTED`),
+                }),
+              ],
+        ])
+      );
     },
   };
 };
