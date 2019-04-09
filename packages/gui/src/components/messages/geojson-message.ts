@@ -5,11 +5,15 @@ import { getMessageSubjects } from '../../utils';
 import { TrialSvc } from '../../services';
 import { UploadAsset } from '../ui';
 
-export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
+export const GeoJsonMessageForm: FactoryComponent<{
+  inject: IInject;
+  onChange?: () => void;
+  disabled?: boolean;
+}> = () => {
   const jsonExt = /json$/i;
 
   return {
-    view: ({ attrs: { inject } }) => {
+    view: ({ attrs: { inject, disabled } }) => {
       const pm = getMessage(inject, MessageType.GEOJSON_MESSAGE) as IGeoJsonMessage;
       const subjects = getMessageSubjects(MessageType.GEOJSON_MESSAGE);
       if (!pm.subjectId && subjects.length === 1) {
@@ -25,6 +29,7 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject, onChange: (
           m(
             '.col.s12.m4',
             m(TextInput, {
+              disabled,
               id: 'title',
               initialValue: inject.title,
               onchange: (v: string) => {
@@ -35,6 +40,7 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject, onChange: (
             })
           ),
           m(Select, {
+            disabled,
             placeholder: subjects.length === 0 ? 'First create a subject' : 'Select a subject',
             className: 'col s6 m3',
             label: 'Subject',
@@ -44,6 +50,7 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject, onChange: (
             onchange: (v: unknown) => (pm.subjectId = v as string),
           }),
           m(Select, {
+            disabled,
             label: 'Asset',
             placeholder: 'Select a geojson file',
             className: 'col s6 m4',
@@ -57,12 +64,14 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject, onChange: (
             },
           }),
           m(FlatButton, {
+            disabled,
             className: 'input-field col s6 m1',
             modalId: 'upload',
             iconName: 'file_upload',
           }),
         ]),
         m(TextArea, {
+          disabled,
           id: 'desc',
           className: 'col s10 m11',
           initialValue: inject.description,
@@ -71,6 +80,7 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject, onChange: (
           iconName: 'short_text',
         }),
         m(FlatButton, {
+          disabled,
           className: 'input-field col s2 m1',
           iconName: pm.properties ? 'delete' : 'add',
           onclick: () => {
@@ -82,9 +92,16 @@ export const GeoJsonMessageForm: FactoryComponent<{ inject: IInject, onChange: (
           },
         }),
         pm.properties
-          ? m(MapEditor, { label: 'Properties', iconName: 'dns', disallowArrays: true, properties: pm.properties })
+          ? m(MapEditor, {
+              disabled,
+              label: 'Properties',
+              iconName: 'dns',
+              disallowArrays: true,
+              properties: pm.properties,
+            })
           : undefined,
         m(ModalPanel, {
+          disabled,
           id: 'upload',
           title: 'Upload a new GeoJSON file',
           description: m(UploadAsset, {
