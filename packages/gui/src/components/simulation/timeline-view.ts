@@ -111,7 +111,7 @@ export const TimelineView: FactoryComponent = () => {
         m(
           '.row',
           m(
-            '.col.s12.l3.xl2',
+            '.col.s12',
             m(Select, {
               options,
               checkedId: scenarioId,
@@ -120,7 +120,7 @@ export const TimelineView: FactoryComponent = () => {
             } as ISelectOptions<string>)
           ),
           m(
-            '.col.s12.l9.xl10.sb.large',
+            '.col.s12.sb.large',
             m(Timeline, {
               onSelect,
               timeFormatter,
