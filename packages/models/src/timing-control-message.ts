@@ -5,7 +5,7 @@ export interface ITimingControlMessage {
    */
   trialTime?: number;
   /** The Trialtime speed factor */
-  trialSpeed?: number;
+  trialTimeSpeed?: number;
   /** The type of timing control command */
   command: TimingControlCommand;
 }
