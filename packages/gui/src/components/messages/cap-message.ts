@@ -1,5 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, MapEditor, ISelectOption } from 'mithril-materialized';
+import { EditableTable, IEditableTable } from 'mithril-table';
 import {
   IInject,
   getMessage,
@@ -16,11 +17,13 @@ import {
   Severity,
   Certainty,
   IValueNamePair,
+  IActionList,
+  ActionListParameter,
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { enumToOptions } from '../../utils';
 
-export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () => void }> = () => {
+export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () => void, disabled?: boolean; }> = () => {
   const state = {} as {
     alert: IAlert;
     alertInfo: IInfo;
@@ -33,7 +36,9 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
     urgencyOptions: Array<ISelectOption<string>>;
     severityOptions: Array<ISelectOption<string>>;
     certaintyOptions: Array<ISelectOption<string>>;
+    actionList: IActionList[];
   };
+
   return {
     oninit: ({ attrs: { inject } }) => {
       const alert = getMessage<IAlert>(inject, MessageType.CAP_MESSAGE);
@@ -65,8 +70,11 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
       state.urgencyOptions = enumToOptions(Urgency);
       state.severityOptions = enumToOptions(Severity);
       state.certaintyOptions = enumToOptions(Certainty);
+
+      const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
+      state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
     },
-    view: ({ attrs: { inject } }) => {
+    view: ({ attrs: { inject, disabled } }) => {
       const {
         alert,
         alertInfo,
@@ -80,9 +88,11 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
         severityOptions,
         certaintyOptions,
       } = state;
-      console.table(statusOptions);
+      // console.table(statusOptions);
+
       return [
         m(TextInput, {
+          disabled,
           id: 'headline',
           className: 'col s12 m6',
           initialValue: inject.title,
@@ -91,6 +101,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           iconName: 'title',
         }),
         m(Select, {
+          disabled,
           label: 'Sender',
           iconName: 'person',
           className: 'col s12 m6',
@@ -106,6 +117,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           },
         }),
         m(TextArea, {
+          disabled,
           id: 'desc',
           initialValue: inject.description,
           onchange: (v: string) => (inject.description = alertInfo.description = v),
@@ -113,9 +125,10 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           iconName: 'note',
         }),
         m(Select, {
+          disabled,
           label: 'Status',
           iconName: 'menu',
-          className: 'col s12 m4',
+          className: 'col s12 m4 l3',
           placeholder: 'Status',
           options: statusOptions,
           checkedId: alert.status,
@@ -124,9 +137,10 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           },
         }),
         m(Select, {
+          disabled,
           label: 'Message type',
           iconName: 'menu',
-          className: 'col s12 m4',
+          className: 'col s12 m4 l3',
           placeholder: 'Message type',
           options: msgTypeOptions,
           checkedId: alert.msgType,
@@ -135,9 +149,10 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           },
         }),
         m(Select, {
+          disabled,
           label: 'Scope',
           iconName: 'menu',
-          className: 'col s12 m4',
+          className: 'col s12 m4 l3',
           placeholder: 'Scope',
           options: scopeOptions,
           checkedId: alert.scope,
@@ -146,9 +161,10 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           },
         }),
         m(Select, {
+          disabled,
           label: 'Urgency',
           iconName: 'menu',
-          className: 'col s12 m4',
+          className: 'col s12 m4 l3',
           placeholder: 'Urgency',
           options: urgencyOptions,
           checkedId: alertInfo.urgency,
@@ -157,9 +173,10 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           },
         }),
         m(Select, {
+          disabled,
           label: 'Severity',
           iconName: 'menu',
-          className: 'col s12 m4',
+          className: 'col s12 m4 l3',
           placeholder: 'Severity',
           options: severityOptions,
           checkedId: alertInfo.severity,
@@ -168,9 +185,10 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           },
         }),
         m(Select, {
+          disabled,
           label: 'Certainty',
           iconName: 'menu',
-          className: 'col s12 m4',
+          className: 'col s12 m4 l3',
           placeholder: 'Certainty',
           options: certaintyOptions,
           checkedId: alertInfo.certainty,
@@ -179,6 +197,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
           },
         }),
         m(Select, {
+          disabled,
           label: 'Category',
           iconName: 'menu',
           className: 'col s12 m6',
@@ -190,7 +209,29 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange: () =>
             alertInfo.category = v as Category | Category[];
           },
         }),
+        m(EditableTable, {
+          headers: [
+            { column: 'title', title: 'Title' },
+            { column: 'description', title: 'Description' },
+            { column: 'priority', title: 'Priority' },
+          ],
+          data: state.actionList,
+          disabled,
+          addRows: true,
+          deleteRows: true,
+          moveRows: true,
+          onchange: data => {
+            state.actionList = data;
+            const updatedActionList = parameters.filter(p => p.valueName !== ActionListParameter);
+            updatedActionList.push({
+              valueName: ActionListParameter,
+              value: JSON.stringify(data),
+            });
+            alertInfo.parameter = state.parameters = updatedActionList;
+          },
+        } as IEditableTable<IActionList>),
         m(MapEditor, {
+          disabled,
           label: 'Parameters',
           labelKey: 'Section',
           labelValue: 'HTML text',
