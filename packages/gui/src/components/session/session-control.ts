@@ -169,6 +169,7 @@ export const SessionControl: FactoryComponent = () => {
           m(
             '.col.s12.m6',
             m(Select, {
+              label: 'Run scenario',
               options: scenarios,
               iconName: getInjectIcon(InjectType.SCENARIO),
               onchange: (id: string) => (state.scenario = state.scenarios.filter(s => s.id === id).shift()),
