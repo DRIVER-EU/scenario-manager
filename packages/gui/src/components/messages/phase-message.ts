@@ -1,21 +1,25 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, Switch } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, IPhaseMessage, Phase } from 'trial-manager-models';
-import { iterEnum } from '../../utils';
 
-export const PhaseMessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
+export const PhaseMessageForm: FactoryComponent<{
+  inject: IInject;
+  disabled?: boolean;
+  onChange?: () => void;
+}> = () => {
   const setTitle = (inject: IInject, pm: IPhaseMessage) => {
     const name = pm.phase === Phase.PROPER_NAME ? pm.alternativeName : Phase[pm.phase];
     inject.title = `${pm.isStarting ? 'START' : 'END'} ${name}`;
   };
   return {
-    view: ({ attrs: { inject } }) => {
+    view: ({ attrs: { inject, disabled } }) => {
       const pm = getMessage(inject, MessageType.PHASE_MESSAGE) as IPhaseMessage;
       const options = Object.keys(Phase).map(p => ({ id: p, label: p }));
       console.table(pm);
 
       return [
         m(Select, {
+          disabled,
           iconName: 'flag',
           placeholder: 'Select the phase type',
           checkedId: pm.phase,
@@ -30,6 +34,7 @@ export const PhaseMessageForm: FactoryComponent<{ inject: IInject, onChange: () 
         }),
         pm.phase === Phase.PROPER_NAME
           ? m(TextInput, {
+              disabled,
               id: 'title',
               initialValue: pm.alternativeName || '',
               onchange: (v: string) => {
@@ -41,6 +46,7 @@ export const PhaseMessageForm: FactoryComponent<{ inject: IInject, onChange: () 
             })
           : undefined,
         m(Switch, {
+          disabled,
           checked: !pm.isStarting,
           label: 'Start or end of phase?',
           left: 'Start',
@@ -51,6 +57,7 @@ export const PhaseMessageForm: FactoryComponent<{ inject: IInject, onChange: () 
           },
         }),
         m(TextArea, {
+          disabled,
           id: 'desc',
           initialValue: inject.description,
           onchange: (v: string) => (inject.description = v),
