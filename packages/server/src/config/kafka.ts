@@ -33,6 +33,7 @@ export default {
     TrialManagementRolePlayerTopic,
     TrialManagementSessionMgmtTopic,
     'system_tm_session_mgmt',
+    'standard_cap',
     'standard_geojson',
     'standard_named_geojson',
   ],
