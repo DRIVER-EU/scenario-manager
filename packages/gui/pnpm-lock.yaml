@@ -1,8 +1,9 @@
 dependencies:
-  material-icons: 0.3.0
+  material-icons: 0.3.1
   materialize-css: 1.0.0
-  mithril: 1.1.6
-  mithril-materialized: 0.11.5
+  mithril: 2.0.0-rc.4
+  mithril-materialized: 0.11.6
+  mithril-table: 0.2.0
   mithril-tree-component: 0.4.0
   recursive: 0.0.2
   socket.io-client: 2.2.0
@@ -11,13 +12,13 @@ devDependencies:
   '@types/materialize-css': 1.0.6
   '@types/mithril': 1.1.16
   '@types/socket.io-client': 1.4.32
-  autoprefixer: 9.5.0
+  autoprefixer: 9.5.1
   awesome-typescript-loader: 5.2.1
   css-loader: 2.1.1
   file-loader: 3.0.1
   html-webpack-plugin: 3.2.0
   style-loader: 0.23.1
-  typescript: 3.4.1
+  typescript: 3.4.2
   webpack: 4.29.6
   webpack-cli: 3.3.0
   webpack-dev-server: 3.2.1
@@ -374,10 +375,10 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
-  /autoprefixer/9.5.0:
+  /autoprefixer/9.5.1:
     dependencies:
-      browserslist: 4.5.1
-      caniuse-lite: 1.0.30000951
+      browserslist: 4.5.4
+      caniuse-lite: 1.0.30000957
       normalize-range: 0.1.2
       num2fraction: 1.2.2
       postcss: 7.0.14
@@ -387,7 +388,7 @@ packages:
       node: '>=6.0.0'
     hasBin: true
     resolution:
-      integrity: sha512-hMKcyHsZn5+qL6AUeP3c8OyuteZ4VaUlg+fWbyl8z7PqsKHF/Bf8/px3K6AT8aMzDkBo8Bc11245MM+itDBOxQ==
+      integrity: sha512-KJSzkStUl3wP0D5sdMlP82Q52JLy5+atf2MHAre48+ckWkXgixmfHyWmA77wFDy6jTHU6mIgXv6hAQ2mf1PjJQ==
   /awesome-typescript-loader/5.2.1:
     dependencies:
       chalk: 2.4.2
@@ -584,15 +585,15 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Z942RysHXmJrhqk88FmKBVq/v5tqmSkDz7p54G/MGyjMnCFFnC79XWNbg+Vta8W6Wb2qtSZTSxIGkJrRpCFEiA==
-  /browserslist/4.5.1:
+  /browserslist/4.5.4:
     dependencies:
-      caniuse-lite: 1.0.30000951
-      electron-to-chromium: 1.3.116
-      node-releases: 1.1.11
+      caniuse-lite: 1.0.30000957
+      electron-to-chromium: 1.3.124
+      node-releases: 1.1.13
     dev: true
     hasBin: true
     resolution:
-      integrity: sha512-/pPw5IAUyqaQXGuD5vS8tcbudyPZ241jk1W5pQBsGDfcjNQt7p8qxZhgMNuygDShte1PibLFexecWUPgmVLfrg==
+      integrity: sha512-rAjx494LMjqKnMPhFkuLmLp8JWEX0o8ADTGeAbOqaF+XCvYLreZrG5uVjnPBlAQ8REZK4pzXGvp0bWgrFtKaag==
   /buffer-from/1.1.1:
     dev: true
     resolution:
@@ -681,10 +682,10 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-IXFsBS2pC+X0j0N/GE7Dm7j3bsEBp+oTpb7F50dwEVX7rf3IgwO9XatnegTsDtniKCUtEJH4fSU6Asw7uoVLfQ==
-  /caniuse-lite/1.0.30000951:
+  /caniuse-lite/1.0.30000957:
     dev: true
     resolution:
-      integrity: sha512-eRhP+nQ6YUkIcNQ6hnvdhMkdc7n3zadog0KXNRxAZTT2kHjUb1yGn71OrPhSn8MOvlX97g5CR97kGVj8fMsXWg==
+      integrity: sha512-8wxNrjAzyiHcLXN/iunskqQnJquQQ6VX8JHfW5kLgAPRSiSuKZiNfmIkP5j7jgyXqAQBSoXyJxfnbCFS0ThSiQ==
   /chalk/2.4.2:
     dependencies:
       ansi-styles: 3.2.1
@@ -1225,10 +1226,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
-  /electron-to-chromium/1.3.116:
+  /electron-to-chromium/1.3.124:
     dev: true
     resolution:
-      integrity: sha512-NKwKAXzur5vFCZYBHpdWjTMO8QptNLNP80nItkSIgUOapPAo9Uia+RvkCaZJtO7fhQaVElSvBPWEc2ku6cKsPA==
+      integrity: sha512-glecGr/kFdfeXUHOHAWvGcXrxNU+1wSO/t5B23tT1dtlvYB26GY8aHzZSWD7HqhqC800Lr+w/hQul6C5AF542w==
   /elliptic/6.4.1:
     dependencies:
       bn.js: 4.11.8
@@ -2479,10 +2480,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
-  /material-icons/0.3.0:
+  /material-icons/0.3.1:
     dev: false
     resolution:
-      integrity: sha512-nqKE2/yoiTJzoJ8Lw5SzJCDrNkA3hnJ8v70MkCwuA8C1Cayi31Azee1sloLyBAjOUtbctAC66p7Hh8Zow+rMrg==
+      integrity: sha512-5Hbj76A6xDPcDZEbM4oxTknhWuMwGWnAHVLLPCEq9eVlcHb0fn4koU9ZeyMy1wjARtDEPAHfd5ZdL2Re5hf0zQ==
   /materialize-css/1.0.0:
     dev: false
     resolution:
@@ -2627,19 +2628,29 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-x471SsVjUtBRtcvd4BzKE9kFC+/2TeWgKCgw0bZcw1b9l2X3QX5vCWgF+KaZaYm87Ss//rHnWryupDrgLvmSkA==
-  /mithril-materialized/0.11.5:
+  /mithril-contenteditable/0.1.0:
     dev: false
     resolution:
-      integrity: sha512-7r09bqBFOPmEf+yIDuYxk3ZkppiHh5HkselVRKDm6st+GBcV2oVfxSwQLJ8ngLkHR/sYPi5G6BYPWn6izc9vxQ==
+      integrity: sha512-t9ox6uChD5sSXXb7U8gJrUEZFcuWXr6ajLZQ2uoImIjqshTzFfvVATDu2+E+/glY73RcbxETUK4FSOcbEzgCgQ==
+  /mithril-materialized/0.11.6:
+    dev: false
+    resolution:
+      integrity: sha512-vlQOAsNzOPiE5OPpxhdfB6qScNxtvqLwma8nbpovylzQvUl1pKO2s65iMq0qk1F1399uZXGrNrhEcaOIoOS3Zg==
+  /mithril-table/0.2.0:
+    dependencies:
+      mithril-contenteditable: 0.1.0
+    dev: false
+    resolution:
+      integrity: sha512-UTx0PWOGPE+mLGNnY94uSzCTPztkkcJRuHQt7873ZW6LiC5JAE9CRGtz6m1B7MBv8zfpq9tWOKaEldMWTZq59Q==
   /mithril-tree-component/0.4.0:
     dev: false
     resolution:
       integrity: sha512-cjYvjvBEvhKBQ0Ju+SDbVDMgIEWQfA2pR9gHCm5i0zw2YhIO96kKbglOrj1QGxVZbPEUectSsqPBQXaMYRcEaw==
-  /mithril/1.1.6:
+  /mithril/2.0.0-rc.4:
     dev: false
     hasBin: true
     resolution:
-      integrity: sha512-fWcUrQTCqu8M916rj1MFGlHaPh65rznPu6U/N2U9g81H89klDCIptSK5bnkNkC+jyi3sJIXjyGhSQjUnR8jzZA==
+      integrity: sha512-Vea5rnb4Z7RUuQgB3/LSltZlYwR9dbuXwxTOlNyyfGu5FNC/FvfteR3Je5u95v8GGSgGN2mzmVrPXETOHOaOtA==
   /mixin-deep/1.3.1:
     dependencies:
       for-in: 1.0.2
@@ -2765,12 +2776,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-5MQunG/oyOaBdttrL40dA7bUfPORLRWMUJLQtMg7nluxUvk5XwnLdL9twQHFAjRx/y7mIMkLKT9++qPbbk6BZA==
-  /node-releases/1.1.11:
+  /node-releases/1.1.13:
     dependencies:
-      semver: 5.6.0
+      semver: 5.7.0
     dev: true
     resolution:
-      integrity: sha512-8v1j5KfP+s5WOTa1spNUAOfreajQPN12JXbRR0oDE+YrJBQCXBnNqUDj27EKpPLOoSiU3tKi3xGPB+JaOdUEQQ==
+      integrity: sha512-fKZGviSXR6YvVPyc011NHuJDSD8gFQvLPmc2d2V3BS4gr52ycyQ1Xzs7a8B+Ax3Ni/W+5h1h4SqmzeoA8WZRmA==
   /normalize-path/2.1.1:
     dependencies:
       remove-trailing-separator: 1.1.0
@@ -3510,6 +3521,11 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-RS9R6R35NYgQn++fkDWaOmqGoj4Ek9gGs+DPxNUZKuwE183xjJroKvyo1IzVFeXvUrvmALy6FWD5xrdJT25gMg==
+  /semver/5.7.0:
+    dev: true
+    hasBin: true
+    resolution:
+      integrity: sha512-Ya52jSX2u7QKghxeoFGpLwCtGlt7j0oY9DYb5apt9nPlJ42ID+ulTXESnt/qAQcoSERyZ5sl3LDIOw0nAn/5DA==
   /send/0.16.2:
     dependencies:
       debug: 2.6.9
@@ -4013,13 +4029,13 @@ packages:
     dev: true
     resolution:
       integrity: sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
-  /typescript/3.4.1:
+  /typescript/3.4.2:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-3NSMb2VzDQm8oBTLH6Nj55VVtUEpe/rgkIzMir0qVoLyjDZlnMBva0U6vDiV3IH+sl/Yu6oP5QwsAQtHPmDd2Q==
+      integrity: sha512-Og2Vn6Mk7JAuWA1hQdDQN/Ekm/SchX80VzLhjKN9ETYrIepBFAd8PkOdOTK2nKt0FCkmMZKBJvQ1dV1gIxPu/A==
   /uglify-js/3.4.10:
     dependencies:
       commander: 2.19.0
@@ -4443,21 +4459,22 @@ specifiers:
   '@types/materialize-css': ^1.0.6
   '@types/mithril': ^1.1.16
   '@types/socket.io-client': ^1.4.32
-  autoprefixer: ^9.5.0
+  autoprefixer: ^9.5.1
   awesome-typescript-loader: ^5.2.1
   css-loader: ^2.1.1
   file-loader: ^3.0.1
   html-webpack-plugin: ^3.2.0
-  material-icons: ^0.3.0
+  material-icons: ^0.3.1
   materialize-css: ^1.0.0
-  mithril: ^1.1.6
-  mithril-materialized: ^0.11.5
+  mithril: next
+  mithril-materialized: ^0.11.6
+  mithril-table: ^0.2.0
   mithril-tree-component: ^0.4.0
   recursive: ^0.0.2
   socket.io-client: ^2.2.0
   style-loader: ^0.23.1
   trial-manager-models: ^0.0.1
-  typescript: ^3.4.1
+  typescript: ^3.4.2
   webpack: ^4.29.6
   webpack-cli: ^3.3.0
   webpack-dev-server: ^3.2.1
