@@ -108,7 +108,6 @@ export const transitionInjects = (
 
   do {
     done = true;
-
     // Injects that are ON_HOLD and whose parent is IN_PROGRESS, transition them to SCHEDULED.
     injects
       .filter(onHold)

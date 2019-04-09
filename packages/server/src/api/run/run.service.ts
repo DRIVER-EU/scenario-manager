@@ -73,24 +73,28 @@ export class RunService {
       this.updateLoop();
     };
 
-    if (this.kafkaService.once('time', time => {
-      if (time.state === 'Initialized' || time.state === 'Started') {
-        startUpdateLoop();
-      }
-    }))
-    return true;
+    if (
+      this.kafkaService.once('time', time => {
+        if (time.state === 'Initialized' || time.state === 'Started') {
+          startUpdateLoop();
+        }
+      })
+    )
+      return true;
   }
 
   /** Close the active scenario */
   public async close() {
+    this.isRunning = false;
     this.session.sessionState = SessionState.STOP;
     this.kafkaService.sendSessionMessage(this.session);
-    this.isRunning = false;
-    this.session = undefined;
-    this.trial = undefined;
-    this.scenario = undefined;
-    this.injects = [];
-    this.states = {};
+    setTimeout(() => {
+      this.session = undefined;
+      this.trial = undefined;
+      this.scenario = undefined;
+      this.injects = [];
+      this.states = {};
+    }, 1000);
   }
 
   /** Add a request for a state transition */
@@ -106,14 +110,18 @@ export class RunService {
   private updateLoop() {
     const scheduleRestart = () => {
       if (this.isRunning) {
+        console.log(`${new Date()} Looping...`);
         const at = Date.now();
         setTimeout(() => this.updateLoop(), Math.max(0, 1000 - (at - now)));
       }
     };
 
+    if (!this.isRunning) {
+      return;
+    }
     const now = Date.now();
     const time = this.kafkaService.trialTime;
-    if (time.valueOf() === this.trialTime.valueOf()) {
+    if (time === this.trialTime) {
       scheduleRestart();
     }
     this.trialTime = time;
@@ -129,6 +137,9 @@ export class RunService {
     const t = this.trialTime;
     while (this.transitionQueue.length > 0) {
       const tr = this.transitionQueue.shift();
+      console.log(
+        `${new Date()}: Processing one transmission request from ${tr.from}.`,
+      );
       this.transition(tr, t);
     }
   }
@@ -144,12 +155,22 @@ export class RunService {
 
   /** Transition all injects when the conditions are satisfied, until no more state is changed. */
   private transitionInjects() {
-    transitionInjects(this.trialTime, this.states, this.injects, new Date(this.scenario.startDate));
+    transitionInjects(
+      this.trialTime,
+      this.states,
+      this.injects,
+      new Date(this.scenario.startDate),
+    );
   }
 
   /** Execute each inject that is IN_PROGRESS */
   private executeInjects() {
-    executeInjects(this.trialTime, this.states, this.injects, this.executionService);
+    executeInjects(
+      this.trialTime,
+      this.states,
+      this.injects,
+      this.executionService,
+    );
   }
 
   /** Send a state update message to all connected clients */
