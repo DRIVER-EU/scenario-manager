@@ -50,6 +50,10 @@ const setupSocket = () => {
 };
 socket = setupSocket();
 
+/**
+ * The SocketSvc is a service to manage the socket connection
+ * with the server.
+ */
 export const SocketSvc = {
   socket: socket || setupSocket(),
 };

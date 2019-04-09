@@ -4,6 +4,10 @@ import { IStateTransitionRequest, ISessionMgmt } from 'trial-manager-models';
 
 const withCredentials = false;
 
+/**
+ * The RunService is responsible for starting,
+ * stopping, loading and unloading a Trial.
+ */
 class RunService {
   protected baseUrl: string;
 

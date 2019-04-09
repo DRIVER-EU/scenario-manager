@@ -22,8 +22,7 @@ export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
 
 /** Map a string enum to a list of options */
 export const enumToOptions = <E extends { [P in keyof E]: string }>(e: E) =>
-  Object.keys(e)
-    .map(id => ({ id, label: id }));
+  Object.keys(e).map(id => ({ id, label: id }));
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.
@@ -173,11 +172,11 @@ export const getIcon = (inject: IInject) =>
 export const executionIcon = (inject: IExecutingInject) => {
   switch (inject.state) {
     case InjectState.EXECUTED:
-      return 'stop';
+      return 'check';
     case InjectState.IN_PROGRESS:
-      return inject.condition && inject.condition.type === InjectConditionType.MANUALLY ? 'access_alarm' : 'play_arrow';
+      return inject.condition && inject.condition.type === InjectConditionType.MANUALLY ? 'pause' : 'play_arrow';
     case InjectState.ON_HOLD:
-      return 'pause';
+      return 'pan_tool';
     case InjectState.SCHEDULED:
       return 'schedule';
     default:
@@ -303,4 +302,4 @@ export const createEmailLink = (emails: string | Array<string | undefined>, subj
  * Create a phone call link
  * @param phone Phone number
  */
-export const createPhoneLink = (phone?: string) => phone ? `tel:${phone}` : '';
+export const createPhoneLink = (phone?: string) => (phone ? `tel:${phone}` : '');

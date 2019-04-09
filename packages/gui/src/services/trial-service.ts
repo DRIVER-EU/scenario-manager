@@ -3,6 +3,11 @@ import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChan
 import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, uniqueId, UserRole } from 'trial-manager-models';
 import { userRolesFilter } from '../utils';
 
+/**
+ * The TrialService wraps common functionality needed
+ * to CRUD a Trial with the server. 
+ * It also provides help functionality to parse the data.
+ */
 class TrialService extends RestService<ITrial> {
   private assetSvc?: AssetService;
 
