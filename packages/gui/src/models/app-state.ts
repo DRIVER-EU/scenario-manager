@@ -1,4 +1,4 @@
-import { ITimeMessage, ISessionMgmt } from 'trial-manager-models';
+import { ITimeMessage, ISessionMgmt, IInjectSimStates } from 'trial-manager-models';
 
 /** Application state */
 export const AppState = {
@@ -14,4 +14,5 @@ export const AppState = {
   simulationView: {
     scenarioId: '',
   },
+  injectStates: {} as IInjectSimStates,
 };

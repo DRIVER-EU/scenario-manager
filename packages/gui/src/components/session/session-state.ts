@@ -4,7 +4,7 @@ import { InjectState, IInject, InjectType, deepEqual, getAncestors, IInjectSimSt
 import { Timeline, ITimelineItem, Collection, CollectionMode, ICollectionItem } from 'mithril-materialized';
 import { padLeft, getIcon, executionIcon } from '../../utils';
 import { IExecutingInject } from '../../models/executing-inject';
-import { injectsChannel, TopicNames } from '../../models';
+import { injectsChannel, TopicNames, AppState } from '../../models';
 
 export const SessionState: FactoryComponent = () => {
   const timeFormatter = (d: Date) =>
@@ -26,7 +26,6 @@ export const SessionState: FactoryComponent = () => {
     injectNames: {} as { [key: string]: string },
     selected: undefined as IInject | undefined,
     socket: SocketSvc.socket,
-    injectStates: {} as IInjectSimStates,
   };
 
   // TODO What do we do when the user opened the wrong trial, i.e. not the one that is running?
@@ -44,10 +43,10 @@ export const SessionState: FactoryComponent = () => {
         return acc;
       }, {} as { [key: string]: string });
       socket.on('injectStates', (injectStates: IInjectSimStates) => {
-        if (deepEqual(state.injectStates, injectStates)) {
+        if (deepEqual(AppState.injectStates, injectStates)) {
           return;
         }
-        state.injectStates = injectStates;
+        AppState.injectStates = injectStates;
         console.table(injectStates);
         m.redraw();
       });
@@ -57,7 +56,8 @@ export const SessionState: FactoryComponent = () => {
       socket.off('injectStates');
     },
     view: () => {
-      const { injectStates, injects, injectNames } = state;
+      const { injects, injectNames } = state;
+      const { injectStates } = AppState;
       const exe = injects
         .filter(i => injectStates.hasOwnProperty(i.id) && activeInjectState(injectStates[i.id].state))
         .map(
