@@ -6,15 +6,18 @@ import { formatTime, padLeft } from '../../utils';
 import { timeControlChannel, TopicNames } from '../../models';
 import { RunSvc } from './../../services/run-service';
 
-const updateSpeed = (socket: SocketIOClient.Socket, trialTimeSpeed: number) =>
-  socket.emit('time-control', {
+const sendCmd = (socket: SocketIOClient.Socket, msg: ITimingControlMessage) => {
+  socket.emit('time-control', msg);
+  timeControlChannel.publish(TopicNames.CMD, { cmd: msg });
+  setTimeout(() => m.redraw(), 1000);
+};
+
+const updateSpeed = (socket: SocketIOClient.Socket, trialTimeSpeed: number) => {
+  sendCmd(socket, {
     trialTimeSpeed,
     command: TimingControlCommand.Update,
   } as ITimingControlMessage);
-const sendCmd = (socket: SocketIOClient.Socket, command: TimingControlCommand) =>
-  socket.emit('time-control', {
-    command,
-  } as ITimingControlMessage);
+};
 
 const MediaControls: FactoryComponent<{
   socket: SocketIOClient.Socket;
@@ -38,11 +41,11 @@ const MediaControls: FactoryComponent<{
         isPaused
           ? m(FlatButton, {
               iconName: 'play_arrow',
-              onclick: () => sendCmd(socket, TimingControlCommand.Start),
+              onclick: () => sendCmd(socket, { command: TimingControlCommand.Start }),
             })
           : m(FlatButton, {
               iconName: 'pause',
-              onclick: () => sendCmd(socket, TimingControlCommand.Pause),
+              onclick: () => sendCmd(socket, { command: TimingControlCommand.Pause }),
             }),
         m(FlatButton, {
           iconName: 'fast_forward',
@@ -120,15 +123,12 @@ const MediaStateControl: FactoryComponent<{
                 className: 'btn-flat-large',
                 iconName: 'timer',
                 disabled: !canStart,
-                onclick: () => {
-                  const tm = {
+                onclick: () =>
+                  sendCmd(socket, {
                     trialTime: newTime(),
                     trialTimeSpeed: 1,
                     command: TimingControlCommand.Init,
-                  } as ITimingControlMessage;
-                  socket.emit('time-control', tm);
-                  timeControlChannel.publish(TopicNames.CMD, { cmd: tm });
-                },
+                  }),
               })
             ),
           ];
@@ -140,9 +140,7 @@ const MediaStateControl: FactoryComponent<{
               iconName: 'timer_off',
               onclick: async () => {
                 await RunSvc.unload();
-                socket.emit('time-control', {
-                  command: TimingControlCommand.Reset,
-                } as ITimingControlMessage);
+                sendCmd(socket, { command: TimingControlCommand.Reset });
               },
             }),
           ]);
@@ -167,12 +165,13 @@ const MediaStateControl: FactoryComponent<{
                 label: 'Update time',
                 iconName: 'update',
                 disabled: timeHasNotChanged(),
-                onclick: () =>
-                  socket.emit('time-control', {
+                onclick: () => {
+                  sendCmd(socket, {
                     trialTime: newTime(),
                     trialTimeSpeed: 0,
                     command: TimingControlCommand.Update,
-                  } as ITimingControlMessage),
+                  });
+                },
               }),
             ]),
           ]);
@@ -190,7 +189,7 @@ const MediaStateControl: FactoryComponent<{
             m(FlatButton, {
               label: 'Reset time',
               iconName: 'timer_off',
-              onclick: () => sendCmd(socket, TimingControlCommand.Reset),
+              onclick: () => sendCmd(socket, { command: TimingControlCommand.Reset }),
             })
           );
       }
@@ -236,12 +235,7 @@ export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
             { label: 'No, bring me back to safety' },
             {
               label: 'Yes, I am sure!',
-              onclick: () => {
-                const tm = { command: TimingControlCommand.Stop } as ITimingControlMessage;
-                timeControlChannel.publish(TopicNames.CMD, { cmd: tm });
-                sendCmd(state.socket, TimingControlCommand.Stop);
-                m.redraw();
-              },
+              onclick: () => sendCmd(state.socket, { command: TimingControlCommand.Stop }),
             },
           ],
         }),
