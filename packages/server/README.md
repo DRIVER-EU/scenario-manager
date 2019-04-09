@@ -20,6 +20,11 @@ ENVIRONMENT VARIABLES
 
 - `SCENARIO_MANAGER_SERVER_FOLDER`: folder where all scenarios are stored
 - `SCENARIO_MANAGER_SERVER_PORT`: port of the REST service
+- `KAFKA_HOST`: location of the Kafka broker, e.g. localhost:3501
+- `SCHEMA_REGISTRY`: location of the schema registry, e.g. localhost:3502
+- `CLIENT_ID`: ID of the Kafka client, default `TB-TrialMgmt`
+- `PRODUCE`: Stringified JSON array of produce topics, e.g.
+  `["system_tm_session_mgmt", "system_request_change_of_trial_stage", "system_tm_role_player", "system_tm_phase_message", "standard_cap", ...]`
 
 ## Installation
 
