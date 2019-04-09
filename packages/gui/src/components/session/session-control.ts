@@ -117,6 +117,7 @@ export const SessionControl: FactoryComponent = () => {
       state.scenarios = state.trial.injects.filter(i => i.type === InjectType.SCENARIO);
 
       socket.on('time', (tm: ITimeMessage) => {
+        console.log('Time msg received: ' + JSON.stringify(tm));
         if (AppState.time.state !== tm.state || AppState.time.trialTimeSpeed !== tm.trialTimeSpeed) {
           m.redraw();
         }
@@ -128,7 +129,7 @@ export const SessionControl: FactoryComponent = () => {
         if (state.isConnected) {
           RunSvc.active()
             .then(session => (AppState.session = session))
-            .catch(e => console.log(e));
+            .catch(e => console.warn('Getting active session: ' + e));
         }
         m.redraw();
       });
