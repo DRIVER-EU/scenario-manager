@@ -13,6 +13,8 @@ import {
   IExecutionService,
   IPhaseMessage,
   IOstStageChangeMessage,
+  IAlert,
+  convertCAPtoAVRO,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -35,6 +37,9 @@ export class ExecutionService implements IExecutionService {
     switch (messageType) {
       case MessageType.GEOJSON_MESSAGE:
         this.sendGeoJSON(i);
+        break;
+      case MessageType.CAP_MESSAGE:
+        this.sendCAP(i);
         break;
       case MessageType.ROLE_PLAYER_MESSAGE:
         this.sendRolePlayerMessage(i, comment);
@@ -80,6 +85,13 @@ export class ExecutionService implements IExecutionService {
       ? { geojson, properties: mapToAvro(message.properties) }
       : geojson;
     this.kafkaService.sendMessage(msg, topic);
+  }
+
+  private async sendCAP(i: IInject) {
+    const message = getMessage<IAlert>(i, MessageType.CAP_MESSAGE);
+    const topic = 'standard_cap';
+    const cap = convertCAPtoAVRO(message, new Date(this.kafkaService.timeMessage.trialTime));
+    this.kafkaService.sendMessage(cap, topic);
   }
 
   private async sendRolePlayerMessage(i: IInject, comment?: string) {
