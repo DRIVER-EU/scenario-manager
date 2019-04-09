@@ -62,7 +62,9 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   private subscribe() {
-    this.adapter.on('time', message => this.emit('time', message));
+    this.adapter.on('time', message => {
+      this.emit('time', message);
+    });
     this.adapter.on('message', message => this.handleMessage(message));
     this.adapter.on('error', err =>
       this.log.error(`Consumer received an error: ${err}`),
