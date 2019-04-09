@@ -2,7 +2,7 @@ dependencies:
   material-icons: 0.3.1
   materialize-css: 1.0.0
   mithril: 2.0.0-rc.4
-  mithril-materialized: 0.11.6
+  mithril-materialized: 0.11.8
   mithril-table: 0.2.0
   mithril-tree-component: 0.4.0
   recursive: 0.0.2
@@ -2632,10 +2632,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-t9ox6uChD5sSXXb7U8gJrUEZFcuWXr6ajLZQ2uoImIjqshTzFfvVATDu2+E+/glY73RcbxETUK4FSOcbEzgCgQ==
-  /mithril-materialized/0.11.6:
+  /mithril-materialized/0.11.8:
     dev: false
     resolution:
-      integrity: sha512-vlQOAsNzOPiE5OPpxhdfB6qScNxtvqLwma8nbpovylzQvUl1pKO2s65iMq0qk1F1399uZXGrNrhEcaOIoOS3Zg==
+      integrity: sha512-98rjvIulJAsmmJRxl3K6ev2QahSRWsWzOs2NbwMaet6NZ8ioJhFwD98/W+jG7+tbn0WYI9CoERjv1yegu/zosw==
   /mithril-table/0.2.0:
     dependencies:
       mithril-contenteditable: 0.1.0
@@ -4467,7 +4467,7 @@ specifiers:
   material-icons: ^0.3.1
   materialize-css: ^1.0.0
   mithril: next
-  mithril-materialized: ^0.11.6
+  mithril-materialized: ^0.11.8
   mithril-table: ^0.2.0
   mithril-tree-component: ^0.4.0
   recursive: ^0.0.2
