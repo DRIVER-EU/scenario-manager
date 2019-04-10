@@ -115,6 +115,8 @@ export const getMessageIcon = (type?: MessageType) => {
       return 'record_voice_over';
     case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
       return 'speaker_notes';
+    case MessageType.LCMS_MESSAGE:
+      return 'event_seat';
     default:
       return 'message';
   }
@@ -148,7 +150,7 @@ export const getMessageTitle = (type?: MessageType) => {
     case MessageType.GEOJSON_MESSAGE:
       return 'MAP OVERLAY';
     case MessageType.CAP_MESSAGE:
-      return 'CAP';
+      return 'COMMON ALERTING PROTOCOL MESSAGE';
     case MessageType.PHASE_MESSAGE:
       return 'NEW PHASE';
     case MessageType.POST_MESSAGE:
@@ -159,6 +161,8 @@ export const getMessageTitle = (type?: MessageType) => {
       return 'CHANGE OBSERVER QUESTIONNAIRES';
     case MessageType.AUTOMATED_ACTION:
       return 'AUTOMATED ACTION';
+    case MessageType.LCMS_MESSAGE:
+      return 'LCMS MESSAGE';
     default:
       return 'message';
   }
