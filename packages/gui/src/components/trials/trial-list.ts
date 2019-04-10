@@ -1,9 +1,9 @@
 import m from 'mithril';
-import { TextInput, RoundIconButton } from 'mithril-materialized';
-import { TrialSvc, dashboardSvc } from '../../services';
+import { TextInput, RoundIconButton, Icon } from 'mithril-materialized';
+import { TrialSvc, dashboardSvc, RepoSvc } from '../../services';
 import { titleAndDescriptionFilter } from '../../utils';
 import { ITrial } from 'trial-manager-models';
-import { Dashboards } from '../../models/dashboards';
+import { Dashboards, AppState } from '../../models';
 
 export const TrialList = () => {
   const state = {
@@ -55,7 +55,19 @@ export const TrialList = () => {
                     scenario.title || 'Untitled'
                   ),
                   m('p', scenario.description),
-                ])
+                ]),
+                m(
+                  '.card-action',
+                  m(
+                    'a',
+                    {
+                      href: `${AppState.apiService}/repo/${scenario.id}`,
+                    },
+                    m(Icon, {
+                      iconName: 'cloud_download',
+                    })
+                  )
+                )
               ),
             ])
           )
