@@ -50,10 +50,13 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
       // alert.scope = 'Exercise';
       if (!alert.info) {
         const alertInfo = {} as IInfo;
-        alert.info = [alertInfo];
+        alert.info = alertInfo;
         alertInfo.event = 'Monitor';
         state.alertInfo = alertInfo;
       } else {
+        if (alert.info instanceof Array) {
+          alert.info = alert.info[0];
+        }
         state.alertInfo = alert.info instanceof Array ? alert.info[0] : alert.info;
       }
       if (!state.alertInfo.parameter) {
