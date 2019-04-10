@@ -49,7 +49,7 @@ export class KafkaService extends EventEmitter implements TimeService {
     this.adapter = new TestBedAdapter(options);
     this.adapter.on('ready', () => {
       this.subscribe();
-      this.log.info('Consumer is connected');
+      this.log.info(`Consumer is connected to broker running at ${options.kafkaHost}.`);
     });
   }
 
