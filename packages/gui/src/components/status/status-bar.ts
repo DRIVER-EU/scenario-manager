@@ -17,10 +17,10 @@ export const StatusBar: FactoryComponent<null> = () => {
   };
   const progressTime = (dom: Element) => () => {
     const now = Date.now();
-    if (!AppState.time || !AppState.time.trialTime) { return; }
-    if (typeof AppState.time.trialTimeSpeed !== undefined) {
-      const delta = now - sbState.receivedTime;
-      AppState.time.timeElapsed += delta;
+    const delta = now - sbState.receivedTime;
+    if (!AppState.time) { return; }
+    AppState.time.timeElapsed += delta;
+    if (AppState.time.trialTimeSpeed) {
       AppState.time.trialTime += delta * AppState.time.trialTimeSpeed;
     }
     sbState.receivedTime = now;
