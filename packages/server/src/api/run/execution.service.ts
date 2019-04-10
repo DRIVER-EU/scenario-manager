@@ -38,6 +38,7 @@ export class ExecutionService implements IExecutionService {
       case MessageType.GEOJSON_MESSAGE:
         this.sendGeoJSON(i);
         break;
+      case MessageType.LCMS_MESSAGE:
       case MessageType.CAP_MESSAGE:
         this.sendCAP(i);
         break;

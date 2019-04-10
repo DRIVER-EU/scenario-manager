@@ -4,6 +4,7 @@ import { RolePlayerMessageForm, PhaseMessageForm, ScenarioForm, DefaultMessageFo
 import { GeoJsonMessageForm } from './geojson-message';
 import { OstChangeStageMessageForm } from './ost-change-stage-message';
 import { CapMessageForm } from './cap-message';
+import { LcmsMessageForm } from './lcms-message';
 
 export const MessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
   const getMessageForm = (inject: IInject, onChange: () => void) => {
@@ -16,6 +17,8 @@ export const MessageForm: FactoryComponent<{ inject: IInject, onChange: () => vo
         return m(GeoJsonMessageForm, { inject, onChange });
       case MessageType.CAP_MESSAGE:
         return m(CapMessageForm, { inject, onChange });
+      case MessageType.LCMS_MESSAGE:
+        return m(LcmsMessageForm, { inject, onChange });
       case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
         return m(OstChangeStageMessageForm, { inject, onChange });
       default:
