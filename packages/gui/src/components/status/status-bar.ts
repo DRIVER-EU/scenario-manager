@@ -11,7 +11,7 @@ export const StatusBar: FactoryComponent<null> = () => {
     progressTimeHandler: -1,
   };
   const updateTime = (time: ITimeMessage) => {
-    console.log(`Status-bar updateTime: ` + JSON.stringify(time));
+    // console.log(`Status-bar updateTime: ` + JSON.stringify(time));
     sbState.receivedTime = Date.now(),
     AppState.time = deepCopy(time);
   };
@@ -49,7 +49,6 @@ export const StatusBar: FactoryComponent<null> = () => {
   return {
     oninit: () => socket.on('time', updateTime),
     onremove: () => {
-      console.log(`!Status-bar removed!`);
       socket.off('time', updateTime);
       clearInterval(sbState.progressTimeHandler);
     },
