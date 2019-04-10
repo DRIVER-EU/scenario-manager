@@ -3,6 +3,7 @@ import { IAlert } from './standard_cap-value';
 export const ActionListParameter = '_actions';
 
 export enum Priority {
+  URGENT = 'URGENT',
   HIGH = 'HIGH',
   AVERAGE = 'AVERAGE',
   LOW = 'LOW',
