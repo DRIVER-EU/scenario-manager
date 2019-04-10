@@ -13,6 +13,7 @@ import {
   TimingControlCommand,
   SessionState,
   ITimingControlMessage,
+  TimeState,
 } from 'trial-manager-models';
 import { getInjectIcon } from '../../utils';
 
@@ -76,7 +77,29 @@ export const SessionControl: FactoryComponent = () => {
     scenario: undefined as IScenario | undefined,
     isConnected: false,
     isConnecting: false,
+    time: {} as ITimeMessage,
     subscription: timeControlChannel.subscribe(TopicNames.CMD, ({ cmd }) => handleTimeControlMessages(cmd)),
+  };
+
+  const updateTime = (tm: ITimeMessage) => {
+    const { time: { state: timeState, trialTimeSpeed } } = state;
+    console.log('Time msg received: ' + JSON.stringify(tm));
+    if (timeState !== tm.state || trialTimeSpeed !== tm.trialTimeSpeed) {
+      state.time = tm;
+      m.redraw();
+    }
+  };
+
+  const isConnected = (data: IConnectMessage) => {
+    state.isConnecting = false;
+    state.isConnected = data.isConnected;
+    AppState.time = state.time = data.time;
+    if (state.isConnected) {
+      RunSvc.active()
+        .then(session => (AppState.session = session))
+        .catch(e => console.warn('Getting active session: ' + e));
+    }
+    m.redraw();
   };
 
   const handleTimeControlMessages = (cmd: ITimingControlMessage) => {
@@ -115,24 +138,8 @@ export const SessionControl: FactoryComponent = () => {
     oninit: () => {
       state.trial = TrialSvc.getCurrent();
       state.scenarios = state.trial.injects.filter(i => i.type === InjectType.SCENARIO);
-
-      socket.on('time', (tm: ITimeMessage) => {
-        console.log('Time msg received: ' + JSON.stringify(tm));
-        if (AppState.time.state !== tm.state || AppState.time.trialTimeSpeed !== tm.trialTimeSpeed) {
-          m.redraw();
-        }
-      });
-      socket.on('is-connected', (data: IConnectMessage) => {
-        state.isConnecting = false;
-        state.isConnected = data.isConnected;
-        AppState.time = data.time;
-        if (state.isConnected) {
-          RunSvc.active()
-            .then(session => (AppState.session = session))
-            .catch(e => console.warn('Getting active session: ' + e));
-        }
-        m.redraw();
-      });
+      socket.on('time', updateTime);
+      socket.on('is-connected', isConnected);
       // Check whether we are connected
       socket.emit('is-connected');
       // TODO display the inject states
@@ -140,11 +147,11 @@ export const SessionControl: FactoryComponent = () => {
     },
     onremove: () => {
       state.subscription.unsubscribe();
-      socket.off('time');
-      socket.off('is-connected');
+      socket.off('time', updateTime);
+      socket.off('is-connected', isConnected);
     },
     view: () => {
-      const { isConnected, isConnecting } = state;
+      const { isConnected, isConnecting, time } = state;
       const scenarios = state.scenarios.map(s => ({ id: s.id, label: s.title }));
       const canStart = isComplete(AppState.session);
       state.scenario = state.scenarios[0];
@@ -180,7 +187,7 @@ export const SessionControl: FactoryComponent = () => {
         m(SessionSettings),
         m(
           '.row',
-          m('.col.s12.m6', m(TimeControl, { scenario: state.scenario, isConnected, time: AppState.time, canStart }))
+          m('.col.s12.m6', m(TimeControl, { scenario: state.scenario, isConnected, time, canStart }))
         ),
       ];
     },
