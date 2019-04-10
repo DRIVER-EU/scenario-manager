@@ -90,7 +90,7 @@ export const SessionControl: FactoryComponent = () => {
     }
   };
 
-  const isConnected = (data: IConnectMessage) => {
+  const isTestbedConnected = (data: IConnectMessage) => {
     state.isConnecting = false;
     state.isConnected = data.isConnected;
     AppState.time = state.time = data.time;
@@ -139,7 +139,7 @@ export const SessionControl: FactoryComponent = () => {
       state.trial = TrialSvc.getCurrent();
       state.scenarios = state.trial.injects.filter(i => i.type === InjectType.SCENARIO);
       socket.on('time', updateTime);
-      socket.on('is-connected', isConnected);
+      socket.on('is-connected', isTestbedConnected);
       // Check whether we are connected
       socket.emit('is-connected');
       // TODO display the inject states
@@ -148,13 +148,13 @@ export const SessionControl: FactoryComponent = () => {
     onremove: () => {
       state.subscription.unsubscribe();
       socket.off('time', updateTime);
-      socket.off('is-connected', isConnected);
+      socket.off('is-connected', isTestbedConnected);
     },
     view: () => {
       const { isConnected, isConnecting, time } = state;
       const scenarios = state.scenarios.map(s => ({ id: s.id, label: s.title }));
       const canStart = isComplete(AppState.session);
-      state.scenario = state.scenarios[0];
+      state.scenario = state.scenario || state.scenarios[0];
       return [
         m(
           '.row',
@@ -180,7 +180,10 @@ export const SessionControl: FactoryComponent = () => {
               label: 'Run scenario',
               options: scenarios,
               iconName: getInjectIcon(InjectType.SCENARIO),
-              onchange: (id: string) => (state.scenario = state.scenarios.filter(s => s.id === id).shift()),
+              onchange: (id: string) => {
+                state.scenario = state.scenarios.filter(s => s.id === id).shift();
+                if (state.scenario) { console.log('Scenario (new): ' + state.scenario.title); }
+              },
             } as ISelectOptions<string>)
           )
         ),
