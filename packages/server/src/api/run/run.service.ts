@@ -110,7 +110,6 @@ export class RunService {
   private updateLoop() {
     const scheduleRestart = () => {
       if (this.isRunning) {
-        console.log(`${new Date()} Looping...`);
         const at = Date.now();
         setTimeout(() => this.updateLoop(), Math.max(0, 1000 - (at - now)));
       }
