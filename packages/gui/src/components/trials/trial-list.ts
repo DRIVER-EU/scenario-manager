@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextInput, RoundIconButton, Icon } from 'mithril-materialized';
-import { TrialSvc, dashboardSvc, RepoSvc } from '../../services';
+import { TrialSvc, dashboardSvc } from '../../services';
 import { titleAndDescriptionFilter } from '../../utils';
 import { ITrial } from 'trial-manager-models';
 import { Dashboards, AppState } from '../../models';
