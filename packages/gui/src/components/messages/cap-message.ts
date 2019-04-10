@@ -47,7 +47,6 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
       alert.status = alert.status || Status.Exercise;
       alert.msgType = alert.msgType || MsgType.Alert;
       alert.scope = alert.scope || Scope.Public;
-      // alert.scope = 'Exercise';
       if (!alert.info) {
         const alertInfo = {} as IInfo;
         alert.info = alertInfo;
@@ -55,6 +54,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
         state.alertInfo = alertInfo;
       } else {
         if (alert.info instanceof Array) {
+          console.log('Converting array')
           alert.info = alert.info[0];
         }
         state.alertInfo = alert.info instanceof Array ? alert.info[0] : alert.info;
