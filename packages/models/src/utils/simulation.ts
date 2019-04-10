@@ -159,7 +159,7 @@ export const executeInjects = (
     const state = states[inject.id];
     state.lastTransitionAt = trialTime;
     state.state = InjectState.EXECUTED;
-    console.log(`${new Date(trialTime).toUTCString()}: Executed ${inject.title}...`);
+    // console.log(`${new Date(trialTime).toUTCString()}: Executed ${inject.title}...`);
   };
 
   injects
