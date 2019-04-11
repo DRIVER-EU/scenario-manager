@@ -92,7 +92,7 @@ export const TimelineView: FactoryComponent = () => {
               ...simStates[i.id],
               ...i,
             } as IExecutingInject)
-        )
+        );
       const items = executingInjects
         .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1))
         .map(
