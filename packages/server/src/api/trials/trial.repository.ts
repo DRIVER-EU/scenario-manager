@@ -17,6 +17,10 @@ export class TrialRepository {
   private overview: TrialOverview[] = [];
 
   constructor(private folder: string) {
+    this.init();
+  }
+
+  init() {
     const dbs = this.openAllDatabases();
     this.createOverview(dbs);
     this.closeAllDatabasesOnExit();
@@ -50,6 +54,25 @@ export class TrialRepository {
     this.overview.sort(sortTrialsByLastEdit);
     await this.createDb(trial);
     return trial;
+  }
+
+  async createTrialFromFile(file: IUploadedFile) {
+    const { originalname } = file;
+    const ext = path.extname(originalname);
+    const baseName = path.basename(originalname).replace(new RegExp(`${ext}$`, 'g'), '');
+    let p: string;
+    let count = 0;
+    do {
+      count++;
+      p = path.resolve(this.folder, `${baseName} (${count})${ext}`);
+    } while (fs.existsSync(p));
+    fs.writeFile(p, file.buffer, err => {
+      if (err) {
+        return console.error(err);
+      }
+      this.closeAllDatabases();
+      this.init();
+    });
   }
 
   async updateTrial(id: string, trial: TrialOverview) {
@@ -193,7 +216,12 @@ export class TrialRepository {
           mimetype,
           buffer,
           dbCallbackWrapper((rowId: number) => {
-            const asset = { id: rowId, alias, filename: originalname, mimetype };
+            const asset = {
+              id: rowId,
+              alias,
+              filename: originalname,
+              mimetype,
+            };
             resolve(asset);
           }, reject),
         );
@@ -207,35 +235,33 @@ export class TrialRepository {
     file?: IUploadedFile,
     alias?: string,
   ) {
-    return new Promise(
-      async (resolve, reject) => {
-        const db = this.databases.hasOwnProperty(id)
-          ? this.databases[id].db
-          : undefined;
-        if (!db) {
-          return reject(`Error, no database with id ${id} found!`);
-        }
-        if (file) {
-          const { originalname, mimetype, buffer } = file;
-          db.run(
-            `UPDATE ${ASSETS} SET alias = ?, filename = ?, mimetype = ?, data = ? WHERE id = ?`,
-            alias,
-            originalname,
-            mimetype,
-            buffer,
-            assetId,
-            dbCallbackWrapper(resolve, reject),
-          );
-        } else {
-          db.run(
-            `UPDATE ${ASSETS} SET alias = ? WHERE id = ?`,
-            alias,
-            assetId,
-            dbCallbackWrapper(resolve, reject),
-          );
-        }
-      },
-    );
+    return new Promise(async (resolve, reject) => {
+      const db = this.databases.hasOwnProperty(id)
+        ? this.databases[id].db
+        : undefined;
+      if (!db) {
+        return reject(`Error, no database with id ${id} found!`);
+      }
+      if (file) {
+        const { originalname, mimetype, buffer } = file;
+        db.run(
+          `UPDATE ${ASSETS} SET alias = ?, filename = ?, mimetype = ?, data = ? WHERE id = ?`,
+          alias,
+          originalname,
+          mimetype,
+          buffer,
+          assetId,
+          dbCallbackWrapper(resolve, reject),
+        );
+      } else {
+        db.run(
+          `UPDATE ${ASSETS} SET alias = ? WHERE id = ?`,
+          alias,
+          assetId,
+          dbCallbackWrapper(resolve, reject),
+        );
+      }
+    });
   }
 
   async removeAsset(id: string, assetId: number | string) {
@@ -277,8 +303,12 @@ export class TrialRepository {
           console.error(err);
           return reject(err);
         }
-        const scenario = JSON.parse(row.data);
-        resolve(scenario);
+        const trial = JSON.parse(row.data);
+        if (typeof id === 'string') {
+          // In case we are dealing with a copy, set the correct ID.
+          trial.id = id;
+        }
+        resolve(trial);
       });
     });
   }
@@ -303,6 +333,11 @@ export class TrialRepository {
       }, []),
     );
     this.databases = trials.reduce((acc, s, i) => {
+      if (acc.hasOwnProperty(s.id)) {
+        console.warn(`Trial with duplicate ID found: ${s.title} (${s.creationDate.toString()}). Creating clone.`);
+        s.id = uniqueId();
+        s.title += ' (COPY)';
+      }
       acc[s.id] = dbs[i];
       return acc;
     }, {});

@@ -1,7 +1,8 @@
 import m from 'mithril';
-import { Button, TextArea, TextInput } from 'mithril-materialized';
-import { TrialSvc } from '../../services';
+import { Button, TextArea, TextInput, FileInput } from 'mithril-materialized';
+import { TrialSvc, dashboardSvc } from '../../services';
 import { ITrial, deepCopy, deepEqual } from 'trial-manager-models';
+import { AppState } from '../../models';
 
 const log = console.log;
 const close = async (e: UIEvent) => {
@@ -23,6 +24,20 @@ export const TrialForm = () => {
       state.trial = deepCopy(TrialSvc.getCurrent());
     }
   };
+  const upload = (file: FileList) => {
+    if (!file || file.length < 1) {
+      return console.warn('File is undefined');
+    }
+    const data = new FormData();
+    data.append('file', file[0]);
+
+    m.request({
+      method: 'POST',
+      url: `${AppState.apiService}/repo/upload`,
+      data,
+    }).then(() => setTimeout(() => m.route.set(dashboardSvc.defaultRoute), 500));
+  };
+
   return {
     oninit: () => {
       log('On INIT');
@@ -37,6 +52,7 @@ export const TrialForm = () => {
         m('.col.s12', [
           m('.row', [
             [
+              m('h5', trial.id ? 'Trial' : 'Create new Trial'),
               m(
                 '.col.s6.l4',
                 m(TextInput, {
@@ -69,6 +85,17 @@ export const TrialForm = () => {
               ),
             ],
           ]),
+          trial.id
+            ? undefined
+            : m('.row', [
+                m('h5', 'Upload an existing trial'),
+                m(FileInput, {
+                  placeholder: 'Upload an existing Trial',
+                  accept: ['.sqlite3', '.sqlite'],
+                  style: 'margin-bottom: 20px',
+                  onchange: upload,
+                }),
+              ]),
           m('.row.buttons', [
             m(Button, {
               label: 'Undo',

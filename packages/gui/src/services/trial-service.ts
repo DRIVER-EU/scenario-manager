@@ -5,7 +5,7 @@ import { userRolesFilter } from '../utils';
 
 /**
  * The TrialService wraps common functionality needed
- * to CRUD a Trial with the server. 
+ * to CRUD a Trial with the server.
  * It also provides help functionality to parse the data.
  */
 class TrialService extends RestService<ITrial> {

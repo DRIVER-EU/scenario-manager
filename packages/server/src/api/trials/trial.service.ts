@@ -38,6 +38,10 @@ export class TrialService {
     return this.repo.createTrial(newTrial);
   }
 
+  async createTrialFromFile(file: IUploadedFile) {
+    return this.repo.createTrialFromFile(file);
+  }
+
   async update(id: string, trial: TrialOverview) {
     if (trial.id !== id) {
       return `Error: Trial id (${trial.id}) does not match id (${id})!`;
