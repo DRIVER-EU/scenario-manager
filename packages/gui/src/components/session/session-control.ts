@@ -13,6 +13,7 @@ import {
   TimingControlCommand,
   SessionState,
   ITimingControlMessage,
+  uniqueId,
   TimeState,
 } from 'trial-manager-models';
 import { getInjectIcon } from '../../utils';
@@ -21,34 +22,25 @@ const isComplete = ({ sessionId, sessionName }: Partial<ISessionMgmt>) =>
   sessionId && sessionId.length && sessionName && sessionName.length > 1 ? true : false;
 
 /** Helper component to specify the session id, name, comments */
-const SessionSettings: FactoryComponent = () => {
+const SessionSettings: FactoryComponent<{ disabled: boolean }> = () => {
   return {
-    view: () => {
-      const session = AppState.session;
+    view: ({ attrs: { disabled }}) => {
+      const { session } = AppState;
       if (session && !session.sessionName) {
-        session.sessionId = '1';
+        session.sessionId = uniqueId();
         session.sessionName = 'New session';
       }
       return [
         m('.row', [
           m(
-            '.col.s3',
-            m(TextInput, {
-              initialValue: session.sessionId,
-              label: 'ID',
-              isMandatory: true,
-              min: 0,
-              onchange: (v: string) => (AppState.session.sessionId = v),
-              iconName: 'title',
-            })
-          ),
-          m(
-            '.col.s9',
+            '.col.s12',
             m(TextInput, {
               initialValue: session.sessionName,
               label: 'Session name',
+              disabled,
               isMandatory: true,
               onchange: (v: string) => (AppState.session.sessionName = v),
+              iconName: 'title',
             })
           ),
         ]),
@@ -59,6 +51,7 @@ const SessionSettings: FactoryComponent = () => {
             m(TextArea, {
               initialValue: session.comment || undefined,
               label: 'Comments',
+              disabled,
               onchange: (v: string) => (AppState.session.comment = v),
               iconName: 'note',
             })
@@ -82,7 +75,9 @@ export const SessionControl: FactoryComponent = () => {
   };
 
   const updateTime = (tm: ITimeMessage) => {
-    const { time: { state: timeState, trialTimeSpeed } } = state;
+    const {
+      time: { state: timeState, trialTimeSpeed },
+    } = state;
     console.log('Time msg received: ' + JSON.stringify(tm));
     if (timeState !== tm.state || trialTimeSpeed !== tm.trialTimeSpeed) {
       state.time = tm;
@@ -90,14 +85,29 @@ export const SessionControl: FactoryComponent = () => {
     }
   };
 
+  const setScenario = (session?: Partial<ISessionMgmt>) => {
+    const { scenarios } = state;
+    if (session && scenarios && scenarios.length >= 1) {
+      state.scenario = session.scenarioId ? scenarios.filter(s => s.id === session.scenarioId).shift() : scenarios[0];
+    }
+  };
+
   const isTestbedConnected = (data: IConnectMessage) => {
     state.isConnecting = false;
     state.isConnected = data.isConnected;
     AppState.time = state.time = data.time;
+    AppState.session = data.session || {};
     if (state.isConnected) {
-      RunSvc.active()
-        .then(session => (AppState.session = session))
-        .catch(e => console.warn('Getting active session: ' + e));
+      setTimeout(() => RunSvc.active()
+        .then(session => {
+          AppState.session = session;
+          setScenario(session);
+          if (TrialSvc.getCurrent().id !== session.trialId) {
+            console.warn(`The Test-bed is currently running another trial: ${session.trialName}`);
+          }
+          m.redraw();
+        })
+        .catch(e => console.warn('Getting active session: ' + e)), 500);
     }
     m.redraw();
   };
@@ -105,16 +115,19 @@ export const SessionControl: FactoryComponent = () => {
   const handleTimeControlMessages = (cmd: ITimingControlMessage) => {
     const createSessionMsg = (sessionState: SessionState) => {
       const { trial, scenario } = state;
+      const {
+        session: { sessionId, sessionName, comment },
+      } = AppState;
       if (trial && scenario) {
         const session = {
           trialId: trial.id,
           trialName: trial.title,
           scenarioId: scenario.id,
           scenarioName: scenario.title,
-          sessionId: AppState.session.sessionId,
-          sessionName: AppState.session.sessionName,
+          sessionId,
+          sessionName,
           sessionState,
-          comment: AppState.session.comment,
+          comment,
         } as ISessionMgmt;
         return session;
       }
@@ -138,6 +151,7 @@ export const SessionControl: FactoryComponent = () => {
     oninit: () => {
       state.trial = TrialSvc.getCurrent();
       state.scenarios = state.trial.injects.filter(i => i.type === InjectType.SCENARIO);
+      setScenario(AppState.session);
       socket.on('time', updateTime);
       socket.on('is-connected', isTestbedConnected);
       // Check whether we are connected
@@ -151,10 +165,11 @@ export const SessionControl: FactoryComponent = () => {
       socket.off('is-connected', isTestbedConnected);
     },
     view: () => {
-      const { isConnected, isConnecting, time } = state;
-      const scenarios = state.scenarios.map(s => ({ id: s.id, label: s.title }));
+      const { isConnected, isConnecting, scenario, time } = state;
+      const key = scenario ? scenario.id : undefined;
+      const scenarioOptions = state.scenarios.map(s => ({ id: s.id, label: s.title }));
       const canStart = isComplete(AppState.session);
-      state.scenario = state.scenario || state.scenarios[0];
+      const disabled = time && time.state !== TimeState.Idle;
       return [
         m(
           '.row',
@@ -178,19 +193,26 @@ export const SessionControl: FactoryComponent = () => {
             '.col.s12.m6',
             m(Select, {
               label: 'Run scenario',
-              options: scenarios,
+              checkedId: scenario ? scenario.id : undefined,
+              options: scenarioOptions,
+              disabled,
               iconName: getInjectIcon(InjectType.SCENARIO),
               onchange: (id: string) => {
                 state.scenario = state.scenarios.filter(s => s.id === id).shift();
-                if (state.scenario) { console.log('Scenario (new): ' + state.scenario.title); }
+                if (state.scenario) {
+                  console.log('Scenario (new): ' + state.scenario.title);
+                }
               },
             } as ISelectOptions<string>)
           )
         ),
-        m(SessionSettings),
+        m(SessionSettings, { disabled }),
         m(
           '.row',
-          m('.col.s12.m6', m(TimeControl, { scenario: state.scenario, isConnected, time, canStart }))
+          m(
+            '.col.s12.m6',
+            m(TimeControl, { scenario: state.scenario, isConnected, time, canStart, key })
+          )
         ),
       ];
     },

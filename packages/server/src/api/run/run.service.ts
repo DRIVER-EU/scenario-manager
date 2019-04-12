@@ -41,7 +41,7 @@ export class RunService {
   ) {}
 
   public get activeSession() {
-    return this.session ? this.session : undefined;
+    return this.session ? this.session : this.kafkaService.currentSession ;
   }
 
   /** Initialize the new trial and scenario */
@@ -86,15 +86,15 @@ export class RunService {
   /** Close the active scenario */
   public async close() {
     this.isRunning = false;
-    this.session.sessionState = SessionState.STOP;
-    this.kafkaService.sendSessionMessage(this.session);
-    setTimeout(() => {
-      this.session = undefined;
-      this.trial = undefined;
-      this.scenario = undefined;
-      this.injects = [];
-      this.states = {};
-    }, 1000);
+    this.activeSession.sessionState = SessionState.STOP;
+    this.kafkaService.sendSessionMessage(this.activeSession);
+    // setTimeout(() => {
+    this.session = undefined;
+    this.trial = undefined;
+    this.scenario = undefined;
+    this.injects = [];
+    this.states = {};
+    // }, 1000);
   }
 
   /** Add a request for a state transition */

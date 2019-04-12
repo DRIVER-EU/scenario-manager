@@ -34,6 +34,7 @@ export interface KafkaService {
 @Injectable()
 export class KafkaService extends EventEmitter implements TimeService {
   private adapter: TestBedAdapter;
+  private session?: ISessionMgmt;
   private log = Logger.instance;
 
   constructor(config: ConfigService) {
@@ -50,6 +51,11 @@ export class KafkaService extends EventEmitter implements TimeService {
     this.adapter.on('ready', () => {
       this.subscribe();
       this.log.info(`Consumer is connected to broker running at ${options.kafkaHost}.`);
+      // See if we are running a session that was not initialized by this trial.
+      this.adapter.addConsumerTopics({
+        topic: TrialManagementSessionMgmtTopic,
+        offset: 0,
+      }, true);
     });
   }
 
@@ -60,6 +66,8 @@ export class KafkaService extends EventEmitter implements TimeService {
   public isConnected() {
     return this.adapter.isConnected;
   }
+
+  public get currentSession() { return this.session; }
 
   private subscribe() {
     this.adapter.on('time', message => {
@@ -131,6 +139,9 @@ export class KafkaService extends EventEmitter implements TimeService {
 
   private handleMessage(message: IAdapterMessage) {
     switch (message.topic) {
+      case TrialManagementSessionMgmtTopic:
+        this.session = message.value as ISessionMgmt;
+        break;
       default:
         console.warn('Unhandled message: ' + message.value);
         break;

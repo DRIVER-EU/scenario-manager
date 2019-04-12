@@ -64,10 +64,10 @@ const MediaStateControl: FactoryComponent<{
   time: ITimeMessage;
   canStart: boolean;
 }> = () => {
-  const state = {
-    startTime: '00:00',
-    startDate: new Date(),
-    time: {} as ITimeMessage,
+  const state = {} as {
+    startTime: string;
+    startDate: Date;
+    time: ITimeMessage;
   };
 
   const newTime = () => {
@@ -79,14 +79,15 @@ const MediaStateControl: FactoryComponent<{
     const d = new Date(state.time.trialTime);
     return state.startTime === formatTime(d, false) && state.startDate.valueOf() === d.valueOf();
   };
+
   const onSelect = (hrs: number, min: number) => {
     state.startTime = `${padLeft(hrs)}:${padLeft(min)}`;
   };
 
   return {
     view: ({ attrs: { socket, startTime, startDate, time, canStart } }) => {
-      state.startTime = startTime;
-      state.startDate = startDate;
+      state.startTime = state.startTime || startTime || '00:00';
+      state.startDate = state.startDate || startDate || new Date();
       state.time = time;
 
       switch (time.state) {
@@ -207,10 +208,16 @@ export interface ITimeControlOptions {
 export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
   const state = {
     socket: SocketSvc.socket,
-    startTime: '00:00',
-    startDate: new Date(),
+    // startTime: '00:00',
+    // startDate: new Date(),
     time: {} as ITimeMessage,
     canStart: false,
+  } as {
+    socket: SocketIOClient.Socket;
+    startTime: string;
+    startDate: Date;
+    time: ITimeMessage;
+    canStart: boolean;
   };
 
   const updateStart: (vnode: m.Vnode<ITimeControlOptions, {}>) => void = ({ attrs: { scenario } }) => {

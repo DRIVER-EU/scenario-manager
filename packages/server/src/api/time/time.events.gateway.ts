@@ -42,12 +42,13 @@ export class TimeEventsGateway {
       data: {
         isConnected: this.kafkaService.isConnected(),
         time: this.kafkaService.timeMessage,
+        session: this.kafkaService.currentSession,
       } as IConnectMessage,
     };
   }
 
   @SubscribeMessage('time-control')
-  timeControl(_client, data: ITimingControl) {
+  async timeControl(_client, data: ITimingControl) {
     // console.log('time-control');
     // console.table(data);
     return this.kafkaService.sendTimeControlMessage(data);

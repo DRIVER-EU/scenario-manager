@@ -18,6 +18,7 @@ import {
 import { RunService } from './run.service';
 import { SessionMessage } from '../../adapters/models';
 import { StateTransitionRequest } from '../../adapters/models/state-transition-request';
+import { SessionState } from '../../../../models/dist';
 
 @ApiUseTags('run')
 @Controller('run')
@@ -60,7 +61,9 @@ export class RunController {
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }
-    await this.runService.close();
+    if (this.runService.activeSession.sessionState === SessionState.START) {
+      await this.runService.close();
+    }
   }
 
   @ApiOperation({ title: 'Load a trial scenario' })
@@ -76,7 +79,7 @@ export class RunController {
         HttpStatus.PRECONDITION_FAILED,
       );
     }
-    if (this.runService.activeSession) {
+    if (this.runService.activeSession && this.runService.activeSession.sessionState === SessionState.START) {
       throw new HttpException(
         'First deactivate current scenario',
         HttpStatus.PRECONDITION_FAILED,
