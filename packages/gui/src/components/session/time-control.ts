@@ -24,21 +24,26 @@ const MediaControls: FactoryComponent<{
   time: ITimeMessage;
   canChangeSpeed: boolean;
   isPaused: boolean;
+  realtime: boolean;
 }> = () => {
   return {
-    view: ({ attrs: { time, socket, isPaused, canChangeSpeed } }) => {
+    view: ({ attrs: { time, socket, isPaused, canChangeSpeed, realtime } }) => {
       return [
-        m(FlatButton, {
-          iconName: 'fast_rewind',
-          disabled: !canChangeSpeed,
-          onclick: () => updateSpeed(socket, time.trialTimeSpeed / 2),
-        }),
+        realtime
+          ? undefined
+          : m(FlatButton, {
+              iconName: 'fast_rewind',
+              disabled: !canChangeSpeed,
+              onclick: () => updateSpeed(socket, time.trialTimeSpeed / 2),
+            }),
         m(FlatButton, {
           modalId: 'stopPanel',
           iconName: 'stop',
           disabled: time.state === TimeState.Initialized,
         }),
-        isPaused
+        realtime
+          ? undefined
+          : isPaused
           ? m(FlatButton, {
               iconName: 'play_arrow',
               onclick: () => sendCmd(socket, { command: TimingControlCommand.Start }),
@@ -47,11 +52,13 @@ const MediaControls: FactoryComponent<{
               iconName: 'pause',
               onclick: () => sendCmd(socket, { command: TimingControlCommand.Pause }),
             }),
-        m(FlatButton, {
-          iconName: 'fast_forward',
-          disabled: !canChangeSpeed,
-          onclick: () => updateSpeed(socket, time.trialTimeSpeed * 2),
-        }),
+        realtime
+          ? undefined
+          : m(FlatButton, {
+              iconName: 'fast_forward',
+              disabled: !canChangeSpeed,
+              onclick: () => updateSpeed(socket, time.trialTimeSpeed * 2),
+            }),
       ];
     },
   };
@@ -63,6 +70,7 @@ const MediaStateControl: FactoryComponent<{
   startDate: Date;
   time: ITimeMessage;
   canStart: boolean;
+  realtime: boolean;
 }> = () => {
   const state = {} as {
     startTime: string;
@@ -85,7 +93,7 @@ const MediaStateControl: FactoryComponent<{
   };
 
   return {
-    view: ({ attrs: { socket, startTime, startDate, time, canStart } }) => {
+    view: ({ attrs: { socket, startTime, startDate, time, canStart, realtime } }) => {
       state.startTime = state.startTime || startTime || '00:00';
       state.startDate = state.startDate || startDate || new Date();
       state.time = time;
@@ -94,51 +102,63 @@ const MediaStateControl: FactoryComponent<{
         default:
         case TimeState.Idle:
           return [
-            m(
-              '.row',
-              m(
-                '.col.s6',
-                m(TimePicker, {
-                  label: 'Start time:',
-                  iconName: 'timer',
-                  container: '#main',
-                  initialValue: state.startTime,
-                  twelveHour: false,
-                  onSelect,
-                })
-              ),
-              m(
-                '.col.s6',
-                m(DatePicker, {
-                  label: 'Start date:',
-                  initialValue: state.startDate,
-                  container: document.getElementById('main') as Element,
-                  onchange: (d: Date) => (state.startDate = d),
-                })
-              )
-            ),
+            realtime
+              ? undefined
+              : m(
+                  '.row',
+                  m(
+                    '.col.s6',
+                    m(TimePicker, {
+                      label: 'Start time:',
+                      iconName: 'timer',
+                      container: '#main',
+                      initialValue: state.startTime,
+                      twelveHour: false,
+                      onSelect,
+                    })
+                  ),
+                  m(
+                    '.col.s6',
+                    m(DatePicker, {
+                      label: 'Start date:',
+                      initialValue: state.startDate,
+                      container: document.getElementById('main') as Element,
+                      onchange: (d: Date) => (state.startDate = d),
+                    })
+                  )
+                ),
             m(
               '.row',
               m(FlatButton, {
                 label: 'Initialize scenario',
                 className: 'btn-flat-large',
-                iconName: 'timer',
+                // iconName: 'timer',
                 disabled: !canStart,
-                onclick: () =>
-                  sendCmd(socket, {
-                    trialTime: newTime(),
-                    trialTimeSpeed: 1,
-                    command: TimingControlCommand.Init,
-                  }),
+                onclick: () => {
+                  if (realtime) {
+                    sendCmd(socket, {
+                      trialTime: Date.now(),
+                      trialTimeSpeed: 1,
+                      command: TimingControlCommand.Init,
+                    });
+                    sendCmd(socket, { command: TimingControlCommand.Start });
+                  } else {
+                    sendCmd(socket, {
+                      trialTime: newTime(),
+                      trialTimeSpeed: 1,
+                      command: TimingControlCommand.Init,
+                    });
+                  }
+                },
               })
             ),
           ];
         case TimeState.Initialized:
           return m('.row', [
-            m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time }),
+            m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time, realtime }),
             m(FlatButton, {
               label: 'Reset time',
-              iconName: 'timer_off',
+              // iconName: 'timer_off',
               onclick: async () => {
                 await RunSvc.unload();
                 sendCmd(socket, { command: TimingControlCommand.Reset });
@@ -147,7 +167,7 @@ const MediaStateControl: FactoryComponent<{
           ]);
         case TimeState.Paused:
           return m('.row', [
-            m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time }),
+            m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time, realtime }),
             m('.row.left', [
               m(TimePicker, {
                 label: 'Updated time:',
@@ -178,7 +198,7 @@ const MediaStateControl: FactoryComponent<{
           ]);
         case TimeState.Started:
           return m('.row', [
-            m(MediaControls, { socket, isPaused: false, canChangeSpeed: true, time: state.time }),
+            m(MediaControls, { socket, isPaused: false, canChangeSpeed: true, time: state.time, realtime }),
             m('em', `Speed: ${state.time.trialTimeSpeed}x`),
             state.time.trialTimeSpeed !== 1
               ? m(FlatButton, { iconName: 'restore', onclick: () => updateSpeed(socket, 1) })
@@ -189,7 +209,7 @@ const MediaStateControl: FactoryComponent<{
             '.row',
             m(FlatButton, {
               label: 'Reset time',
-              iconName: 'timer_off',
+              // iconName: 'timer_off',
               onclick: () => sendCmd(socket, { command: TimingControlCommand.Reset }),
             })
           );
@@ -203,21 +223,23 @@ export interface ITimeControlOptions {
   isConnected: boolean;
   time: ITimeMessage;
   canStart: boolean;
+  realtime: boolean;
+  style?: string;
 }
 
 export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
   const state = {
     socket: SocketSvc.socket,
-    // startTime: '00:00',
-    // startDate: new Date(),
     time: {} as ITimeMessage,
     canStart: false,
+    realtime: false,
   } as {
     socket: SocketIOClient.Socket;
     startTime: string;
     startDate: Date;
     time: ITimeMessage;
     canStart: boolean;
+    realtime: boolean;
   };
 
   const updateStart: (vnode: m.Vnode<ITimeControlOptions, {}>) => void = ({ attrs: { scenario } }) => {
@@ -229,11 +251,12 @@ export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
   return {
     oninit: updateStart,
     onupdate: updateStart,
-    view: ({ attrs: { isConnected, time, canStart } }) => {
+    view: ({ attrs: { isConnected, time, canStart, realtime, style } }) => {
       state.time = time;
       state.canStart = canStart;
+      state.realtime = realtime;
       return [
-        m('.button-group', isConnected ? m(MediaStateControl, state) : undefined),
+        m('.button-group', { style }, isConnected ? m(MediaStateControl, state) : undefined),
         m(ModalPanel, {
           id: 'stopPanel',
           title: 'Are you certain you want to stop?',

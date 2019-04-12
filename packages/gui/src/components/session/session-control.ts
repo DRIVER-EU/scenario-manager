@@ -2,7 +2,7 @@ import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
 import { SocketSvc, TrialSvc, RunSvc } from '../../services';
 import { AppState, timeControlChannel, TopicNames } from '../../models';
-import { FlatButton, Select, ISelectOptions, TextInput, TextArea } from 'mithril-materialized';
+import { Select, ISelectOptions, TextInput, TextArea, Switch, Icon } from 'mithril-materialized';
 import {
   ITrial,
   IScenario,
@@ -24,7 +24,7 @@ const isComplete = ({ sessionId, sessionName }: Partial<ISessionMgmt>) =>
 /** Helper component to specify the session id, name, comments */
 const SessionSettings: FactoryComponent<{ disabled: boolean }> = () => {
   return {
-    view: ({ attrs: { disabled }}) => {
+    view: ({ attrs: { disabled } }) => {
       const { session } = AppState;
       if (session && !session.sessionName) {
         session.sessionId = uniqueId();
@@ -97,17 +97,22 @@ export const SessionControl: FactoryComponent = () => {
     state.isConnected = data.isConnected;
     AppState.time = state.time = data.time;
     AppState.session = data.session || {};
+    AppState.sessionControl.host = data.host;
     if (state.isConnected) {
-      setTimeout(() => RunSvc.active()
-        .then(session => {
-          AppState.session = session;
-          setScenario(session);
-          if (TrialSvc.getCurrent().id !== session.trialId) {
-            console.warn(`The Test-bed is currently running another trial: ${session.trialName}`);
-          }
-          m.redraw();
-        })
-        .catch(e => console.warn('Getting active session: ' + e)), 500);
+      setTimeout(
+        () =>
+          RunSvc.active()
+            .then(session => {
+              AppState.session = session;
+              setScenario(session);
+              if (TrialSvc.getCurrent().id !== session.trialId) {
+                console.warn(`The Test-bed is currently running another trial: ${session.trialName}`);
+              }
+              m.redraw();
+            })
+            .catch(e => console.warn('Getting active session: ' + e)),
+        500
+      );
     }
     m.redraw();
   };
@@ -166,25 +171,55 @@ export const SessionControl: FactoryComponent = () => {
     },
     view: () => {
       const { isConnected, isConnecting, scenario, time } = state;
+      const {
+        sessionControl: { realtime },
+      } = AppState;
       const key = scenario ? scenario.id : undefined;
       const scenarioOptions = state.scenarios.map(s => ({ id: s.id, label: s.title }));
       const canStart = isComplete(AppState.session);
       const disabled = time && time.state !== TimeState.Idle;
+      const iconName = time
+        ? time.state === TimeState.Idle
+          ? 'timer'
+          : time.state === TimeState.Stopped
+          ? 'timer_off'
+          : 'access_time'
+        : 'access_time';
       return [
         m(
           '.row',
           m('.col.s12.m6', [
             isConnecting
               ? m('.row', [m('span', 'Connecting...'), m('.progress', m('.indeterminate'))])
-              : m(FlatButton, {
-                  iconName: isConnected ? 'radio_button_checked' : 'radio_button_unchecked',
-                  label: state.isConnected ? 'Connected' : 'Connect',
-                  disabled: isConnected,
-                  onclick: () => {
-                    state.isConnecting = true;
-                    socket.emit('test-bed-connect');
-                  },
-                }),
+              : m(
+                  '.row',
+                  { style: 'margin: 10px 0 20px 0;' },
+                  m(
+                    '.col.s6',
+                    m(Switch, {
+                      left: '',
+                      right: isConnected ? 'Connected' : 'Connect',
+                      checked: isConnected,
+                      onchange: () => {
+                        if (isConnected) {
+                          socket.emit('test-bed-disconnect');
+                        } else {
+                          state.isConnecting = true;
+                          socket.emit('test-bed-connect');
+                        }
+                      },
+                    })
+                  ),
+                  m(
+                    '.col.s6',
+                    m(Switch, {
+                      left: '',
+                      right: 'Real time',
+                      checked: realtime,
+                      onchange: s => (AppState.sessionControl.realtime = s),
+                    })
+                  )
+                ),
           ])
         ),
         m(
@@ -207,13 +242,33 @@ export const SessionControl: FactoryComponent = () => {
           )
         ),
         m(SessionSettings, { disabled }),
-        m(
-          '.row',
-          m(
-            '.col.s12.m6',
-            m(TimeControl, { scenario: state.scenario, isConnected, time, canStart, key })
-          )
-        ),
+        realtime
+          ? m(
+              '.row',
+              m(
+                '.col.s12.m6',
+                m('.input-field.col.s12', [
+                  m(Icon, { iconName, className: 'prefix' }),
+                  m(TimeControl, {
+                    style: 'margin-left: 3em',
+                    scenario: state.scenario,
+                    isConnected,
+                    time,
+                    canStart,
+                    realtime,
+                    key,
+                  }),
+                ])
+              )
+            )
+          : m(TimeControl, {
+              scenario: state.scenario,
+              isConnected,
+              time,
+              canStart,
+              realtime,
+              key,
+            }),
       ];
     },
   };

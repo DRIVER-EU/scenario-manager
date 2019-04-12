@@ -4,6 +4,10 @@ import { ITimeMessage, ISessionMgmt, IInjectSimStates } from 'trial-manager-mode
 export const AppState = {
   apiService: 'http://localhost:3000',
   time: {} as ITimeMessage,
+  sessionControl: {
+    realtime: false,
+    host: '',
+  },
   session: {
     id: 1,
     name: '',

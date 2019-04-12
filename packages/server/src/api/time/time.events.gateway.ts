@@ -20,10 +20,15 @@ export class TimeEventsGateway {
     });
   }
 
-  // @SubscribeMessage('time-events')
-  // findAll(client, data): Observable<WsResponse<number>> {
-  //   return from([1, 2, 3, 4, 5]).pipe(map(item => ({ event: 'time-events', data: item })));
-  // }
+  @SubscribeMessage('test-bed-disconnect')
+  async disconnect() {
+    // console.log('disconnect received');
+    if (!this.kafkaService.isConnected()) {
+      return this.isConnected();
+    }
+    await this.kafkaService.disconnect();
+    return this.isConnected();
+  }
 
   @SubscribeMessage('test-bed-connect')
   async connect() {
@@ -43,6 +48,7 @@ export class TimeEventsGateway {
         isConnected: this.kafkaService.isConnected(),
         time: this.kafkaService.timeMessage,
         session: this.kafkaService.currentSession,
+        host: this.kafkaService.hostname,
       } as IConnectMessage,
     };
   }

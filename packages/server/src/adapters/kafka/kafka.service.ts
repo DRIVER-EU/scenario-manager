@@ -34,6 +34,7 @@ export interface KafkaService {
 @Injectable()
 export class KafkaService extends EventEmitter implements TimeService {
   private adapter: TestBedAdapter;
+  private kafkaHost: string;
   private session?: ISessionMgmt;
   private log = Logger.instance;
 
@@ -46,7 +47,7 @@ export class KafkaService extends EventEmitter implements TimeService {
       options.produce.push(TimeControlTopic);
     }
     console.table(options);
-
+    this.kafkaHost = options.kafkaHost;
     this.adapter = new TestBedAdapter(options);
     this.adapter.on('ready', () => {
       this.subscribe();
@@ -63,11 +64,18 @@ export class KafkaService extends EventEmitter implements TimeService {
     return this.adapter.connect();
   }
 
+  public disconnect() {
+    // TODO Add disconnect to adapter
+    // return this.adapter.disconnect();
+  }
+
   public isConnected() {
     return this.adapter.isConnected;
   }
 
   public get currentSession() { return this.session; }
+
+  public get hostname() { return this.kafkaHost; }
 
   private subscribe() {
     this.adapter.on('time', message => {
