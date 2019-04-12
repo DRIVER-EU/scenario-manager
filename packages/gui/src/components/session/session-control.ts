@@ -98,6 +98,7 @@ export const SessionControl: FactoryComponent = () => {
     AppState.time = state.time = data.time;
     AppState.session = data.session || {};
     AppState.sessionControl.host = data.host;
+    AppState.sessionControl.realtime = Math.abs(data.time.trialTime - Date.now()) < 10000;
     if (state.isConnected) {
       setTimeout(
         () =>
