@@ -66,7 +66,7 @@ export const InjectsForm: FactoryComponent = () => {
                         inject.type,
                       ]),
                   [
-                    m(MessageForm, { inject, onChange }),
+                    m(MessageForm, { inject, onChange, key: inject.id }),
                     m(InjectConditions, { inject, previousInjects }),
                     m(SetObjectives, { inject }),
                   ],
