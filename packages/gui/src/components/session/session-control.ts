@@ -244,24 +244,26 @@ export const SessionControl: FactoryComponent = () => {
         ),
         m(SessionSettings, { disabled }),
         realtime
-          ? m(
-              '.row',
-              m(
-                '.col.s12.m6',
-                m('.input-field.col.s12', [
-                  m(Icon, { iconName, className: 'prefix' }),
-                  m(TimeControl, {
-                    style: 'margin-left: 3em',
-                    scenario: state.scenario,
-                    isConnected,
-                    time,
-                    canStart,
-                    realtime,
-                    key,
-                  }),
-                ])
+          ? canStart
+            ? m(
+                '.row',
+                m(
+                  '.col.s12.m6',
+                  m('.input-field.col.s12', [
+                    m(Icon, { iconName, className: 'prefix' }),
+                    m(TimeControl, {
+                      style: 'margin-left: 3em',
+                      scenario: state.scenario,
+                      isConnected,
+                      time,
+                      canStart,
+                      realtime,
+                      key,
+                    }),
+                  ])
+                )
               )
-            )
+            : undefined
           : m(TimeControl, {
               scenario: state.scenario,
               isConnected,
