@@ -30,6 +30,7 @@ export const StatusBar: FactoryComponent<null> = () => {
 
   const render = () => {
     const { trialTime, trialTimeSpeed, timeElapsed, state } = AppState.time;
+    const { host, isConnected } = AppState.sessionControl;
     if (typeof state === 'undefined') {
       return undefined;
     }
@@ -37,7 +38,7 @@ export const StatusBar: FactoryComponent<null> = () => {
 
     const dt = new Date(trialTime);
     return m('.statusbar.center-align', [
-      AppState.sessionControl.host
+      host && isConnected
         ? [m('span', `Connected to ${AppState.sessionControl.host}`), m('span', '|')]
         : undefined,
       m('span', state),

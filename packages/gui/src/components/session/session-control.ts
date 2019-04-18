@@ -97,6 +97,7 @@ export const SessionControl: FactoryComponent = () => {
     state.isConnected = data.isConnected;
     AppState.time = state.time = data.time;
     AppState.session = data.session || {};
+    AppState.sessionControl.isConnected = data.isConnected;
     AppState.sessionControl.host = data.host;
     AppState.sessionControl.realtime = Math.abs(data.time.trialTime - Date.now()) < 10000;
     if (state.isConnected) {

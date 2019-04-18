@@ -5,6 +5,7 @@ export const AppState = {
   apiService: 'http://localhost:3000',
   time: {} as ITimeMessage,
   sessionControl: {
+    isConnected: false,
     realtime: false,
     host: '',
   },
