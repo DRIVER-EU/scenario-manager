@@ -18,7 +18,7 @@ import {
 import { RunService } from './run.service';
 import { SessionMessage } from '../../adapters/models';
 import { StateTransitionRequest } from '../../adapters/models/state-transition-request';
-import { SessionState } from '../../../../models/dist';
+import { SessionState } from 'trial-manager-models';
 
 @ApiUseTags('run')
 @Controller('run')
