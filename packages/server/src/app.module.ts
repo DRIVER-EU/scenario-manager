@@ -1,8 +1,6 @@
 import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from 'nestjs-config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TrialModule } from './api/trials/trial.module';
 import { RepoModule } from './api/repo/repo.module';
 import { TimeEventsModule } from './api/time';
@@ -20,7 +18,5 @@ import { RunModule } from './api/run/run.module';
     RepoModule,
     TimeEventsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
