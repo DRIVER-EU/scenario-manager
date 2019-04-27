@@ -18,11 +18,8 @@ API
 
 ENVIRONMENT VARIABLES
 
-- `SCENARIO_MANAGER_SERVER_FOLDER`: folder where all scenarios are stored
-- `SCENARIO_MANAGER_SERVER_PORT`: port of the REST service
 - `KAFKA_HOST`: location of the Kafka broker, e.g. localhost:3501
 - `SCHEMA_REGISTRY`: location of the schema registry, e.g. localhost:3502
-- `CLIENT_ID`: ID of the Kafka client, default `TB-TrialMgmt`
 - `SSL`: If truthy, set the following SSL options
 - `SSL_PFX`: Points to the location of your PKI certificate to login securely, default `certs/TB-TrialMgmt.p12`
 - `SSL_CA`: Points to the location of your Certificate Authority's public certificate, default `certs/test-ca.pem`
@@ -30,6 +27,9 @@ ENVIRONMENT VARIABLES
 - `SSL_CA`: Passphrase for opening your private certificate
 - `PRODUCE`: Stringified JSON array of produce topics, e.g.
   `["system_tm_session_mgmt", "system_request_change_of_trial_stage", "system_tm_role_player", "system_tm_phase_message", "standard_cap", ...]`
+- `SCENARIO_MANAGER_SERVER_FOLDER`: folder where all scenarios are stored, default `trials`
+- `SCENARIO_MANAGER_SERVER_PORT`: port of the REST service, default 3000
+- `CLIENT_ID`: ID of the Kafka client, default `TB-TrialMgmt`
 
 ## Installation
 
