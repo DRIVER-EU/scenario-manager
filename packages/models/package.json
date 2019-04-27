@@ -12,7 +12,12 @@
   "keywords": [],
   "author": "Erik Vullings <erik.vullings@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DRIVER-EU/scenario-manager.git"
+  },
   "dependencies": {
-    "@types/geojson": "^7946.0.6"
+    "@types/geojson": "^7946.0.6",
+    "typescript": "^3.4.5"
   }
 }
