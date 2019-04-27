@@ -388,7 +388,7 @@ export class TrialRepository {
   }
 
   private closeAllDatabasesOnExit() {
-    process.on('SIGKILL', () => {
+    process.on('exit', () => {
       console.log('Closing all databases...');
       this.closeAllDatabases();
     });
