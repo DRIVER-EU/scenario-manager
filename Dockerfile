@@ -39,7 +39,7 @@ COPY --from=builder /packages/server/certs /app/certs
 COPY --from=builder /packages/server/dist /app/dist
 COPY --from=builder /packages/server/.yalc /app/.yalc
 COPY --from=builder /packages/server/node_modules /app/node_modules
-COPY --from=builder /packages/gui/dist /app/dist/public
+COPY --from=builder /packages/gui/dist /app/public
 WORKDIR /app
 EXPOSE 3000
 CMD ["node", "./dist/main.js"]
