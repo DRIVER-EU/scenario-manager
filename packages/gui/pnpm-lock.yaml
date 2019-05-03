@@ -2,6 +2,7 @@ dependencies:
   material-icons: 0.3.1
   materialize-css: 1.0.0
   mithril: 2.0.0-rc.4
+  mithril-markdown: 0.2.1
   mithril-materialized: 0.11.8
   mithril-table: 0.2.0
   mithril-tree-component: 0.4.0
@@ -2469,6 +2470,13 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
+  /marked/0.6.2:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-LqxwVH3P/rqKX4EKGz7+c2G9r98WeM/SW34ybhgNGhUQNKtf1GmmSkJ6cDGJ/t6tiyae49qRkpyTw2B9HOrgUA==
   /material-icons/0.3.1:
     dev: false
     resolution:
@@ -2621,6 +2629,14 @@ packages:
     dev: false
     resolution:
       integrity: sha512-t9ox6uChD5sSXXb7U8gJrUEZFcuWXr6ajLZQ2uoImIjqshTzFfvVATDu2+E+/glY73RcbxETUK4FSOcbEzgCgQ==
+  /mithril-markdown/0.2.1:
+    dependencies:
+      marked: 0.6.2
+    dev: false
+    peerDependencies:
+      mithril: next
+    resolution:
+      integrity: sha512-4WgVhe4MB2cceot0/yVRvJn51KBt0DkVENK/kN0Pd73h9v45bxkgEJvY7RllyYh43bn2R2ljHDVd71ieh+ebig==
   /mithril-materialized/0.11.8:
     dev: false
     resolution:
@@ -4424,6 +4440,7 @@ specifiers:
   material-icons: ^0.3.1
   materialize-css: ^1.0.0
   mithril: next
+  mithril-markdown: ^0.2.1
   mithril-materialized: ^0.11.8
   mithril-table: ^0.2.0
   mithril-tree-component: ^0.4.0

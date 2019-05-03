@@ -307,3 +307,12 @@ export const createEmailLink = (emails: string | Array<string | undefined>, subj
  * @param phone Phone number
  */
 export const createPhoneLink = (phone?: string) => (phone ? `tel:${phone}` : '');
+
+/** Debounce a function */
+export const debounce = <F extends (...params: any[]) => void>(fn: F, delay = 100) => {
+  let timeoutID: number;
+  return function(this: any, ...args: any[]) {
+    clearTimeout(timeoutID);
+    timeoutID = window.setTimeout(() => fn.apply(this, args), delay);
+  } as F;
+};

@@ -1,10 +1,19 @@
 dependencies:
   '@types/geojson': 7946.0.7
+  typescript: 3.4.5
 lockfileVersion: 5
 packages:
   /@types/geojson/7946.0.7:
     dev: false
     resolution:
       integrity: sha512-wE2v81i4C4Ol09RtsWFAqg3BUitWbHSpSlIo+bNdsCJijO9sjme+zm+73ZMCa/qMC8UEERxzGbvmr1cffo2SiQ==
+  /typescript/3.4.5:
+    dev: false
+    engines:
+      node: '>=4.2.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-YycBxUb49UUhdNMU5aJ7z5Ej2XGmaIBL0x34vZ82fn3hGvD+bgrMrVDpatgz2f7YxUMJxMkbWxJZeAvDxVe7Vw==
 specifiers:
   '@types/geojson': ^7946.0.6
+  typescript: ^3.4.5

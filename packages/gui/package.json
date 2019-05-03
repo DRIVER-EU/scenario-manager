@@ -18,15 +18,16 @@
   "author": "Erik Vullings <erik.vullings@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "trial-manager-models": "^0.0.1",
-    "mithril": "next",
     "material-icons": "^0.3.1",
     "materialize-css": "^1.0.0",
+    "mithril": "next",
+    "mithril-markdown": "^0.2.1",
     "mithril-materialized": "^0.11.8",
-    "mithril-tree-component": "^0.4.0",
     "mithril-table": "^0.2.0",
+    "mithril-tree-component": "^0.4.0",
     "recursive": "^0.0.2",
-    "socket.io-client": "^2.2.0"
+    "socket.io-client": "^2.2.0",
+    "trial-manager-models": "^0.0.1"
   },
   "devDependencies": {
     "@types/materialize-css": "^1.0.6",

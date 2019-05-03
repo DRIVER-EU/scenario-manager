@@ -1,6 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
-import { TextArea, TextInput, Select, MapEditor } from 'mithril-materialized';
+import { TextArea, TextInput, Select, Label, FlatButton } from 'mithril-materialized';
 import { EditableTable, IEditableTable } from 'mithril-table';
+import { MarkdownEditor, IMarkdownEditor } from 'mithril-markdown';
 import {
   IInject,
   getMessage,
@@ -20,8 +21,10 @@ import {
   IActionList,
   ActionListParameter,
   ResponseType,
+  Priority,
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
+import { debounce } from '../../utils';
 
 /** LCMS message, currently a wrapped CAP message */
 export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () => void; disabled?: boolean }> = () => {
@@ -33,12 +36,29 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
     actionList: IActionList[];
   };
 
+  const validateActionList = debounce((al: IActionList[]) => {
+    const errors: string[] = [];
+    const priorities = Object.keys(Priority);
+    const checkPriority = (prio: string) => priorities.indexOf(prio) >= 0;
+    al.forEach(a => {
+      a.priority = a.priority ? (a.priority.toUpperCase() as Priority) : Priority.AVERAGE;
+      if (!checkPriority(a.priority)) {
+        errors.push(`Priority ${a.priority} is not valid. Valid options are: ${priorities.join(', ')}.`);
+      }
+    });
+    if (errors.length > 0) {
+      const html = errors.join('<br/>');
+      M.toast({ html, classes: 'red' });
+      return false;
+    }
+    return true;
+  }, 500);
+
   return {
     oninit: ({ attrs: { inject } }) => {
+      state.participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT) || [];
       const alert = getMessage<IAlert>(inject, MessageType.CAP_MESSAGE);
-      const participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT) || [];
       alert.identifier = inject.id;
-      console.log(alert.identifier);
       alert.msgType = alert.msgType || MsgType.Alert;
       alert.scope = alert.scope || Scope.Public;
       alert.status = alert.status || Status.Exercise;
@@ -65,20 +85,14 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
         state.alertInfo.parameter = [] as IValueNamePair[];
       }
       state.parameters = state.alertInfo.parameter as IValueNamePair[];
-      state.alertInfo.headline = inject.title = inject.title || 'New CAP message';
+      state.alertInfo.headline = inject.title = inject.title || 'New LCMS message';
       state.alert = alert;
-      state.participants = participants;
 
       const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
       state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
     },
     view: ({ attrs: { inject, disabled } }) => {
-      const {
-        alert,
-        alertInfo,
-        parameters,
-        participants,
-      } = state;
+      const { alert, alertInfo, actionList, parameters, participants } = state;
       // console.table(statusOptions);
 
       return [
@@ -115,48 +129,86 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
           label: 'Description',
           iconName: 'note',
         }),
-        m(EditableTable, {
-          headers: [
-            { column: 'title', title: 'Title' },
-            { column: 'description', title: 'Description' },
-            { column: 'priority', title: 'Priority' },
-          ],
-          data: state.actionList,
-          disabled,
-          addRows: true,
-          deleteRows: true,
-          moveRows: true,
-          onchange: data => {
-            state.actionList = data;
-            const updatedActionList = parameters.filter(p => p.valueName !== ActionListParameter);
-            updatedActionList.push({
-              valueName: ActionListParameter,
-              value: JSON.stringify(data),
-            });
-            alertInfo.parameter = state.parameters = updatedActionList;
-          },
-        } as IEditableTable<IActionList>),
-        m(MapEditor, {
-          disabled,
-          label: 'Parameters',
-          labelKey: 'Section',
-          labelValue: 'HTML text',
-          disallowArrays: true,
-          keyClass: '.col.s4.m3',
-          valueClass: '.col.s8.m9',
-          properties: parameters.reduce(
-            (acc, cur) => {
-              acc[cur.valueName] = cur.value;
-              return acc;
-            },
-            {} as { [key: string]: string }
-          ),
-          onchange: (props: { [key: string]: string | number | boolean | Array<string | number> }) => {
-            alertInfo.parameter = state.parameters = Object.keys(props).map(
-              p => ({ valueName: p, value: props[p] } as IValueNamePair)
-            );
-          },
-        }),
+        m(
+          '.col.s12',
+          m('div', [
+            m(Label, { label: 'Sections' }),
+            m(FlatButton, {
+              iconName: 'add',
+              disabled: parameters.filter(p => p.valueName === 'New section').length > 0,
+              onclick: () => {
+                state.parameters.push({ valueName: 'New section', value: 'Click me to change' });
+              },
+            }),
+          ]),
+          m(
+            'div',
+            parameters
+              .filter(p => p.valueName[0] !== '_')
+              .map((p, i) => {
+                return [
+                  m(TextInput, {
+                    label: `Section ${i + 1}. Title`,
+                    initialValue: p.valueName,
+                    onchange: t => (p.valueName = t),
+                  }),
+                  m('.col.s12', [
+                    m('div', [
+                      m(Label, { label: `Section ${i + 1}. Content` }),
+                      m(FlatButton, {
+                        iconName: 'delete',
+                        onclick: () => {
+                          state.parameters = parameters.filter(c => c.valueName === p.valueName);
+                        },
+                      }),
+                    ]),
+                    m(MarkdownEditor, {
+                      markdown: p.value,
+                      onchange: (_, html) => (p.value = html),
+                    } as IMarkdownEditor),
+                  ]),
+                ];
+              })
+          )
+        ),
+        m(
+          '.col.s12',
+          m('div', [
+            m(Label, { label: 'Actions' }),
+            m(FlatButton, {
+              iconName: 'add',
+              disabled: actionList.length > 0,
+              onclick: () => actionList.push({ title: 'New title', description: '', priority: Priority.AVERAGE }),
+            }),
+          ]),
+          actionList.length > 0
+            ? m(
+                '.input-field',
+                m(EditableTable, {
+                  headers: [
+                    { column: 'title', title: 'Title' },
+                    { column: 'description', title: 'Description' },
+                    { column: 'priority', title: 'Priority' },
+                  ],
+                  data: actionList,
+                  disabled,
+                  addRows: true,
+                  deleteRows: true,
+                  moveRows: true,
+                  onchange: data => {
+                    validateActionList(data);
+                    state.actionList = data;
+                    const updatedActionList = parameters.filter(p => p.valueName !== ActionListParameter);
+                    updatedActionList.push({
+                      valueName: ActionListParameter,
+                      value: JSON.stringify(data),
+                    });
+                    alertInfo.parameter = state.parameters = updatedActionList;
+                  },
+                } as IEditableTable<IActionList>)
+              )
+            : undefined
+        ),
       ];
     },
   };

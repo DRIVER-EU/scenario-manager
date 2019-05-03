@@ -19,7 +19,7 @@ dependencies:
 devDependencies:
   '@types/express': 4.16.1
   '@types/express-serve-static-core': 4.16.3
-  '@types/node': 11.13.7
+  '@types/node': 11.13.9
   '@types/socket.io': 2.1.2
   '@types/sqlite3': 3.1.5
   tsc-watch: 2.1.2
@@ -163,6 +163,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-suFHr6hcA9mp8vFrZTgrmqW2ZU3mbWsryQtQlY/QvwTISCw7nw/j+bCQPPohqmskhmqa5wLNuMHTTsc+xf1MQg==
+  /@types/node/11.13.9:
+    dev: true
+    resolution:
+      integrity: sha512-NJ4yuEVw5podZbINp3tEqUIImMSAEHaCXRiWCf3KC32l6hIKf0iPJEh2uZdT0fELfRYk310yLmMXqy2leZQUbg==
   /@types/range-parser/1.2.3:
     dev: true
     resolution:
@@ -2424,7 +2428,7 @@ specifiers:
   '@nestjs/websockets': ^6.1.1
   '@types/express': ^4.16.1
   '@types/express-serve-static-core': ^4.16.3
-  '@types/node': ^11.13.7
+  '@types/node': ^11.13.8
   '@types/socket.io': ^2.1.2
   '@types/sqlite3': ^3.1.5
   body-parser: ^1.19.0
