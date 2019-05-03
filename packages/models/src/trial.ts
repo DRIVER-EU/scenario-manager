@@ -5,7 +5,7 @@ import {
   IInjectGroup,
   IInject,
   IPerson,
-  ILocation,
+  ILocationAddress,
   IPersonOfInterest,
   IObjectOfInterest,
 } from '.';
@@ -32,7 +32,7 @@ export interface ITrial extends ITrialOverview {
   /** Persons of interest that play a role in the scenario */
   players: IPersonOfInterest[];
   /** Locations of interest that play a role in the scenario */
-  locations: ILocation[];
+  locations: ILocationAddress[];
   /** Persons that can login, and play one of more roles, such as editors, stakeholders, role players */
   users: IPerson[];
   /** Solutions, departments, organisations that have an interest in the scenario */

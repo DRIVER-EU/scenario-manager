@@ -1,7 +1,10 @@
 dependencies:
+  leaflet: 1.4.0
+  leaflet-draw: 1.0.4
   material-icons: 0.3.1
   materialize-css: 1.0.0
   mithril: 2.0.0-rc.4
+  mithril-leaflet: 0.1.2
   mithril-markdown: 0.2.1
   mithril-materialized: 0.11.8
   mithril-table: 0.2.0
@@ -10,6 +13,9 @@ dependencies:
   socket.io-client: 2.2.0
   trial-manager-models: 'link:../models'
 devDependencies:
+  '@types/geojson': 7946.0.7
+  '@types/leaflet': 1.4.4
+  '@types/leaflet-draw': 0.4.14
   '@types/materialize-css': 1.0.6
   '@types/mithril': 1.1.16
   '@types/socket.io-client': 1.4.32
@@ -29,12 +35,28 @@ packages:
     dev: true
     resolution:
       integrity: sha512-gS24kdFuVwfo5h7IlStnXyBSIH4e9aFIhNHb4w+o5DwbYDeQJv+i9heh7u7nSvqnOP3v34tQMTe7VoJp2US08w==
+  /@types/geojson/7946.0.7:
+    dev: true
+    resolution:
+      integrity: sha512-wE2v81i4C4Ol09RtsWFAqg3BUitWbHSpSlIo+bNdsCJijO9sjme+zm+73ZMCa/qMC8UEERxzGbvmr1cffo2SiQ==
   /@types/jquery/3.3.29:
     dependencies:
       '@types/sizzle': 2.3.2
     dev: true
     resolution:
       integrity: sha512-FhJvBninYD36v3k6c+bVk1DSZwh7B5Dpb/Pyk3HKVsiohn0nhbefZZ+3JXbWQhFyt0MxSl2jRDdGQPHeOHFXrQ==
+  /@types/leaflet-draw/0.4.14:
+    dependencies:
+      '@types/leaflet': 1.4.4
+    dev: true
+    resolution:
+      integrity: sha512-TyOZtr5SZf9ELR5EMLFwDlZuCGyjG0saUA6hEguZNEoratDiag1G/2eAVeYwK2NOX9N0zxQ9eDCRsjJK420X9g==
+  /@types/leaflet/1.4.4:
+    dependencies:
+      '@types/geojson': 7946.0.7
+    dev: true
+    resolution:
+      integrity: sha512-CROxHvsRDFyR1OQKZv/WJsCVFv8Wj6wFF/FOI/yiGwX7GMivyvF8Ks5AT3/JYk269pGiE43wP9JOgcr7EK2eUw==
   /@types/materialize-css/1.0.6:
     dependencies:
       '@types/cash': 0.0.3
@@ -2364,6 +2386,14 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-avPEb8P8EGnwXKClwsNUgryVjllcRqtMYa49NTsbQagYuT1DcXnl1915oxWjoyGrXR6zH/Y0Zc96xWsPcoDKeA==
+  /leaflet-draw/1.0.4:
+    dev: false
+    resolution:
+      integrity: sha512-rsQ6saQO5ST5Aj6XRFylr5zvarWgzWnrg46zQ1MEOEIHsppdC/8hnN8qMoFvACsPvTioAuysya/TVtog15tyAQ==
+  /leaflet/1.4.0:
+    dev: false
+    resolution:
+      integrity: sha512-x9j9tGY1+PDLN9pcWTx9/y6C5nezoTMB8BLK5jTakx+H7bPlnbCHfi9Hjg+Qt36sgDz/cb9lrSpNQXmk45Tvhw==
   /loader-runner/2.4.0:
     dev: true
     engines:
@@ -2629,6 +2659,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-t9ox6uChD5sSXXb7U8gJrUEZFcuWXr6ajLZQ2uoImIjqshTzFfvVATDu2+E+/glY73RcbxETUK4FSOcbEzgCgQ==
+  /mithril-leaflet/0.1.2:
+    dev: false
+    resolution:
+      integrity: sha512-abU9JbxK11OWdE0vxwM9eDxIbSbyoOkCfGS/584D+NNwpCRUDhHWMY191FKnFtItw+kjirYpw1pCEJjvPfS/Yw==
   /mithril-markdown/0.2.1:
     dependencies:
       marked: 0.6.2
@@ -4429,6 +4463,9 @@ packages:
     resolution:
       integrity: sha1-AI4G2AlDIMNy28L47XagymyKxBk=
 specifiers:
+  '@types/geojson': ^7946.0.7
+  '@types/leaflet': ^1.4.4
+  '@types/leaflet-draw': ^0.4.14
   '@types/materialize-css': ^1.0.6
   '@types/mithril': ^1.1.16
   '@types/socket.io-client': ^1.4.32
@@ -4437,9 +4474,12 @@ specifiers:
   css-loader: ^2.1.1
   file-loader: ^3.0.1
   html-webpack-plugin: ^3.2.0
+  leaflet: ^1.4.0
+  leaflet-draw: ^1.0.4
   material-icons: ^0.3.1
   materialize-css: ^1.0.0
   mithril: next
+  mithril-leaflet: ^0.1.2
   mithril-markdown: ^0.2.1
   mithril-materialized: ^0.11.8
   mithril-table: ^0.2.0

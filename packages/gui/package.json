@@ -18,9 +18,12 @@
   "author": "Erik Vullings <erik.vullings@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "leaflet": "^1.4.0",
+    "leaflet-draw": "^1.0.4",
     "material-icons": "^0.3.1",
     "materialize-css": "^1.0.0",
     "mithril": "next",
+    "mithril-leaflet": "^0.1.2",
     "mithril-markdown": "^0.2.1",
     "mithril-materialized": "^0.11.8",
     "mithril-table": "^0.2.0",
@@ -30,6 +33,9 @@
     "trial-manager-models": "^0.0.1"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.7",
+    "@types/leaflet": "^1.4.4",
+    "@types/leaflet-draw": "^0.4.14",
     "@types/materialize-css": "^1.0.6",
     "@types/mithril": "^1.1.16",
     "@types/socket.io-client": "^1.4.32",

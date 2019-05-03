@@ -117,6 +117,14 @@ export const getMessageIcon = (type?: MessageType) => {
       return 'speaker_notes';
     case MessageType.LCMS_MESSAGE:
       return 'event_seat';
+    case MessageType.START_INJECT:
+      return 'colorize';
+    case MessageType.REQUEST_UNIT_TRANSPORT:
+      return 'directions';
+    case MessageType.SET_AFFECTED_AREA:
+      return 'wallpaper';
+    case MessageType.SUMO_CONFIGURATION:
+      return 'traffic';
     default:
       return 'message';
   }
@@ -163,6 +171,14 @@ export const getMessageTitle = (type?: MessageType) => {
       return 'AUTOMATED ACTION';
     case MessageType.LCMS_MESSAGE:
       return 'LCMS MESSAGE';
+    case MessageType.START_INJECT:
+      return 'START INJECT';
+    case MessageType.REQUEST_UNIT_TRANSPORT:
+      return 'REQUEST UNIT TRANSPORT';
+    case MessageType.SET_AFFECTED_AREA:
+      return 'SET AFFECTED AREA';
+    case MessageType.SUMO_CONFIGURATION:
+      return 'SUMO CONFIGURATION';
     default:
       return 'message';
   }

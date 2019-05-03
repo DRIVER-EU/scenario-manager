@@ -1,5 +1,5 @@
 /** A location is a point where something interesting, in scenario terms, may occur. */
-export interface ILocation {
+export interface ILocationAddress {
   name: string;
   description?: string;
   address?: {

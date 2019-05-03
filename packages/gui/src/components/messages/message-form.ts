@@ -1,12 +1,21 @@
 import m, { FactoryComponent } from 'mithril';
 import { IInject, MessageType, InjectType } from 'trial-manager-models';
-import { RolePlayerMessageForm, PhaseMessageForm, ScenarioForm, DefaultMessageForm } from '.';
-import { GeoJsonMessageForm } from './geojson-message';
-import { OstChangeStageMessageForm } from './ost-change-stage-message';
-import { CapMessageForm } from './cap-message';
-import { LcmsMessageForm } from './lcms-message';
+import {
+  RolePlayerMessageForm,
+  PhaseMessageForm,
+  ScenarioForm,
+  DefaultMessageForm,
+  GeoJsonMessageForm,
+  OstChangeStageMessageForm,
+  LcmsMessageForm,
+  CapMessageForm,
+  StartInjectForm,
+  SumoConfigurationForm,
+  RequestUnitTransportForm,
+  SetAffectedAreaForm,
+} from '.';
 
-export const MessageForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
+export const MessageForm: FactoryComponent<{ inject: IInject; onChange: () => void }> = () => {
   const getMessageForm = (inject: IInject, onChange: () => void) => {
     switch (inject.messageType) {
       case MessageType.ROLE_PLAYER_MESSAGE:
@@ -21,6 +30,14 @@ export const MessageForm: FactoryComponent<{ inject: IInject, onChange: () => vo
         return m(LcmsMessageForm, { inject, onChange });
       case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
         return m(OstChangeStageMessageForm, { inject, onChange });
+      case MessageType.START_INJECT:
+        return m(StartInjectForm, { inject, onChange });
+      case MessageType.SUMO_CONFIGURATION:
+        return m(SumoConfigurationForm, { inject, onChange });
+      case MessageType.REQUEST_UNIT_TRANSPORT:
+        return m(RequestUnitTransportForm, { inject, onChange });
+      case MessageType.SET_AFFECTED_AREA:
+        return m(SetAffectedAreaForm, { inject, onChange });
       default:
         return m('.row', 'TODO');
     }

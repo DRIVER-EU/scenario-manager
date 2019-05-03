@@ -8,3 +8,7 @@ export * from './system_tm_phase_message-value';
 export { Type as RolePlayerMessageType, IRolePlayerMessage } from './system_tm_role_player-value';
 export * from './system_tm_phase_message-value';
 export * from './system_tm_session_mgmt-value';
+export * from './simulation_request_startinject-value';
+export * from './simulation_request_unittransport-value';
+export * from './sumo_AffectedArea-value';
+export * from './sumo_SumoConfiguration-value';
