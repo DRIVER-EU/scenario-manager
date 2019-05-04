@@ -23,7 +23,7 @@ export const InjectsList = () => {
       view: ({ attrs }: Vnode<ITreeItemViewComponent>) => {
         const inject = attrs.treeItem as IInject;
         const isValid = inject.isValid || 'valid';
-        const className = isValid === 'invalid' ? 'red' : isValid === 'childInvalid' ? 'orange' : '';
+        const className = isValid === 'invalid' ? 'red-text' : isValid === 'childInvalid' ? 'orange-text' : '';
         return m('div.icon-label', [m(Icon, { iconName: getIcon(inject), className }), inject.title]);
       },
     } as Component<ITreeItemViewComponent>,
@@ -134,7 +134,7 @@ export const InjectsList = () => {
                 className: 'right',
               })
             ),
-            m('.col.s12', m(TreeContainer, { tree: filteredInjects, options })),
+            m('.col.s12.sb.large', m(TreeContainer, { tree: filteredInjects, options })),
           ])
         : undefined;
     },
