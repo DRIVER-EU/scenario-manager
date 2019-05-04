@@ -48,6 +48,8 @@ export interface IInjectCondition {
   injectState?: InjectState;
 }
 
+export type InjectValidationState = 'valid' | 'invalid' | 'childInvalid';
+
 export interface IInject extends IContent {
   /** Who performs the action */
   actorId?: string;
@@ -65,6 +67,8 @@ export interface IInject extends IContent {
     /** Key is the the same as the InjectType */
     [key: string]: unknown;
   };
+  /** Inject validation state */
+  isValid?: InjectValidationState;
 }
 
 export interface IInjectGroup extends IInject {

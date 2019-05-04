@@ -21,7 +21,10 @@ export const InjectsList = () => {
     // name: 'title',
     treeItemView: {
       view: ({ attrs }: Vnode<ITreeItemViewComponent>) => {
-        return m('div.icon-label', [m(Icon, { iconName: getIcon(attrs.treeItem as IInject) }), attrs.treeItem.title]);
+        const inject = attrs.treeItem as IInject;
+        const isValid = inject.isValid || 'valid';
+        const className = isValid === 'invalid' ? 'red' : isValid === 'childInvalid' ? 'orange' : '';
+        return m('div.icon-label', [m(Icon, { iconName: getIcon(inject), className }), inject.title]);
       },
     } as Component<ITreeItemViewComponent>,
     onSelect: (ti, isSelected) => injectSelected(ti as IInject, isSelected),
@@ -100,6 +103,7 @@ export const InjectsList = () => {
       const loadScenarios = async () => {
         const trial = TrialSvc.getCurrent();
         state.trialId = trial.id;
+        TrialSvc.validateInjects();
       };
       loadScenarios();
     },

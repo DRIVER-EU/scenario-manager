@@ -77,6 +77,9 @@ export const TimelineView: FactoryComponent = () => {
         .filter(i => i.condition && i.condition.type === InjectConditionType.MANUALLY)
         .map(i => ({ id: i.id, delayInMSec: 30000 }));
       const simStates = state.simStates || simulationEngine(trial, scenarioId, autoTransitions);
+      if (typeof simStates === 'undefined') {
+        return;
+      }
       state.simStates = simStates;
       console.table(simStates);
       if (!simStates) {
@@ -123,7 +126,7 @@ export const TimelineView: FactoryComponent = () => {
             } as ISelectOptions<string>)
           ),
           m(
-            '.col.s12.sb.large',
+            '.col.s12',
             m(Timeline, {
               onSelect,
               timeFormatter,

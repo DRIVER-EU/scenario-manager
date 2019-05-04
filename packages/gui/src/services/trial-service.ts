@@ -27,6 +27,7 @@ class TrialService extends RestService<ITrial> {
   }
 
   public async saveTrial(s: ITrial = this.current) {
+    this.validateInjects();
     s.lastEdit = new Date();
     return super.save(s);
   }
@@ -217,6 +218,46 @@ class TrialService extends RestService<ITrial> {
     }
     await this.saveTrial();
     injectsChannel.publish(TopicNames.ITEM_UPDATE, { cur: i });
+  }
+
+  /** Check whether the injects are still valid, e.g. after deleting an inject, a depending inject becomes invalid. */
+  public validateInjects() {
+    const invalidateParents = (parentId?: string) => {
+      if (!parentId) {
+        return;
+      }
+      injects.some(i => {
+        if (i.id === parentId) {
+          i.isValid = 'childInvalid';
+          invalidateParents(i.parentId);
+          return true;
+        }
+        return false;
+      });
+    };
+    if (!this.current || !this.current.injects) {
+      return true;
+    }
+    const injects = this.current.injects;
+    const ids = injects.map(i => i.id);
+    const errors = [] as string[];
+    injects.forEach(i => {
+      if (i.condition && i.condition.injectId && ids.indexOf(i.condition.injectId) === -1) {
+        errors.push(`Inject ${i.title} depends on a non-existing condition.`);
+        i.isValid = 'invalid';
+        invalidateParents(i.parentId);
+      } else {
+        i.isValid = 'valid';
+      }
+    });
+    if (errors.length > 0) {
+      M.toast({
+        html: errors.join('<br>'),
+        classes: 'red',
+      });
+      return false;
+    }
+    return true;
   }
 
   // Delete inject, including all children

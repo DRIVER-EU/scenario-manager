@@ -9,12 +9,18 @@ import {
   IInjectSimStates,
   InjectState,
 } from 'trial-manager-models';
+import { TrialSvc } from '../../services';
 
 export const simulationEngine = (
   trial: ITrial,
   scenarioId: string,
   autoTransitions: Array<{ id: string; delayInMSec: number }> = []
 ) => {
+  const isValid = TrialSvc.validateInjects();
+  if (!isValid) {
+    M.toast({ html: `Cannot start the simulation. Please fix the scenario first!`, classes: 'red' });
+    return;
+  }
   const scenario = getParent(trial.injects, scenarioId) as IScenario;
   if (!scenario) {
     return undefined;
