@@ -8,7 +8,7 @@ dependencies:
   mithril-markdown: 0.2.1
   mithril-materialized: 0.11.8
   mithril-table: 0.2.0
-  mithril-tree-component: 0.4.0
+  mithril-tree-component: 0.5.1
   recursive: 0.0.2
   socket.io-client: 2.2.0
   trial-manager-models: 'link:../models'
@@ -2681,10 +2681,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-UTx0PWOGPE+mLGNnY94uSzCTPztkkcJRuHQt7873ZW6LiC5JAE9CRGtz6m1B7MBv8zfpq9tWOKaEldMWTZq59Q==
-  /mithril-tree-component/0.4.0:
+  /mithril-tree-component/0.5.1:
     dev: false
     resolution:
-      integrity: sha512-cjYvjvBEvhKBQ0Ju+SDbVDMgIEWQfA2pR9gHCm5i0zw2YhIO96kKbglOrj1QGxVZbPEUectSsqPBQXaMYRcEaw==
+      integrity: sha512-jI6+UvcwvC0lssGljPOYrejX9NRExQT3l2UkzUmS9hVHcGv4Lz55BxcWRX/ho3HPPTvlktH/JlI6LX7lwzWDaQ==
   /mithril/2.0.0-rc.4:
     dev: false
     hasBin: true
@@ -4483,7 +4483,7 @@ specifiers:
   mithril-markdown: ^0.2.1
   mithril-materialized: ^0.11.8
   mithril-table: ^0.2.0
-  mithril-tree-component: ^0.4.0
+  mithril-tree-component: ^0.5.1
   recursive: ^0.0.2
   socket.io-client: ^2.2.0
   style-loader: ^0.23.1
