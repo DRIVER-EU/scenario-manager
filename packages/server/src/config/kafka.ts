@@ -9,10 +9,10 @@ import {
 } from 'node-test-bed-adapter';
 
 export default {
-  kafkaHost: process.env.KAFKA_HOST || 'tb4.driver-testbed.eu:3541',
-  schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb4.driver-testbed.eu:3542',
-  // kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
-  // schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
+  // kafkaHost: process.env.KAFKA_HOST || 'tb4.driver-testbed.eu:3541',
+  // schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb4.driver-testbed.eu:3542',
+  kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
+  schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
   // kafkaHost: process.env.KAFKA_HOST || 'tb5.driver-testbed.eu:3551',
   // schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb5.driver-testbed.eu:3552',
   // kafkaHost: 'driver-testbed.eu:3501',
@@ -42,6 +42,10 @@ export default {
         TrialManagementSessionMgmtTopic,
         'standard_cap',
         'standard_geojson',
+        'sumo_SumoConfiguration',
+        'sumo_AffectedArea',
+        'simulation_request_startinject',
+        'simulation_request_unittransport',
         // 'standard_named_geojson',
       ],
   logging: {

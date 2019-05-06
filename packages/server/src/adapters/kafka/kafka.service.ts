@@ -17,6 +17,12 @@ import {
 } from 'node-test-bed-adapter';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
+import {
+  IRequestStartInject,
+  IRequestUnitTransport,
+  IAffectedArea,
+  ISumoConfiguration,
+} from 'trial-manager-models';
 export { ITimingControl } from 'node-test-bed-adapter';
 
 export interface TimeService {
@@ -51,12 +57,17 @@ export class KafkaService extends EventEmitter implements TimeService {
     this.adapter = new TestBedAdapter(options);
     this.adapter.on('ready', () => {
       this.subscribe();
-      this.log.info(`Consumer is connected to broker running at ${options.kafkaHost}.`);
+      this.log.info(
+        `Consumer is connected to broker running at ${options.kafkaHost}.`,
+      );
       // See if we are running a session that was not initialized by this trial.
-      this.adapter.addConsumerTopics({
-        topic: TrialManagementSessionMgmtTopic,
-        offset: 0,
-      }, true);
+      this.adapter.addConsumerTopics(
+        {
+          topic: TrialManagementSessionMgmtTopic,
+          offset: 0,
+        },
+        true,
+      );
     });
   }
 
@@ -73,9 +84,13 @@ export class KafkaService extends EventEmitter implements TimeService {
     return this.adapter.isConnected;
   }
 
-  public get currentSession() { return this.session; }
+  public get currentSession() {
+    return this.session;
+  }
 
-  public get hostname() { return this.kafkaHost; }
+  public get hostname() {
+    return this.kafkaHost;
+  }
 
   private subscribe() {
     this.adapter.on('time', message => {
@@ -106,8 +121,26 @@ export class KafkaService extends EventEmitter implements TimeService {
     return this.sendMessage(om, 'system_request_change_of_trial_stage');
   }
 
-  public sendRolePlayerMessage<ITestbedRolePlayerMessage>(rpm: ITestbedRolePlayerMessage) {
+  public sendRolePlayerMessage<ITestbedRolePlayerMessage>(
+    rpm: ITestbedRolePlayerMessage,
+  ) {
     return this.sendMessage(rpm, TrialManagementRolePlayerTopic);
+  }
+
+  public sendStartInjectMessage(m: IRequestStartInject) {
+    return this.sendMessage(m, 'simulation_request_startinject');
+  }
+
+  public sendRequestUnitTransport(m: IRequestUnitTransport) {
+    return this.sendMessage(m, 'simulation_request_unittransport');
+  }
+
+  public sendSetAffectedArea(m: IAffectedArea) {
+    return this.sendMessage(m, 'sumo_AffectedArea');
+  }
+
+  public sendSumoConfiguration(m: ISumoConfiguration) {
+    return this.sendMessage(m, 'sumo_SumoConfiguration');
   }
 
   public get timeMessage() {

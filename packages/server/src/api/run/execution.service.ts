@@ -15,6 +15,10 @@ import {
   IOstStageChangeMessage,
   IAlert,
   convertCAPtoAVRO,
+  IRequestStartInject,
+  IRequestUnitTransport,
+  IAffectedArea,
+  ISumoConfiguration,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -50,6 +54,18 @@ export class ExecutionService implements IExecutionService {
         break;
       case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
         this.sendChangeObserverQuestionnairesMessage(i, comment);
+        break;
+      case MessageType.START_INJECT:
+        this.sendStartInjectMessage(i, comment);
+        break;
+      case MessageType.REQUEST_UNIT_TRANSPORT:
+        this.sendRequestUnitTransport(i, comment);
+        break;
+      case MessageType.SET_AFFECTED_AREA:
+        this.sendSetAffectedArea(i, comment);
+        break;
+      case MessageType.SUMO_CONFIGURATION:
+        this.sendSumoConfiguration(i, comment);
         break;
       default:
         console.warn(
@@ -126,6 +142,26 @@ export class ExecutionService implements IExecutionService {
   private async sendChangeObserverQuestionnairesMessage(i: IInject, comment?: string) {
     const msg = getMessage(i, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES) as IOstStageChangeMessage;
     this.kafkaService.sendOstStageChangeRequestMessage(msg);
+  }
+
+  private async sendStartInjectMessage(i: IInject, comment?: string) {
+    const msg = getMessage(i, MessageType.START_INJECT) as IRequestStartInject;
+    this.kafkaService.sendStartInjectMessage(msg);
+  }
+
+  private async sendRequestUnitTransport(i: IInject, comment?: string) {
+    const msg = getMessage(i, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestUnitTransport;
+    this.kafkaService.sendRequestUnitTransport(msg);
+  }
+
+  private async sendSetAffectedArea(i: IInject, comment?: string) {
+    const msg = getMessage(i, MessageType.SET_AFFECTED_AREA) as IAffectedArea;
+    this.kafkaService.sendSetAffectedArea(msg);
+  }
+
+  private async sendSumoConfiguration(i: IInject, comment?: string) {
+    const msg = getMessage(i, MessageType.SUMO_CONFIGURATION) as ISumoConfiguration;
+    this.kafkaService.sendSumoConfiguration(msg);
   }
 
   /** Find the topic that should be used for publishing. */
