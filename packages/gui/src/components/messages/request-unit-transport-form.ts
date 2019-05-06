@@ -5,6 +5,7 @@ import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection } from 'geojson';
 import { LatLngExpression, FeatureGroup, geoJSON } from 'leaflet';
 import { AppState } from '../../models';
+import { centerArea } from '../../utils';
 
 export const RequestUnitTransportForm: FactoryComponent<{
   inject: IInject;
@@ -44,20 +45,6 @@ export const RequestUnitTransportForm: FactoryComponent<{
         latitude: c[1],
         altitude: c[2],
       } as ILocation));
-
-  const centerArea = (area: L.GeoJSON<LineString>) => {
-    const bounds = area.getBounds();
-    console.warn('Get bounds');
-    return Object.keys(bounds).length
-      ? {
-          view: bounds.getCenter(),
-          zoom: 14,
-        }
-      : {
-          view: [51.5, 5] as LatLngExpression,
-          zoom: 4,
-        };
-  };
 
   return {
     oninit: ({ attrs: { inject } }) => {

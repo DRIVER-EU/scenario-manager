@@ -13,6 +13,8 @@ import {
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 import { IExecutingInject } from '../models';
+import { LineString } from 'trial-manager-models/node_modules/.registry.npmjs.org/@types/geojson/7946.0.7/node_modules/@types/geojson';
+import { LatLngExpression } from 'leaflet';
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
@@ -331,4 +333,19 @@ export const debounce = <F extends (...params: any[]) => void>(fn: F, delay = 10
     clearTimeout(timeoutID);
     timeoutID = window.setTimeout(() => fn.apply(this, args), delay);
   } as F;
+};
+
+/** Get the center and zoom for a GeoJSON */
+export const centerArea = (area: L.GeoJSON<any>) => {
+  const bounds = area.getBounds();
+  console.warn('Get bounds');
+  return Object.keys(bounds).length
+    ? {
+        view: bounds.getCenter(),
+        zoom: 14,
+      }
+    : {
+        view: [51.5, 5] as LatLngExpression,
+        zoom: 4,
+      };
 };

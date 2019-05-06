@@ -27,6 +27,8 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
     state.curAssetId = cur.id;
   };
 
+  console.warn('assets');
+
   return {
     oninit: () => {
       state.trial = TrialSvc.getCurrent();
@@ -78,7 +80,10 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
               '.row.sb',
               m(
                 '.col.s12',
-                m(Collection, { mode: CollectionMode.AVATAR, items })
+                m(Collection, {
+                  mode: CollectionMode.AVATAR,
+                  items,
+                })
                 // m(
                 //   'ul.collection',
                 //   filteredAssets.map(cur =>
