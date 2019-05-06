@@ -148,7 +148,7 @@ export const geojsonToAvro = (geojson?: FeatureCollection) => {
   if (geojson.bbox) {
     avro.bbox = geojson.bbox.map(b => b);
   }
-  if (geojson.features) {
+  if (geojson.features && geojson.features.length > 0) {
     avro.features = geojson.features.map(f => {
       const avroFeature = {} as { [key: string]: any };
       if (f && f.geometry && Object.keys(f.geometry).length > 1) {
