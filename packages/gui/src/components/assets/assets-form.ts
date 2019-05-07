@@ -106,7 +106,6 @@ export const AssetsForm = () => {
                         showScale: { imperial: false },
                         // onLayerEdited: (f: FeatureGroup) => {
                         //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
-                        //   console.log('onLayerEdited');
                         //   const r = geoJSONtoRoute(geojson);
                         //   if (r) {
                         //     ut.route = r;

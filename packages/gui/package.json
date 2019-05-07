@@ -27,7 +27,7 @@
     "mithril-markdown": "^0.2.1",
     "mithril-materialized": "^0.11.10",
     "mithril-table": "^0.2.0",
-    "mithril-tree-component": "^0.5.1",
+    "mithril-tree-component": "^0.5.2",
     "recursive": "^0.0.2",
     "socket.io-client": "^2.2.0",
     "trial-manager-models": "^0.0.1"
