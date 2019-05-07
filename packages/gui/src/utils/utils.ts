@@ -13,7 +13,6 @@ import {
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 import { IExecutingInject } from '../models';
-import { LineString } from 'trial-manager-models/node_modules/.registry.npmjs.org/@types/geojson/7946.0.7/node_modules/@types/geojson';
 import { LatLngExpression } from 'leaflet';
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */

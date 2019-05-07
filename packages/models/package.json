@@ -17,7 +17,7 @@
     "url": "git+https://github.com/DRIVER-EU/scenario-manager.git"
   },
   "dependencies": {
-    "@types/geojson": "^7946.0.6",
+    "@types/geojson": "^7946.0.7",
     "typescript": "^3.4.5"
   }
 }
