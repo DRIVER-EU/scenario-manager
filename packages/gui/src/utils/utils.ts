@@ -194,12 +194,12 @@ export const executionIcon = (inject: IExecutingInject) => {
   switch (inject.state) {
     case InjectState.EXECUTED:
       return 'check';
-    case InjectState.IN_PROGRESS:
+    case InjectState.SCHEDULED:
       return inject.condition && inject.condition.type === InjectConditionType.MANUALLY ? 'pause' : 'play_arrow';
     case InjectState.ON_HOLD:
       return 'pan_tool';
-    case InjectState.SCHEDULED:
-      return 'schedule';
+    case InjectState.IN_PROGRESS:
+      return 'directions_run';
     default:
       return 'stop';
   }
