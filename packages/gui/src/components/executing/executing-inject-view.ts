@@ -1,9 +1,11 @@
 import m, { FactoryComponent } from 'mithril';
-import { deepCopy } from 'trial-manager-models';
+import { deepCopy, InjectType } from 'trial-manager-models';
 import { executingChannel, TopicNames, IExecutingInject } from '../../models';
 import { Icon } from 'mithril-materialized';
-import { getMessageIcon, getMessageTitle } from '../../utils';
+import { getMessageIcon, getMessageTitle, getInjectIcon } from '../../utils';
 import { ExecutingMessageView } from './executing-message-view';
+import { ManualTransition } from './manual-transition';
+import { DefaultMessageForm } from '../messages';
 
 export const ExecutingInjectView: FactoryComponent = () => {
   const state = {
@@ -19,23 +21,37 @@ export const ExecutingInjectView: FactoryComponent = () => {
     },
     view: () => {
       const { inject } = state;
+      const isGroupInject = inject && inject.type !== InjectType.INJECT;
 
       return m('.injects-form', [
         m(
           '.row',
           m(
-            '. col.s12',
+            '.col.s12',
             inject
-              ? [
-                  m('h4', [
-                    m(Icon, {
-                      iconName: getMessageIcon(inject.messageType),
-                      style: 'margin-right: 12px;',
-                    }),
-                    getMessageTitle(inject.messageType),
-                  ]),
-                  m(ExecutingMessageView, { inject }),
-                ]
+              ? isGroupInject
+                ? [
+                    m(ManualTransition, { inject, key: inject.id }),
+                    m('h4', [
+                      m(Icon, {
+                        iconName: getInjectIcon(inject.type),
+                        style: 'margin-right: 12px;',
+                      }),
+                      inject.title,
+                    ]),
+                    m(DefaultMessageForm, { inject, disabled: true }),
+                    // m('')
+                  ]
+                : [
+                    m('h4', [
+                      m(Icon, {
+                        iconName: getMessageIcon(inject.messageType),
+                        style: 'margin-right: 12px;',
+                      }),
+                      getMessageTitle(inject.messageType),
+                    ]),
+                    m(ExecutingMessageView, { inject }),
+                  ]
               : undefined
           )
         ),

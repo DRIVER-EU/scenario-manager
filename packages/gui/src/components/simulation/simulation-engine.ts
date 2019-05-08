@@ -31,7 +31,7 @@ export const simulationEngine = (
       .filter(at => {
         const { id, delayInMSec } = at;
         const injectState = injectStates[id];
-        if (!injectState || injectState.state !== InjectState.IN_PROGRESS) {
+        if (!injectState || injectState.state !== InjectState.SCHEDULED) {
           return false;
         }
         const { lastTransitionAt } = injectState;
@@ -41,7 +41,7 @@ export const simulationEngine = (
       .map(at => injectStates[at.id])
       .forEach(i => {
         i.lastTransitionAt = curTime;
-        i.state = InjectState.EXECUTED;
+        i.state = InjectState.IN_PROGRESS;
       });
 
   const trialStart = scenario.startDate

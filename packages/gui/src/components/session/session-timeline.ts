@@ -1,6 +1,14 @@
 import m, { FactoryComponent } from 'mithril';
 import { SocketSvc, TrialSvc } from '../../services';
-import { InjectState, IInject, InjectType, deepEqual, getAncestors, IInjectSimStates } from 'trial-manager-models';
+import {
+  InjectState,
+  IInject,
+  InjectType,
+  deepEqual,
+  getAncestors,
+  IInjectSimStates,
+  InjectConditionType,
+} from 'trial-manager-models';
 import { Timeline, ITimelineItem, Icon } from 'mithril-materialized';
 import { padLeft, getIcon, executionIcon } from '../../utils';
 import { IExecutingInject } from '../../models/executing-inject';
@@ -10,7 +18,7 @@ export const SessionTimelineView: FactoryComponent = () => {
   const timeFormatter = (d: Date) =>
     `${padLeft(d.getUTCHours())}:${padLeft(d.getUTCMinutes())}:${padLeft(d.getUTCSeconds())}`;
   const isNoGroupInject = (i: IInject) => i.type === InjectType.INJECT;
-  const activeInjectState = (is: InjectState) => is === InjectState.EXECUTED || is === InjectState.IN_PROGRESS;
+  const activeInjectState = (is: InjectState) => is === InjectState.EXECUTED || is === InjectState.SCHEDULED;
 
   const state = {
     injects: [] as IInject[],
@@ -23,11 +31,14 @@ export const SessionTimelineView: FactoryComponent = () => {
   // TODO What do we do when the user opened the wrong trial, i.e. not the one that is running?
   // Automatically load it for him?
 
+  const waitingForManualConfirmation = (i: IExecutingInject) =>
+    i.state === InjectState.SCHEDULED && i.condition && i.condition.type === InjectConditionType.MANUALLY;
+
   return {
     oninit: () => {
       const { socket } = state;
       const injects = TrialSvc.getInjects() || [];
-      state.injects = injects.filter(isNoGroupInject);
+      state.injects = injects; // .filter(isNoGroupInject);
       state.injectNames = state.injects.reduce(
         (acc, cur) => {
           const ancestors = getAncestors(injects, cur);
@@ -67,7 +78,7 @@ export const SessionTimelineView: FactoryComponent = () => {
       };
 
       const executingInjects = injects
-        .filter(i => i.type === InjectType.INJECT)
+        // .filter(i => i.type === InjectType.INJECT)
         .filter(i => injectStates.hasOwnProperty(i.id) && activeInjectState(injectStates[i.id].state))
         .map(
           i =>
@@ -76,9 +87,10 @@ export const SessionTimelineView: FactoryComponent = () => {
               ...i,
             } as IExecutingInject)
         )
+        .filter(i => waitingForManualConfirmation || i.type === InjectType.INJECT)
         .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1));
       const items = executingInjects
-        .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1))
+        // .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1))
         .map(
           i =>
             ({

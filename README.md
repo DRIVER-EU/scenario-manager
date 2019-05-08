@@ -36,17 +36,21 @@ pnpm m i
 npm start
 ```
 
+## State management
+
+During execution, all messages (a.k.a. injects) are pass through 5 states:
+
+- Initially, they are ON_HOLD, except the main scenario (root), which is IN_PROGRESS
+- When a message's parent is IN_PROGRESS, and it satisfies all timing conditions, it can transition to SCHEDULED.
+- A SCHEDULED message, if it does not require manual confirmation, will automatically transition to IN_PROGRESS.
+- A message that requires manual confirmation will wait for that: it will transition to IN_PROGRESS after receiving the confirmation (via the REST interface).
+- An inject message IN_PROGRESS will be executed, which will make it transition to EXECUTED.
+- A group (act, storyline) message will transition to EXECUTED when all of its children are EXECUTED too.
+- There is a fifth state, CANCELLED, but that hasn't been implemented yet.
+
 ## TODO
 
-- Add simulation-state views for all messages upon selection.
-- Add role-player message with manual confirmation (when done).
-  - Execute these messages, with an optional comment.
-- Add markdown editor (using marked) for inject description.
-- Add simple map editor (mapbox?) for editing/viewing locations.
-- Add CAP message.
 - Add Tactical Simulation Object (EMSI) message.
-- Add settings/locations e.g. address and WGS84. May also be a route or area. Has alias, title, description.
-  - Single GeoJSON feature for now.
 - Add settings/items (e.g. buildings, vehicles, weapons, etc.)
   - Properties: Alias, title, description, picture.
   - Buildings may have occupants

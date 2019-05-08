@@ -76,6 +76,7 @@ export const transitionInjects = (
   const onHold = (i: IInject) => states[i.id].state === InjectState.ON_HOLD;
   const parentInProgress = (i: IInject) => i.parentId && states[i.parentId].state === InjectState.IN_PROGRESS;
   const isScheduled = (i: IInject) => states[i.id].state === InjectState.SCHEDULED;
+  const notManual = (i: IInject) => !i.condition || i.condition.type !== InjectConditionType.MANUALLY;
   const passCondition = (i: IInject) => {
     if (!i.condition) {
       return true;
@@ -93,13 +94,13 @@ export const transitionInjects = (
       if (type === InjectConditionType.IMMEDIATELY) {
         return true;
       }
-      if (type === InjectConditionType.MANUALLY) {
-        console.table({ type, delay, delayUnitType, injectId, injectState });
-        console.table({ state, lastTransitionAt });
-        console.table(i.condition);
-        return true;
-      }
-      if (type === InjectConditionType.DELAY) {
+      // if (type === InjectConditionType.MANUALLY) {
+      //   console.table({ type, delay, delayUnitType, injectId, injectState });
+      //   console.table({ state, lastTransitionAt });
+      //   console.table(i.condition);
+      //   return true;
+      // }
+      if (type === InjectConditionType.DELAY || type === InjectConditionType.MANUALLY) {
         const time = lastTransitionAt.valueOf() + toMsec(delay, delayUnitType);
         return trialTimeValue >= time;
       }
@@ -112,12 +113,13 @@ export const transitionInjects = (
     injects
       .filter(onHold)
       .filter(parentInProgress)
+      .filter(passCondition)
       .forEach(transitionTo(InjectState.SCHEDULED));
 
     // Injects that are SCHEDULED and pass all conditions, transition them to IN_PROGRESS
     injects
       .filter(isScheduled)
-      .filter(passCondition)
+      .filter(notManual)
       .forEach(transitionTo(InjectState.IN_PROGRESS));
 
     // Injects that are a group (scenario, storyline and act), that are still in progress,
@@ -164,7 +166,7 @@ export const executeInjects = (
 
   injects
     .filter(actionableInjectFilter)
-    .filter(nonManualInjects)
+    // .filter(nonManualInjects)
     .forEach(i => {
       if (executionService) {
         executionService.execute(i);

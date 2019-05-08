@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { MessageType, InjectType, InjectState } from 'trial-manager-models';
+import { MessageType, InjectType, InjectState, InjectConditionType } from 'trial-manager-models';
 import { IExecutingInject } from '../../models';
 import {
   RolePlayerMessageView,
@@ -13,6 +13,7 @@ import {
   RequestUnitTransportForm,
   SetAffectedAreaForm,
 } from '../messages';
+import { ManualTransition } from './manual-transition';
 
 export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject }> = () => {
   const disabled = true;
@@ -45,6 +46,11 @@ export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject 
 
   return {
     view: ({ attrs: { inject } }) =>
-      inject ? (inject.type === InjectType.INJECT ? getMessageForm(inject) : undefined) : undefined,
+      inject
+        ? [
+            m(ManualTransition, { inject, key: inject.id }),
+            inject.type === InjectType.INJECT ? getMessageForm(inject) : undefined,
+          ]
+        : undefined,
   };
 };
