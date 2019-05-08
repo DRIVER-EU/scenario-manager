@@ -32,7 +32,7 @@ Optionally, you may need to satisfy certain conditions:
 
 For regular injects:
 
-- Start manually (after the previous inject)
+- Start manually (after some time after the previous inject)
 - Start immediately (after the previous inject)
 - Start after 5 minutes (after the previous inject)
 
@@ -106,7 +106,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
                 m('span.inline', ' after '),
                 m(Select, {
                   placeholder: 'Pick one',
-                  className: 'inline small',
+                  className: 'inline',
                   checkedId: condition.injectId,
                   options: previousInjectOptions,
                   onchange: (v: string) => (condition.injectId = v),
@@ -130,7 +130,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
 const Delay: FactoryComponent<{ condition: IInjectCondition }> = () => {
   return {
     view: ({ attrs: { condition } }) =>
-      condition.type === InjectConditionType.DELAY
+      condition.type === InjectConditionType.DELAY || condition.type === InjectConditionType.MANUALLY
         ? [
             m(NumberInput, {
               className: 'inline xs',
