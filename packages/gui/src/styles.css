@@ -189,3 +189,7 @@ nav .brand-logo {
     line-height: 40px;
   }
 }
+
+i.material-icons {
+  vertical-align: bottom;
+}
