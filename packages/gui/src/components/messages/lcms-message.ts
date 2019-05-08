@@ -135,7 +135,7 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
             m(Label, { label: 'Sections' }),
             m(FlatButton, {
               iconName: 'add',
-              disabled: parameters.filter(p => p.valueName === 'New section').length > 0,
+              disabled: disabled || parameters.filter(p => p.valueName === 'New section').length > 0,
               onclick: () => {
                 state.parameters.push({ valueName: 'New section', value: 'Click me to change' });
               },
@@ -148,6 +148,7 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
               .map((p, i) => {
                 return [
                   m(TextInput, {
+                    disabled,
                     label: `Section ${i + 1}. Title`,
                     initialValue: p.valueName,
                     onchange: t => (p.valueName = t),
@@ -156,6 +157,7 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
                     m('div', [
                       m(Label, { label: `Section ${i + 1}. Content` }),
                       m(FlatButton, {
+                        disabled,
                         iconName: 'delete',
                         onclick: () => {
                           state.parameters = parameters.filter(c => c.valueName === p.valueName);
@@ -163,6 +165,7 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
                       }),
                     ]),
                     m(MarkdownEditor, {
+                      disabled,
                       markdown: p.value,
                       onchange: (_, html) => (p.value = html),
                     } as IMarkdownEditor),
