@@ -8,9 +8,8 @@ import {
   IRolePlayerMsg,
   RolePlayerMessageType,
   IPerson,
-  InjectState,
 } from 'trial-manager-models';
-import { TrialSvc, RunSvc } from '../../services';
+import { TrialSvc } from '../../services';
 import { IExecutingInject } from '../../models';
 import { createEmailLink, createPhoneLink, getMessageIcon, getRolePlayerMessageIcon } from '../../utils';
 
@@ -149,38 +148,20 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject;
       const participants = TrialSvc.getUsers().filter(u =>
         rpm.participantIds && rpm.participantIds.indexOf(u.id) >= 0 ? true : false
       );
-      return m(
-        '.row',
-        m('.col.s12', [
-          m('h5', [
-            m(Icon, { iconName: getRolePlayerMessageIcon(rpm.type) }),
-            `${rpm.title} [${rolePlayer.name}]`,
-          ]),
+      return [
+        m(
+          '.row',
+          m(
+            '.col.s12',
+            m('h5', [m(Icon, { iconName: getRolePlayerMessageIcon(rpm.type) }), `${rpm.title} [${rolePlayer.name}]`])
+          )
+        ),
+        m('.row', m('.col.s12', [
           rpm.headline ? [m('h6', 'Headline'), m('p', m('i', rpm.headline))] : undefined,
           rpm.description ? [m('h6', 'Description'), m('p', rpm.description)] : undefined,
           msgDetails(rpm, rolePlayer, participants),
-          // // TODO Where do we store the comments, and can we retrieve them afterwards.
-          // disabled
-          //   ? undefined
-          //   : [
-          //       // m('h6', 'Comments'),
-          //       // // m(TextArea, {
-          //       // //   id: 'comments',
-          //       // //   // initialValue: ,
-          //       // //   // onchange: (v: string) => (inject.description = rpm.headline = v),
-          //       // //   label: 'Comments',
-          //       // //   iconName: 'note',
-          //       // // }),
-          //       m(FlatButton, {
-          //         iconClass: 'check_circle',
-          //         label: 'Done',
-          //         onclick: () => {
-          //           RunSvc.transition({ id: inject.id, from: inject.state, to: InjectState.EXECUTED });
-          //         },
-          //       }),
-          //     ],
-        ])
-      );
+        ])),
+      ];
     },
   };
 };
