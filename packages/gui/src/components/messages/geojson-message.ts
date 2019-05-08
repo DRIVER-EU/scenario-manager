@@ -1,28 +1,45 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
 import { getMessage, IAsset, IInject, MessageType, IGeoJsonMessage } from 'trial-manager-models';
-import { getMessageSubjects } from '../../utils';
+import { getMessageSubjects, isJSON, centerArea } from '../../utils';
 import { TrialSvc } from '../../services';
 import { UploadAsset } from '../ui';
+import { LeafletMap } from 'mithril-leaflet';
+import { geoJSON, GeoJSON } from 'leaflet';
 
 export const GeoJsonMessageForm: FactoryComponent<{
   inject: IInject;
   onChange?: () => void;
   disabled?: boolean;
 }> = () => {
-  const jsonExt = /json$/i;
+  const state = {
+    overlay: undefined,
+  } as {
+    overlay?: GeoJSON;
+  };
 
   return {
     view: ({ attrs: { inject, disabled } }) => {
+      const { overlay } = state;
       const pm = getMessage(inject, MessageType.GEOJSON_MESSAGE) as IGeoJsonMessage;
       const subjects = getMessageSubjects(MessageType.GEOJSON_MESSAGE);
       if (!pm.subjectId && subjects.length === 1) {
         pm.subjectId = subjects[0].id;
       }
       const assets = TrialSvc.assets;
-      const options = assets
-        .filter(a => a.mimetype === 'application/json' || jsonExt.test(a.filename))
-        .map(a => ({ id: a.id, label: a.alias || a.filename }));
+      const availableAssets = assets
+        .filter(a => a.mimetype === 'application/json' || isJSON(a.filename))
+        .map(a => ({ id: a.id, label: a.alias || a.filename, url: a.url }));
+      const cur = pm.assetId && availableAssets.filter(a => a.id === pm.assetId).shift();
+      if (!overlay && cur && cur.url) {
+        m.request<GeoJSON.FeatureCollection>(cur.url).then(r => {
+          const isGeoJSON = r && r.features && r.features.length > 0;
+          if (isGeoJSON) {
+            state.overlay = geoJSON(r);
+          }
+        });
+      }
+      const { view, zoom } = overlay ? centerArea(overlay) : { view: undefined, zoom: undefined };
 
       return [
         m('.row', [
@@ -55,7 +72,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
             placeholder: 'Select a geojson file',
             className: 'col s6 m4',
             checkedId: pm.assetId,
-            options,
+            options: availableAssets,
             onchange: (v: unknown) => {
               const assetId = +(v as number);
               pm.assetId = assetId;
@@ -70,27 +87,29 @@ export const GeoJsonMessageForm: FactoryComponent<{
             iconName: 'file_upload',
           }),
         ]),
-        m(TextArea, {
-          disabled,
-          id: 'desc',
-          className: 'col s10 m11',
-          initialValue: inject.description,
-          onchange: (v: string) => (inject.description = v),
-          label: 'Description',
-          iconName: 'short_text',
-        }),
-        m(FlatButton, {
-          disabled,
-          className: 'input-field col s2 m1',
-          iconName: pm.properties ? 'delete' : 'add',
-          onclick: () => {
-            if (pm.properties) {
-              delete pm.properties;
-            } else {
-              pm.properties = {};
-            }
-          },
-        }),
+        m('.row', [
+          m(TextArea, {
+            disabled,
+            id: 'desc',
+            className: 'col s10 m11',
+            initialValue: inject.description,
+            onchange: (v: string) => (inject.description = v),
+            label: 'Description',
+            iconName: 'short_text',
+          }),
+          m(FlatButton, {
+            disabled,
+            className: 'input-field col s2 m1',
+            iconName: pm.properties ? 'delete' : 'add',
+            onclick: () => {
+              if (pm.properties) {
+                delete pm.properties;
+              } else {
+                pm.properties = {};
+              }
+            },
+          }),
+        ]),
         pm.properties
           ? m(MapEditor, {
               disabled,
@@ -98,6 +117,28 @@ export const GeoJsonMessageForm: FactoryComponent<{
               iconName: 'dns',
               disallowArrays: true,
               properties: pm.properties,
+            })
+          : undefined,
+        overlay
+          ? m(LeafletMap, {
+              style: 'width: 100%; height: 400px; margin: 10px;',
+              view,
+              zoom,
+              overlays: { overlay },
+              visible: ['overlay'],
+              // editable: ['overlay'],
+              // onMapClicked: console.log,
+              showScale: { imperial: false },
+              // onLayerEdited: (f: FeatureGroup) => {
+              //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
+              //   const r = geoJSONtoRoute(geojson);
+              //   if (r) {
+              //     ut.route = r;
+              //     if (onChange) {
+              //       onChange();
+              //     }
+              //   }
+              // },
             })
           : undefined,
         m(ModalPanel, {
