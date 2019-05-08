@@ -168,8 +168,8 @@ export const getMessageTitle = (type?: MessageType) => {
       return 'ROLE PLAYER MESSAGE';
     case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
       return 'CHANGE OBSERVER QUESTIONNAIRES';
-    case MessageType.AUTOMATED_ACTION:
-      return 'AUTOMATED ACTION';
+    // case MessageType.AUTOMATED_ACTION:
+    //   return 'AUTOMATED ACTION';
     case MessageType.LCMS_MESSAGE:
       return 'LCMS MESSAGE';
     case MessageType.START_INJECT:
@@ -348,3 +348,6 @@ export const centerArea = (area: L.GeoJSON<any>) => {
         zoom: 4,
       };
 };
+
+/** Test if the filename represents a GeoJSON (based on the extension) */
+export const isJSON = (s: string) => /\.json$|\.geojson$/.test(s);

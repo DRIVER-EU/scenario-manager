@@ -5,7 +5,7 @@ import { assetsChannel, TopicNames } from '../../models';
 import { TrialSvc } from '../../services';
 import { geoJSON } from 'leaflet';
 import { LeafletMap } from 'mithril-leaflet';
-import { centerArea } from '../../utils';
+import { centerArea, isJSON } from '../../utils';
 
 export const AssetsForm = () => {
   const state = {
@@ -24,7 +24,7 @@ export const AssetsForm = () => {
       } else {
         state.asset = cur ? deepCopy(cur) : undefined;
         state.original = cur ? deepCopy(cur) : undefined;
-        if (isJSON.test(cur.filename) && cur.url) {
+        if (isJSON(cur.filename) && cur.url) {
           m.request(cur.url).then(r => {
             state.json = r;
             const isGeoJSON = state.json && state.json.features && state.json.features.length > 0;
@@ -41,7 +41,6 @@ export const AssetsForm = () => {
     const { asset, files } = state;
     TrialSvc.saveAsset(asset, files);
   };
-  const isJSON = new RegExp(/\.json$|\.geojson$/);
 
   return {
     oninit: () => {
