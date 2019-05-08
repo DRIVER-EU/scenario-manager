@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
 import { TimeState, SimulationState, ITimeMessage } from 'trial-manager-models';
+import { AppState } from '../models';
 
 // tslint:disable-next-line:no-console
 const log = console.log;
@@ -10,12 +11,7 @@ const setupSocket = () => {
     return socket;
   }
 
-  socket = io(
-    'http://localhost:3000'
-    // {
-    // path: '/time-service/socket.io/',
-    // }
-  );
+  socket = io(AppState.apiService);
 
   socket.on('connect', () => {
     log('Connected');
