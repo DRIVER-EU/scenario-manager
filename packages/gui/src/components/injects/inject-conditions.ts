@@ -77,9 +77,9 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
       }
       return m(
         '.row',
-        m('.col.s12', [
+        m('.col.s12.input-field', [
           // m('h5', 'Start condition'),
-          m(Icon, { iconName: 'playlist_play', class: 'small', style: 'margin: 0 0.5em;' }),
+          // m(Icon, { iconName: 'playlist_play', class: 'small', style: 'margin: 0 0.5em;' }),
           m('span.inline', 'Start '),
           m(Select, {
             style: 'width: 70px',
