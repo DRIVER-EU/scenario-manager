@@ -37,7 +37,6 @@ export const InjectsTimeline: FactoryComponent = () => {
     view: () => {
       const injects = TrialSvc.getInjects() || [];
       const onClick = (item: ITimelineItem) => {
-        console.warn('clicked');
         const inject = injects.filter(i => i.id === item.id).shift();
         if (inject && inject.type !== InjectType.INJECT) {
           inject.isOpen = !inject.isOpen;
