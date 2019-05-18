@@ -4,8 +4,6 @@ import { TrialSvc } from '../../services';
 import { InjectType, IInjectGroup, IInject, toMsec, IScenario, InjectState } from 'trial-manager-models';
 
 export const InjectsTimeline: FactoryComponent = () => {
-  const onClick = (item: ITimelineItem) => console.log(`Clicked ${item.title}`);
-
   const injectToTimelineItem = (i: IInject | IInjectGroup) => {
     const { id, title, parentId, isOpen, condition } = i;
     return {
@@ -38,22 +36,32 @@ export const InjectsTimeline: FactoryComponent = () => {
   return {
     view: () => {
       const injects = TrialSvc.getInjects() || [];
+      const onClick = (item: ITimelineItem) => {
+        console.warn('clicked');
+        const inject = injects.filter(i => i.id === item.id).shift();
+        if (inject && inject.type !== InjectType.INJECT) {
+          inject.isOpen = !inject.isOpen;
+          m.redraw();
+        }
+      };
+
       const scenarios: IScenario[] = injects ? injects.filter(i => i.type === InjectType.SCENARIO) : [];
       return m(
         '.row.timeline',
-        scenarios.map(scenario =>
-          scenario.isOpen
-            ? m(
-                '.col.s12',
-                m(ScenarioTimeline, {
-                  lineHeight: 31,
-                  timeline: scenarioToTimelineItems(scenario, injects),
-                  onClick,
-                  scenarioStart: new Date(scenario.startDate || new Date()),
-                })
-              )
-            : undefined
-            // : m('.scenario-title', scenario.title)
+        scenarios.map(
+          scenario =>
+            scenario.isOpen
+              ? m(
+                  '.col.s12',
+                  m(ScenarioTimeline, {
+                    lineHeight: 31,
+                    timeline: scenarioToTimelineItems(scenario, injects),
+                    onClick,
+                    scenarioStart: new Date(scenario.startDate || new Date()),
+                  })
+                )
+              : undefined
+          // : m('.scenario-title', scenario.title)
         )
       );
     },
