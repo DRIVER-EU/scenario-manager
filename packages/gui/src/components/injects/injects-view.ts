@@ -16,7 +16,7 @@ export const InjectsView = () => {
               m(
                 'ul.tabs',
                 {
-                  style: 'margin-top: 10px;', // to align with the filter
+                  style: 'margin-top: 12px;', // to align with the filter
                   // https://github.com/Dogfalo/materialize/issues/4159 when swipeable is true
                   oncreate: ({ dom }) => M.Tabs.init(dom, { swipeable: false }),
                 },
