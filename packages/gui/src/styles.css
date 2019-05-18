@@ -140,7 +140,7 @@ span.inline {
 }
 .col.sb.large,
 .row.sb.large {
-  height: 87vh;
+  height: 83vh;
 }
 .mm_label > ul.collection > li.collection-item {
   background: transparent;
@@ -192,4 +192,8 @@ nav .brand-logo {
 
 i.material-icons {
   vertical-align: bottom;
+}
+
+.mst__title {
+  min-width: 400px;
 }

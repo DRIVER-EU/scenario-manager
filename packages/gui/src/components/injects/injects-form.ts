@@ -48,7 +48,8 @@ export const InjectsForm: FactoryComponent = () => {
         inject
           ? [
               m(
-                '.row.sb.large', { style: 'padding-bottom: 10px;' }, 
+                '.row',
+                { style: 'padding-bottom: 10px;' },
                 m('.col.s12', [
                   inject.type === InjectType.INJECT
                     ? m(Select, {

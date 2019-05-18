@@ -26,6 +26,7 @@
     "mithril-leaflet": "^0.1.2",
     "mithril-markdown": "^0.2.1",
     "mithril-materialized": "^0.11.10",
+    "mithril-scenario-timeline": "^0.0.5",
     "mithril-table": "^0.2.0",
     "mithril-tree-component": "^0.6.3",
     "recursive": "^0.0.2",
@@ -48,6 +49,6 @@
     "typescript": "^3.4.5",
     "webpack": "^4.31.0",
     "webpack-cli": "^3.3.2",
-    "webpack-dev-server": "^3.3.1"
+    "webpack-dev-server": "^3.4.1"
   }
 }

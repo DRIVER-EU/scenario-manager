@@ -134,7 +134,7 @@ export const InjectsList = () => {
                 className: 'right',
               })
             ),
-            m('.col.s12.sb.large', m(TreeContainer, { tree: filteredInjects, options })),
+            m('.col.s12', m(TreeContainer, { tree: filteredInjects, options })),
           ])
         : undefined;
     },

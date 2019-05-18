@@ -69,6 +69,8 @@ export interface IInject extends IContent {
   };
   /** Inject validation state */
   isValid?: InjectValidationState;
+  /** For the tree view, indicate if we should see the children */
+  isOpen?: boolean;
 }
 
 export interface IInjectGroup extends IInject {
