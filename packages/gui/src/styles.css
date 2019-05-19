@@ -197,3 +197,43 @@ i.material-icons {
 .mst__title {
   min-width: 400px;
 }
+
+.html-area ul {
+  padding-left: 40px;
+}
+
+.html-area ul > li {
+  list-style-type: square;
+}
+
+.html-area h2,
+.html-area h1 { 
+  display: block;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.html-area h1 { 
+  font-size: 2em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+}
+
+.html-area h2 {
+  font-size: 1.5em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+}
+
+.html-area h3 { 
+  font-size: 1.17em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.html-arae h4 { 
+  font-size: 1em;
+  margin-top: 1.33em;
+  margin-bottom: 1.33em;
+}

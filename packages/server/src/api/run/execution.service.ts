@@ -19,9 +19,11 @@ import {
   IRequestUnitTransport,
   IAffectedArea,
   ISumoConfiguration,
+  IValueNamePair,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
+import { parse } from '../../utils';
 
 @Injectable()
 export class ExecutionService implements IExecutionService {
@@ -43,6 +45,8 @@ export class ExecutionService implements IExecutionService {
         this.sendGeoJSON(i);
         break;
       case MessageType.LCMS_MESSAGE:
+        this.sendLCMS(i);
+        break;
       case MessageType.CAP_MESSAGE:
         this.sendCAP(i);
         break;
@@ -104,10 +108,37 @@ export class ExecutionService implements IExecutionService {
     this.kafkaService.sendMessage(msg, topic);
   }
 
+  private async sendLCMS(i: IInject) {
+    const message = getMessage<IAlert>(i, MessageType.CAP_MESSAGE);
+    const topic = 'standard_cap';
+    if (message.info) {
+      const info =
+        message.info instanceof Array ? message.info[0] : message.info;
+      const parameters =
+        info.parameter instanceof Array ? info.parameter : [info.parameter];
+      info.parameter = parameters.map(
+        p =>
+          ({
+            valueName: p.valueName,
+            value: parse(p.value),
+          } as IValueNamePair),
+      );
+      message.info = info;
+    }
+    const cap = convertCAPtoAVRO(
+      message,
+      new Date(this.kafkaService.timeMessage.trialTime),
+    );
+    this.kafkaService.sendMessage(cap, topic);
+  }
+
   private async sendCAP(i: IInject) {
     const message = getMessage<IAlert>(i, MessageType.CAP_MESSAGE);
     const topic = 'standard_cap';
-    const cap = convertCAPtoAVRO(message, new Date(this.kafkaService.timeMessage.trialTime));
+    const cap = convertCAPtoAVRO(
+      message,
+      new Date(this.kafkaService.timeMessage.trialTime),
+    );
     this.kafkaService.sendMessage(cap, topic);
   }
 
@@ -139,8 +170,14 @@ export class ExecutionService implements IExecutionService {
     this.kafkaService.sendPhaseMessage(msg);
   }
 
-  private async sendChangeObserverQuestionnairesMessage(i: IInject, comment?: string) {
-    const msg = getMessage(i, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES) as IOstStageChangeMessage;
+  private async sendChangeObserverQuestionnairesMessage(
+    i: IInject,
+    comment?: string,
+  ) {
+    const msg = getMessage(
+      i,
+      MessageType.CHANGE_OBSERVER_QUESTIONNAIRES,
+    ) as IOstStageChangeMessage;
     this.kafkaService.sendOstStageChangeRequestMessage(msg);
   }
 
@@ -150,7 +187,10 @@ export class ExecutionService implements IExecutionService {
   }
 
   private async sendRequestUnitTransport(i: IInject, comment?: string) {
-    const msg = getMessage(i, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestUnitTransport;
+    const msg = getMessage(
+      i,
+      MessageType.REQUEST_UNIT_TRANSPORT,
+    ) as IRequestUnitTransport;
     this.kafkaService.sendRequestUnitTransport(msg);
   }
 
@@ -160,7 +200,10 @@ export class ExecutionService implements IExecutionService {
   }
 
   private async sendSumoConfiguration(i: IInject, comment?: string) {
-    const msg = getMessage(i, MessageType.SUMO_CONFIGURATION) as ISumoConfiguration;
+    const msg = getMessage(
+      i,
+      MessageType.SUMO_CONFIGURATION,
+    ) as ISumoConfiguration;
     this.kafkaService.sendSumoConfiguration(msg);
   }
 

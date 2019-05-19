@@ -167,7 +167,7 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
                     m(MarkdownEditor, {
                       disabled,
                       markdown: p.value,
-                      onchange: (_, html) => (p.value = html),
+                      onchange: md => (p.value = md),
                     } as IMarkdownEditor),
                   ]),
                 ];
