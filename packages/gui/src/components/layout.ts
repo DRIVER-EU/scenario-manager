@@ -9,6 +9,14 @@ export const Layout: FactoryComponent<{}> = () => {
   return {
     view: vnode => {
       const curRoute = m.route.get();
+      console.log(curRoute);
+      const mainPath = (path: string) => {
+        const subs = path.split('/');
+        if (subs.length > 2) {
+          subs.pop();
+        }
+        return subs.join('/');
+      };
       const isActive = (path: string) => (curRoute.indexOf(path) >= 0 ? '.active' : '');
       const curDashboard = dashboardSvc.getCurrent(curRoute);
       const subDashboards = curDashboard ? dashboardSvc.getList(curDashboard.level || curDashboard.id) : [];
@@ -32,7 +40,7 @@ export const Layout: FactoryComponent<{}> = () => {
                 .filter(d => d.visible)
                 .map(d =>
                   m(
-                    `li${isActive(d.route)}`,
+                    `li${isActive(mainPath(d.route))}`,
                     m(
                       'a',
                       { href: d.route, oncreate: m.route.link },
