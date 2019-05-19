@@ -12,7 +12,8 @@ export const StatusBar: FactoryComponent<null> = () => {
   };
   const updateTime = (time: ITimeMessage) => {
     // console.log(`Status-bar updateTime: ` + JSON.stringify(time));
-    (sbState.receivedTime = Date.now()), (AppState.time = deepCopy(time));
+    sbState.receivedTime = Date.now();
+    AppState.time = deepCopy(time);
   };
   const progressTime = (dom: Element) => () => {
     const now = Date.now();
@@ -38,9 +39,7 @@ export const StatusBar: FactoryComponent<null> = () => {
 
     const dt = new Date(trialTime);
     return m('.statusbar.center-align', [
-      host && isConnected
-        ? [m('span', `Connected to ${AppState.sessionControl.host}`), m('span', '|')]
-        : undefined,
+      host && isConnected ? [m('span', `Connected to ${AppState.sessionControl.host}`), m('span', '|')] : undefined,
       m('span', state),
       m('span', '|'),
       m('span', hasTimeInfo ? `${trialTimeSpeed}x` : ''),
