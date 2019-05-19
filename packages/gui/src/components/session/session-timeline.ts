@@ -15,6 +15,8 @@ import {
 import { IExecutingInject } from '../../models/executing-inject';
 import { TopicNames, AppState, executingChannel } from '../../models';
 import { ScenarioTimeline, ITimelineItem } from 'mithril-scenario-timeline';
+import { Icon } from 'mithril-materialized';
+import { getIcon } from '../../utils';
 
 export const SessionTimelineView: FactoryComponent = () => {
   const state = {
@@ -44,13 +46,27 @@ export const SessionTimelineView: FactoryComponent = () => {
     }, 1000);
   };
 
-  const injectToTimelineItem = (i: IExecutingInject) => {
-    const { id, title, parentId, isOpen, condition } = i;
+  const titleView: FactoryComponent<{ item: ITimelineItem }> = () => {
     return {
-      id,
-      title,
-      parentId,
-      isOpen,
+      view: ({ attrs: { item } }) => {
+        const { title, highlight } = item;
+        const inject = item as IInject;
+        return m('div', { className: highlight ? 'red-text' : '' }, [
+          m(Icon, {
+            style: 'vertical-align: middle; margin-right: 5px;',
+            iconName: getIcon(inject),
+            className: 'tiny',
+          }),
+          m('span', `Custom title: ${title}`),
+        ]);
+      },
+    };
+  };
+
+  const injectToTimelineItem = (i: IExecutingInject) => {
+    const { condition } = i;
+    return {
+      ...i,
       completed: i.state === InjectState.EXECUTED ? 1 : 0,
       highlight: waitingForManualConfirmation(i),
       delay: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
@@ -136,7 +152,9 @@ export const SessionTimelineView: FactoryComponent = () => {
       const scenarioStartTime =
         activeScenario && activeScenario.state !== InjectState.EXECUTED
           ? new Date(activeScenario.lastTransitionAt)
-          : new Date(0);
+          : AppState.scenarioStartTime;
+      AppState.scenarioStartTime = scenarioStartTime;
+
       return m('.row', [
         activeScenario
           ? m(
@@ -146,6 +164,7 @@ export const SessionTimelineView: FactoryComponent = () => {
                 timeline: scenarioToTimelineItems(activeScenario, executingInjects),
                 onClick,
                 time,
+                titleView,
                 scenarioStart: new Date(scenarioStartTime),
               })
             )
