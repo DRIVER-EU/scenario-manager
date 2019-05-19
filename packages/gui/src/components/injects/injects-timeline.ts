@@ -5,12 +5,9 @@ import { InjectType, IInjectGroup, IInject, toMsec, IScenario, InjectState } fro
 
 export const InjectsTimeline: FactoryComponent = () => {
   const injectToTimelineItem = (i: IInject | IInjectGroup) => {
-    const { id, title, parentId, isOpen, condition } = i;
+    const { condition } = i;
     return {
-      id,
-      title,
-      parentId,
-      isOpen,
+      ...i,
       delay: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
       dependsOn:
         condition && condition.injectId
