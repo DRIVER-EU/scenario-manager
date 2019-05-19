@@ -26,23 +26,15 @@ export const ObjectivesList = () => {
     } as Component<ITreeItemViewComponent>,
     onSelect: (ti, isSelected) => objectiveSelected(ti as IObjective, isSelected),
     onBeforeCreate: ti => {
-      console.log(`On before create ${ti.title}`);
       TrialSvc.createObjective(ti as IObjective);
     },
     onCreate: ti => {
-      console.log(`On create ${ti.title}`);
       objectiveChannel.publish(TopicNames.ITEM_SELECT, { cur: ti as IObjective });
-      // ScenarioSvc.createObjective(ti as IObjective);
     },
-    onBeforeDelete: ti => console.log(`On before delete ${ti.title}`),
     onDelete: async ti => {
-      console.log(`On delete ${ti.title}`);
       TrialSvc.deleteObjective(ti as IObjective);
     },
-    onBeforeUpdate: (ti, action, newParent) =>
-      console.log(`On before ${action} update ${ti.title} to ${newParent ? newParent.title : ''}.`),
     onUpdate: (ti, action) => {
-      console.log(`On update ${ti.title}`);
       if (!ti.parentId) {
         ti.parentId = '';
       }
@@ -66,14 +58,15 @@ export const ObjectivesList = () => {
   } as ITreeOptions;
 
   const objectiveSelected = (selected?: IObjective, isSelected?: boolean) => {
-    if (!selected) { return; }
+    if (!selected) {
+      return;
+    }
     state.selected = selected;
     objectiveChannel.publish(TopicNames.ITEM_SELECT, isSelected ? { cur: selected } : { cur: {} as IObjective });
   };
 
   return {
     oninit: () => {
-      console.log('Oninit objectives-view called...');
       const loadObjectives = async () => {
         const trial = TrialSvc.getCurrent();
         state.trialId = trial.id;
@@ -104,7 +97,7 @@ export const ObjectivesList = () => {
                 id: 'filter',
                 iconName: 'filter_list',
                 initialValue: state.filterValue,
-                onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+                onkeyup: (_: KeyboardEvent, v?: string) => (state.filterValue = v),
                 className: 'right',
               })
             ),
