@@ -1,10 +1,9 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimePicker, DatePicker, FlatButton, ModalPanel } from 'mithril-materialized';
 import { TimeState, IScenario, ITimeMessage, ITimingControlMessage, TimingControlCommand } from 'trial-manager-models';
-import { SocketSvc } from '../../services';
+import { SocketSvc, RunSvc } from '../../services';
 import { formatTime, padLeft } from '../../utils';
 import { timeControlChannel, TopicNames } from '../../models';
-import { RunSvc } from './../../services/run-service';
 
 const sendCmd = (socket: SocketIOClient.Socket, msg: ITimingControlMessage) => {
   socket.emit('time-control', msg);
@@ -210,7 +209,10 @@ const MediaStateControl: FactoryComponent<{
             m(FlatButton, {
               label: 'Reset time',
               // iconName: 'timer_off',
-              onclick: () => sendCmd(socket, { command: TimingControlCommand.Reset }),
+              onclick: () => {
+                sendCmd(socket, { command: TimingControlCommand.Reset });
+                RunSvc.unload();
+              },
             })
           );
       }
