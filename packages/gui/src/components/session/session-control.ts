@@ -78,7 +78,7 @@ export const SessionControl: FactoryComponent = () => {
     const {
       time: { state: timeState, trialTimeSpeed },
     } = state;
-    console.log('Time msg received: ' + JSON.stringify(tm));
+    // console.log('Time msg received: ' + JSON.stringify(tm));
     if (timeState !== tm.state || trialTimeSpeed !== tm.trialTimeSpeed) {
       state.time = tm;
       m.redraw();
@@ -108,7 +108,10 @@ export const SessionControl: FactoryComponent = () => {
               AppState.session = session;
               setScenario(session);
               if (TrialSvc.getCurrent().id !== session.trialId) {
-                console.warn(`The Test-bed is currently running another trial: ${session.trialName}`);
+                M.toast({
+                  html: `The Test-bed is currently running another trial: ${session.trialName}`,
+                  classes: 'orange',
+                });
               }
               m.redraw();
             })
