@@ -5,26 +5,24 @@ import {
   IInject,
   InjectType,
   deepEqual,
-  getAncestors,
   IInjectSimStates,
   InjectConditionType,
+  // IInjectGroup,
+  toMsec,
+  ITimeMessage,
 } from 'trial-manager-models';
-import { Timeline, ITimelineItem, Icon } from 'mithril-materialized';
-import { padLeft, getIcon, executionIcon } from '../../utils';
+// import { padLeft, getIcon, executionIcon } from '../../utils';
 import { IExecutingInject } from '../../models/executing-inject';
 import { TopicNames, AppState, executingChannel } from '../../models';
+import { ScenarioTimeline, ITimelineItem } from 'mithril-scenario-timeline';
 
 export const SessionTimelineView: FactoryComponent = () => {
-  const timeFormatter = (d: Date) =>
-    `${padLeft(d.getUTCHours())}:${padLeft(d.getUTCMinutes())}:${padLeft(d.getUTCSeconds())}`;
-  const isNoGroupInject = (i: IInject) => i.type === InjectType.INJECT;
-  const activeInjectState = (is: InjectState) => is === InjectState.EXECUTED || is === InjectState.SCHEDULED;
-
   const state = {
+    time: undefined as number | undefined,
+    timeInterval: undefined as number | undefined,
     injects: [] as IInject[],
-    injectNames: {} as { [key: string]: string },
+    executingInjects: [] as IExecutingInject[],
     selected: undefined as IInject | undefined,
-    selectedId: undefined as string | undefined,
     socket: SocketSvc.socket,
   };
 
@@ -34,87 +32,124 @@ export const SessionTimelineView: FactoryComponent = () => {
   const waitingForManualConfirmation = (i: IExecutingInject) =>
     i.state === InjectState.SCHEDULED && i.condition && i.condition.type === InjectConditionType.MANUALLY;
 
+  const updateTime = (t: ITimeMessage) => {
+    state.time = t.trialTime;
+  };
+
+  const time = (update: (t: number | Date) => void) => {
+    state.timeInterval = window.setInterval(() => {
+      if (state.time) {
+        update(new Date(state.time));
+      }
+    }, 1000);
+  };
+
+  const injectToTimelineItem = (i: IExecutingInject) => {
+    const { id, title, parentId, isOpen, condition } = i;
+    return {
+      id,
+      title,
+      parentId,
+      isOpen,
+      completed: i.state === InjectState.EXECUTED ? 1 : 0,
+      highlight: waitingForManualConfirmation(i),
+      delay: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
+      dependsOn:
+        condition && condition.injectId
+          ? [
+              {
+                id: condition.injectId,
+                condition: condition.injectState === InjectState.EXECUTED ? 'finished' : 'started',
+              },
+            ]
+          : undefined,
+    } as ITimelineItem;
+  };
+
+  const scenarioToTimelineItems = (scenario: IExecutingInject, items: IExecutingInject[]) => {
+    const getChildren = (id: string): IExecutingInject[] => {
+      const children = items.filter(i => i.parentId === id);
+      return children.reduce((acc, c) => [...acc, ...getChildren(c.id)], children);
+    };
+    const ti = [scenario, ...getChildren(scenario.id)].map(injectToTimelineItem);
+    // console.log(JSON.stringify(ti, null, 2));
+    return ti;
+  };
+
+  const onClick = (ti: ITimelineItem) => {
+    const { id } = ti;
+    const { injects, executingInjects } = state;
+    const inject = executingInjects.filter(i => i.id === id).shift() as IExecutingInject;
+    console.table(ti);
+    if (inject) {
+      executingChannel.publish(TopicNames.ITEM_SELECT, { cur: inject });
+      if (inject.type !== InjectType.INJECT) {
+        const selInject = injects.filter(i => i.id === inject.id).shift();
+        if (selInject) {
+          selInject.isOpen = !selInject.isOpen;
+        }
+      }
+      m.redraw();
+    }
+  };
+
   return {
     oninit: () => {
       const { socket } = state;
       const injects = TrialSvc.getInjects() || [];
       state.injects = injects; // .filter(isNoGroupInject);
-      state.injectNames = state.injects.reduce(
-        (acc, cur) => {
-          const ancestors = getAncestors(injects, cur);
-          ancestors.pop(); // Remove scenario
-          acc[cur.id] = ancestors
-            .reverse()
-            .map(i => i.title)
-            .join(' > ');
-          return acc;
-        },
-        {} as { [key: string]: string }
-      );
       socket.on('injectStates', (injectStates: IInjectSimStates) => {
         if (deepEqual(AppState.injectStates, injectStates)) {
           return;
         }
         AppState.injectStates = injectStates;
-        console.table(injectStates);
+        // console.table(injectStates);
         m.redraw();
       });
+      socket.on('time', updateTime);
     },
     onremove: () => {
       const { socket } = state;
       socket.off('injectStates');
+      socket.off('time', updateTime);
+      window.clearInterval(state.timeInterval);
     },
     view: () => {
-      const { injects, injectNames, selectedId } = state;
+      const { injects } = state;
       const { injectStates } = AppState;
-      const onSelect = (ti: ITimelineItem) => {
-        const { id } = ti;
-        state.selectedId = id;
-        const inject = executingInjects.filter(i => i.id === id).shift() as IExecutingInject;
-        if (inject) {
-          console.table(inject);
-          executingChannel.publish(TopicNames.ITEM_SELECT, { cur: inject });
-        }
-      };
 
       const executingInjects = injects
-        // .filter(i => i.type === InjectType.INJECT)
-        .filter(i => injectStates.hasOwnProperty(i.id) && activeInjectState(injectStates[i.id].state))
+        .filter(i => injectStates.hasOwnProperty(i.id))
         .map(
           i =>
             ({
               ...injectStates[i.id],
               ...i,
             } as IExecutingInject)
-        )
-        .filter(i => waitingForManualConfirmation || i.type === InjectType.INJECT)
-        .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1));
-      const items = executingInjects
-        // .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1))
-        .map(
-          i =>
-            ({
-              id: i.id,
-              active: selectedId === i.id,
-              datetime: new Date(i.lastTransitionAt),
-              iconName: getIcon(i),
-              title: m('h5', [
-                i.title,
-                m(Icon, { iconName: executionIcon(i), className: 'small', style: 'float: right;' }),
-              ]),
-              content: m('i', `From ${injectNames[i.id]}`),
-            } as ITimelineItem)
         );
+      // console.table(executingInjects);
+      state.executingInjects = executingInjects;
+      const activeScenario = executingInjects
+        ? executingInjects.filter(i => i.type === InjectType.SCENARIO).shift()
+        : undefined;
 
+      const scenarioStartTime =
+        activeScenario && activeScenario.state !== InjectState.EXECUTED
+          ? new Date(activeScenario.lastTransitionAt)
+          : new Date(0);
       return m('.row', [
-        m(
-          '.col.s12.sb.large',
-          m(Timeline, {
-            onSelect,
-            timeFormatter,
-            items,
-          })
-        ),
+        activeScenario
+          ? m(
+              '.col.s12.sb.large',
+              m(ScenarioTimeline, {
+                lineHeight: 31,
+                timeline: scenarioToTimelineItems(activeScenario, executingInjects),
+                onClick,
+                time,
+                scenarioStart: new Date(scenarioStartTime),
+              })
+            )
+          : undefined,
       ]);
     },
   };
