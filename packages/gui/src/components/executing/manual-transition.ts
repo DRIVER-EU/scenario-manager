@@ -40,7 +40,7 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject }> = 
                 className: 'right',
                 iconName: 'send',
                 iconClass: 'right',
-                label: 'Resend',
+                label: inject.state === InjectState.EXECUTED ? 'Resend' : 'Send now',
                 onclick: () => {
                   state.show = false;
                   RunSvc.transition({ id: inject.id, from: inject.state, to: InjectState.IN_PROGRESS });
