@@ -87,6 +87,7 @@ export const InjectsForm: FactoryComponent = () => {
                     m(Button, {
                       iconName: 'delete',
                       class: 'red',
+                      disabled: !TrialSvc.canDeleteInject(inject),
                       onclick: () => TrialSvc.deleteInject(inject),
                     }),
                   ]),
