@@ -28,25 +28,18 @@ export const InjectsList = () => {
     } as Component<ITreeItemViewComponent>,
     onSelect: (ti, isSelected) => injectSelected(ti as IInject, isSelected),
     onBeforeCreate: ti => {
-      // console.log(`On before create ${ti.title}`);
       TrialSvc.createInject(ti as IInject)
         .then(() => true)
         .catch(e => {
           console.error(e);
           return false;
         });
-      // injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: ti as IInject });
     },
-    // onCreate: ti => {
-    //   console.log(`On create ${ti.title}`);
-    // },
     onBeforeDelete: ti => console.log(`On before delete ${ti.title}`),
     onDelete: async ti => {
-      // console.log(`On delete ${ti.title}`);
       await TrialSvc.deleteInject(ti.id);
     },
-    onBeforeUpdate: (ti, action, newParent) => {
-      // console.log(`On before ${action} update ${ti.title} to ${newParent ? newParent.title : ''}.`);
+    onBeforeUpdate: (ti, _, newParent) => {
       const src = ti as IInject;
       const tgt = newParent as IInject;
       switch (src.type) {
@@ -61,7 +54,6 @@ export const InjectsList = () => {
       }
     },
     onUpdate: (ti, action) => {
-      // console.log(`On update ${ti.title}`);
       if (!ti.parentId) {
         ti.parentId = '';
       }
@@ -73,7 +65,6 @@ export const InjectsList = () => {
     },
     create: (parent?: IInject, depth?: number) => {
       const itemFactory: () => Partial<IInject> = () => {
-        debugger;
         if (!parent) {
           return { title: 'New scenario', type: InjectType.SCENARIO };
         }
