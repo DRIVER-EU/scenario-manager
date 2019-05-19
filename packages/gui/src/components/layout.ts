@@ -9,7 +9,6 @@ export const Layout: FactoryComponent<{}> = () => {
   return {
     view: vnode => {
       const curRoute = m.route.get();
-      console.log(curRoute);
       const mainPath = (path: string) => {
         const subs = path.split('/');
         if (subs.length > 2) {

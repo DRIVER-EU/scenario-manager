@@ -23,13 +23,14 @@ export const InjectsTimeline: FactoryComponent = () => {
           : undefined,
     } as ITimelineItem;
   };
+
   const scenarioToTimelineItems = (scenario: IInjectGroup, items: Array<IInjectGroup | IInject>) => {
     const getChildren = (id: string): Array<IInjectGroup | IInject> => {
       const children = items.filter(i => i.parentId === id);
       return children.reduce((acc, c) => [...acc, ...getChildren(c.id)], children);
     };
     const ti = [scenario, ...getChildren(scenario.id)].map(injectToTimelineItem);
-    console.log(JSON.stringify(ti, null, 2));
+    // console.log(JSON.stringify(ti, null, 2));
     return ti;
   };
 
