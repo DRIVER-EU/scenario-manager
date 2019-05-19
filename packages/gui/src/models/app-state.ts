@@ -10,6 +10,7 @@ export const AppState = {
     realtime: false,
     host: '',
   },
+  scenarioStartTime: new Date(),
   session: {
     id: 1,
     name: '',
