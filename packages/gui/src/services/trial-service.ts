@@ -261,6 +261,13 @@ class TrialService extends RestService<ITrial> {
   }
 
   // Delete inject, including all children
+  public canDeleteInject(i: IInject) {
+    const injects = this.current ? this.current.injects : [];
+    const findChildren = (inject: IInject) => injects.filter(s => s.parentId === inject.id);
+    return findChildren(i).length === 0;
+  }
+
+  // Delete inject, including all children
   public async deleteInject(i: IInject) {
     let injects = this.current ? this.current.injects : [];
     const findChildren = (inject: IInject) => injects.filter(s => s.parentId === inject.id);
