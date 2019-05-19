@@ -43,6 +43,7 @@ export const ExecutingInjectView: FactoryComponent = () => {
                     // m('')
                   ]
                 : [
+                    m(ManualTransition, { inject, key: inject.id }),
                     m('h4', [
                       m(Icon, {
                         iconName: getMessageIcon(inject.messageType),

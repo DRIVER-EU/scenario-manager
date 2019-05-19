@@ -13,7 +13,6 @@ import {
   RequestUnitTransportForm,
   SetAffectedAreaForm,
 } from '../messages';
-import { ManualTransition } from './manual-transition';
 
 export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject }> = () => {
   const disabled = true;
@@ -45,12 +44,6 @@ export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject 
   };
 
   return {
-    view: ({ attrs: { inject } }) =>
-      inject
-        ? [
-            m(ManualTransition, { inject, key: inject.id }),
-            inject.type === InjectType.INJECT ? getMessageForm(inject) : undefined,
-          ]
-        : undefined,
+    view: ({ attrs: { inject } }) => (inject && inject.type === InjectType.INJECT ? getMessageForm(inject) : undefined),
   };
 };
