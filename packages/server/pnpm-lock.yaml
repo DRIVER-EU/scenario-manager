@@ -24,7 +24,7 @@ devDependencies:
   '@types/node': 12.0.2
   '@types/socket.io': 2.1.2
   '@types/sqlite3': 3.1.5
-  tsc-watch: 2.2.0
+  tsc-watch: 2.2.1
   tsconfig-paths: 3.8.0
   typescript: 3.4.5
 lockfileVersion: 5
@@ -2333,7 +2333,7 @@ packages:
     dev: false
     resolution:
       integrity: sha1-cXuPIgzAu3tE5AUUwisui7xw2Lk=
-  /tsc-watch/2.2.0:
+  /tsc-watch/2.2.1:
     dependencies:
       cross-spawn: 5.1.0
       node-cleanup: 2.1.2
@@ -2347,7 +2347,7 @@ packages:
     peerDependencies:
       typescript: '*'
     resolution:
-      integrity: sha512-/osGGNIbYU0szhfE/LFOEbrd1zVjw9SdnGLIqTvsCGkAJN3WhZvQf9maB0FCIX7nXYlMnSrs3yTeCesqA+hr2Q==
+      integrity: sha512-E61+ozEutLDgmXN+1+rkoCaUmd2g/cpa4mpEPMA3gPi89PBJiAcIUtH0xdCxeChXlR9TcuwOuTqu5jZDRhgfRw==
   /tsconfig-paths/3.8.0:
     dependencies:
       '@types/json5': 0.0.29
@@ -2528,6 +2528,6 @@ specifiers:
   sqlite3: ^4.0.8
   swagger-ui-express: ^4.0.3
   trial-manager-models: ^0.0.1
-  tsc-watch: ^2.2.0
+  tsc-watch: ^2.2.1
   tsconfig-paths: ^3.8.0
   typescript: ^3.4.5
