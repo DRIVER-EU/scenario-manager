@@ -28,7 +28,7 @@ ENVIRONMENT VARIABLES
 - `PRODUCE`: Stringified JSON array of produce topics, e.g.
   `["system_tm_session_mgmt", "system_request_change_of_trial_stage", "system_tm_role_player", "system_tm_phase_message", "standard_cap", ...]`
 - `SCENARIO_MANAGER_SERVER_FOLDER`: folder where all scenarios are stored, default `trials`
-- `SCENARIO_MANAGER_SERVER_PORT`: port of the REST service, default 3000
+- `SCENARIO_MANAGER_SERVER_PORT`: port of the REST service, default 3210
 - `CLIENT_ID`: ID of the Kafka client, default `TB-TrialMgmt`
 
 ## Installation

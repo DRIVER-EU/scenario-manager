@@ -3,7 +3,7 @@ import { ITimeMessage, ISessionMgmt, IInjectSimStates } from 'trial-manager-mode
 /** Application state */
 export const AppState = {
   owner: 'TB_TrialMgmt',
-  apiService: 'http://localhost:3000',
+  apiService: 'http://localhost:3210',
   time: {} as ITimeMessage,
   sessionControl: {
     isConnected: false,

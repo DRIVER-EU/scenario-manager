@@ -36,7 +36,7 @@ async function bootstrap() {
     // or whatever crash reporting service you use
   });
 
-  const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3000;
+  const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3210;
   await app.listen(port, () => {
     console.log(`TRIAL_MANAGER_SERVER_PORT is listening on port ${port}.`);
     console.log(

@@ -3,7 +3,7 @@
 # You can access the container using:
 #   docker run -it trial-management-tool sh
 # To start it stand-alone:
-#   docker run -it -p 8888:3000 trial-management-tool
+#   docker run -it -p 8888:3210 trial-management-tool
 
 FROM node:alpine AS builder
 RUN apk add --no-cache --virtual .gyp python make g++ && \
@@ -41,5 +41,5 @@ COPY --from=builder /packages/server/.yalc /app/.yalc
 COPY --from=builder /packages/server/node_modules /app/node_modules
 COPY --from=builder /packages/gui/dist /app/public
 WORKDIR /app
-EXPOSE 3000
+EXPOSE 3210
 CMD ["node", "./dist/main.js"]

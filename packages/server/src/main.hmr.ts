@@ -33,7 +33,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
-  const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3000;
+  const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3210;
   await app.listen(port, () => {
     console.log(
       `TRIAL_MANAGER_SERVER_PORT is listening on port ${port}. Swagger documentation is available at 'http://localhost:${port}/api'.`,
