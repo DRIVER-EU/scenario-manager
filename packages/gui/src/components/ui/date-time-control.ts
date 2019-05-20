@@ -20,7 +20,7 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
       const { prefix, icon, onchange, dt } = attrs;
       if (dt) {
         state.date = new Date(dt);
-        state.time = `${padLeft(state.date.getUTCHours())}:${padLeft(state.date.getUTCMinutes())}`;
+        state.time = `${padLeft(state.date.getHours())}:${padLeft(state.date.getMinutes())}`;
       }
       const changeTime = () => (onchange ? onchange(getTime()) : undefined);
       return m('.input-field', { class: attrs.class || 'col s12', style: 'margin: 0 auto;' }, [
@@ -40,7 +40,7 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
                 }
                 const hrs = +match[1];
                 const min = +match[2];
-                state.date.setUTCHours(hrs, min, 0, 0);
+                state.date.setHours(hrs, min, 0, 0);
                 changeTime();
               },
             })
@@ -50,15 +50,16 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
             m(DatePicker, {
               initialValue: state.date,
               onchange: (d: Date) => {
-                state.date = new Date(
-                  Date.UTC(
-                    d.getFullYear(),
-                    d.getMonth(),
-                    d.getDate(),
-                    state.date.getUTCHours(),
-                    state.date.getUTCMinutes()
-                  )
-                );
+                state.date = d;
+                //  new Date(
+                //   Date.(
+                //     d.getFullYear(),
+                //     d.getMonth(),
+                //     d.getDate(),
+                //     state.date.getHours(),
+                //     state.date.getMinutes()
+                //   )
+                // );
                 changeTime();
               },
             })

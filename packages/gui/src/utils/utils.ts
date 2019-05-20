@@ -259,13 +259,13 @@ export const eatSpaces = (ev: KeyboardEvent) => {
   }
 };
 
-const formatHHmm = (t: Date) => `${padLeft(t.getUTCHours())}:${padLeft(t.getUTCMinutes())}`;
-const formatDate = (t: Date) => `${t.getUTCDate() > 1 ? `${t.getUTCDate() - 1}d ` : ''}`;
+const formatHHmm = (t: Date) => `${padLeft(t.getHours())}:${padLeft(t.getMinutes())}`;
+const formatDate = (t: Date) => `${t.getDate() > 1 ? `${t.getDate() - 1}d ` : ''}`;
 
 /** Convert a date to HH:mm, optionally including seconds and date */
 export const formatTime = (t: Date, includeSeconds = true, includeDate = false) =>
   includeSeconds
-    ? `${includeDate ? formatDate(t) : ''}${formatHHmm(t)}:${padLeft(t.getUTCSeconds())}`
+    ? `${includeDate ? formatDate(t) : ''}${formatHHmm(t)}:${padLeft(t.getSeconds())}`
     : `${includeDate ? formatDate(t) : ''}${formatHHmm(t)}`;
 
 /**

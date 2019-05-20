@@ -83,7 +83,7 @@ const MediaStateControl: FactoryComponent<{
 
   const newTime = () => {
     const [hours, minutes] = state.startTime.split(':').map(v => +v);
-    return state.startDate.setUTCHours(hours, minutes, 0, 0);
+    return state.startDate.setHours(hours, minutes, 0, 0);
   };
 
   const timeHasNotChanged = () => {
