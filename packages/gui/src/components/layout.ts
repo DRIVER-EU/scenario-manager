@@ -1,9 +1,12 @@
 import m, { FactoryComponent } from 'mithril';
 import owl from '../assets/owl.svg';
-import { dashboardSvc } from '../services';
+import { dashboardSvc, SocketSvc } from '../services';
 import { Dashboards } from '../models/dashboards';
 import { StatusBar } from './status/status-bar';
 import { Icon } from 'mithril-materialized';
+import { MediaControls } from './session/time-control';
+import { AppState } from '../models';
+import { TimeState } from 'trial-manager-models';
 
 export const Layout: FactoryComponent<{}> = () => {
   return {
@@ -23,6 +26,7 @@ export const Layout: FactoryComponent<{}> = () => {
       const executeMode = curDashboard
         ? curDashboard.id === Dashboards.EXECUTE || curDashboard.level === Dashboards.EXECUTE
         : false;
+      const time = AppState.time;
 
       return m('container', [
         m('nav', { class: hasSubDashboards ? 'nav-extended' : '' }, [
@@ -52,12 +56,22 @@ export const Layout: FactoryComponent<{}> = () => {
           hasSubDashboards
             ? m(
                 '.nav-content',
-                m(
-                  'ul.tabs.tabs-transparent',
-                  subDashboards.map(d =>
+                m('ul.tabs.tabs-transparent', [
+                  ...subDashboards.map(d =>
                     m(`li.tab${isActive(d.route)}`, m('a', { href: d.route, oncreate: m.route.link }, d.title))
-                  )
-                )
+                  ),
+                  executeMode && time.state !== TimeState.Idle
+                    ? m(MediaControls, {
+                        className: 'right',
+                        socket: SocketSvc.socket,
+                        realtime: false,
+                        isPaused: time.state === TimeState.Paused,
+                        canChangeSpeed: true,
+                        canStop: false,
+                        time: AppState.time,
+                      })
+                    : undefined,
+                ])
               )
             : undefined,
         ]),

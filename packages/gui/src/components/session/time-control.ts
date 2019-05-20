@@ -18,16 +18,18 @@ const updateSpeed = (socket: SocketIOClient.Socket, trialTimeSpeed: number) => {
   } as ITimingControlMessage);
 };
 
-const MediaControls: FactoryComponent<{
+export const MediaControls: FactoryComponent<{
   socket: SocketIOClient.Socket;
   time: ITimeMessage;
   canChangeSpeed: boolean;
+  canStop?: boolean;
   isPaused: boolean;
   realtime: boolean;
+  className?: string;
 }> = () => {
   return {
-    view: ({ attrs: { time, socket, isPaused, canChangeSpeed, realtime } }) => {
-      return [
+    view: ({ attrs: { time, socket, isPaused, canChangeSpeed, canStop = true, realtime, className } }) => {
+      return m('div', { className }, [
         realtime
           ? undefined
           : m(FlatButton, {
@@ -35,11 +37,13 @@ const MediaControls: FactoryComponent<{
               disabled: !canChangeSpeed,
               onclick: () => updateSpeed(socket, time.trialTimeSpeed / 2),
             }),
-        m(FlatButton, {
-          modalId: 'stopPanel',
-          iconName: 'stop',
-          disabled: time.state === TimeState.Initialized,
-        }),
+        canStop
+          ? m(FlatButton, {
+              modalId: 'stopPanel',
+              iconName: 'stop',
+              disabled: time.state === TimeState.Initialized,
+            })
+          : undefined,
         realtime
           ? undefined
           : isPaused
@@ -58,7 +62,7 @@ const MediaControls: FactoryComponent<{
               disabled: !canChangeSpeed,
               onclick: () => updateSpeed(socket, time.trialTimeSpeed * 2),
             }),
-      ];
+      ]);
     },
   };
 };
