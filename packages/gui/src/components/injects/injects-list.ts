@@ -39,6 +39,7 @@ export const InjectsList = () => {
     onDelete: async ti => {
       await TrialSvc.deleteInject(ti.id);
     },
+    onCreate: ti => injectSelected(ti as IInject, true),
     onBeforeUpdate: (ti, _, newParent) => {
       const src = ti as IInject;
       const tgt = newParent as IInject;
