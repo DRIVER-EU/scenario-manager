@@ -7,11 +7,9 @@ import {
   deepEqual,
   IInjectSimStates,
   InjectConditionType,
-  // IInjectGroup,
   toMsec,
   ITimeMessage,
 } from 'trial-manager-models';
-// import { padLeft, getIcon, executionIcon } from '../../utils';
 import { IExecutingInject } from '../../models/executing-inject';
 import { TopicNames, AppState, executingChannel } from '../../models';
 import { ScenarioTimeline, ITimelineItem } from 'mithril-scenario-timeline';
@@ -51,13 +49,14 @@ export const SessionTimelineView: FactoryComponent = () => {
       view: ({ attrs: { item } }) => {
         const { title, highlight } = item;
         const inject = item as IInject;
+        const grayedOut = item.completed === 1 ? 'grey-text' : '';
         return m('div', { className: highlight ? 'red-text' : '' }, [
           m(Icon, {
             style: 'vertical-align: middle; margin-right: 5px;',
             iconName: getIcon(inject),
-            className: 'tiny',
+            className: 'tiny ' + grayedOut,
           }),
-          m('span', `Custom title: ${title}`),
+          m('span', { className: grayedOut }, title),
         ]);
       },
     };
