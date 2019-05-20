@@ -138,6 +138,9 @@ span.inline {
   overflow-y: auto;
   overflow-x: hidden;
 }
+.row.sb-hor {
+  overflow-x: auto;
+}
 .col.sb.large,
 .row.sb.large {
   height: 83vh;
@@ -194,8 +197,13 @@ i.material-icons {
   vertical-align: bottom;
 }
 
+.mst__container {
+  height: 83vh;
+  overflow-y: auto;
+}
 .mst__title {
   min-width: 400px;
+  /* overflow: hidden; */
 }
 
 .html-area ul {
