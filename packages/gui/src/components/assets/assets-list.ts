@@ -27,8 +27,6 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
     state.curAssetId = cur.id;
   };
 
-  console.warn('assets');
-
   return {
     oninit: () => {
       state.trial = TrialSvc.getCurrent();
@@ -41,12 +39,6 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
         return;
       }
       const filteredAssets = TrialSvc.assets.filter(aliasAndFilenameFilter());
-      if (!state.curAssetId && filteredAssets.length > 0) {
-        setTimeout(() => {
-          selectAsset(filteredAssets[0])();
-          m.redraw();
-        }, 0);
-      }
       const items = filteredAssets.map(cur => ({
         title: cur.alias || cur.filename,
         avatar: assetIcon(cur),
@@ -71,7 +63,7 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
             label: 'Filter',
             id: 'filter',
             iconName: 'filter_list',
-            onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+            onkeyup: (_: KeyboardEvent, v?: string) => (state.filterValue = v),
             className: 'right',
           }),
         ]),
