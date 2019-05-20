@@ -52,7 +52,11 @@ export class KafkaService extends EventEmitter implements TimeService {
     } else if (options.produce.indexOf(TimeControlTopic) < 0) {
       options.produce.push(TimeControlTopic);
     }
-    console.table(options);
+    console.table({
+      kafkaHost: options.kafkaHost,
+      schemaRegistry: options.schemaRegistry,
+      ssl: options.sslOptions ? true : false,
+    });
     this.kafkaHost = options.kafkaHost;
     this.adapter = new TestBedAdapter(options);
     this.adapter.on('ready', () => {
@@ -72,6 +76,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public connect() {
+    console.log('Connecting...');
     return this.adapter.connect();
   }
 
