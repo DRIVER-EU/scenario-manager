@@ -49,7 +49,9 @@ export const SessionTimelineView: FactoryComponent = () => {
       view: ({ attrs: { item } }) => {
         const { title, highlight } = item;
         const inject = item as IInject;
-        const grayedOut = item.completed === 1 ? 'grey-text' : '';
+        const isManual = inject.condition && inject.condition.type === InjectConditionType.MANUALLY;
+        const isCompleted = item.completed === 1;
+        const grayedOut = isCompleted ? 'grey-text' : '';
         return m('div', { className: highlight ? 'red-text' : '' }, [
           m(Icon, {
             style: 'vertical-align: middle; margin-right: 5px;',
@@ -57,18 +59,28 @@ export const SessionTimelineView: FactoryComponent = () => {
             className: 'tiny ' + grayedOut,
           }),
           m('span', { className: grayedOut }, title),
+          isManual && !isCompleted
+            ? m(Icon, {
+                style: 'vertical-align: middle; margin-left: 5px;',
+                iconName: 'block',
+                className: 'tiny',
+              })
+            : undefined,
         ]);
       },
     };
   };
 
   const injectToTimelineItem = (i: IExecutingInject) => {
-    const { condition } = i;
+    const { condition, id } = i;
     return {
       ...i,
       completed: i.state === InjectState.EXECUTED ? 1 : 0,
       highlight: waitingForManualConfirmation(i),
-      delay: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
+      delay:
+        (AppState.injectStates && AppState.injectStates.hasOwnProperty(id)
+          ? AppState.injectStates[id].delayInSeconds || 0
+          : 0) + (condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0),
       dependsOn:
         condition && condition.injectId
           ? [

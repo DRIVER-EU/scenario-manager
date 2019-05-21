@@ -1,9 +1,44 @@
 import m, { FactoryComponent } from 'mithril';
 import { ScenarioTimeline, ITimelineItem } from 'mithril-scenario-timeline';
 import { TrialSvc } from '../../services';
-import { InjectType, IInjectGroup, IInject, toMsec, IScenario, InjectState } from 'trial-manager-models';
+import {
+  InjectType,
+  IInjectGroup,
+  IInject,
+  toMsec,
+  IScenario,
+  InjectState,
+  InjectConditionType,
+} from 'trial-manager-models';
+import { Icon } from 'mithril-materialized';
+import { getIcon } from '../../utils';
 
 export const InjectsTimeline: FactoryComponent = () => {
+  const titleView: FactoryComponent<{ item: ITimelineItem }> = () => {
+    return {
+      view: ({ attrs: { item } }) => {
+        const { title } = item;
+        const inject = item as IInject;
+        const isManual = inject.condition && inject.condition.type === InjectConditionType.MANUALLY;
+        return m('div', [
+          m(Icon, {
+            style: 'vertical-align: middle; margin-right: 5px;',
+            iconName: getIcon(inject),
+            className: 'tiny',
+          }),
+          m('span', title),
+          isManual
+            ? m(Icon, {
+                style: 'vertical-align: middle; margin-left: 5px;',
+                iconName: 'block',
+                className: 'tiny',
+              })
+            : undefined,
+        ]);
+      },
+    };
+  };
+
   const injectToTimelineItem = (i: IInject | IInjectGroup) => {
     const { condition } = i;
     return {
@@ -51,6 +86,7 @@ export const InjectsTimeline: FactoryComponent = () => {
               ? m(
                   '.col.s12',
                   m(ScenarioTimeline, {
+                    titleView,
                     lineHeight: 31,
                     timeline: scenarioToTimelineItems(scenario, injects),
                     onClick,
