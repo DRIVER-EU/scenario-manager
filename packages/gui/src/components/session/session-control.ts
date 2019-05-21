@@ -126,7 +126,7 @@ export const SessionControl: FactoryComponent = () => {
     const createSessionMsg = (sessionState: SessionState) => {
       const { trial, scenario } = state;
       const {
-        session: { sessionId, sessionName, comment },
+        session: { sessionName = 'New session created', comment },
       } = AppState;
       if (trial && scenario) {
         const session = {
@@ -134,11 +134,12 @@ export const SessionControl: FactoryComponent = () => {
           trialName: trial.title,
           scenarioId: scenario.id,
           scenarioName: scenario.title,
-          sessionId,
+          sessionId: uniqueId(),
           sessionName,
           sessionState,
           comment,
         } as ISessionMgmt;
+        AppState.session = session;
         return session;
       }
       return undefined;
