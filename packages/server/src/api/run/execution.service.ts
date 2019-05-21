@@ -116,11 +116,12 @@ export class ExecutionService implements IExecutionService {
         message.info instanceof Array ? message.info[0] : message.info;
       const parameters =
         info.parameter instanceof Array ? info.parameter : [info.parameter];
-      info.parameter = parameters.map(
+      info.parameter = parameters
+        .map(
         p =>
           ({
             valueName: p.valueName,
-            value: parse(p.value),
+            value: p.valueName[0] !== '_' ? parse(p.value) : p.value,
           } as IValueNamePair),
       );
       message.info = info;
