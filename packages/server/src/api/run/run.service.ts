@@ -15,6 +15,7 @@ import {
   executeInjects,
   createInitialState,
   IInjectSimStates,
+  InjectState,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -144,9 +145,13 @@ export class RunService {
   }
 
   /** Perform a transition */
-  private transition(tr: StateTransitionRequest, t: Date) {
+  private transition(tr: StateTransitionRequest, t2: Date) {
     const state = this.states[tr.id];
+    const t = this.trialTime;
     if (state && state.state === tr.from) {
+      if (tr.from === InjectState.SCHEDULED && tr.to === InjectState.IN_PROGRESS) {
+        state.delayInSeconds = (t.valueOf() - state.lastTransitionAt.valueOf()) / 1000;
+      }
       state.lastTransitionAt = t;
       state.state = tr.to;
     }

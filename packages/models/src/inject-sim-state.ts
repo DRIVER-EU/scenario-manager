@@ -8,4 +8,5 @@ export interface IInjectSimState {
   state: InjectState;
   lastTransitionAt: Date;
   title?: string;
+  delayInSeconds?: number;
 }
