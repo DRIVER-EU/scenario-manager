@@ -7,7 +7,7 @@ dependencies:
   mithril-leaflet: 0.1.2
   mithril-markdown: 0.2.1
   mithril-materialized: 0.11.10
-  mithril-scenario-timeline: 0.0.7
+  mithril-scenario-timeline: 0.0.8
   mithril-table: 0.2.0
   mithril-tree-component: 0.6.3
   recursive: 0.0.2
@@ -2738,12 +2738,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-h4BdOuCjDQL77bGqwVm00olVU3FlIRFf49Zm6McIO4O+lgeehURIQEvZl3xtOI3zh6WT95anuYAQAIX1ME51qQ==
-  /mithril-scenario-timeline/0.0.7:
+  /mithril-scenario-timeline/0.0.8:
     dev: false
     peerDependencies:
       mithril: next
     resolution:
-      integrity: sha512-gJ032MARvAmXDG0D6JTKfERz5F1pG7S3o/Ab8Rnwd5XsP3ovmJNVlqpez1XfbiULSPTQbUr0dL5M2sBsizp5lw==
+      integrity: sha512-3Zl8IAAretDE8kZxf827wUkdbNLymYEJa0hbJk4otu9g2cVmReHwk5ECX0xrrroCoPH7qFed0H6Jq36atN8mWQ==
   /mithril-table/0.2.0:
     dependencies:
       mithril-contenteditable: 0.1.0
@@ -4555,7 +4555,7 @@ specifiers:
   mithril-leaflet: ^0.1.2
   mithril-markdown: ^0.2.1
   mithril-materialized: ^0.11.10
-  mithril-scenario-timeline: ^0.0.7
+  mithril-scenario-timeline: ^0.0.8
   mithril-table: ^0.2.0
   mithril-tree-component: ^0.6.3
   recursive: ^0.0.2
