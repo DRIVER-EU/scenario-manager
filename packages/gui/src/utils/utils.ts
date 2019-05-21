@@ -337,7 +337,6 @@ export const debounce = <F extends (...params: any[]) => void>(fn: F, delay = 10
 /** Get the center and zoom for a GeoJSON */
 export const centerArea = (area: L.GeoJSON<any>) => {
   const bounds = area.getBounds();
-  console.warn('Get bounds');
   return Object.keys(bounds).length
     ? {
         view: bounds.getCenter(),
