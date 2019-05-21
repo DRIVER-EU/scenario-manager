@@ -27,8 +27,8 @@ export const InjectsView = () => {
     },
     view: () => {
       const { msgTabActive } = state;
-      return m('.row.sb.large', [
-        m('.col.s12.m5.l4', m(InjectsList)),
+      return m('.row', [
+        m('.col.s12.m5.l4.sb.large', m(InjectsList)),
         m(
           '.col.s12.m7.l8',
           m('.row', [
@@ -47,7 +47,7 @@ export const InjectsView = () => {
               )
             ),
             m('.col.s12[id=timeline]', m(InjectsTimeline)),
-            m('.col.s12[id=message]', m(InjectsForm)),
+            m('.col.s12[id=message].sb.large', m(InjectsForm)),
           ])
         ),
       ]);
