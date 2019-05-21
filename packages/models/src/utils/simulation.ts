@@ -37,14 +37,18 @@ export const pruneInjects = (scenario: IScenario, allInjects: IInject[]) => {
  * @param injects all relevant injects for the active scenario
  */
 export const createInitialState = (trialTime: Date, injects: IInject[]) => {
-  return injects.reduce((acc, i) => {
-    acc[i.id] = {
-      state: i.condition ? InjectState.ON_HOLD : InjectState.IN_PROGRESS,
-      lastTransitionAt: trialTime,
-      title: `${i.type}: ${i.title}`,
-    } as IInjectSimState;
-    return acc;
-  }, {} as IInjectSimStates);
+  return injects.reduce(
+    (acc, i) => {
+      acc[i.id] = {
+        state: i.condition ? InjectState.ON_HOLD : InjectState.IN_PROGRESS,
+        lastTransitionAt: trialTime,
+        title: `${i.type}: ${i.title}`,
+        delayInSeconds: 0,
+      } as IInjectSimState;
+      return acc;
+    },
+    {} as IInjectSimStates
+  );
 };
 
 /**
@@ -55,12 +59,7 @@ export const createInitialState = (trialTime: Date, injects: IInject[]) => {
  * @param injects Active injects, i.e. the injects active in the current scenario
  * @param startTime Trial start time
  */
-export const transitionInjects = (
-  trialTime: Date,
-  states: IInjectSimStates,
-  injects: IInject[],
-  startTime: Date
-) => {
+export const transitionInjects = (trialTime: Date, states: IInjectSimStates, injects: IInject[], startTime: Date) => {
   let done = true;
   const trialTimeValue = trialTime.valueOf();
   const transitionTo = (to: InjectState) => (inject: IInject) => {
