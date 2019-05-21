@@ -27,10 +27,10 @@ export const rolePlayerMessageToTestbed = (
   comment = ''
 ) => ({
   id: rpm.id,
-  type: rpm.type = RolePlayerMessageType.ACTION,
-  title: rpm.title = '',
-  headline: rpm.headline = '',
-  description: rpm.description = '',
+  type: rpm.type || RolePlayerMessageType.ACTION,
+  title: rpm.title || '',
+  headline: rpm.headline || '',
+  description: rpm.description || '',
   rolePlayerName,
   participantsName,
   comment,
