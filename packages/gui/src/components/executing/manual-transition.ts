@@ -18,6 +18,12 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject }> = 
     view: ({ attrs: { inject } }) => {
       const { show } = state;
       const isWaiting = waitingForManualConfirmation(inject);
+
+      const onclick = () => {
+        state.show = false;
+        RunSvc.transition({ id: inject.id, from: inject.state, to: InjectState.IN_PROGRESS });
+      };
+
       return show
         ? isWaiting
           ? m(
@@ -27,10 +33,7 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject }> = 
                 iconName: 'check_circle',
                 iconClass: 'red-text right',
                 label: 'Click here when ready',
-                onclick: () => {
-                  state.show = false;
-                  RunSvc.transition({ id: inject.id, from: inject.state, to: InjectState.IN_PROGRESS });
-                },
+                onclick,
               })
             )
           : inject.type === InjectType.INJECT
@@ -41,10 +44,7 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject }> = 
                 iconName: 'send',
                 iconClass: 'right',
                 label: inject.state === InjectState.EXECUTED ? 'Resend' : 'Send now',
-                onclick: () => {
-                  state.show = false;
-                  RunSvc.transition({ id: inject.id, from: inject.state, to: InjectState.IN_PROGRESS });
-                },
+                onclick,
               })
             )
           : undefined
