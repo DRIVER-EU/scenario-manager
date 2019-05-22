@@ -36,8 +36,7 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject }> = 
                 onclick,
               })
             )
-          : inject.type === InjectType.INJECT
-          ? m(
+          : m(
               '.row',
               m(FlatButton, {
                 className: 'right',
@@ -47,7 +46,6 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject }> = 
                 onclick,
               })
             )
-          : undefined
         : undefined;
     },
   };
