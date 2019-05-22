@@ -15,7 +15,7 @@ export const PhaseMessageForm: FactoryComponent<{
     view: ({ attrs: { inject, disabled } }) => {
       const pm = getMessage(inject, MessageType.PHASE_MESSAGE) as IPhaseMessage;
       const options = Object.keys(Phase).map(p => ({ id: p, label: p }));
-      console.table(pm);
+      // console.table(pm);
 
       return [
         m(Select, {
