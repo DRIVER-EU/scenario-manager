@@ -6,6 +6,7 @@ import { IInject, InjectType, IInjectGroup, deepCopy, deepEqual, getInject, Mess
 import { TopicNames, injectsChannel } from '../../models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages/message-form';
+import { stat } from 'fs';
 
 const log = console.log;
 
@@ -88,7 +89,14 @@ export const InjectsForm: FactoryComponent = () => {
                       iconName: 'delete',
                       class: 'red',
                       disabled: !TrialSvc.canDeleteInject(inject),
-                      onclick: () => TrialSvc.deleteInject(inject),
+                      onclick: async () => {
+                        const { parentId } = inject;
+                        state.inject = undefined;
+                        const injects = TrialSvc.getInjects() || [];
+                        const parent = injects.filter(i => i.id === parentId).shift() || injects[0];
+                        await TrialSvc.deleteInject(inject);
+                        injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: parent });
+                      },
                     }),
                   ]),
                 ])
