@@ -39,7 +39,7 @@ export const MessageForm: FactoryComponent<{ inject: IInject; onChange: () => vo
       case MessageType.SET_AFFECTED_AREA:
         return m(SetAffectedAreaForm, { inject, onChange });
       default:
-        return m('.row', 'TODO');
+        return m('.row', '');
     }
   };
 
