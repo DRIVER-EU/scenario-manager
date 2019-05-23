@@ -4,4 +4,5 @@ import { IInject, InjectState } from 'trial-manager-models';
 export interface IExecutingInject extends IInject {
   state: InjectState;
   lastTransitionAt: Date;
+  expectedExecutionTimeAt?: Date;
 }

@@ -12,7 +12,7 @@ import {
 } from 'trial-manager-models';
 import { IExecutingInject } from '../../models/executing-inject';
 import { TopicNames, AppState, executingChannel } from '../../models';
-import { ScenarioTimeline, ITimelineItem } from 'mithril-scenario-timeline';
+import { ScenarioTimeline, ITimelineItem, IExecutingTimelineItem } from 'mithril-scenario-timeline';
 import { Icon } from 'mithril-materialized';
 import { getIcon } from '../../utils';
 
@@ -73,14 +73,14 @@ export const SessionTimelineView: FactoryComponent = () => {
 
   const injectToTimelineItem = (i: IExecutingInject) => {
     const { condition, id } = i;
+    const { injectStates } = AppState;
+    const delay = injectStates && injectStates.hasOwnProperty(id) ? injectStates[id].delayInSeconds || 0 : 0;
+    const condDelay = condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0;
     return {
       ...i,
       completed: i.state === InjectState.EXECUTED ? 1 : 0,
       highlight: waitingForManualConfirmation(i),
-      delay:
-        (AppState.injectStates && AppState.injectStates.hasOwnProperty(id)
-          ? AppState.injectStates[id].delayInSeconds || 0
-          : 0) + (condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0),
+      delay: delay + condDelay,
       dependsOn:
         condition && condition.injectId
           ? [
@@ -103,12 +103,15 @@ export const SessionTimelineView: FactoryComponent = () => {
     return ti;
   };
 
-  const onClick = (ti: ITimelineItem) => {
-    const { id } = ti;
+  const onClick = (scenarioStartTime: Date) => (ti: IExecutingTimelineItem) => {
+    const { id, startTime = 0, lastTransitionAt } = ti;
     const { injects, executingInjects } = state;
     const inject = executingInjects.filter(i => i.id === id).shift() as IExecutingInject;
-    console.table(ti);
     if (inject) {
+      const t = new Date(scenarioStartTime.valueOf());
+      t.setSeconds(scenarioStartTime.getSeconds() + startTime);
+      const lastTransition = new Date(lastTransitionAt);
+      inject.expectedExecutionTimeAt = t > lastTransition ? t : lastTransition;
       executingChannel.publish(TopicNames.ITEM_SELECT, { cur: inject });
       if (inject.type !== InjectType.INJECT) {
         const selInject = injects.filter(i => i.id === inject.id).shift();
@@ -173,7 +176,7 @@ export const SessionTimelineView: FactoryComponent = () => {
               m(ScenarioTimeline, {
                 lineHeight: 31,
                 timeline: scenarioToTimelineItems(activeScenario, executingInjects),
-                onClick,
+                onClick: onClick(scenarioStartTime),
                 time,
                 titleView,
                 scenarioStart: new Date(scenarioStartTime),
