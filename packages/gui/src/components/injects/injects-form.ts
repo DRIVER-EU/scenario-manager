@@ -6,7 +6,6 @@ import { IInject, InjectType, IInjectGroup, deepCopy, deepEqual, getInject, Mess
 import { TopicNames, injectsChannel } from '../../models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages/message-form';
-import { stat } from 'fs';
 
 const log = console.log;
 
