@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-  entry: './src/app.ts',
+  entry: './src/index.ts',
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
@@ -13,7 +13,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Boobook',
-      // favicon: './src/assets/favicon.ico'
+      favicon: './src/assets/favicon.ico',
+      
     }),
     new webpack.HotModuleReplacementPlugin()
   ],
