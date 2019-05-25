@@ -134,8 +134,6 @@ export class RestService<T extends { id?: string | number }> {
         withCredentials,
       })
       .then(result => {
-        // log(JSON.stringify(result, null, 2));
-        log('loadList...');
         this.setList(result);
         return this.list;
       });

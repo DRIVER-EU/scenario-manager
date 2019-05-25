@@ -9,13 +9,16 @@ export class StateTransitionRequest implements IStateTransitionRequest {
   public readonly from: InjectState;
   @ApiModelProperty({ description: 'Requested new state' })
   public readonly to: InjectState;
-  @ApiModelProperty({ description: 'Optional comment when making a transition' })
+  @ApiModelPropertyOptional({ description: 'Expected time of execution (Date.valueOf())' })
+  public readonly expectedExecutionTimeAt?: number;
+  @ApiModelPropertyOptional({ description: 'Optional comment when making a transition' })
   public readonly comment?: string;
 
-  constructor(id: string, from: InjectState, to: InjectState, comment?: string) {
+  constructor(id: string, from: InjectState, to: InjectState, expectedExecutionTimeAt?: number, comment?: string) {
     this.id = id;
     this.from = from;
     this.to = to;
+    this.expectedExecutionTimeAt = expectedExecutionTimeAt;
     this.comment = comment;
   }
 }

@@ -8,7 +8,7 @@ dependencies:
   mithril-leaflet: 0.1.2
   mithril-markdown: 0.2.1
   mithril-materialized: 0.12.5
-  mithril-scenario-timeline: 0.0.9
+  mithril-scenario-timeline: 0.0.10
   mithril-table: 0.2.0
   mithril-tree-component: 0.6.4
   socket.io-client: 2.2.0
@@ -4614,12 +4614,12 @@ packages:
       mithril: next
     resolution:
       integrity: sha512-/XrdTF5Sd4Va83zD2B+LoBOx8Fe93Qb4eSclBoe7KwHrBO6iNSTWiTN6dPED7Eny4OW9f7CEOMJbOFlLH1oc9A==
-  /mithril-scenario-timeline/0.0.9:
+  /mithril-scenario-timeline/0.0.10:
     dev: false
     peerDependencies:
       mithril: next
     resolution:
-      integrity: sha512-4yJp5T6mHAY+RZw/xsvNlq/bp3jXgCjS5MlVgsLW242MVSefCYSv7CPCbOZmlJt+5NLKfgffOc9J6fw3MIeMrw==
+      integrity: sha512-zBp++CdKiHks0RfNr7xvi51EeeAwbtP9FflCkdBWAadVe5mQIyGdmf4elJAKt2dhE8sYfwkg8r6+1FPNEenvyA==
   /mithril-table/0.2.0:
     dependencies:
       mithril-contenteditable: 0.1.0
@@ -7552,7 +7552,7 @@ specifiers:
   mithril-leaflet: ^0.1.2
   mithril-markdown: ^0.2.1
   mithril-materialized: ^0.12.5
-  mithril-scenario-timeline: ^0.0.9
+  mithril-scenario-timeline: ^0.0.10
   mithril-table: ^0.2.0
   mithril-tree-component: ^0.6.4
   parcel-bundler: ^1.12.3

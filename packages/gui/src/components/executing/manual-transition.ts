@@ -37,7 +37,12 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject }> = 
 
       const onclick = () => {
         state.show = false;
-        RunSvc.transition({ id, from, to: InjectState.IN_PROGRESS });
+        RunSvc.transition({
+          id,
+          from,
+          to: InjectState.IN_PROGRESS,
+          expectedExecutionTimeAt: expectedExecutionTimeAt ? expectedExecutionTimeAt.valueOf() : undefined,
+        });
       };
 
       return show

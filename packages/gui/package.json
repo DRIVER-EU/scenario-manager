@@ -27,7 +27,7 @@
     "mithril-leaflet": "^0.1.2",
     "mithril-markdown": "^0.2.1",
     "mithril-materialized": "^0.12.5",
-    "mithril-scenario-timeline": "^0.0.9",
+    "mithril-scenario-timeline": "^0.0.10",
     "mithril-table": "^0.2.0",
     "mithril-tree-component": "^0.6.4",
     "socket.io-client": "^2.2.0",

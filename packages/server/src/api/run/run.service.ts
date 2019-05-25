@@ -144,13 +144,16 @@ export class RunService {
     }
   }
 
-  /** Perform a transition */
-  private transition(tr: StateTransitionRequest, t2: Date) {
+  /**
+   * Perform a transition.
+   * @param tr transition request
+   * @param t trial time
+   */
+  private transition(tr: StateTransitionRequest, t: Date) {
     const state = this.states[tr.id];
-    const t = this.trialTime;
     if (state && state.state === tr.from) {
-      if (tr.from === InjectState.SCHEDULED && tr.to === InjectState.IN_PROGRESS) {
-        state.delayInSeconds = (t.valueOf() - state.lastTransitionAt.valueOf()) / 1000;
+      if (tr.expectedExecutionTimeAt) {
+        state.delayInSeconds = (t.valueOf() - tr.expectedExecutionTimeAt) / 1000;
       }
       state.lastTransitionAt = t;
       state.state = tr.to;

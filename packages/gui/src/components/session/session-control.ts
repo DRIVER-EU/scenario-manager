@@ -255,7 +255,7 @@ export const SessionControl: FactoryComponent = () => {
                 m(
                   '.col.s12.m6',
                   m('.input-field.col.s12', [
-                    m(Icon, { iconName, className: 'prefix' }),
+                    isConnected ? m(Icon, { iconName, className: 'prefix' }) : undefined,
                     m(TimeControl, {
                       style: 'margin-left: 3em',
                       scenario: state.scenario,
