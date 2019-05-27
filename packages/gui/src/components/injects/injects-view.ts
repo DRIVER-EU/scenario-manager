@@ -30,6 +30,7 @@ export const InjectsView = () => {
               {
                 id: 'message',
                 title: 'Message',
+                contentClass: 'sb large',
                 vnode: m(InjectsForm),
               },
             ],

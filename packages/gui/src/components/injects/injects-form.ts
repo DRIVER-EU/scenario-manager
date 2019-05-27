@@ -1,4 +1,4 @@
-import m, { FactoryComponent } from 'mithril';
+import m, { FactoryComponent, Attributes } from 'mithril';
 import { Button, Icon, Dropdown, Select } from 'mithril-materialized';
 import { getInjectIcon, findPreviousInjects, getMessageIcon, getMessageTitle, iterEnum } from '../../utils';
 import { TrialSvc } from '../../services';
@@ -9,7 +9,7 @@ import { MessageForm } from '../messages/message-form';
 
 const log = console.log;
 
-export const InjectsForm: FactoryComponent = () => {
+export const InjectsForm: FactoryComponent<Attributes> = () => {
   const state = {
     parent: undefined as IInject | IInjectGroup | undefined,
     inject: undefined as IInject | undefined,
@@ -25,7 +25,7 @@ export const InjectsForm: FactoryComponent = () => {
     onremove: () => {
       state.subscription.unsubscribe();
     },
-    view: () => {
+    view: ({ attrs: { className }}) => {
       const { inject, original } = state;
       const onChange = () => {
         state.inject = inject;
@@ -44,7 +44,7 @@ export const InjectsForm: FactoryComponent = () => {
 
       return m(
         '.injects-form',
-        { style: 'color: black' },
+        { style: 'color: black', className },
         inject
           ? [
               m(
