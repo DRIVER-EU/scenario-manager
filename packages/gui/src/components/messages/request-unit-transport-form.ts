@@ -3,7 +3,7 @@ import { TextArea, TextInput } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, IRequestUnitTransport, ILocation } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection } from 'geojson';
-import { LatLngExpression, FeatureGroup, geoJSON } from 'leaflet';
+import { FeatureGroup, geoJSON } from 'leaflet';
 import { AppState } from '../../models';
 import { centerArea } from '../../utils';
 
@@ -13,7 +13,7 @@ export const RequestUnitTransportForm: FactoryComponent<{
   onChange?: () => void;
 }> = () => {
   const setTitle = (inject: IInject, si: IRequestUnitTransport) => {
-    inject.title = `Send ${si.unit} to ${si.destination}`;
+    inject.title = `Send ${si.guid} (${si.unit}) to ${si.destination}`;
   };
 
   const routeToGeoJSON = (route?: ILocation[] | null) => {
@@ -22,17 +22,20 @@ export const RequestUnitTransportForm: FactoryComponent<{
       features: [],
     };
     if (route && route.length > 0) {
-        geojson.features.push({
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: route.reduce((acc, loc) => {
+      geojson.features.push({
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'LineString',
+          coordinates: route.reduce(
+            (acc, loc) => {
               acc.push([loc.longitude, loc.latitude, loc.altitude || 0]);
               return acc;
-            }, [] as number[][]),
-          },
-        });
+            },
+            [] as number[][]
+          ),
+        },
+      });
     }
     return geoJSON(geojson) as L.GeoJSON<LineString>;
   };
@@ -40,16 +43,18 @@ export const RequestUnitTransportForm: FactoryComponent<{
   const geoJSONtoRoute = (geojson: FeatureCollection<LineString>) =>
     geojson.features.length === 0
       ? undefined
-      : geojson.features[0].geometry.coordinates.map(c => ({
-        longitude: c[0],
-        latitude: c[1],
-        altitude: c[2],
-      } as ILocation));
+      : geojson.features[0].geometry.coordinates.map(
+          c =>
+            ({
+              longitude: c[0],
+              latitude: c[1],
+              altitude: c[2],
+            } as ILocation)
+        );
 
   return {
     oninit: ({ attrs: { inject } }) => {
       const ut = getMessage(inject, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestUnitTransport;
-      ut.guid = inject.id;
       ut.owner = AppState.owner;
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
@@ -61,11 +66,26 @@ export const RequestUnitTransportForm: FactoryComponent<{
       return [
         m(TextInput, {
           disabled,
-          className: 'col s6',
-          label: 'Unit',
-          iconName: 'directions_car',
+          className: 'col s6 m4',
+          label: 'Unit ID',
+          iconName: 'title',
           isMandatory: true,
           helperText: 'Name of the unit that must be transported.',
+          initialValue: ut.guid,
+          onchange: v => {
+            ut.guid = v;
+            setTitle(inject, ut);
+          },
+        }),
+        m(TextInput, {
+          disabled,
+          className: 'col s6 m4',
+          label: 'Unit Type',
+          iconName: 'directions_car',
+          isMandatory: true,
+          // ('DEFAULT_BIKETYPE', 'DEFAULT_PEDTYPE', 'DEFAULT_VEHTYPE', 'bike_bicycle', 'bus_bus', 'emergency',
+          // 'ped_pedestrian', 'rail_rail', 'tram_tram', 'truck_truck', 'veh_passenger')
+          helperText: 'Unit type, e.g. emergency, bus_bus, truck_truck, tram_tram, veh_passenger or bike_bicycle.',
           initialValue: ut.unit,
           onchange: v => {
             ut.unit = v;
@@ -74,7 +94,7 @@ export const RequestUnitTransportForm: FactoryComponent<{
         }),
         m(TextInput, {
           disabled,
-          className: 'col s6',
+          className: 'col s6 m4',
           label: 'Destination',
           iconName: 'store',
           isMandatory: true,
