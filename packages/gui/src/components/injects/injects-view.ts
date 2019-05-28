@@ -15,7 +15,7 @@ export const InjectsView = () => {
 
   return {
     view: () => {
-      return m('.row', [
+      return m('.row.sb.large', [
         m('.col.s12.m5.l4', m(InjectsList)),
         m(
           '.col.s12.m7.l8',

@@ -79,7 +79,7 @@ export const InjectsTimeline: FactoryComponent = () => {
 
       const scenarios: IScenario[] = injects ? injects.filter(i => i.type === InjectType.SCENARIO) : [];
       return m(
-        '.row.timeline.sb.large',
+        '.row.timeline',
         scenarios.map(
           scenario =>
             scenario.isOpen
