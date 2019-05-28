@@ -79,7 +79,7 @@ export const InjectsTimeline: FactoryComponent = () => {
 
       const scenarios: IScenario[] = injects ? injects.filter(i => i.type === InjectType.SCENARIO) : [];
       return m(
-        '.row.timeline',
+        '.row.timeline.sb.large',
         scenarios.map(
           scenario =>
             scenario.isOpen
@@ -87,13 +87,13 @@ export const InjectsTimeline: FactoryComponent = () => {
                   '.col.s12',
                   m(ScenarioTimeline, {
                     titleView,
-                    lineHeight: 31,
+                    lineHeight: 33,
                     timeline: scenarioToTimelineItems(scenario, injects),
                     onClick,
                     scenarioStart: new Date(scenario.startDate || new Date()),
                   })
                 )
-              : undefined
+              : m('.col.s12.empty-line')
           // : m('.scenario-title', scenario.title)
         )
       );

@@ -16,9 +16,10 @@ export const InjectsView = () => {
   return {
     view: () => {
       return m('.row', [
-        m('.col.s12.m5.l4.sb.large', m(InjectsList)),
+        m('.col.s12.m5.l4', m(InjectsList)),
         m(
           '.col.s12.m7.l8',
+          { style: 'margin-top: 11px;' },
           m(Tabs, {
             tabWidth: 'fixed',
             tabs: [

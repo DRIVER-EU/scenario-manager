@@ -197,10 +197,6 @@ i.material-icons {
   vertical-align: bottom;
 }
 
-.mst__container {
-  height: 83vh;
-  overflow-y: auto;
-}
 .mst__title {
   min-width: 400px;
   /* overflow: hidden; */
@@ -244,4 +240,19 @@ i.material-icons {
   font-size: 1em;
   margin-top: 1.33em;
   margin-bottom: 1.33em;
+}
+
+.mtc__container > div > ul > li {
+  margin-top: 37px;
+}
+.mst__container {
+  margin-top: 7px;
+  /* overflow-x: auto;
+  overflow-y: hidden; */
+}
+#timeline {
+  margin-top: 12px;
+}
+.empty-line {
+  height: 70px;
 }

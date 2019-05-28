@@ -122,11 +122,11 @@ export const InjectsList = () => {
                 id: 'filter',
                 iconName: 'filter_list',
                 initialValue: state.filterValue,
-                onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+                onkeyup: (_: KeyboardEvent, v?: string) => (state.filterValue = v),
                 className: 'right',
               })
             ),
-            m('.col.s12', m(TreeContainer, { tree: filteredInjects, options })),
+            m('.col.s12.sb.large', m(TreeContainer, { tree: filteredInjects, options })),
           ])
         : undefined;
     },
