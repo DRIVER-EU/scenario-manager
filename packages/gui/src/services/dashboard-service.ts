@@ -11,10 +11,10 @@ import { Dashboards } from '../models/dashboards';
 import { UsersView } from '../components/users/users-list';
 import { StakeholdersView } from '../components/stakeholders/stakeholders-list';
 import { AssetsView } from '../components/assets';
-import { SessionControl } from '../components/session/session-control';
 import { SessionState } from '../components/session/session-state';
 import { TrialSettings } from '../components/configuration/trial-settings';
 import { SimulationView } from '../components/simulation';
+import { SessionView } from '../components/session/session-view';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -103,7 +103,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     title: 'Run',
     route: '/execute/session',
     visible: false,
-    component: SessionControl,
+    component: SessionView,
   },
   {
     id: Dashboards.SETTINGS,
@@ -183,7 +183,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/execute/session',
     visible: false,
     level: Dashboards.EXECUTE,
-    component: SessionControl,
+    component: SessionView,
   },
   {
     id: Dashboards.SESSION_STATE,

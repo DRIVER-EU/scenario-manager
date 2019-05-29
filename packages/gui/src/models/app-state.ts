@@ -7,6 +7,7 @@ export const AppState = {
   time: {} as ITimeMessage,
   sessionControl: {
     isConnected: false,
+    activeSession: false,
     realtime: false,
     host: '',
   },

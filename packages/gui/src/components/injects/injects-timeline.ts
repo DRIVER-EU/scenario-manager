@@ -87,7 +87,7 @@ export const InjectsTimeline: FactoryComponent = () => {
                   '.col.s12',
                   m(ScenarioTimeline, {
                     titleView,
-                    lineHeight: 33,
+                    lineHeight: 32,
                     timeline: scenarioToTimelineItems(scenario, injects),
                     onClick,
                     scenarioStart: new Date(scenario.startDate || new Date()),

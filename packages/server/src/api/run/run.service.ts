@@ -66,10 +66,11 @@ export class RunService {
 
     this.injects = pruneInjects(this.scenario, this.trial.injects);
 
+    this.kafkaService.sendSessionMessage(this.session);
+
     const startUpdateLoop = () => {
       this.trialTime = this.kafkaService.trialTime;
       this.states = createInitialState(this.trialTime, this.injects);
-      this.kafkaService.sendSessionMessage(this.session);
       this.isRunning = true;
       this.updateLoop();
     };

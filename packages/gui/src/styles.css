@@ -211,14 +211,14 @@ i.material-icons {
 }
 
 .html-area h2,
-.html-area h1 { 
+.html-area h1 {
   display: block;
   margin-left: 0;
   margin-right: 0;
   font-weight: bold;
 }
 
-.html-area h1 { 
+.html-area h1 {
   font-size: 2em;
   margin-top: 0.67em;
   margin-bottom: 0.67em;
@@ -230,25 +230,25 @@ i.material-icons {
   margin-bottom: 0.83em;
 }
 
-.html-area h3 { 
+.html-area h3 {
   font-size: 1.17em;
   margin-top: 1em;
   margin-bottom: 1em;
 }
 
-.html-arae h4 { 
+.html-arae h4 {
   font-size: 1em;
   margin-top: 1.33em;
   margin-bottom: 1.33em;
 }
 
 .mtc__container > div > ul > li {
-  margin-top: 37px;
+  margin-top: 38px;
 }
 .mst__container {
-  margin-top: 7px;
-  /* overflow-x: auto;
-  overflow-y: hidden; */
+  padding-top: 8px;
+  overflow-x: visible;
+  overflow-y: hidden;
 }
 #timeline {
   margin-top: 12px;
