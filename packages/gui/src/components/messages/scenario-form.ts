@@ -2,13 +2,14 @@ import m, { FactoryComponent } from 'mithril';
 import { IInject, IScenario } from 'trial-manager-models';
 import { DateTimeControl } from '../ui/date-time-control';
 import { DefaultMessageForm } from '.';
+import { Checklist } from '../ui/checklist';
 
 const DEFAULT_TRIAL_DURATION = 8;
 
 /**
  * Default message form with a title and description.
  */
-export const ScenarioForm: FactoryComponent<{ inject: IInject, onChange: () => void }> = () => {
+export const ScenarioForm: FactoryComponent<{ inject: IInject; onChange: () => void; }> = () => {
   const setEndDate = (d: Date) => {
     const end = new Date(d.valueOf());
     end.setHours(d.getHours() + DEFAULT_TRIAL_DURATION);
@@ -32,16 +33,16 @@ export const ScenarioForm: FactoryComponent<{ inject: IInject, onChange: () => v
     },
     view: ({ attrs }) => {
       const { onChange } = attrs;
-      const inject = attrs.inject as IScenario;
+      const scenario = attrs.inject as IScenario;
 
       return [
-        m(DefaultMessageForm, { inject }),
+        m(DefaultMessageForm, { inject: scenario }),
         m(DateTimeControl, {
           class: 'col s12 m6',
           prefix: 'Start',
           dt: state.startDate,
           onchange: (d: Date) => {
-            inject.startDate = d.toUTCString();
+            scenario.startDate = d.toUTCString();
             onChange();
           },
         }),
@@ -51,9 +52,13 @@ export const ScenarioForm: FactoryComponent<{ inject: IInject, onChange: () => v
           icon: 'timer_off',
           dt: state.endDate,
           onchange: (d: Date) => {
-            inject.endDate = d.toUTCString();
+            scenario.endDate = d.toUTCString();
             onChange();
           },
+        }),
+        m(Checklist, {
+          scenario,
+          onChange,
         }),
       ];
     },
