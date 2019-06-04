@@ -1,4 +1,4 @@
-import { IContent, MessageType } from '.';
+import { IContent, MessageType, ITodo } from '.';
 
 /** The inject state communicates the state of an inject during execution of a scenario. */
 export enum InjectState {
@@ -83,4 +83,8 @@ export interface IScenario extends IInjectGroup {
   startDate?: string;
   /** When does the scenario end */
   endDate?: string;
+  /** Checklist: items to do before the scenario has started */
+  todoBefore?: ITodo[];
+  /** Checklist: items to do after the scenario has finished */
+  todoAfter?: ITodo[];
 }

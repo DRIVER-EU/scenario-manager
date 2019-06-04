@@ -68,6 +68,7 @@ export class TrialController {
   @ApiResponse({ status: 200, type: TrialOverview })
   @Put(':id')
   async update(@Param('id') id: string, @Body() scenario: TrialOverview) {
+    // console.log(JSON.stringify(scenario, null, 2));
     return this.trialService.update(id, scenario);
   }
 

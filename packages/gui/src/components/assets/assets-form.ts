@@ -1,4 +1,5 @@
 import m from 'mithril';
+import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
 import { TextInput, FileInput, Button, Icon, ModalPanel, MaterialBox } from 'mithril-materialized';
 import { ITrial, IAsset, deepCopy, deepEqual } from 'trial-manager-models';
 import { assetsChannel, TopicNames } from '../../models';
@@ -25,7 +26,7 @@ export const AssetsForm = () => {
         state.asset = cur ? deepCopy(cur) : undefined;
         state.original = cur ? deepCopy(cur) : undefined;
         if (isJSON(cur.filename) && cur.url) {
-          m.request(cur.url).then(r => {
+          m.request<FeatureCollection<Geometry, GeoJsonProperties>>(cur.url).then(r => {
             state.json = r;
             const isGeoJSON = state.json && state.json.features && state.json.features.length > 0;
             if (isGeoJSON) {

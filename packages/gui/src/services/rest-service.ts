@@ -49,12 +49,13 @@ export class RestService<T extends { id?: string | number }> {
 
   public async update(item: T, fd?: FormData) {
     try {
+      console.debug('put');
       await m.request({
         method: 'PUT',
         url: this.baseUrl + item.id,
         data: fd || item,
         withCredentials,
-      });
+      }).catch(e => console.error(e));
       // this.setCurrent(data);
       this.current = item;
       this.updateItemInList(item);

@@ -108,13 +108,14 @@ const SessionSettings: FactoryComponent<{}> = () => {
               options,
               disabled,
               iconName: getInjectIcon(InjectType.SCENARIO),
-              onchange: (id: string) => {
+              onchange: ids => {
+                const id = ids instanceof Array ? ids[0] : ids;
                 state.scenario = state.scenarios.filter(s => s.id === id).shift();
                 if (state.scenario) {
                   console.log('Scenario (new): ' + state.scenario.title);
                 }
               },
-            } as ISelectOptions<string>)
+            } as ISelectOptions)
           ),
           !isConnected
             ? undefined

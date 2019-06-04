@@ -57,7 +57,10 @@ export const InjectsForm: FactoryComponent<Attributes> = () => {
                         placeholder: 'Select the message type',
                         checkedId: inject.messageType,
                         options,
-                        onchange: (v: unknown) => (inject.messageType = v as MessageType),
+                        onchange: v => {
+                          console.warn('Getting message form');
+                          inject.messageType = v && v.length > 0 ? v[0] as MessageType : undefined;
+                        },
                       })
                     : m('h4', [
                         m(Icon, {

@@ -119,11 +119,11 @@ export const TimelineView: FactoryComponent = () => {
               options,
               checkedId: scenarioId,
               iconName: getInjectIcon(InjectType.SCENARIO),
-              onchange: (id: string) => {
-                AppState.simulationView.scenarioId = id;
+              onchange: ids => {
+                AppState.simulationView.scenarioId = ids[0] as string;
                 state.simStates = undefined;
               },
-            } as ISelectOptions<string>)
+            } as ISelectOptions)
           ),
           m(
             '.col.s12',

@@ -9,7 +9,7 @@ import {
   getParent,
   getInject,
 } from 'trial-manager-models';
-import { Select, NumberInput, ISelectOption, Icon, TimePicker, ISelectOptions } from 'mithril-materialized';
+import { Select, NumberInput, IInputOption, TimePicker, ISelectOptions } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
 import { padLeft } from '../../utils';
 
@@ -62,7 +62,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
       // console.table(inject);
       const dependency = getInject(condition.injectId, TrialSvc.getInjects());
       const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
-      const injectStateOptions: Array<ISelectOption<string>> =
+      const injectStateOptions: IInputOption[] =
         dependency && dependency.type !== InjectType.SCENARIO ? [{ id: InjectState.EXECUTED, label: 'finished' }] : [];
       injectStateOptions.push({
         id: InjectState.IN_PROGRESS,
@@ -97,8 +97,9 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
                 disabled: !TrialSvc.getCurrent(),
               },
             ],
-            onchange: v => (condition.type = v as InjectConditionType),
-          } as ISelectOptions<InjectConditionType>),
+            onchange: v =>
+              (condition.type = v instanceof Array && v.length > 0 ? (v[0] as InjectConditionType) : undefined),
+          }),
           condition.type === InjectConditionType.AT_TIME
             ? m(StartAt, { condition, inject })
             : [
@@ -109,8 +110,9 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
                   className: 'inline',
                   checkedId: condition.injectId,
                   options: previousInjectOptions,
-                  onchange: (v: string) => (condition.injectId = v),
-                } as ISelectOptions<string>),
+                  onchange: v =>
+                    (condition.type = v instanceof Array && v.length > 0 ? (v[0] as InjectConditionType) : undefined),
+                }),
                 m('span.inline', ' has '),
                 m(Select, {
                   placeholder: 'Pick one',

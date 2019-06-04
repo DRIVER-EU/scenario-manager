@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { TextArea, TextInput, Select, MapEditor, ISelectOption } from 'mithril-materialized';
+import { TextArea, TextInput, Select, MapEditor, IInputOption } from 'mithril-materialized';
 import { EditableTable, IEditableTable } from 'mithril-table';
 import {
   IInject,
@@ -29,13 +29,13 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
     alertInfo: IInfo;
     parameters: IValueNamePair[];
     participants: IPerson[];
-    statusOptions: Array<ISelectOption<string>>;
-    msgTypeOptions: Array<ISelectOption<string>>;
-    scopeOptions: Array<ISelectOption<string>>;
-    categoryOptions: Array<ISelectOption<string>>;
-    urgencyOptions: Array<ISelectOption<string>>;
-    severityOptions: Array<ISelectOption<string>>;
-    certaintyOptions: Array<ISelectOption<string>>;
+    statusOptions: IInputOption[];
+    msgTypeOptions: IInputOption[];
+    scopeOptions: IInputOption[];
+    categoryOptions: IInputOption[];
+    urgencyOptions: IInputOption[];
+    severityOptions: IInputOption[];
+    certaintyOptions: IInputOption[];
     actionList: IActionList[];
   };
 
@@ -54,7 +54,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
         state.alertInfo = alertInfo;
       } else {
         if (alert.info instanceof Array) {
-          console.log('Converting array')
+          // console.log('Converting array')
           alert.info = alert.info[0];
         }
         state.alertInfo = alert.info instanceof Array ? alert.info[0] : alert.info;
@@ -109,7 +109,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           iconName: 'person',
           className: 'col s12 m6',
           placeholder: 'Sender',
-          options: participants.map(p => ({ id: p.email, label: `${p.name} (${p.email})` })),
+          options: participants.map(p => ({ id: p.email || '', label: `${p.name} (${p.email})` })),
           checkedId: participants
             .filter(p => p.email === alert.sender)
             .map(p => p.email)
