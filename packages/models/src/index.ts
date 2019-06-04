@@ -20,6 +20,7 @@ export * from './state-transition-request';
 export * from './time-message';
 export * from './time-state';
 export * from './sim-state';
+export * from './todo';
 export * from './timing-control-message';
 export * from './trial';
 export * from './user-role';
