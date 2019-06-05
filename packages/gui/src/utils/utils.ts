@@ -10,6 +10,7 @@ import {
   InjectState,
   InjectConditionType,
   RolePlayerMessageType,
+  IInjectGroup,
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 import { IExecutingInject } from '../models';
@@ -354,3 +355,6 @@ export const centerArea = (area: L.GeoJSON<any>) => {
 
 /** Test if the filename represents a GeoJSON (based on the extension) */
 export const isJSON = (s: string) => /\.json$|\.geojson$/.test(s);
+
+/** Type guard check if we are dealing with an inject group  */
+export const isInjectGroup = (i: IInject): i is IInjectGroup => i.type !== InjectType.INJECT;
