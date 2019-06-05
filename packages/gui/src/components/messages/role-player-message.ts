@@ -17,34 +17,40 @@ export const RolePlayerMessageForm: FactoryComponent<{
   inject: IInject;
   onChange?: () => void;
   disabled?: boolean;
+  checkpoint?: boolean;
 }> = () => {
   return {
-    view: ({ attrs: { inject, disabled } }) => {
+    view: ({ attrs: { inject, disabled, checkpoint = false } }) => {
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayers = TrialSvc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
       const participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name }));
       const types = Object.keys(RolePlayerMessageType).map(t => ({ id: t, label: t }));
+      if (checkpoint) {
+        rpm.type = RolePlayerMessageType.ACTION;
+      }
       const isAction = rpm.type === RolePlayerMessageType.ACTION;
 
       return [
         m(Select, {
           disabled,
           iconName: 'record_voice_over',
-          className: 'col s12 m4',
+          className: checkpoint ? 'col s12' : isAction ? 'col s12 m6' : 'col s12 m4',
           placeholder: 'Pick role player',
           options: rolePlayers,
           checkedId: rpm.rolePlayerId,
-          onchange: (v: unknown) => (rpm.rolePlayerId = v as string),
+          onchange: v => (rpm.rolePlayerId = v[0] as string),
         }),
-        m(Select, {
-          disabled,
-          iconName: getRolePlayerMessageIcon(rpm.type),
-          className: 'col s12 m4',
-          placeholder: 'Select action type',
-          options: types,
-          checkedId: rpm.type,
-          onchange: (v: unknown) => (rpm.type = v as RolePlayerMessageType),
-        }),
+        checkpoint
+          ? undefined
+          : m(Select, {
+              disabled,
+              iconName: getRolePlayerMessageIcon(rpm.type),
+              className: isAction ? 'col s12 m6' : 'col s12 m4',
+              placeholder: 'Select type',
+              options: types,
+              checkedId: rpm.type,
+              onchange: v => (rpm.type = v[0] as RolePlayerMessageType),
+            }),
         isAction
           ? undefined
           : m(Select, {
@@ -55,30 +61,22 @@ export const RolePlayerMessageForm: FactoryComponent<{
               multiple: true,
               options: participants,
               checkedId: rpm.participantIds,
-              onchange: (v: unknown) => (rpm.participantIds = v as string[]),
+              onchange: v => (rpm.participantIds = v as string[]),
             }),
         m(TextInput, {
           disabled,
-          id: 'title',
-          initialValue: rpm.title,
-          onchange: (v: string) => (inject.title = rpm.title = v),
-          label: isAction ? 'Title' : 'Subject',
-          iconName: 'title',
-          className: 'col s12',
-        }),
-        m(TextArea, {
-          disabled,
           id: 'headline',
-          initialValue: rpm.headline,
-          onchange: (v: string) => (inject.description = rpm.headline = v),
-          label: 'Headline',
-          iconName: 'note',
+          initialValue: rpm.headline || rpm.title,
+          onchange: (v: string) => (inject.title = rpm.headline = v),
+          label: checkpoint ? 'Check' : isAction ? 'Headline' : 'Subject',
+          iconName: checkpoint ? getRolePlayerMessageIcon(rpm.type) : 'title',
+          className: 'col s12',
         }),
         m(TextArea, {
           disabled,
           id: 'desc',
           initialValue: rpm.description as string,
-          onchange: (v: string) => (rpm.description = v),
+          onchange: (v: string) => (inject.description = rpm.description = v),
           label: 'Description',
           iconName: 'description',
         }),
@@ -156,11 +154,14 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject;
             m('h5', [m(Icon, { iconName: getRolePlayerMessageIcon(rpm.type) }), `${rpm.title} [${rolePlayer.name}]`])
           )
         ),
-        m('.row', m('.col.s12', [
-          rpm.headline ? [m('h6', 'Headline'), m('p', m('i', rpm.headline))] : undefined,
-          rpm.description ? [m('h6', 'Description'), m('p', rpm.description)] : undefined,
-          msgDetails(rpm, rolePlayer, participants),
-        ])),
+        m(
+          '.row',
+          m('.col.s12', [
+            rpm.headline ? [m('h6', 'Headline'), m('p', m('i', rpm.headline))] : undefined,
+            rpm.description ? [m('h6', 'Description'), m('p', rpm.description)] : undefined,
+            msgDetails(rpm, rolePlayer, participants),
+          ])
+        ),
       ];
     },
   };

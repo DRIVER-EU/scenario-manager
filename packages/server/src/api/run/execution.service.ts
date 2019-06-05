@@ -50,6 +50,7 @@ export class ExecutionService implements IExecutionService {
       case MessageType.CAP_MESSAGE:
         this.sendCAP(i);
         break;
+      case MessageType.CHECKPOINT:
       case MessageType.ROLE_PLAYER_MESSAGE:
         this.sendRolePlayerMessage(i, comment);
         break;

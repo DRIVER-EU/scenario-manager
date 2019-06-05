@@ -24,8 +24,8 @@ export const PhaseMessageForm: FactoryComponent<{
           placeholder: 'Select the phase type',
           checkedId: pm.phase,
           options,
-          onchange: (v: unknown) => {
-            pm.phase = v as Phase;
+          onchange: v => {
+            pm.phase = v[0] as Phase;
             if (!pm.isStarting) {
               pm.isStarting = true;
             }

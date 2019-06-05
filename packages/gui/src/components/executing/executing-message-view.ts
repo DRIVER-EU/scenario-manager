@@ -12,12 +12,15 @@ import {
   SumoConfigurationForm,
   RequestUnitTransportForm,
   SetAffectedAreaForm,
+  RolePlayerMessageForm,
 } from '../messages';
 
 export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject }> = () => {
   const disabled = true;
   const getMessageForm = (inject: IExecutingInject) => {
     switch (inject.messageType) {
+      case MessageType.CHECKPOINT:
+        return m(RolePlayerMessageForm, { inject, checkpoint: true, disabled });
       case MessageType.ROLE_PLAYER_MESSAGE:
         return m(RolePlayerMessageView, { inject, disabled: inject.state === InjectState.EXECUTED });
       case MessageType.CAP_MESSAGE:

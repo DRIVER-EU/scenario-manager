@@ -18,6 +18,8 @@ import {
 export const MessageForm: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange?: () => void }> = () => {
   const getMessageForm = (inject: IInject, disabled: boolean, onChange?: () => void) => {
     switch (inject.messageType) {
+      case MessageType.CHECKPOINT:
+        return m(RolePlayerMessageForm, { inject, disabled, checkpoint: true, onChange });
       case MessageType.ROLE_PLAYER_MESSAGE:
         return m(RolePlayerMessageForm, { inject, disabled, onChange });
       case MessageType.PHASE_MESSAGE:

@@ -109,14 +109,14 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           iconName: 'person',
           className: 'col s12 m6',
           placeholder: 'Sender',
-          options: participants.map(p => ({ id: p.email || '', label: `${p.name} (${p.email})` })),
+          options: participants.map(p => ({ id: p.id || '', label: `${p.name} (${p.email})` })),
           checkedId: participants
             .filter(p => p.email === alert.sender)
             .map(p => p.email)
             .shift(),
-          onchange: (v: unknown) => {
-            alert.sender = v as string;
-            alertInfo.senderName = (participants.filter(p => p.email === v).shift() || ({} as IPerson)).name;
+          onchange: v => {
+            alert.sender = v[0] as string;
+            alertInfo.senderName = (participants.filter(p => p.id === v[0]).shift() || ({} as IPerson)).name;
           },
         }),
         m(TextArea, {
@@ -135,8 +135,8 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           placeholder: 'Status',
           options: statusOptions,
           checkedId: alert.status,
-          onchange: (v: unknown) => {
-            alert.status = v as Status;
+          onchange: v => {
+            alert.status = v[0] as Status;
           },
         }),
         m(Select, {
@@ -147,8 +147,8 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           placeholder: 'Message type',
           options: msgTypeOptions,
           checkedId: alert.msgType,
-          onchange: (v: unknown) => {
-            alert.msgType = v as MsgType;
+          onchange: v => {
+            alert.msgType = v[0] as MsgType;
           },
         }),
         m(Select, {
@@ -159,8 +159,8 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           placeholder: 'Scope',
           options: scopeOptions,
           checkedId: alert.scope,
-          onchange: (v: unknown) => {
-            alert.scope = v as Scope;
+          onchange: v => {
+            alert.scope = v[0] as Scope;
           },
         }),
         m(Select, {
@@ -171,8 +171,8 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           placeholder: 'Urgency',
           options: urgencyOptions,
           checkedId: alertInfo.urgency,
-          onchange: (v: unknown) => {
-            alertInfo.urgency = v as Urgency;
+          onchange: v => {
+            alertInfo.urgency = v[0] as Urgency;
           },
         }),
         m(Select, {
@@ -183,8 +183,8 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           placeholder: 'Severity',
           options: severityOptions,
           checkedId: alertInfo.severity,
-          onchange: (v: unknown) => {
-            alertInfo.severity = v as Severity;
+          onchange: v => {
+            alertInfo.severity = v[0] as Severity;
           },
         }),
         m(Select, {
@@ -195,8 +195,8 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           placeholder: 'Certainty',
           options: certaintyOptions,
           checkedId: alertInfo.certainty,
-          onchange: (v: unknown) => {
-            alertInfo.certainty = v as Certainty;
+          onchange: v => {
+            alertInfo.certainty = v[0] as Certainty;
           },
         }),
         m(Select, {
@@ -208,7 +208,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           multiple: true,
           options: categoryOptions,
           checkedId: alertInfo.category,
-          onchange: (v: unknown) => {
+          onchange: v => {
             alertInfo.category = v as Category | Category[];
           },
         }),

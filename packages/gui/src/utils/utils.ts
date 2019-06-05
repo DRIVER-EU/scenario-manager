@@ -104,7 +104,7 @@ export const getInjectIcon = (type?: InjectType) => {
  * Represent the message with an icon.
  * @param type message type
  */
-export const getMessageIcon = (type?: MessageType) => {
+export const getMessageIcon = (type?: string) => {
   switch (type) {
     case MessageType.GEOJSON_MESSAGE:
       return 'map';
@@ -126,6 +126,8 @@ export const getMessageIcon = (type?: MessageType) => {
       return 'wallpaper';
     case MessageType.SUMO_CONFIGURATION:
       return 'traffic';
+    case MessageType.CHECKPOINT:
+      return 'check';
     default:
       return 'message';
   }
@@ -154,7 +156,7 @@ export const getRolePlayerMessageIcon = (type?: RolePlayerMessageType) => {
  * Represent the message with a title.
  * @param type message type
  */
-export const getMessageTitle = (type?: MessageType) => {
+export const getMessageTitle = (type?: string) => {
   switch (type) {
     case MessageType.GEOJSON_MESSAGE:
       return 'MAP OVERLAY';
@@ -180,6 +182,8 @@ export const getMessageTitle = (type?: MessageType) => {
       return 'SET AFFECTED AREA';
     case MessageType.SUMO_CONFIGURATION:
       return 'SUMO CONFIGURATION';
+    case MessageType.CHECKPOINT:
+      return 'CHECKPOINT';
     default:
       return 'message';
   }

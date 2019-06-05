@@ -9,7 +9,7 @@ import {
   getParent,
   getInject,
 } from 'trial-manager-models';
-import { Select, NumberInput, IInputOption, TimePicker, ISelectOptions } from 'mithril-materialized';
+import { Select, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
 import { padLeft } from '../../utils';
 
@@ -63,7 +63,7 @@ export const InjectConditions: FactoryComponent<{
         } as IInjectCondition;
       }
       const { condition } = inject;
-      // console.table(inject);
+      console.table(inject);
       const dependency = getInject(condition.injectId, TrialSvc.getInjects());
       const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =
@@ -102,8 +102,7 @@ export const InjectConditions: FactoryComponent<{
                 disabled: !TrialSvc.getCurrent(),
               },
             ],
-            onchange: v =>
-              (condition.type = v instanceof Array && v.length > 0 ? (v[0] as InjectConditionType) : undefined),
+            onchange: v => (condition.type = v[0] as InjectConditionType),
           }),
           condition.type === InjectConditionType.AT_TIME
             ? m(StartAt, { disabled, condition, inject })
@@ -116,8 +115,7 @@ export const InjectConditions: FactoryComponent<{
                   className: 'inline',
                   checkedId: condition.injectId,
                   options: previousInjectOptions,
-                  onchange: v =>
-                    (condition.type = v instanceof Array && v.length > 0 ? (v[0] as InjectConditionType) : undefined),
+                  onchange: v => (condition.injectId = v[0] as InjectConditionType),
                 }),
                 m('span.inline', ' has '),
                 m(Select, {
@@ -126,7 +124,7 @@ export const InjectConditions: FactoryComponent<{
                   className: 'inline small',
                   checkedId: condition.injectState,
                   options: injectStateOptions,
-                  onchange: (v: unknown) => (condition.injectState = v as InjectState),
+                  onchange: v => (condition.injectState = v[0] as InjectState),
                 }),
               ],
           m('span.inline', '.'),
@@ -158,7 +156,7 @@ const Delay: FactoryComponent<{ condition: IInjectCondition; disabled?: boolean;
                 { id: 'minutes', label: condition.delay === 1 ? 'minute' : 'minutes' },
                 { id: 'hours', label: condition.delay === 1 ? 'hour' : 'hours' },
               ],
-              onchange: (v: unknown) => (condition.delayUnitType = v as 'seconds' | 'minutes' | 'hours' | undefined),
+              onchange: v => (condition.delayUnitType = v[0] as 'seconds' | 'minutes' | 'hours' | undefined),
             }),
           ]
         : undefined,

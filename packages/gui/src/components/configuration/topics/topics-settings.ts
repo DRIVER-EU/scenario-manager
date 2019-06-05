@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { Collection, CollectionMode, TextInput, FlatButton } from 'mithril-materialized';
 import { IMessageTopic, ITopicSubject, MessageType, ITrial, uniqueId } from 'trial-manager-models';
-import { iterEnum } from '../../../utils';
+import { iterEnum, enumToOptions, getMessageTitle } from '../../../utils';
 
 /**
  * Configure the required topics, verify that they are available (via the adapter - TODO),
@@ -22,8 +22,8 @@ export const TopicsSettings: FactoryComponent<{ trial: ITrial }> = () => {
     },
     view: ({ attrs: { trial } }) => {
       const { curMessageType, curTopicId } = state;
-      const messageTypes = iterEnum(MessageType).map(id => ({
-        title: MessageType[id].replace(/_/g, ' '),
+      const messageTypes = enumToOptions(MessageType).map(({ id }) => ({
+        title: getMessageTitle(id),
         active: id === curMessageType,
         onclick: () => (state.curMessageType = id as MessageType),
       }));

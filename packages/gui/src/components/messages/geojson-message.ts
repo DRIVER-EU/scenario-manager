@@ -64,7 +64,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
             isMandatory: true,
             options: subjects,
             checkedId: pm.subjectId,
-            onchange: (v: unknown) => (pm.subjectId = v as string),
+            onchange: v => (pm.subjectId = v[0] as string),
           }),
           m(Select, {
             disabled,
@@ -73,8 +73,8 @@ export const GeoJsonMessageForm: FactoryComponent<{
             className: 'col s6 m4',
             checkedId: pm.assetId,
             options: availableAssets,
-            onchange: (v: unknown) => {
-              const assetId = +(v as number);
+            onchange: v => {
+              const assetId = +(v[0] as number);
               pm.assetId = assetId;
               const asset = assets.filter(a => a.id === assetId).shift();
               pm.alias = asset ? asset.alias : undefined;

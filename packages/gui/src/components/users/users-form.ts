@@ -75,7 +75,7 @@ export const UsersForm = () => {
                         id: +r,
                         label: userRoleToString(+r),
                       })),
-                      onchange: (v: unknown) => (user.roles = (v as number[]).sort()),
+                      onchange: v => (user.roles = (v as number[]).sort()),
                     }),
                     m(EmailInput, {
                       id: 'email',
