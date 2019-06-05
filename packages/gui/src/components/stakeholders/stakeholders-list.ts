@@ -35,15 +35,16 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
             iconName: 'create',
             className: 'yellow black-text',
             active: state.curStakeholderId === cur.id,
-            content:
-              cur.notes +
-              '<br>' +
-              (cur.contactIds
-                ? cur.contactIds
-                    .map(id => TrialSvc.getUserById(id))
-                    .map(c => c && c.name)
-                    .join(', ')
-                : ''),
+            content: cur.notes
+              ? cur.notes +
+                '<br>' +
+                (cur.contactIds
+                  ? cur.contactIds
+                      .map(id => TrialSvc.getUserById(id))
+                      .map(c => c && c.name)
+                      .join(', ')
+                  : '')
+              : '',
             onclick: selectStakeholder(cur),
           }))
         : undefined;
@@ -66,7 +67,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
             label: 'Filter',
             id: 'filter',
             iconName: 'filter_list',
-            onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+            onkeyup: (_: KeyboardEvent, v?: string) => (state.filterValue = v),
             className: 'right',
           }),
         ]),

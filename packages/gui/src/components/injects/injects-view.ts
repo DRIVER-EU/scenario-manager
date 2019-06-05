@@ -10,7 +10,6 @@ export const InjectsView = () => {
   const state = {
     selectedTabId: 'timeline' as 'timeline' | 'message',
     subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
-      console.warn(cur);
       if (!isInjectGroup(cur)) {
         state.selectedTabId = 'message';
       }

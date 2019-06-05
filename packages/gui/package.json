@@ -26,7 +26,7 @@
     "mithril": "2.0.0-rc.4",
     "mithril-leaflet": "^0.1.2",
     "mithril-markdown": "^0.2.1",
-    "mithril-materialized": "^0.13.7",
+    "mithril-materialized": "^0.13.8",
     "mithril-scenario-timeline": "^0.0.10",
     "mithril-table": "^0.2.2",
     "mithril-tree-component": "^0.6.4",

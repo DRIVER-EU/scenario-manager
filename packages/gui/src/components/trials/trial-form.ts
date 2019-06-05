@@ -28,13 +28,13 @@ export const TrialForm = () => {
     if (!file || file.length < 1) {
       return console.warn('File is undefined');
     }
-    const data = new FormData();
-    data.append('file', file[0]);
+    const body = new FormData();
+    body.append('file', file[0]);
 
     m.request({
       method: 'POST',
       url: `${AppState.apiService}/repo/upload`,
-      data,
+      data: body,
     }).then(() => setTimeout(() => m.route.set(dashboardSvc.defaultRoute), 500));
   };
 

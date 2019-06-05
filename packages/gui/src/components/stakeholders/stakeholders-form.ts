@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { TextInput, TextArea, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
+import { TextInput, TextArea, Button, Icon, Select, ModalPanel, Collapsible } from 'mithril-materialized';
 import { ITrial, IStakeholder, deepCopy, deepEqual } from 'trial-manager-models';
 import { TopicNames, stakeholdersChannel } from '../../models';
 import { TrialSvc } from '../../services';
@@ -12,6 +12,7 @@ export const StakeholdersForm = () => {
     stakeholder: undefined as IStakeholder | undefined,
     original: undefined as IStakeholder | undefined,
     subscription: stakeholdersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
+      console.warn(cur);
       if (envelope.topic === TopicNames.ITEM_DELETE) {
         state.stakeholder = undefined;
         state.original = undefined;
@@ -46,6 +47,10 @@ export const StakeholdersForm = () => {
           TrialSvc.updateStakeholder(stakeholder);
         }
       };
+
+      const objectives =
+        stakeholder &&
+        (TrialSvc.getObjectives() || []).filter(o => o.stakeholderIds && o.stakeholderIds.indexOf(stakeholder.id) >= 0);
 
       return m(
         '.row',
@@ -95,6 +100,21 @@ export const StakeholdersForm = () => {
                         })
                       : undefined,
                   ],
+                  objectives
+                    ? m(
+                        '.row',
+                        m(
+                          '.col.s12',
+                          m(Collapsible, {
+                            items: objectives.map(o => ({
+                              header: o.title,
+                              body: o.description || 'No description provided',
+                              iconName: 'my_location',
+                            })),
+                          })
+                        )
+                      )
+                    : undefined,
                   m('row', [
                     m(Button, {
                       iconName: 'undo',
