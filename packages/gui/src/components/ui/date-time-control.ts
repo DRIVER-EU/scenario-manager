@@ -6,6 +6,7 @@ export interface IDateTimeControl extends Attributes {
   prefix: string;
   icon?: string;
   dt?: Date;
+  disabled?: boolean;
   onchange?: (date: Date) => void;
 }
 
@@ -16,20 +17,20 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
   };
   const getTime = () => new Date(state.date);
   return {
-    view: ({ attrs }) => {
-      const { prefix, icon, onchange, dt } = attrs;
+    view: ({ attrs: { prefix, icon, onchange, dt, class: className, disabled } }) => {
       if (dt) {
         state.date = new Date(dt);
         state.time = `${padLeft(state.date.getHours())}:${padLeft(state.date.getMinutes())}`;
       }
       const changeTime = () => (onchange ? onchange(getTime()) : undefined);
-      return m('.input-field', { class: attrs.class || 'col s12', style: 'margin: 0 auto;' }, [
+      return m('.input-field', { class: className || 'col s12', style: 'margin: 0 auto;' }, [
         m(Icon, { iconName: icon || 'timer', class: 'prefix', style: 'margin-top: 0.8em;' }),
         m('label[for=tp]', `${prefix} time:`),
         m('.list-inline', { style: 'margin-left: 1.6rem; margin-top: 0.7em;' }, [
           m(
             '.col.s5',
             m(TimePicker, {
+              disabled,
               initialValue: state.time,
               twelveHour: false,
               onchange: (time: string) => {
@@ -48,18 +49,10 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
           m(
             '.col.s7',
             m(DatePicker, {
+              disabled,
               initialValue: state.date,
               onchange: (d: Date) => {
                 state.date = d;
-                //  new Date(
-                //   Date.(
-                //     d.getFullYear(),
-                //     d.getMonth(),
-                //     d.getDate(),
-                //     state.date.getHours(),
-                //     state.date.getMinutes()
-                //   )
-                // );
                 changeTime();
               },
             })

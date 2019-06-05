@@ -9,7 +9,7 @@ const DEFAULT_TRIAL_DURATION = 8;
 /**
  * Default message form with a title and description.
  */
-export const ScenarioForm: FactoryComponent<{ inject: IInject; onChange: () => void; }> = () => {
+export const ScenarioForm: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange?: () => void }> = () => {
   const setEndDate = (d: Date) => {
     const end = new Date(d.valueOf());
     end.setHours(d.getHours() + DEFAULT_TRIAL_DURATION);
@@ -32,31 +32,40 @@ export const ScenarioForm: FactoryComponent<{ inject: IInject; onChange: () => v
       setTime(inject);
     },
     view: ({ attrs }) => {
-      const { onChange } = attrs;
+      const { onChange, disabled = false } = attrs;
       const scenario = attrs.inject as IScenario;
 
       return [
-        m(DefaultMessageForm, { inject: scenario }),
-        m(DateTimeControl, {
-          class: 'col s12 m6',
-          prefix: 'Start',
-          dt: state.startDate,
-          onchange: (d: Date) => {
-            scenario.startDate = d.toUTCString();
-            onChange();
-          },
-        }),
-        m(DateTimeControl, {
-          class: 'col s12 m6',
-          prefix: 'End',
-          icon: 'timer_off',
-          dt: state.endDate,
-          onchange: (d: Date) => {
-            scenario.endDate = d.toUTCString();
-            onChange();
-          },
-        }),
+        m(DefaultMessageForm, { inject: scenario, disabled }),
+        disabled
+          ? undefined
+          : [
+              m(DateTimeControl, {
+                class: 'col s12 m6',
+                prefix: 'Start',
+                dt: state.startDate,
+                onchange: (d: Date) => {
+                  scenario.startDate = d.toUTCString();
+                  if (onChange) {
+                    onChange();
+                  }
+                },
+              }),
+              m(DateTimeControl, {
+                class: 'col s12 m6',
+                prefix: 'End',
+                icon: 'timer_off',
+                dt: state.endDate,
+                onchange: (d: Date) => {
+                  scenario.endDate = d.toUTCString();
+                  if (onChange) {
+                    onChange();
+                  }
+                },
+              }),
+            ],
         m(Checklist, {
+          disabled,
           scenario,
           onChange,
         }),

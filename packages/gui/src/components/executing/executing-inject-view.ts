@@ -5,7 +5,7 @@ import { Icon } from 'mithril-materialized';
 import { getMessageIcon, getMessageTitle, getInjectIcon } from '../../utils';
 import { ExecutingMessageView } from './executing-message-view';
 import { ManualTransition } from './manual-transition';
-import { DefaultMessageForm } from '../messages';
+import { MessageForm } from '../messages';
 
 export const ExecutingInjectView: FactoryComponent = () => {
   const state = {
@@ -39,8 +39,7 @@ export const ExecutingInjectView: FactoryComponent = () => {
                       }),
                       inject.title,
                     ]),
-                    m(DefaultMessageForm, { inject, disabled: true }),
-                    // m('')
+                    m(MessageForm, { inject, disabled: true }),
                   ]
                 : [
                     m(ManualTransition, { inject, key: inject.id }),

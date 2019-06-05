@@ -44,9 +44,13 @@ For acts and storylines, which are at the beginning of a sequence
 */
 
 /** Allows to set the inject conditions, i.e. when does the inject get executed. */
-export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjects: IInject[] }> = () => {
+export const InjectConditions: FactoryComponent<{
+  inject: IInject;
+  previousInjects: IInject[];
+  disabled?: boolean;
+}> = () => {
   return {
-    view: ({ attrs: { inject, previousInjects } }) => {
+    view: ({ attrs: { inject, previousInjects, disabled = false } }) => {
       if (inject.type === InjectType.SCENARIO) {
         return undefined;
       }
@@ -82,6 +86,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
           // m(Icon, { iconName: 'playlist_play', class: 'small', style: 'margin: 0 0.5em;' }),
           m('span.inline', 'Start '),
           m(Select, {
+            disabled,
             style: 'width: 70px',
             className: 'inline medium',
             placeholder: 'Pick one',
@@ -101,11 +106,12 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
               (condition.type = v instanceof Array && v.length > 0 ? (v[0] as InjectConditionType) : undefined),
           }),
           condition.type === InjectConditionType.AT_TIME
-            ? m(StartAt, { condition, inject })
+            ? m(StartAt, { disabled, condition, inject })
             : [
-                m(Delay, { condition }),
+                m(Delay, { disabled, condition }),
                 m('span.inline', ' after '),
                 m(Select, {
+                  disabled,
                   placeholder: 'Pick one',
                   className: 'inline',
                   checkedId: condition.injectId,
@@ -115,6 +121,7 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
                 }),
                 m('span.inline', ' has '),
                 m(Select, {
+                  disabled,
                   placeholder: 'Pick one',
                   className: 'inline small',
                   checkedId: condition.injectState,
@@ -129,18 +136,20 @@ export const InjectConditions: FactoryComponent<{ inject: IInject; previousInjec
   };
 };
 
-const Delay: FactoryComponent<{ condition: IInjectCondition }> = () => {
+const Delay: FactoryComponent<{ condition: IInjectCondition; disabled?: boolean; }> = () => {
   return {
-    view: ({ attrs: { condition } }) =>
+    view: ({ attrs: { condition, disabled = false } }) =>
       condition.type === InjectConditionType.DELAY || condition.type === InjectConditionType.MANUALLY
         ? [
             m(NumberInput, {
+              disabled,
               className: 'inline xs',
               min: 0,
               initialValue: condition.delay,
               onchange: (v: number) => (condition.delay = v),
             }),
             m(Select, {
+              disabled,
               placeholder: 'Pick one',
               className: 'inline small',
               checkedId: condition.delayUnitType,
@@ -156,9 +165,9 @@ const Delay: FactoryComponent<{ condition: IInjectCondition }> = () => {
   };
 };
 
-const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject }> = () => {
+const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject; disabled?: boolean; }> = () => {
   return {
-    view: ({ attrs: { condition, inject } }) => {
+    view: ({ attrs: { condition, inject, disabled = false } }) => {
       const { delay = 0, delayUnitType = 'seconds' } = condition;
       const trial = TrialSvc.getCurrent();
       if (!trial) {
@@ -173,6 +182,7 @@ const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject }
       const trialStart = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const atTime = new Date(trialStart.getTime() + delayInSeconds * 1000);
       return m(TimePicker, {
+        disabled,
         className: 'inline',
         initialValue: `${padLeft(atTime.getHours(), 2)}:${padLeft(atTime.getMinutes(), 2)}`,
         prefix: 'Start',

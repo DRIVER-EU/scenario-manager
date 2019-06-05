@@ -15,40 +15,40 @@ import {
   SetAffectedAreaForm,
 } from '.';
 
-export const MessageForm: FactoryComponent<{ inject: IInject; onChange: () => void }> = () => {
-  const getMessageForm = (inject: IInject, onChange: () => void) => {
+export const MessageForm: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange?: () => void }> = () => {
+  const getMessageForm = (inject: IInject, disabled: boolean, onChange?: () => void) => {
     switch (inject.messageType) {
       case MessageType.ROLE_PLAYER_MESSAGE:
-        return m(RolePlayerMessageForm, { inject, onChange });
+        return m(RolePlayerMessageForm, { inject, disabled, onChange });
       case MessageType.PHASE_MESSAGE:
-        return m(PhaseMessageForm, { inject, onChange });
+        return m(PhaseMessageForm, { inject, disabled, onChange });
       case MessageType.GEOJSON_MESSAGE:
-        return m(GeoJsonMessageForm, { inject, onChange });
+        return m(GeoJsonMessageForm, { inject, disabled, onChange });
       case MessageType.CAP_MESSAGE:
-        return m(CapMessageForm, { inject, onChange });
+        return m(CapMessageForm, { inject, disabled, onChange });
       case MessageType.LCMS_MESSAGE:
-        return m(LcmsMessageForm, { inject, onChange });
+        return m(LcmsMessageForm, { inject, disabled, onChange });
       case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
-        return m(OstChangeStageMessageForm, { inject, onChange });
+        return m(OstChangeStageMessageForm, { inject, disabled, onChange });
       case MessageType.START_INJECT:
-        return m(StartInjectForm, { inject, onChange });
+        return m(StartInjectForm, { inject, disabled, onChange });
       case MessageType.SUMO_CONFIGURATION:
-        return m(SumoConfigurationForm, { inject, onChange });
+        return m(SumoConfigurationForm, { inject, disabled, onChange });
       case MessageType.REQUEST_UNIT_TRANSPORT:
-        return m(RequestUnitTransportForm, { inject, onChange });
+        return m(RequestUnitTransportForm, { inject, disabled, onChange });
       case MessageType.SET_AFFECTED_AREA:
-        return m(SetAffectedAreaForm, { inject, onChange });
+        return m(SetAffectedAreaForm, { inject, disabled, onChange });
       default:
         return m('.row', '');
     }
   };
 
   return {
-    view: ({ attrs: { inject, onChange } }) =>
+    view: ({ attrs: { inject, disabled = false, onChange } }) =>
       inject.type === InjectType.INJECT
-        ? getMessageForm(inject, onChange)
+        ? getMessageForm(inject, disabled, onChange)
         : inject.type === InjectType.SCENARIO
-        ? m(ScenarioForm, { inject, onChange })
-        : m(DefaultMessageForm, { inject }),
+        ? m(ScenarioForm, { inject, disabled, onChange })
+        : m(DefaultMessageForm, { inject, disabled }),
   };
 };

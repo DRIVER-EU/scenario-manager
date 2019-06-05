@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
 import { SocketSvc, TrialSvc, RunSvc } from '../../services';
-import { AppState } from '../../models';
+import { AppState, injectsChannel, TopicNames } from '../../models';
 import { Select, ISelectOptions, TextInput, TextArea, Switch, Icon, FlatButton } from 'mithril-materialized';
 import {
   ITrial,
@@ -54,7 +54,6 @@ const SessionSettings: FactoryComponent<{}> = () => {
       }
       return undefined;
     };
-    console.log(AppState);
     switch (cmd) {
       case 'start': {
         const s = createSessionMsg(SessionState.START);
@@ -86,6 +85,11 @@ const SessionSettings: FactoryComponent<{}> = () => {
       state.trial = TrialSvc.getCurrent();
       setScenario(AppState.session);
     },
+    oncreate: () => {
+      if (state.scenario) {
+        injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: state.scenario });
+      }
+    },
     view: () => {
       const { trial, scenario } = state;
       const { session, sessionControl } = AppState;
@@ -112,6 +116,7 @@ const SessionSettings: FactoryComponent<{}> = () => {
                 const id = ids instanceof Array ? ids[0] : ids;
                 state.scenario = state.scenarios.filter(s => s.id === id).shift();
                 if (state.scenario) {
+                  injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: state.scenario });
                   console.log('Scenario (new): ' + state.scenario.title);
                 }
               },

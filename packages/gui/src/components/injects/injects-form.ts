@@ -9,7 +9,11 @@ import { MessageForm } from '../messages/message-form';
 
 const log = console.log;
 
-export const InjectsForm: FactoryComponent<Attributes> = () => {
+export interface IInjectsForm extends Attributes {
+  disabled?: boolean;
+}
+
+export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
   const state = {
     parent: undefined as IInject | IInjectGroup | undefined,
     inject: undefined as IInject | undefined,
@@ -25,7 +29,7 @@ export const InjectsForm: FactoryComponent<Attributes> = () => {
     onremove: () => {
       state.subscription.unsubscribe();
     },
-    view: ({ attrs: { className }}) => {
+    view: ({ attrs: { className, disabled = false }}) => {
       const { inject, original } = state;
       const onChange = () => {
         state.inject = inject;
@@ -53,6 +57,7 @@ export const InjectsForm: FactoryComponent<Attributes> = () => {
                 m('.col.s12', [
                   inject.type === InjectType.INJECT
                     ? m(Select, {
+                        disabled,
                         iconName: getMessageIcon(inject.messageType),
                         placeholder: 'Select the message type',
                         checkedId: inject.messageType,
@@ -70,11 +75,11 @@ export const InjectsForm: FactoryComponent<Attributes> = () => {
                         inject.type,
                       ]),
                   [
-                    m(MessageForm, { inject, onChange, key: inject.id }),
-                    m(InjectConditions, { inject, previousInjects }),
-                    m(SetObjectives, { inject }),
+                    m(MessageForm, { disabled, inject, onChange, key: inject.id }),
+                    m(InjectConditions, { disabled, inject, previousInjects }),
+                    m(SetObjectives, { disabled, inject }),
                   ],
-                  m('row', [
+                  m('row', disabled ? undefined : [
                     m(Button, {
                       iconName: 'undo',
                       class: `green ${hasChanged ? '' : 'disabled'}`,
@@ -111,9 +116,9 @@ export const InjectsForm: FactoryComponent<Attributes> = () => {
 };
 
 /** Allows to set the main and secondary objective */
-export const SetObjectives: FactoryComponent<{ inject: IInject }> = () => {
+export const SetObjectives: FactoryComponent<{ inject: IInject; disabled?: boolean; }> = () => {
   return {
-    view: ({ attrs: { inject } }) => {
+    view: ({ attrs: { inject, disabled = false } }) => {
       const isGroup = inject && inject.type !== InjectType.INJECT;
       const objectives = [{ id: '', title: 'Pick one' }, ...(TrialSvc.getObjectives() || [])].map(o => ({
         id: o.id,
@@ -124,6 +129,7 @@ export const SetObjectives: FactoryComponent<{ inject: IInject }> = () => {
       return isGroup
         ? m('.row', [
             m(Dropdown, {
+              disabled,
               id: 'primary',
               className: 'col s6',
               helperText: 'Main objective',
@@ -133,6 +139,7 @@ export const SetObjectives: FactoryComponent<{ inject: IInject }> = () => {
             }),
             injectGroup.mainObjectiveId
               ? m(Dropdown, {
+                  disabled,
                   id: 'secondary',
                   className: 'col s6',
                   helperText: 'Secondary objective',
