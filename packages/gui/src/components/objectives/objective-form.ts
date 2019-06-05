@@ -1,8 +1,9 @@
 import m from 'mithril';
-import { TextInput, TextArea, Select, Button, Icon } from 'mithril-materialized';
-import { ITrial, IObjective, deepCopy, deepEqual } from 'trial-manager-models';
+import { TextInput, TextArea, Select, Button, Icon, Collapsible } from 'mithril-materialized';
+import { ITrial, IObjective, deepCopy, deepEqual, IInjectGroup } from 'trial-manager-models';
 import { TopicNames, objectiveChannel } from '../../models';
 import { TrialSvc } from '../../services';
+import { isInjectGroup, getInjectIcon } from '../../utils';
 
 const log = console.log;
 
@@ -12,6 +13,7 @@ export const ObjectiveForm = () => {
     parent: undefined as IObjective | undefined,
     objective: undefined as IObjective | undefined,
     original: undefined as IObjective | undefined,
+    injectGroups: undefined as IInjectGroup[] | undefined,
     subscription: objectiveChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
       state.objective = cur && cur.id ? deepCopy(cur) : undefined;
       state.original = cur && cur.id ? deepCopy(cur) : undefined;
@@ -24,12 +26,13 @@ export const ObjectiveForm = () => {
   return {
     oninit: () => {
       state.trial = TrialSvc.getCurrent();
+      state.injectGroups = (TrialSvc.getInjects() || []).filter(isInjectGroup);
     },
     onbeforeremove: () => {
       state.subscription.unsubscribe();
     },
     view: () => {
-      const objective = state.objective;
+      const { objective, injectGroups } = state;
       const hasChanged = !deepEqual(objective, state.original);
       const stakeholders = TrialSvc.getStakeholders();
       const options = stakeholders
@@ -46,6 +49,12 @@ export const ObjectiveForm = () => {
           TrialSvc.updateObjective(objective);
         }
       };
+
+      const mainInjectsGroups =
+        injectGroups && objective && injectGroups.filter(g => g.mainObjectiveId === objective.id);
+      const secInjectsGroups =
+        injectGroups && objective && injectGroups.filter(g => g.secondaryObjectiveId === objective.id);
+
       return m(
         '.row',
         { style: 'color: black' },
@@ -91,6 +100,36 @@ export const ObjectiveForm = () => {
                       })
                     : undefined,
                 ],
+                mainInjectsGroups
+                  ? m(
+                      'row',
+                      m(
+                        '.col.s12',
+                        m(Collapsible, {
+                          items: mainInjectsGroups.map(i => ({
+                            header: i.title,
+                            body: i.description || 'No description provided',
+                            iconName: getInjectIcon(i.type),
+                          })),
+                        })
+                      )
+                    )
+                  : undefined,
+                secInjectsGroups
+                  ? m(
+                      'row',
+                      m(
+                        '.col.s12',
+                        m(Collapsible, {
+                          items: secInjectsGroups.map(i => ({
+                            header: i.title,
+                            body: i.description || 'No description provided',
+                            iconName: getInjectIcon(i.type),
+                          })),
+                        })
+                      )
+                    )
+                  : undefined,
                 m('row', [
                   m(Button, {
                     iconName: 'undo',
