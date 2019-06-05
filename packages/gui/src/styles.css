@@ -242,7 +242,7 @@ i.material-icons {
   margin-bottom: 1.33em;
 }
 
-.mtc__container > div > ul > li {
+.injects-list .mtc__container > div > ul > li {
   margin-top: 38px;
 }
 .mst__container {
