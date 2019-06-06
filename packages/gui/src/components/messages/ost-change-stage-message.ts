@@ -12,23 +12,29 @@ export const OstChangeStageMessageForm: FactoryComponent<{
     view: ({ attrs: { inject, disabled } }) => {
       const pm = getMessage(inject, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES) as IOstStageChangeMessage;
 
-      return [
-        m(TextInput, {
-          disabled,
-          id: 'title',
-          initialValue: inject.title,
-          onchange: (v: string) => (inject.title = v),
-          label: 'Title',
-          iconName: 'title',
-        }),
-        m(TextArea, {
-          disabled,
-          id: 'desc',
-          initialValue: inject.description,
-          onchange: (v: string) => (inject.description = v),
-          label: 'Description',
-          iconName: 'note',
-        }),
+      return m('.row', [
+        m(
+          '.col.s12',
+          m(TextInput, {
+            disabled,
+            id: 'title',
+            initialValue: inject.title,
+            onchange: (v: string) => (inject.title = v),
+            label: 'Title',
+            iconName: 'title',
+          })
+        ),
+        m(
+          '.col.s12',
+          m(TextArea, {
+            disabled,
+            id: 'desc',
+            initialValue: inject.description,
+            onchange: (v: string) => (inject.description = v),
+            label: 'Description',
+            iconName: 'note',
+          })
+        ),
         m(
           '.col.s6',
           m(NumberInput, {
@@ -51,7 +57,7 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             iconName: 'filter_2',
           })
         ),
-      ];
+      ]);
     },
   };
 };
