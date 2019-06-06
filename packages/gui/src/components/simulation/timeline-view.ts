@@ -49,15 +49,15 @@ export const TimelineView: FactoryComponent = () => {
       if (!scenarios || scenarios.length === 0) {
         return;
       }
-      const scenarioId = AppState.simulationView.scenarioId || scenarios[0].id;
+      const scenarioId = AppState.scenarioId || scenarios[0].id;
       state.trial = trial;
       state.injectNames = injectNames;
       state.scenarios = scenarios;
-      AppState.simulationView.scenarioId = scenarioId;
+      AppState.scenarioId = scenarioId;
     },
     view: () => {
       const { trial, scenarios, injectNames, selectedId } = state;
-      const { scenarioId } = AppState.simulationView;
+      const { scenarioId } = AppState;
       const scenario = scenarios.filter(s => s.id === scenarioId).shift();
       if (!scenario) {
         return undefined;
@@ -120,7 +120,7 @@ export const TimelineView: FactoryComponent = () => {
               checkedId: scenarioId,
               iconName: getInjectIcon(InjectType.SCENARIO),
               onchange: ids => {
-                AppState.simulationView.scenarioId = ids[0] as string;
+                AppState.scenarioId = ids[0] as string;
                 state.simStates = undefined;
               },
             } as ISelectOptions)

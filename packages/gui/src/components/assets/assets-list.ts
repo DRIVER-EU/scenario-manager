@@ -57,7 +57,7 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
             m(RoundIconButton, {
               iconName: 'add',
               class: 'green right btn-small',
-              style: 'margin-top: 1em;',
+              style: 'margin: 1em;',
               onclick: async () => {
                 await TrialSvc.newAsset();
               },

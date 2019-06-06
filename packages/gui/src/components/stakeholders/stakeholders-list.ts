@@ -56,7 +56,7 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
             m(RoundIconButton, {
               iconName: 'add',
               class: 'green right btn-small',
-              style: 'margin-top: 1em;',
+              style: 'margin: 1em;',
               onclick: async () => {
                 const sh = {
                   id: uniqueId(),

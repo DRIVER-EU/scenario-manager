@@ -11,6 +11,7 @@ import {
   InjectConditionType,
   RolePlayerMessageType,
   IInjectGroup,
+  IScenario,
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 import { IExecutingInject } from '../models';
@@ -358,3 +359,6 @@ export const isJSON = (s: string) => /\.json$|\.geojson$/.test(s);
 
 /** Type guard check if we are dealing with an inject group  */
 export const isInjectGroup = (i: IInject): i is IInjectGroup => i.type !== InjectType.INJECT;
+
+/** Type guard check if we are dealing with a scenario  */
+export const isScenario = (i: IInject): i is IScenario => i.type === InjectType.SCENARIO;

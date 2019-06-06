@@ -19,8 +19,6 @@ export const AppState = {
     scenarioId: '',
     comments: '',
   } as Partial<ISessionMgmt>,
-  simulationView: {
-    scenarioId: '',
-  },
+  scenarioId: '',
   injectStates: {} as IInjectSimStates,
 };

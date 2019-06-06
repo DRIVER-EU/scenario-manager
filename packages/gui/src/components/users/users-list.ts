@@ -51,7 +51,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
             m(RoundIconButton, {
               iconName: 'person_add',
               class: 'green right btn-small',
-              style: 'margin-top: 1em;',
+              style: 'margin: 1em;',
               onclick: async () => {
                 const user = {
                   id: uniqueId(),
@@ -66,7 +66,7 @@ const UsersList: FactoryComponent<IPerson> = () => {
               label: 'Filter',
               id: 'filter',
               iconName: 'filter_list',
-              onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+              onkeyup: (_: KeyboardEvent, v?: string) => (state.filterValue = v),
               className: 'right',
             }),
           ])

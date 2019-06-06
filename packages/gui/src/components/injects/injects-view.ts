@@ -9,16 +9,20 @@ import { isInjectGroup } from '../../utils';
 export const InjectsView = () => {
   const state = {
     selectedTabId: 'timeline' as 'timeline' | 'message',
-    subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
+    subscriptionSelect: injectsChannel.subscribe(TopicNames.ITEM_SELECT, ({ cur }) => {
       if (!isInjectGroup(cur)) {
         state.selectedTabId = 'message';
       }
+    }),
+    subscriptionCreate: injectsChannel.subscribe(TopicNames.ITEM_CREATE, () => {
+      state.selectedTabId = 'message';
     }),
   };
 
   return {
     onremove: () => {
-      state.subscription.unsubscribe();
+      state.subscriptionSelect.unsubscribe();
+      state.subscriptionCreate.unsubscribe();
     },
     view: () => {
       const { selectedTabId } = state;

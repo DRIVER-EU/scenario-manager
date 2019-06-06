@@ -11,7 +11,8 @@ import {
   InjectConditionType,
 } from 'trial-manager-models';
 import { Icon } from 'mithril-materialized';
-import { getIcon } from '../../utils';
+import { getIcon, isScenario } from '../../utils';
+import { AppState } from '../../models';
 
 export const InjectsTimeline: FactoryComponent = () => {
   const titleView: FactoryComponent<{ item: ITimelineItem }> = () => {
@@ -77,25 +78,23 @@ export const InjectsTimeline: FactoryComponent = () => {
         }
       };
 
-      const scenarios: IScenario[] = injects ? injects.filter(i => i.type === InjectType.SCENARIO) : [];
+      const scenarios: IScenario[] = injects ? injects.filter(isScenario) : [];
+      const { scenarioId } = AppState;
+      const scenario = scenarios.filter(s => s.id === scenarioId).shift() || scenarios[0];
       return m(
         '.row.timeline.sb.large',
-        scenarios.map(
-          scenario =>
-            scenario.isOpen
-              ? m(
-                  '.col.s12',
-                  m(ScenarioTimeline, {
-                    titleView,
-                    lineHeight: 32,
-                    timeline: scenarioToTimelineItems(scenario, injects),
-                    onClick,
-                    scenarioStart: new Date(scenario.startDate || new Date()),
-                  })
-                )
-              : m('.col.s12.empty-line')
-          // : m('.scenario-title', scenario.title)
-        )
+        scenario
+          ? m(
+              '.col.s12',
+              m(ScenarioTimeline, {
+                titleView,
+                lineHeight: 32,
+                timeline: scenarioToTimelineItems(scenario, injects),
+                onClick,
+                scenarioStart: new Date(scenario.startDate || new Date()),
+              })
+            )
+          : undefined
       );
     },
   };
