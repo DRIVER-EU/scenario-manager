@@ -54,16 +54,6 @@ export const TrialForm = () => {
             [
               m('h5', trial.id ? 'Trial' : 'Create new Trial'),
               m(
-                '.col.s6.l4',
-                m(TextInput, {
-                  id: 'id',
-                  initialValue: trial.id,
-                  label: 'ID',
-                  iconName: 'label',
-                  disabled: true,
-                })
-              ),
-              m(
                 '.col.s6.l8',
                 m(TextInput, {
                   id: 'title',
@@ -71,6 +61,16 @@ export const TrialForm = () => {
                   onchange: (v: string) => (trial.title = v),
                   label: 'Title',
                   iconName: 'title',
+                })
+              ),
+              m(
+                '.col.s6.l4',
+                m(TextInput, {
+                  id: 'id',
+                  initialValue: trial.id,
+                  label: 'ID',
+                  iconName: 'label',
+                  disabled: true,
                 })
               ),
               m(
