@@ -5,7 +5,7 @@ dependencies:
   material-icons: 0.3.1
   materialize-css: 1.0.0
   mithril: 2.0.0-rc.4
-  mithril-leaflet: 0.1.2
+  mithril-leaflet: 0.1.3
   mithril-markdown: 0.2.1
   mithril-materialized: 0.13.8
   mithril-scenario-timeline: 0.0.10
@@ -4592,10 +4592,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-SvTQj/4XfW1Fae1B7rjaB1AiXL9TrzvzkAJJ6xNgAHw58MjKAqxjRLodhMHmV5fthvZvWD8QK5CbyRjPcaSxgw==
-  /mithril-leaflet/0.1.2:
+  /mithril-leaflet/0.1.3:
     dev: false
     resolution:
-      integrity: sha512-abU9JbxK11OWdE0vxwM9eDxIbSbyoOkCfGS/584D+NNwpCRUDhHWMY191FKnFtItw+kjirYpw1pCEJjvPfS/Yw==
+      integrity: sha512-w70fHBEKPVhscQ0lG84dEJzuhxCf0etbibQyZgo0bQFHlxhhukUNvo7E4FnK0K4gLUNKShVu4udbsdwuChR5Fw==
   /mithril-markdown/0.2.1:
     dependencies:
       marked: 0.6.2
@@ -7556,7 +7556,7 @@ specifiers:
   material-icons: ^0.3.1
   materialize-css: ^1.0.0
   mithril: 2.0.0-rc.4
-  mithril-leaflet: ^0.1.2
+  mithril-leaflet: ^0.1.3
   mithril-markdown: ^0.2.1
   mithril-materialized: ^0.13.8
   mithril-scenario-timeline: ^0.0.10

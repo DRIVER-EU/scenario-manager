@@ -63,7 +63,7 @@ export const InjectConditions: FactoryComponent<{
         } as IInjectCondition;
       }
       const { condition } = inject;
-      console.table(inject);
+      // console.table(inject);
       const dependency = getInject(condition.injectId, TrialSvc.getInjects());
       const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =

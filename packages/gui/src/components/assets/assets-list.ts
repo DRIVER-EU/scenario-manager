@@ -51,22 +51,26 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
       }));
 
       return [
-        m('.row', [
-          m(RoundIconButton, {
-            iconName: 'add',
-            class: 'green right',
-            onclick: async () => {
-              await TrialSvc.newAsset();
-            },
-          }),
-          m(TextInput, {
-            label: 'Filter',
-            id: 'filter',
-            iconName: 'filter_list',
-            onkeyup: (_: KeyboardEvent, v?: string) => (state.filterValue = v),
-            className: 'right',
-          }),
-        ]),
+        m(
+          '.row',
+          m('.col.s12', [
+            m(RoundIconButton, {
+              iconName: 'add',
+              class: 'green right btn-small',
+              style: 'margin-top: 1em;',
+              onclick: async () => {
+                await TrialSvc.newAsset();
+              },
+            }),
+            m(TextInput, {
+              label: 'Filter',
+              id: 'filter',
+              iconName: 'filter_list',
+              onkeyup: (_: KeyboardEvent, v?: string) => (state.filterValue = v),
+              className: 'right',
+            }),
+          ])
+        ),
         filteredAssets
           ? m(
               '.row.sb',
@@ -76,33 +80,6 @@ const AssetsList: FactoryComponent<IStakeholder> = () => {
                   mode: CollectionMode.AVATAR,
                   items,
                 })
-                // m(
-                //   'ul.collection',
-                //   filteredAssets.map(cur =>
-                //     m(
-                //       'li.collection-item avatar',
-                //       {
-                //         class: state.curAssetId === cur.id ? 'active' : undefined,
-                //         onclick: selectAsset(cur),
-                //       },
-                //       [
-                //         m(Icon, {
-                //           iconName: assetIcon(cur),
-                //           class: 'circle yellow black-text',
-                //         }),
-                //         m('span.title', cur.alias || cur.filename),
-                //         m(
-                //           'p',
-                //           m(
-                //             'a.secondary-content[target=_blank]',
-                //             { href: cur.url },
-                //             m(Icon, { iconName: 'file_download' })
-                //           )
-                //         ),
-                //       ]
-                //     )
-                //   )
-                // )
               )
             )
           : undefined,

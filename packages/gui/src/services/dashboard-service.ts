@@ -15,6 +15,7 @@ import { SessionState } from '../components/session/session-state';
 import { TrialSettings } from '../components/configuration/trial-settings';
 import { SimulationView } from '../components/simulation';
 import { SessionView } from '../components/session/session-view';
+import { OverviewMap } from '../components/map/overview-map';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -167,6 +168,14 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/edit/scenarios',
     visible: false,
     component: InjectsView,
+    level: Dashboards.TRIAL,
+  },
+  {
+    id: Dashboards.MAP,
+    title: 'Map',
+    route: '/edit/map',
+    visible: false,
+    component: OverviewMap,
     level: Dashboards.TRIAL,
   },
   {

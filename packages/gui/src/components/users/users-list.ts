@@ -22,47 +22,55 @@ const UsersList: FactoryComponent<IPerson> = () => {
   return {
     onremove: () => state.subscription.unsubscribe(),
     view: () => {
-      const users = (TrialSvc.getUsers(state.filterValue) || [])
-        .sort((a, b) => (a.name > b.name || a.id > b.id ? 1 : -1));
+      const users = (TrialSvc.getUsers(state.filterValue) || []).sort((a, b) =>
+        a.name > b.name || a.id > b.id ? 1 : -1
+      );
       if (!state.currentUserId && users.length > 0) {
         setTimeout(() => {
           selectUser(users[0])();
           m.redraw();
         }, 0);
       }
-      const items = users.map(cur => ({
-        title: cur.name || '?',
-        iconName: 'create',
-        avatar: userIcon(cur),
-        className: 'yellow black-text',
-        active: state.currentUserId === cur.id,
-        content: userRolesToString(cur) + (cur.notes ? `<br><i>${cur.notes}</i>` : ''),
-        onclick: selectUser(cur),
-      } as ICollectionItem));
+      const items = users.map(
+        cur =>
+          ({
+            title: cur.name || '?',
+            iconName: 'create',
+            avatar: userIcon(cur),
+            className: 'yellow black-text',
+            active: state.currentUserId === cur.id,
+            content: userRolesToString(cur) + (cur.notes ? `<br><i>${cur.notes}</i>` : ''),
+            onclick: selectUser(cur),
+          } as ICollectionItem)
+      );
 
       return [
-        m('.row', [
-          m(RoundIconButton, {
-            iconName: 'person_add',
-            class: 'green right',
-            onclick: async () => {
-              const user = {
-                id: uniqueId(),
-                name: 'New user',
-                roles: [UserRole.STAKEHOLDER],
-              } as IPerson;
-              state.currentUserId = user.id;
-              await TrialSvc.createUser(user);
-            },
-          }),
-          m(TextInput, {
-            label: 'Filter',
-            id: 'filter',
-            iconName: 'filter_list',
-            onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
-            className: 'right',
-          }),
-        ]),
+        m(
+          '.row',
+          m('.col.s12', [
+            m(RoundIconButton, {
+              iconName: 'person_add',
+              class: 'green right btn-small',
+              style: 'margin-top: 1em;',
+              onclick: async () => {
+                const user = {
+                  id: uniqueId(),
+                  name: 'New user',
+                  roles: [UserRole.STAKEHOLDER],
+                } as IPerson;
+                state.currentUserId = user.id;
+                await TrialSvc.createUser(user);
+              },
+            }),
+            m(TextInput, {
+              label: 'Filter',
+              id: 'filter',
+              iconName: 'filter_list',
+              onkeyup: (ev: KeyboardEvent, v?: string) => (state.filterValue = v),
+              className: 'right',
+            }),
+          ])
+        ),
         users.length > 0
           ? m('.row.sb', m('.col.s12', m(Collection, { mode: CollectionMode.AVATAR, items })))
           : undefined,
