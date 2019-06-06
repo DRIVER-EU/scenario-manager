@@ -22,7 +22,7 @@ export const InjectsView = () => {
     },
     view: () => {
       const { selectedTabId } = state;
-      return m('.row.sb.large', [
+      return m('.row', [
         m('.col.s12.m5.l4', m(InjectsList)),
         m(
           '.col.s12.m7.l8.timeline-message',

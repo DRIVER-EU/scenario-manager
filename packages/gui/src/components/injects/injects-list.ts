@@ -118,7 +118,7 @@ export const InjectsList = () => {
             m(
               '.col.s12',
               m(TextInput, {
-                label: 'Filter',
+                label: 'Scenario filter',
                 id: 'filter',
                 iconName: 'filter_list',
                 initialValue: state.filterValue,
@@ -126,7 +126,7 @@ export const InjectsList = () => {
                 className: 'right',
               })
             ),
-            m('.col.s12', m(TreeContainer, { tree: filteredInjects, options })),
+            m('.col.s12.sb.large', m(TreeContainer, { tree: filteredInjects, options })),
           ])
         : undefined;
     },

@@ -47,72 +47,68 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       const options = enumToOptions(MessageType).map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
 
       return m(
-        '.injects-form',
-        { style: 'color: black', className },
+        '.row.injects-form.sb.large',
+        { style: 'color: black; padding-bottom: 10px;', className },
         inject
           ? [
-              m(
-                '.row',
-                { style: 'padding-bottom: 10px;' },
-                m('.col.s12', [
-                  inject.type === InjectType.INJECT
-                    ? m(Select, {
-                        disabled,
-                        iconName: getMessageIcon(inject.messageType),
-                        placeholder: 'Select the message type',
-                        checkedId: inject.messageType,
-                        options,
-                        onchange: v => {
-                          console.warn('Getting message form');
-                          inject.messageType = v && v.length > 0 ? (v[0] as MessageType) : undefined;
-                        },
-                      })
-                    : m('h4', [
-                        m(Icon, {
-                          iconName: getInjectIcon(inject.type),
-                          style: 'margin-right: 12px;',
+              m('.col.s12', [
+                inject.type === InjectType.INJECT
+                  ? m(Select, {
+                      disabled,
+                      iconName: getMessageIcon(inject.messageType),
+                      placeholder: 'Select the message type',
+                      checkedId: inject.messageType,
+                      options,
+                      onchange: v => {
+                        console.warn('Getting message form');
+                        inject.messageType = v && v.length > 0 ? (v[0] as MessageType) : undefined;
+                      },
+                    })
+                  : m('h4', [
+                      m(Icon, {
+                        iconName: getInjectIcon(inject.type),
+                        style: 'margin-right: 12px;',
+                      }),
+                      inject.type,
+                    ]),
+                [
+                  m(MessageForm, { disabled, inject, onChange, key: inject.id }),
+                  m(InjectConditions, { disabled, inject, previousInjects }),
+                  m(SetObjectives, { disabled, inject }),
+                ],
+                m(
+                  'row',
+                  disabled
+                    ? undefined
+                    : [
+                        m(Button, {
+                          iconName: 'undo',
+                          class: `green ${hasChanged ? '' : 'disabled'}`,
+                          onclick: () => (state.inject = deepCopy(state.original)),
                         }),
-                        inject.type,
-                      ]),
-                  [
-                    m(MessageForm, { disabled, inject, onChange, key: inject.id }),
-                    m(InjectConditions, { disabled, inject, previousInjects }),
-                    m(SetObjectives, { disabled, inject }),
-                  ],
-                  m(
-                    'row',
-                    disabled
-                      ? undefined
-                      : [
-                          m(Button, {
-                            iconName: 'undo',
-                            class: `green ${hasChanged ? '' : 'disabled'}`,
-                            onclick: () => (state.inject = deepCopy(state.original)),
-                          }),
-                          ' ',
-                          m(Button, {
-                            iconName: 'save',
-                            class: `green ${hasChanged ? '' : 'disabled'}`,
-                            onclick: onsubmit,
-                          }),
-                          ' ',
-                          m(Button, {
-                            iconName: 'delete',
-                            class: 'red',
-                            disabled: !TrialSvc.canDeleteInject(inject),
-                            onclick: async () => {
-                              const { parentId } = inject;
-                              state.inject = undefined;
-                              const injects = TrialSvc.getInjects() || [];
-                              const parent = injects.filter(i => i.id === parentId).shift() || injects[0];
-                              await TrialSvc.deleteInject(inject);
-                              injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: parent });
-                            },
-                          }),
-                        ]
-                  ),
-                ])
-              ),
+                        ' ',
+                        m(Button, {
+                          iconName: 'save',
+                          class: `green ${hasChanged ? '' : 'disabled'}`,
+                          onclick: onsubmit,
+                        }),
+                        ' ',
+                        m(Button, {
+                          iconName: 'delete',
+                          class: 'red',
+                          disabled: !TrialSvc.canDeleteInject(inject),
+                          onclick: async () => {
+                            const { parentId } = inject;
+                            state.inject = undefined;
+                            const injects = TrialSvc.getInjects() || [];
+                            const parent = injects.filter(i => i.id === parentId).shift() || injects[0];
+                            await TrialSvc.deleteInject(inject);
+                            injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: parent });
+                          },
+                        }),
+                      ]
+                ),
+              ]),
             ]
           : undefined
       );

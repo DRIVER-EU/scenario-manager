@@ -19,7 +19,8 @@ export const TrialList = () => {
         m('.row', [
           m(RoundIconButton, {
             iconName: 'add',
-            class: 'green input-field right',
+            class: 'green input-field right btn-medium',
+            style: 'margin: 1em 1em 0 0;',
             onclick: () => {
               TrialSvc.new({
                 title: 'New trial',
