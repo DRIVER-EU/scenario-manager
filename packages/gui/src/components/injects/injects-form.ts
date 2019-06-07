@@ -1,13 +1,11 @@
 import m, { FactoryComponent, Attributes } from 'mithril';
-import { Button, Icon, Dropdown, Select } from 'mithril-materialized';
+import { Button, Icon, Dropdown, Select, ModalPanel } from 'mithril-materialized';
 import { getInjectIcon, findPreviousInjects, getMessageIcon, getMessageTitle, enumToOptions } from '../../utils';
 import { TrialSvc } from '../../services';
 import { IInject, InjectType, IInjectGroup, deepCopy, deepEqual, getInject, MessageType } from 'trial-manager-models';
 import { TopicNames, injectsChannel } from '../../models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages/message-form';
-
-const log = console.log;
 
 export interface IInjectsForm extends Attributes {
   disabled?: boolean;
@@ -16,9 +14,18 @@ export interface IInjectsForm extends Attributes {
 export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
   const state = {
     parent: undefined as IInject | IInjectGroup | undefined,
+    oldInject: undefined as IInject | undefined,
     inject: undefined as IInject | undefined,
     original: undefined as IInject | undefined,
+    modal: undefined as M.Modal | undefined,
     subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
+      if (Object.keys(cur).length === 0) {
+        return;
+      }
+      if (state.modal && !deepEqual(state.original, state.inject)) {
+        state.oldInject = state.inject;
+        state.modal.open();
+      }
       state.inject = cur ? deepCopy(cur) : undefined;
       state.original = cur ? deepCopy(cur) : undefined;
       state.parent = cur.parentId ? getInject(cur.parentId, TrialSvc.getInjects()) : undefined;
@@ -38,7 +45,6 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       const hasChanged = !deepEqual(inject, original);
       const onsubmit = (e: UIEvent) => {
         e.preventDefault();
-        log('submitting...');
         if (inject) {
           TrialSvc.updateInject(inject);
         }
@@ -109,6 +115,26 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                       ]
                 ),
               ]),
+              m(ModalPanel, {
+                onCreate: modal => (state.modal = modal),
+                id: 'discard',
+                title: `Unsaved changes`,
+                description: `There are unsaved changes. Do you want to save or discard them?`,
+                options: { opacity: 0.7 },
+                buttons: [
+                  {
+                    label: 'Save',
+                    onclick: async () => {
+                      if (state.oldInject) {
+                        await TrialSvc.updateInject(state.oldInject);
+                      }
+                    },
+                  },
+                  {
+                    label: 'Discard',
+                  },
+                ],
+              }),
             ]
           : undefined
       );
