@@ -344,8 +344,16 @@ class TrialService extends RestService<ITrial> {
     return this.assetSvc ? this.assetSvc.getCurrent() : {};
   }
 
+  public overlayRename(oldName: string, newName: string) {
+    return OverlaySvc.rename(oldName, newName);
+  }
+
   public overlays() {
     return OverlaySvc.overlays();
+  }
+
+  public get bounds() {
+    return OverlaySvc.bounds;
   }
 }
 

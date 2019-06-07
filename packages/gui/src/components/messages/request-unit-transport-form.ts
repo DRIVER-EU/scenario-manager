@@ -1,27 +1,39 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestUnitTransport, ILocation } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IRequestUnitTransport } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection } from 'geojson';
-import { FeatureGroup } from 'leaflet';
+import { FeatureGroup, GeoJSON } from 'leaflet';
 import { AppState } from '../../models';
 import { centerArea, routeToGeoJSON, geoJSONtoRoute } from '../../utils';
+import { TrialSvc } from '../../services';
 
 export const RequestUnitTransportForm: FactoryComponent<{
   inject: IInject;
   disabled?: boolean;
   onChange?: () => void;
 }> = () => {
-  const setTitle = (inject: IInject, si: IRequestUnitTransport) => {
-    inject.title = `Send ${si.guid} (${si.unit}) to ${si.destination}`;
+  const state = {} as {
+    overlays?: { [key: string]: GeoJSON },
+  };
+
+  const setTitle = async (inject: IInject, si: IRequestUnitTransport) => {
+    const newTitle = `Send ${si.guid} (${si.unit}) to ${si.destination}`;
+    TrialSvc.overlayRename(inject.title, newTitle);
+    state.overlays = await TrialSvc.overlays();
+    inject.title = newTitle;
+    m.redraw();
   };
 
   return {
-    oninit: ({ attrs: { inject } }) => {
+    oninit: async ({ attrs: { inject } }) => {
       const ut = getMessage(inject, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestUnitTransport;
       ut.owner = AppState.owner;
+      state.overlays = await TrialSvc.overlays();
+      m.redraw();
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
+      const { overlays } = state;
       const ut = getMessage(inject, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestUnitTransport;
 
       const route = routeToGeoJSON(ut.route);
@@ -73,9 +85,9 @@ export const RequestUnitTransportForm: FactoryComponent<{
           style: 'width: 100%; height: 400px; margin-top: 10px;',
           view,
           zoom,
-          overlays: { route },
-          visible: ['route'],
-          editable: ['route'],
+          overlays,
+          visible: [inject.title],
+          editable: [inject.title],
           // onMapClicked: console.log,
           showScale: { imperial: false },
           onLayerEdited: (f: FeatureGroup) => {

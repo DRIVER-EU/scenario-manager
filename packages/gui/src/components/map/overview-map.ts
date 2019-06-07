@@ -24,15 +24,6 @@ export const OverviewMap: FactoryComponent<IOverviewMap> = () => {
     }),
   };
 
-  const bounds = ()  => {
-    const { overlays } = state;
-    if (!overlays) {
-      return;
-    }
-    const fg = new L.FeatureGroup(Object.keys(overlays).map(key => overlays[key]));
-    return fg.getBounds();
-  };
-
   return {
     oninit: async () => {
       state.overlays = await TrialSvc.overlays();
@@ -43,7 +34,7 @@ export const OverviewMap: FactoryComponent<IOverviewMap> = () => {
     },
     onupdate: () => {
       if (state.map) {
-        const b = bounds();
+        const b = TrialSvc.bounds;
         if (b) {
           state.map.fitBounds(b);
         }

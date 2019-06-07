@@ -3,19 +3,29 @@ import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, IAffectedArea } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { Polygon, FeatureCollection } from 'geojson';
-import { FeatureGroup } from 'leaflet';
+import { FeatureGroup, GeoJSON } from 'leaflet';
 import { affectedAreaToGeoJSON, geoJSONtoAffectedArea, centerArea } from '../../utils';
+import { TrialSvc } from '../../services';
 
 export const SetAffectedAreaForm: FactoryComponent<{
   inject: IInject;
   disabled?: boolean;
   onChange?: () => void;
 }> = () => {
+  const state = {} as {
+    overlays?: { [key: string]: GeoJSON },
+  };
+
   const convertToSec = (n: number) => (n === -1 ? -1 : n / 1000);
   const convertToMSec = (n: number) => (n === -1 ? -1 : n * 1000);
 
   return {
+    oninit: async () => {
+      state.overlays = await TrialSvc.overlays();
+      m.redraw();
+    },
     view: ({ attrs: { inject, disabled, onChange } }) => {
+      const { overlays } = state;
       const aa = getMessage<IAffectedArea>(inject, MessageType.SET_AFFECTED_AREA);
       aa.id = inject.id;
       aa.begin = aa.begin || -1;
@@ -33,7 +43,11 @@ export const SetAffectedAreaForm: FactoryComponent<{
           iconName: 'title',
           isMandatory: true,
           initialValue: inject.title,
-          onchange: v => (inject.title = v),
+          onchange: async v => {
+            TrialSvc.overlayRename(inject.title, v);
+            state.overlays = await TrialSvc.overlays();
+            inject.title = v;
+          },
         }),
         m(TextInput, {
           disabled,
@@ -77,9 +91,9 @@ export const SetAffectedAreaForm: FactoryComponent<{
           style: 'width: 100%; height: 400px; margin-top: 10px;',
           view,
           zoom,
-          overlays: { area },
-          visible: ['area'],
-          editable: ['area'],
+          overlays,
+          visible: [inject.title],
+          editable: [inject.title],
           showScale: { imperial: false },
           onLayerEdited: (f: FeatureGroup) => {
             const geojson = f.toGeoJSON() as FeatureCollection<Polygon>;

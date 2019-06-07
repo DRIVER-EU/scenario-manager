@@ -133,7 +133,7 @@ export const getMessageIcon = (type?: string) => {
     case MessageType.SUMO_CONFIGURATION:
       return 'traffic';
     case MessageType.CHECKPOINT:
-      return 'check';
+      return 'playlist_add_check';
     default:
       return 'message';
   }

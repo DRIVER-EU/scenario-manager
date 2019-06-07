@@ -16,7 +16,7 @@ import {
 } from 'trial-manager-models';
 import { TrialSvc } from './trial-service';
 import { AppState } from '../models';
-import { geoJSON, GeoJSON } from 'leaflet';
+import { geoJSON, GeoJSON, FeatureGroup } from 'leaflet';
 
 class OverlayService {
   private state = {
@@ -34,6 +34,26 @@ class OverlayService {
       await this.loadOverlays(scenarioId);
     }
     return this.state.overlays[scenarioId];
+  }
+
+  public get bounds() {
+    const { scenarioId } = AppState;
+    if (!scenarioId || !this.state.overlays.hasOwnProperty(scenarioId)) {
+      return;
+    }
+    const o = this.state.overlays[scenarioId];
+    const fg = new FeatureGroup(Object.keys(o).map(key => o[key]));
+    return fg.getBounds();
+  }
+
+  /** Rename an overlay */
+  public rename(oldName: string, newName: string) {
+    const { scenarioId } = AppState;
+    if (scenarioId && this.state.overlays.hasOwnProperty(scenarioId)) {
+      const overlays = this.state.overlays[scenarioId];
+      overlays[newName] = overlays[oldName];
+      delete overlays[oldName];
+    }
   }
 
   private async loadOverlays(scenarioId: string) {
