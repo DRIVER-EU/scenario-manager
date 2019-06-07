@@ -4,9 +4,9 @@ import { ExecutingInjectView } from '../executing/executing-inject-view';
 
 export const SimulationView: FactoryComponent = () => {
   return {
-    view: () => m('.row.sb.large', [
-      m('.col.sb.large.s12.m6.l4', m(TimelineView)),
-      m('.col.sb.large.s12.m6.l8', m(ExecutingInjectView)),
+    view: () => m('.row', [
+      m('.col.sb.xlarge.s12.m6.l4', m(TimelineView)),
+      m('.col.sb.xlarge.s12.m6.l8', m(ExecutingInjectView)),
     ]),
   };
 };

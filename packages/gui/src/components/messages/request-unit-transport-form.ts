@@ -3,9 +3,9 @@ import { TextArea, TextInput } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, IRequestUnitTransport, ILocation } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection } from 'geojson';
-import { FeatureGroup, geoJSON } from 'leaflet';
+import { FeatureGroup } from 'leaflet';
 import { AppState } from '../../models';
-import { centerArea } from '../../utils';
+import { centerArea, routeToGeoJSON, geoJSONtoRoute } from '../../utils';
 
 export const RequestUnitTransportForm: FactoryComponent<{
   inject: IInject;
@@ -15,42 +15,6 @@ export const RequestUnitTransportForm: FactoryComponent<{
   const setTitle = (inject: IInject, si: IRequestUnitTransport) => {
     inject.title = `Send ${si.guid} (${si.unit}) to ${si.destination}`;
   };
-
-  const routeToGeoJSON = (route?: ILocation[] | null) => {
-    const geojson: FeatureCollection<LineString> = {
-      type: 'FeatureCollection',
-      features: [],
-    };
-    if (route && route.length > 0) {
-      geojson.features.push({
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'LineString',
-          coordinates: route.reduce(
-            (acc, loc) => {
-              acc.push([loc.longitude, loc.latitude, loc.altitude || 0]);
-              return acc;
-            },
-            [] as number[][]
-          ),
-        },
-      });
-    }
-    return geoJSON(geojson) as L.GeoJSON<LineString>;
-  };
-
-  const geoJSONtoRoute = (geojson: FeatureCollection<LineString>) =>
-    geojson.features.length === 0
-      ? undefined
-      : geojson.features[0].geometry.coordinates.map(
-          c =>
-            ({
-              longitude: c[0],
-              latitude: c[1],
-              altitude: c[2],
-            } as ILocation)
-        );
 
   return {
     oninit: ({ attrs: { inject } }) => {

@@ -36,7 +36,7 @@ export class RestService<T extends { id?: string | number }> {
       const result = await m.request<T>({
         method: 'POST',
         url: this.baseUrl,
-        data: fd || item,
+        body: fd || item,
         withCredentials,
       });
       this.setCurrent(result);
@@ -53,7 +53,7 @@ export class RestService<T extends { id?: string | number }> {
       await m.request({
         method: 'PUT',
         url: this.baseUrl + item.id,
-        data: fd || item,
+        body: fd || item,
         withCredentials,
       }).catch(e => console.error(e));
       // this.setCurrent(data);
@@ -112,47 +112,41 @@ export class RestService<T extends { id?: string | number }> {
     }
   }
 
-  public load(id?: string) {
-    return m
+  public async load(id?: string) {
+    const result = await m
       .request<T>({
         method: 'GET',
         url: this.baseUrl + id,
         withCredentials,
-      })
-      .then(result => {
-        log(result);
-        this.setCurrent(result);
-        this.updateItemInList(this.current);
-        return this.current;
       });
+    // log(result);
+    this.setCurrent(result);
+    this.updateItemInList(this.current);
+    return this.current;
   }
 
-  public loadList() {
-    return m
+  public async loadList() {
+    const result = await m
       .request<T[]>({
         method: 'GET',
         url: this.baseUrl,
         withCredentials,
-      })
-      .then(result => {
-        this.setList(result);
-        return this.list;
       });
+    this.setList(result);
+    return this.list;
   }
 
-  public loadListInScenario(id: string) {
-    return m
+  public async loadListInScenario(id: string) {
+    const result = await m
       .request<T[]>({
         method: 'GET',
         url: this.baseUrl + `scenario/${id}`,
         withCredentials,
-      })
-      .then(result => {
-        // log(JSON.stringify(result, null, 2));
-        log('loadListInScenario...');
-        this.setList(result);
-        return this.list;
       });
+    // log(JSON.stringify(result, null, 2));
+    log('loadListInScenario...');
+    this.setList(result);
+    return this.list;
   }
 
   public new(item?: T) {

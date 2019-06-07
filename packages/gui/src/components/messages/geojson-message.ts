@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
 import { getMessage, IAsset, IInject, MessageType, IGeoJsonMessage } from 'trial-manager-models';
-import { getMessageSubjects, isJSON, centerArea } from '../../utils';
+import { getMessageSubjects, centerArea } from '../../utils';
 import { TrialSvc } from '../../services';
 import { UploadAsset } from '../ui';
 import { LeafletMap } from 'mithril-leaflet';
@@ -15,30 +15,33 @@ export const GeoJsonMessageForm: FactoryComponent<{
   const state = {
     overlay: undefined,
   } as {
+    assets: IAsset[];
     overlay?: GeoJSON;
   };
 
   return {
+    oninit: async () => {
+      state.assets = await TrialSvc.mapOverlays();
+    },
     view: ({ attrs: { inject, disabled } }) => {
-      const { overlay } = state;
-      const pm = getMessage(inject, MessageType.GEOJSON_MESSAGE) as IGeoJsonMessage;
+      const { overlay, assets = [] } = state;
+      const pm = getMessage<IGeoJsonMessage>(inject, MessageType.GEOJSON_MESSAGE);
       const subjects = getMessageSubjects(MessageType.GEOJSON_MESSAGE);
       if (!pm.subjectId && subjects.length === 1) {
         pm.subjectId = subjects[0].id;
       }
-      const assets = TrialSvc.assets;
-      const availableAssets = assets
-        .filter(a => a.mimetype === 'application/json' || isJSON(a.filename))
-        .map(a => ({ id: a.id, label: a.alias || a.filename, url: a.url }));
+
+      const availableAssets = assets.map(a => ({ id: a.id, label: a.alias || a.filename, url: a.url }));
       const cur = pm.assetId && availableAssets.filter(a => a.id === pm.assetId).shift();
-      if (!overlay && cur && cur.url) {
-        m.request<GeoJSON.FeatureCollection>(cur.url).then(r => {
+      if (!overlay && cur && cur.id) {
+        TrialSvc.loadMapOverlay(cur.id).then(r => {
           const isGeoJSON = r && r.features && r.features.length > 0;
           if (isGeoJSON) {
             state.overlay = geoJSON(r);
           }
         });
       }
+
       const { view, zoom } = overlay ? centerArea(overlay) : { view: undefined, zoom: undefined };
 
       return [

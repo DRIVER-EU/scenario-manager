@@ -39,7 +39,7 @@ class RunService {
       method: 'POST',
       url: this.baseUrl + 'load',
       withCredentials,
-      data: sm,
+      body: sm,
     });
   }
 
@@ -49,7 +49,7 @@ class RunService {
       method: 'PUT',
       url: this.baseUrl + 'transition',
       withCredentials,
-      data: st,
+      body: st,
     });
   }
 }

@@ -34,7 +34,7 @@ export const TrialForm = () => {
     m.request({
       method: 'POST',
       url: `${AppState.apiService}/repo/upload`,
-      data: body,
+      body,
     }).then(() => setTimeout(() => m.route.set(dashboardSvc.defaultRoute), 500));
   };
 

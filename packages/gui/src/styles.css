@@ -145,6 +145,10 @@ span.inline {
 .row.sb.large {
   height: 80vh;
 }
+.col.sb.xlarge,
+.row.sb.xlarge {
+  height: 90vh;
+}
 .mm_label > ul.collection > li.collection-item {
   background: transparent;
   color: black;

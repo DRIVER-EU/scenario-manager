@@ -82,10 +82,7 @@ export class ExecutionService implements IExecutionService {
   }
 
   private async sendGeoJSON(i: IInject) {
-    const message = getMessage(
-      i,
-      MessageType.GEOJSON_MESSAGE,
-    ) as IGeoJsonMessage;
+    const message = getMessage<IGeoJsonMessage>(i, MessageType.GEOJSON_MESSAGE);
     const topic = this.findTopic(
       MessageType.GEOJSON_MESSAGE,
       message.subjectId,
@@ -117,8 +114,7 @@ export class ExecutionService implements IExecutionService {
         message.info instanceof Array ? message.info[0] : message.info;
       const parameters =
         info.parameter instanceof Array ? info.parameter : [info.parameter];
-      info.parameter = parameters
-        .map(
+      info.parameter = parameters.map(
         p =>
           ({
             valueName: p.valueName,
@@ -145,10 +141,7 @@ export class ExecutionService implements IExecutionService {
   }
 
   private async sendRolePlayerMessage(i: IInject, comment?: string) {
-    const rpm = getMessage(
-      i,
-      MessageType.ROLE_PLAYER_MESSAGE,
-    ) as IRolePlayerMsg;
+    const rpm = getMessage<IRolePlayerMsg>(i, MessageType.ROLE_PLAYER_MESSAGE);
     const rolePlayer = this.trial.users
       .filter(u => u.id === rpm.rolePlayerId)
       .shift();
@@ -176,36 +169,36 @@ export class ExecutionService implements IExecutionService {
     i: IInject,
     comment?: string,
   ) {
-    const msg = getMessage(
+    const msg = getMessage<IOstStageChangeMessage>(
       i,
       MessageType.CHANGE_OBSERVER_QUESTIONNAIRES,
-    ) as IOstStageChangeMessage;
+    );
     this.kafkaService.sendOstStageChangeRequestMessage(msg);
   }
 
   private async sendStartInjectMessage(i: IInject, comment?: string) {
-    const msg = getMessage(i, MessageType.START_INJECT) as IRequestStartInject;
+    const msg = getMessage<IRequestStartInject>(i, MessageType.START_INJECT);
     this.kafkaService.sendStartInjectMessage(msg);
   }
 
   private async sendRequestUnitTransport(i: IInject, comment?: string) {
-    const msg = getMessage(
+    const msg = getMessage<IRequestUnitTransport>(
       i,
       MessageType.REQUEST_UNIT_TRANSPORT,
-    ) as IRequestUnitTransport;
+    );
     this.kafkaService.sendRequestUnitTransport(msg);
   }
 
   private async sendSetAffectedArea(i: IInject, comment?: string) {
-    const msg = getMessage(i, MessageType.SET_AFFECTED_AREA) as IAffectedArea;
+    const msg = getMessage<IAffectedArea>(i, MessageType.SET_AFFECTED_AREA);
     this.kafkaService.sendSetAffectedArea(msg);
   }
 
   private async sendSumoConfiguration(i: IInject, comment?: string) {
-    const msg = getMessage(
+    const msg = getMessage<ISumoConfiguration>(
       i,
       MessageType.SUMO_CONFIGURATION,
-    ) as ISumoConfiguration;
+    );
     this.kafkaService.sendSumoConfiguration(msg);
   }
 

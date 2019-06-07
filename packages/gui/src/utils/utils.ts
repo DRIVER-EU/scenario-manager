@@ -1,3 +1,4 @@
+import m from 'mithril';
 import {
   IContent,
   InjectType,
@@ -12,10 +13,13 @@ import {
   RolePlayerMessageType,
   IInjectGroup,
   IScenario,
+  IareaPoly,
+  ILocation,
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 import { IExecutingInject } from '../models';
-import { LatLngExpression } from 'leaflet';
+import { geoJSON, LatLngExpression } from 'leaflet';
+import { Polygon, FeatureCollection, LineString } from 'geojson';
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
@@ -354,11 +358,149 @@ export const centerArea = (area: L.GeoJSON<any>) => {
       };
 };
 
+// export const centerAreas = (areas: Array<L.GeoJSON<any>>) => {
+//   const b = areas.reduce(
+//     (acc, area) => {
+//       const ca = centerArea(area);
+//       acc.views.push(ca.view);
+//       acc.zooms.push(ca.zoom);
+//       return acc;
+//     },
+//     { views: [], zooms: [] } as { views: L.LatLngExpression[]; zooms: number[] }
+//   );
+//   return {
+//     view: b.views.reduce((acc, v, i) => {
+//       const lat = i * acc[0] + v[0];
+//       const lng = i * acc.lng + v.lng;
+//       return { lat, lng } as L.LatLngExpression;
+//     }, { lat: 0, lng: 0 } as L.LatLngExpression),
+//   };
+// };
+
 /** Test if the filename represents a GeoJSON (based on the extension) */
-export const isJSON = (s: string) => /\.json$|\.geojson$/.test(s);
+export const isJSON = (s: string) => /\.json$|\.geojson$/i.test(s);
 
 /** Type guard check if we are dealing with an inject group  */
 export const isInjectGroup = (i: IInject): i is IInjectGroup => i.type !== InjectType.INJECT;
 
 /** Type guard check if we are dealing with a scenario  */
 export const isScenario = (i: IInject): i is IScenario => i.type === InjectType.SCENARIO;
+
+/** Filter for selecting all injects that represent a GeoJSON message */
+export const isGeoJSONMessage = (i: IInject) => i.messageType === MessageType.GEOJSON_MESSAGE;
+
+/** Filter for selecting all injects that represent an affected area */
+export const isAffectedArea = (i: IInject) => i.messageType === MessageType.SET_AFFECTED_AREA;
+
+/** Filter for selecting all injects that represent a transport request */
+export const isTransportRequest = (i: IInject) => i.messageType === MessageType.REQUEST_UNIT_TRANSPORT;
+
+/** Filter for selecting all injects that have a map */
+export const containsMapOverlay = (i: IInject) =>
+  i.messageType === MessageType.GEOJSON_MESSAGE ||
+  i.messageType === MessageType.SET_AFFECTED_AREA ||
+  i.messageType === MessageType.REQUEST_UNIT_TRANSPORT ||
+  i.messageType === MessageType.CAP_MESSAGE;
+
+// export const getAsset = async (assetId?: number) => {
+//   const assets = TrialSvc.assets;
+//   const cur = assetId && assets.filter(a => a.id === assetId).shift();
+//   if (cur && cur.url) {
+//     const fc = await m.request<GeoJSON.FeatureCollection>(cur.url);
+//     const isGeoJSON = fc && fc.features && fc.features.length > 0;
+//     if (isGeoJSON) {
+//       return fc;
+//     }
+//   }
+// };
+
+// /**
+//  * Utility function to get all used map overlays in a scenario.
+//  * It not only extracts them from map overlay injects, but also from CAP, Set Affected Area,
+//  * and several others.
+//  */
+// export const getMapOverlays = (injects?: IInject[], scenario?: IScenario) => {
+//   if (!injects || injects.length === 0) {
+//     return;
+//   }
+//   const scenarioInjects = scenario ? pruneInjects(scenario, injects) : injects;
+//   return scenarioInjects && scenarioInjects
+//     .filter(containsMapOverlay)
+//     .map(async i => {
+//       switch (i.messageType) {
+//         case MessageType.GEOJSON_MESSAGE:
+//           const geojsonMsg = getMessage<IGeoJsonMessage>(i, MessageType.GEOJSON_MESSAGE);
+//           return await getAsset(geojsonMsg.assetId);
+//       }
+//     });
+// };
+
+export const affectedAreaToGeoJSON = (area?: IareaPoly) => {
+  const geojson: FeatureCollection<Polygon> = {
+    type: 'FeatureCollection',
+    features: [],
+  };
+  if (area && area.type && area.coordinates && area.coordinates.length > 0) {
+    area.coordinates.forEach(coordinates =>
+      geojson.features.push({
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Polygon',
+          coordinates,
+        },
+      })
+    );
+  }
+  return geoJSON(geojson) as L.GeoJSON<Polygon>;
+};
+
+export const geoJSONtoAffectedArea = (geojson: FeatureCollection<Polygon>) =>
+  geojson.features.length === 0
+    ? undefined
+    : {
+        type: 'MultiPolygon',
+        coordinates: geojson.features.reduce(
+          (acc, f) => {
+            acc.push(f.geometry.coordinates);
+            return acc;
+          },
+          [] as number[][][][]
+        ),
+      };
+
+export const routeToGeoJSON = (route?: ILocation[] | null) => {
+  const geojson: FeatureCollection<LineString> = {
+    type: 'FeatureCollection',
+    features: [],
+  };
+  if (route && route.length > 0) {
+    geojson.features.push({
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'LineString',
+        coordinates: route.reduce(
+          (acc, loc) => {
+            acc.push([loc.longitude, loc.latitude, loc.altitude || 0]);
+            return acc;
+          },
+          [] as number[][]
+        ),
+      },
+    });
+  }
+  return geoJSON(geojson) as L.GeoJSON<LineString>;
+};
+
+export const geoJSONtoRoute = (geojson: FeatureCollection<LineString>) =>
+  geojson.features.length === 0
+    ? undefined
+    : geojson.features[0].geometry.coordinates.map(
+        c =>
+          ({
+            longitude: c[0],
+            latitude: c[1],
+            altitude: c[2],
+          } as ILocation)
+      );

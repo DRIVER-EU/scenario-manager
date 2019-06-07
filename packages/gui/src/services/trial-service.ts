@@ -2,6 +2,7 @@ import { RestService, AssetService } from '.';
 import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
 import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, uniqueId, UserRole } from 'trial-manager-models';
 import { userRolesFilter } from '../utils';
+import { OverlaySvc } from './overlay-service';
 
 /**
  * The TrialService wraps common functionality needed
@@ -284,6 +285,12 @@ class TrialService extends RestService<ITrial> {
 
   /* ASSETS */
 
+  public async mapOverlays() { return this.assetSvc ? this.assetSvc.mapOverlays() || [] : [] as IAsset[]; }
+
+  public async loadMapOverlay(id: number | string) {
+    return this.assetSvc && this.assetSvc.loadMapOverlay(id);
+  }
+
   public async newAsset() {
     if (!this.current) {
       return;
@@ -335,6 +342,10 @@ class TrialService extends RestService<ITrial> {
 
   public get curAsset() {
     return this.assetSvc ? this.assetSvc.getCurrent() : {};
+  }
+
+  public overlays() {
+    return OverlaySvc.overlays();
   }
 }
 
