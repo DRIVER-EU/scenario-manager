@@ -30,7 +30,11 @@ class TrialService extends RestService<ITrial> {
   public async saveTrial(s: ITrial = this.current) {
     this.validateInjects();
     s.lastEdit = new Date();
-    return super.save(s);
+    const trial = await super.save(s);
+    if (trial) {
+      this.assetSvc = new AssetService(trial.id);
+      return this.assetSvc.loadList();
+    }
   }
 
   /** OBJECTIVES */
