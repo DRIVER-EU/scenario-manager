@@ -18,7 +18,7 @@ devDependencies:
   '@types/leaflet': 1.4.4
   '@types/leaflet-draw': 0.4.14
   '@types/materialize-css': 1.0.6
-  '@types/mithril': github.com/MithrilJS/mithril.d.ts/b01095cfaaa6081ccb6cf83517bf0da82995b460
+  '@types/mithril': github.com/MithrilJS/mithril.d.ts/b5a1d389c2e83bdc6351c2d1cb3d909674644af1
   '@types/socket.io-client': 1.4.32
   autoprefixer: 9.6.0
   awesome-typescript-loader: 5.2.1
@@ -7533,12 +7533,11 @@ packages:
     dev: false
     resolution:
       integrity: sha1-AI4G2AlDIMNy28L47XagymyKxBk=
-  github.com/MithrilJS/mithril.d.ts/b01095cfaaa6081ccb6cf83517bf0da82995b460:
+  github.com/MithrilJS/mithril.d.ts/b5a1d389c2e83bdc6351c2d1cb3d909674644af1:
     dev: true
     name: '@types/mithril'
     resolution:
-      registry: 'https://registry.npmjs.org/'
-      tarball: 'https://codeload.github.com/MithrilJS/mithril.d.ts/tar.gz/b01095cfaaa6081ccb6cf83517bf0da82995b460'
+      tarball: 'https://codeload.github.com/MithrilJS/mithril.d.ts/tar.gz/b5a1d389c2e83bdc6351c2d1cb3d909674644af1'
     version: 1.2.0
 specifiers:
   '@types/geojson': ^7946.0.7
