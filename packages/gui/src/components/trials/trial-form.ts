@@ -1,15 +1,17 @@
 import m from 'mithril';
-import { Button, TextArea, TextInput, FileInput } from 'mithril-materialized';
+import { Button, TextArea, TextInput, FileInput, ModalPanel } from 'mithril-materialized';
 import { TrialSvc, dashboardSvc } from '../../services';
 import { ITrial, deepCopy, deepEqual } from 'trial-manager-models';
 import { AppState } from '../../models';
 
 const log = console.log;
-const close = async (e: UIEvent) => {
+const close = async (e?: UIEvent) => {
   log('closing...');
   await TrialSvc.unload();
   m.route.set('/');
-  e.preventDefault();
+  if (e) {
+    e.preventDefault();
+  }
 };
 
 export const TrialForm = () => {
@@ -116,17 +118,36 @@ export const TrialForm = () => {
               }),
               ' ',
               m(Button, {
+                modalId: 'delete-trial',
                 label: 'Delete',
                 iconName: 'delete',
                 class: 'red',
-                onclick: (e: UIEvent) => {
-                  TrialSvc.delete(trial.id);
-                  close(e);
-                },
+                // onclick: (e: UIEvent) => {
+                //   TrialSvc.delete(trial.id);
+                //   close(e);
+                // },
               }),
             ])
           ),
         ]),
+        m(ModalPanel, {
+          id: 'delete-trial',
+          title: `Delete trial`,
+          description: `Do you really want to delete this Trial - there is no way back?`,
+          options: { opacity: 0.7 },
+          buttons: [
+            {
+              label: 'Delete',
+              onclick: async () => {
+                TrialSvc.delete(trial.id);
+                close();
+              },
+            },
+            {
+              label: 'Discard',
+            },
+          ],
+        }),
       ]);
     },
   };
