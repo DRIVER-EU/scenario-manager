@@ -1,37 +1,37 @@
 dependencies:
-  '@nestjs/common': 6.2.4
-  '@nestjs/core': 6.2.4
-  '@nestjs/platform-express': 6.2.4
-  '@nestjs/platform-socket.io': 6.2.4
+  '@nestjs/common': 6.3.1
+  '@nestjs/core': 6.3.1
+  '@nestjs/platform-express': 6.3.1
+  '@nestjs/platform-socket.io': 6.3.1
   '@nestjs/swagger': 3.0.2
-  '@nestjs/websockets': 6.2.4
+  '@nestjs/websockets': 6.3.1
   body-parser: 1.19.0
-  express: 4.17.0
+  express: 4.17.1
   link: 0.1.5
   marked: 0.6.2
-  nestjs-config: 1.4.0
+  nestjs-config: 1.4.1
   node-test-bed-adapter: 0.8.7
   recursive: 0.0.2
   reflect-metadata: 0.1.13
   rxjs: 6.5.2
   sqlite3: 4.0.8
-  swagger-ui-express: 4.0.4
+  swagger-ui-express: 4.0.6
   trial-manager-models: 'link:../models'
 devDependencies:
-  '@types/express': 4.16.1
-  '@types/express-serve-static-core': 4.16.5
+  '@types/express': 4.17.0
+  '@types/express-serve-static-core': 4.16.7
   '@types/marked': 0.6.5
-  '@types/node': 12.0.2
+  '@types/node': 12.0.7
   '@types/socket.io': 2.1.2
   '@types/sqlite3': 3.1.5
   tsc-watch: 2.2.1
   tsconfig-paths: 3.8.0
-  typescript: 3.4.5
+  typescript: 3.5.1
 lockfileVersion: 5
 packages:
-  /@nestjs/common/6.2.4:
+  /@nestjs/common/6.3.1:
     dependencies:
-      axios: 0.18.0
+      axios: 0.19.0
       cli-color: 1.4.0
       uuid: 3.3.2
     dev: false
@@ -39,10 +39,10 @@ packages:
       reflect-metadata: ^0.1.12
       rxjs: ^6.0.0
     resolution:
-      integrity: sha512-YZvJ6/S7yVQZK+9rupCzMCg4tpbc9DyVvLoTx0NBDqExTCUNcNEcCtn0AZrO/hLqbeYODnJwGE2NxkH1R/qw+w==
-  /@nestjs/core/6.2.4:
+      integrity: sha512-uuI/CCe6MFISMX+fSpkRvvQ6CBlXW89+5wfiveQ22AzAxgqGLAyWvNVHUE8F+zev7QDbxbY9vfPtm8CE5kiJVQ==
+  /@nestjs/core/6.3.1:
     dependencies:
-      '@nuxtjs/opencollective': 0.2.1
+      '@nuxtjs/opencollective': 0.2.2
       fast-safe-stringify: 2.0.6
       iterare: 1.1.2
       object-hash: 1.3.1
@@ -55,20 +55,20 @@ packages:
       rxjs: ^6.0.0
     requiresBuild: true
     resolution:
-      integrity: sha512-aYKi3QGKmpxF6w32STAcobIqOHFqSUXrU8nF+Y9dOlStRkXFBTuVchsoJk94sY+3y4SJAlHH4Q/8R4yFaixrug==
-  /@nestjs/platform-express/6.2.4:
+      integrity: sha512-GiH64nX5Z/HrHESo0huiSFH894/hzs0qRuSVNSq4MWIgHgTjdFlqu/VcXlPz21pJXhoimegpk1x1wsm2hu+WUw==
+  /@nestjs/platform-express/6.3.1:
     dependencies:
       body-parser: 1.19.0
       cors: 2.8.5
-      express: 4.17.0
+      express: 4.17.1
       multer: 1.4.1
     dev: false
     peerDependencies:
       '@nestjs/common': ^6.0.0
       '@nestjs/core': ^6.0.0
     resolution:
-      integrity: sha512-MmoQqFWO7nmgEvBIeO6ddz1CFVx3RIQluX1LMIzyfiyRghQzcZCGqTQsZSpck5ZnXNQNxrrI9bz/6a6cTwovmQ==
-  /@nestjs/platform-socket.io/6.2.4:
+      integrity: sha512-vPOkcqhYS+qw5ZJNOp19YnT2uKXB6Phgu5P11AiylE+Cc0eoTSdouVDK4e3I8Lja91VuNN5WSYsODYlJzpMVpA==
+  /@nestjs/platform-socket.io/6.3.1:
     dependencies:
       socket.io: 2.2.0
     dev: false
@@ -77,7 +77,7 @@ packages:
       '@nestjs/websockets': ^6.0.0
       rxjs: ^6.0.0
     resolution:
-      integrity: sha512-VBZiX4jSOPq79X7teF8JrNLDvYSygehiuE2Ttk/cJ19JNluA39k1ltFBwMv7l0Drg0QDZkaBYywkqKWALa7PdQ==
+      integrity: sha512-EBV6Fw1YdXI38c9esDq/pRnx/+Bw0Iq9QfTti4VARKpfJD4GU/3/Hj7ymeDuXcr9xj8j3trEQ+THBcIWh2QJ9A==
   /@nestjs/swagger/3.0.2:
     dependencies:
       lodash: 4.17.11
@@ -88,7 +88,7 @@ packages:
       '@nestjs/core': ^6.0.0
     resolution:
       integrity: sha512-7cmOqa3MoK3ZXThECa3RCe5s5Bppm66DqDRz+nfTp5k2oGoFHX9t45jNU8P5aANCIEi1nA3TYwvEAGgZdV8WbA==
-  /@nestjs/websockets/6.2.4:
+  /@nestjs/websockets/6.3.1:
     dependencies:
       iterare: 1.1.2
     dev: false
@@ -97,11 +97,11 @@ packages:
       '@nestjs/core': ^6.0.0
       rxjs: ^6.0.0
     resolution:
-      integrity: sha512-3cpEZz/uTTHiMXX6d+lXH9Wg7Rtla36Oc3JTmQtuGc1KlAIs3wzJRO/qU/LfLuYrNeqAAFVq8EHW3DkjPFxXjg==
-  /@nuxtjs/opencollective/0.2.1:
+      integrity: sha512-kkzDn2oULL7RpBUZ9Fh755rebXe9pqp67Pn84/1OMErLpk3XMSMXcfABomFNHKY2pbevxOk4ojpnm5WZdw3S9w==
+  /@nuxtjs/opencollective/0.2.2:
     dependencies:
       chalk: 2.4.2
-      consola: 2.6.2
+      consola: 2.7.1
       node-fetch: 2.6.0
     dev: false
     engines:
@@ -109,7 +109,7 @@ packages:
       npm: '>=5.0.0'
     hasBin: true
     resolution:
-      integrity: sha512-pzSib8NKquaTt/ns5Cc2G0BGRVJXaD+p1qfF6q7vNIMvRysorn/VF3y7gAuQpcxfF7wBbGE+dXjhIieWOUsWSw==
+      integrity: sha512-69gFVDs7mJfNjv9Zs5DFVD+pvBW+k1TaHSOqUWqAyTTfLcKI/EMYQgvEvziRd+zAFtUOoye6MfWh0qvinGISPw==
   /@types/bluebird/3.5.26:
     dev: false
     resolution:
@@ -117,38 +117,31 @@ packages:
   /@types/body-parser/1.17.0:
     dependencies:
       '@types/connect': 3.4.32
-      '@types/node': 11.11.4
+      '@types/node': 12.0.7
     dev: true
     resolution:
       integrity: sha512-a2+YeUjPkztKJu5aIF2yArYFQQp8d51wZ7DavSHjFuY1mqVgidGyzEQ41JIVNy82fXj8yPgy2vJmfIywgESW6w==
   /@types/connect/3.4.32:
     dependencies:
-      '@types/node': 11.11.4
+      '@types/node': 12.0.7
     dev: true
     resolution:
       integrity: sha512-4r8qa0quOvh7lGD0pre62CAb1oni1OO6ecJLGCezTmhQ8Fz50Arx9RUszryR8KlgK6avuSXvviL6yWyViQABOg==
-  /@types/express-serve-static-core/4.16.2:
+  /@types/express-serve-static-core/4.16.7:
     dependencies:
-      '@types/node': 11.11.4
+      '@types/node': 12.0.7
       '@types/range-parser': 1.2.3
     dev: true
     resolution:
-      integrity: sha512-qgc8tjnDrc789rAQed8NoiFLV5VGcItA4yWNFphqGU0RcuuQngD00g3LHhWIK3HQ2XeDgVCmlNPDlqi3fWBHnQ==
-  /@types/express-serve-static-core/4.16.5:
-    dependencies:
-      '@types/node': 12.0.2
-      '@types/range-parser': 1.2.3
-    dev: true
-    resolution:
-      integrity: sha512-T8oej2B9TVALoCK4epWXRNWaFaqDyOaEQ3ntph+tSw5QoKnZfxgCXefIm3+nGp2XCRrkX4X7U5CSTMnwKJcOjQ==
-  /@types/express/4.16.1:
+      integrity: sha512-847KvL8Q1y3TtFLRTXcVakErLJQgdpFSaq+k043xefz9raEf0C7HalpSY7OW5PyjCnY8P7bPW5t/Co9qqp+USg==
+  /@types/express/4.17.0:
     dependencies:
       '@types/body-parser': 1.17.0
-      '@types/express-serve-static-core': 4.16.2
+      '@types/express-serve-static-core': 4.16.7
       '@types/serve-static': 1.13.2
     dev: true
     resolution:
-      integrity: sha512-V0clmJow23WeyblmACoxbHBu2JKlE5TiIme6Lem14FnPW9gsttyHtk6wq7njcdIWH1njAaFgR8gW09lgY98gQg==
+      integrity: sha512-CjaMu57cjgjuZbh9DpkloeGxV45CnMGlVd+XpG7Gm9QgVrd7KFq+X4HY0vM+2v0bczS48Wg7bvnMY5TN+Xmcfw==
   /@types/json5/0.0.29:
     dev: true
     resolution:
@@ -165,17 +158,17 @@ packages:
     dev: true
     resolution:
       integrity: sha512-02tIL+QIi/RW4E5xILdoAMjeJ9kYq5t5S2vciUdFPXv/ikFTb0zK8q9vXkg4+WAJuYXGiVT1H28AkD2C+IkXVw==
-  /@types/node/12.0.2:
+  /@types/node/12.0.7:
     dev: true
     resolution:
-      integrity: sha512-5tabW/i+9mhrfEOUcLDu2xBPsHJ+X5Orqy9FKpale3SjDA17j5AEpYq5vfy3oAeAHGcvANRCO3NV3d2D6q3NiA==
+      integrity: sha512-1YKeT4JitGgE4SOzyB9eMwO0nGVNkNEsm9qlIt1Lqm/tG2QEiSMTD4kS3aO6L+w5SClLVxALmIBESK6Mk5wX0A==
   /@types/range-parser/1.2.3:
     dev: true
     resolution:
       integrity: sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
   /@types/serve-static/1.13.2:
     dependencies:
-      '@types/express-serve-static-core': 4.16.2
+      '@types/express-serve-static-core': 4.16.7
       '@types/mime': 2.0.1
     dev: true
     resolution:
@@ -307,6 +300,13 @@ packages:
     dev: false
     resolution:
       integrity: sha1-MtU+SFHv3AoRmTts0AB4nXDAUQI=
+  /axios/0.19.0:
+    dependencies:
+      follow-redirects: 1.5.10
+      is-buffer: 2.0.3
+    dev: false
+    resolution:
+      integrity: sha512-1uvKqKQta3KBxIz14F2v06AEHZ/dIoeKfbTRkK1E5oqjDnuEerLmYTgJB5AiQZHJcljpg1TuRzdjDR06qNk0DQ==
   /backo2/1.0.2:
     dev: false
     resolution:
@@ -543,10 +543,10 @@ packages:
       '0': node >= 0.8
     resolution:
       integrity: sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==
-  /consola/2.6.2:
+  /consola/2.7.1:
     dev: false
     resolution:
-      integrity: sha512-GNJhwvF4bJ8eiAlyB8r4WNM8kBqkl+y4DvMehMbyywoJiv37N0M6/xrKqrrZw/5maZA+UagQV8UZ+XBeuGMzUg==
+      integrity: sha512-u7JYs+HnMbZPD2cEuS1XHsLeqtazA0kd5lAk8r8DnnGdgNhOdb7DSubJ+QLdQkbtpmmxgp7gs8Ug44sCyY4FCQ==
   /console-control-strings/1.1.0:
     dev: false
     resolution:
@@ -636,7 +636,7 @@ packages:
       integrity: sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
   /debug/4.1.1:
     dependencies:
-      ms: 2.1.1
+      ms: 2.1.2
     dev: false
     resolution:
       integrity: sha512-pYAIzeRo8J6KPEaJ0VWOh5Pzkbw/RetuzehGM7QRRX5he4fPHx2rdKMB256ehJCkX+XRQm16eZLqLNS8RSZXZw==
@@ -797,7 +797,7 @@ packages:
     dev: false
     resolution:
       integrity: sha1-vwDvT9q2uhtG7Le2KbTH7VcVzHc=
-  /es6-weak-map/2.0.2:
+  /es6-weak-map/2.0.3:
     dependencies:
       d: 1.0.0
       es5-ext: 0.10.50
@@ -805,7 +805,7 @@ packages:
       es6-symbol: 3.1.1
     dev: false
     resolution:
-      integrity: sha1-XjqzIlH/0VOKH45f+hNXdy+S2W8=
+      integrity: sha512-p5um32HOTO1kP+w7PRnB+5lQ43Z6muuMuIMffvDN8ZB4GcnjLBV6zGStpbASIMk4DCAvEaamhe2zhyCb/QXXsA==
   /escape-html/1.0.3:
     dev: false
     resolution:
@@ -848,7 +848,7 @@ packages:
     optional: true
     resolution:
       integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==
-  /express/4.17.0:
+  /express/4.17.1:
     dependencies:
       accepts: 1.3.7
       array-flatten: 1.1.1
@@ -884,7 +884,7 @@ packages:
     engines:
       node: '>= 0.10.0'
     resolution:
-      integrity: sha512-1Z7/t3Z5ZnBG252gKUPyItc4xdeaA0X934ca2ewckAsVsw9EG71i++ZHZPYnus8g/s5Bty8IMpSVEuRkmwwPRQ==
+      integrity: sha512-mHJ9O79RqluphRrcw2X/GTh3k9tVv8YcoyY4Kkh4WDMUYKRZUq0h1o0w2rrrxBqM7VoeUVqgb27xlEMXTnYt4g==
   /extend/3.0.2:
     dev: false
     resolution:
@@ -932,6 +932,14 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha512-aAWcW57uxVNrQZqFXjITpW3sIUQmHGG3qSb9mUah9MgMC4NeWhNOlNjXEYq3HjRAvL6arUviZGGJsBg6z0zsWA==
+  /follow-redirects/1.5.10:
+    dependencies:
+      debug: 3.1.0
+    dev: false
+    engines:
+      node: '>=4.0'
+    resolution:
+      integrity: sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
   /follow-redirects/1.7.0:
     dependencies:
       debug: 3.2.6
@@ -1121,6 +1129,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
+  /is-buffer/2.0.3:
+    dev: false
+    engines:
+      node: '>=4'
+    resolution:
+      integrity: sha512-U15Q7MXTuZlrbymiz95PJpZxu8IlipAp4dtS3wOdgPXx3mqBnslrWU14kxfHB+Py/+2PVKSr37dMAgM2A4uArw==
   /is-fullwidth-code-point/1.0.0:
     dependencies:
       number-is-nan: 1.0.1
@@ -1284,7 +1298,7 @@ packages:
     dependencies:
       d: 1.0.0
       es5-ext: 0.10.50
-      es6-weak-map: 2.0.2
+      es6-weak-map: 2.0.3
       event-emitter: 0.3.5
       is-promise: 2.1.0
       lru-queue: 0.1.0
@@ -1372,6 +1386,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-tgp+dl5cGk28utYktBsrFqA7HKgrhgPsg6Z/EfhWI4gl1Hwq8B/GmY/0oXZ6nF8hDVesS/FpnYaD/kOWhYQvyg==
+  /ms/2.1.2:
+    dev: false
+    resolution:
+      integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
   /multer/1.4.1:
     dependencies:
       append-field: 1.0.0
@@ -1422,7 +1440,7 @@ packages:
     dev: false
     resolution:
       integrity: sha512-AO81vsIO1k1sM4Zrd6Hu7regmJN1NSiAja10gc4bX3F0wd+9rQmcuHQaHVQCYIEC8iFXnE+mavh23GOt7wBgug==
-  /nestjs-config/1.4.0:
+  /nestjs-config/1.4.1:
     dependencies:
       dotenv: 8.0.0
       glob: 7.1.4
@@ -1434,7 +1452,7 @@ packages:
     peerDependencies:
       '@nestjs/common': ^5.1.0 || ^6.0.3
     resolution:
-      integrity: sha512-wr5YwF6t5HSSzEunsmOJ471jWQMt1w+vxH5QAwchNMO4eXGzdpp96nJUzxLLwLk9JJ3ULAgX/92xjmGOgklpDA==
+      integrity: sha512-lB6DBDcvjqAkNpK8e4GqexwOsykuxwMeVKo1JPoouGaRyA2wRhiqFAUjcYd6JJc2dlFPi1dk6kSpv/kJYBQP3g==
   /next-tick/1.0.0:
     dev: false
     resolution:
@@ -2087,18 +2105,18 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==
-  /swagger-ui-dist/3.22.2:
+  /swagger-ui-dist/3.22.3:
     dev: false
     resolution:
-      integrity: sha512-37RuIYRKjFfoLPctzA2dWvBMJjWa1GLc0NgmubuRbr16b3pSuf9S0rY+82l6F86VV4xlgdPiLMcOZhqcIg/OOg==
-  /swagger-ui-express/4.0.4:
+      integrity: sha512-tmjAsqT43pqg5UoiQ2805c+juX0ASSoI/Ash/0c19jjAOFtTfE93ZrzmFd9hjqVgre935CYeXT0uaku42Lu8xg==
+  /swagger-ui-express/4.0.6:
     dependencies:
-      swagger-ui-dist: 3.22.2
+      swagger-ui-dist: 3.22.3
     dev: false
     engines:
       node: '>= v0.10.32'
     resolution:
-      integrity: sha512-3wRDxbk2wvJi9c4jfBeLz4+JHMYlS4JaDDwZmGqDQmiVq4hgHLpEATgeuyFvX1L5+G9k0lwOLuMOJiC8Rg4Edw==
+      integrity: sha512-7YkBfVWRYjvnGITs7vygM8VNF91iUwX8ReHQaTD9I7q8Ky8SYXZ81gyFc+kovE34iSbCC1yW+n2oII3b3uSxXQ==
   /tar-fs/1.16.3:
     dependencies:
       chownr: 1.1.1
@@ -2238,13 +2256,13 @@ packages:
     dev: false
     resolution:
       integrity: sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
-  /typescript/3.4.5:
+  /typescript/3.5.1:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-YycBxUb49UUhdNMU5aJ7z5Ej2XGmaIBL0x34vZ82fn3hGvD+bgrMrVDpatgz2f7YxUMJxMkbWxJZeAvDxVe7Vw==
+      integrity: sha512-64HkdiRv1yYZsSe4xC1WVgamNigVYjlssIoaH2HcZF0+ijsk5YK2g0G34w9wJkze8+5ow4STd22AynfO6ZYYLw==
   /unpipe/1.0.0:
     dev: false
     engines:
@@ -2348,30 +2366,30 @@ packages:
     resolution:
       integrity: sha1-AI4G2AlDIMNy28L47XagymyKxBk=
 specifiers:
-  '@nestjs/common': ^6.2.4
-  '@nestjs/core': ^6.2.4
-  '@nestjs/platform-express': ^6.2.4
-  '@nestjs/platform-socket.io': ^6.2.4
+  '@nestjs/common': ^6.3.1
+  '@nestjs/core': ^6.3.1
+  '@nestjs/platform-express': ^6.3.1
+  '@nestjs/platform-socket.io': ^6.3.1
   '@nestjs/swagger': ^3.0.2
-  '@nestjs/websockets': ^6.2.4
-  '@types/express': ^4.16.1
-  '@types/express-serve-static-core': ^4.16.5
+  '@nestjs/websockets': ^6.3.1
+  '@types/express': ^4.17.0
+  '@types/express-serve-static-core': ^4.16.7
   '@types/marked': ^0.6.5
-  '@types/node': ^12.0.2
+  '@types/node': ^12.0.7
   '@types/socket.io': ^2.1.2
   '@types/sqlite3': ^3.1.5
   body-parser: ^1.19.0
-  express: ^4.17.0
+  express: ^4.17.1
   link: ^0.1.5
   marked: ^0.6.2
-  nestjs-config: ^1.4.0
+  nestjs-config: ^1.4.1
   node-test-bed-adapter: ^0.8.7
   recursive: ^0.0.2
   reflect-metadata: ^0.1.13
   rxjs: ^6.5.2
   sqlite3: ^4.0.8
-  swagger-ui-express: ^4.0.4
+  swagger-ui-express: ^4.0.6
   trial-manager-models: ^0.0.1
   tsc-watch: ^2.2.1
   tsconfig-paths: ^3.8.0
-  typescript: ^3.4.5
+  typescript: ^3.5.1
