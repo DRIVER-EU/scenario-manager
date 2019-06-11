@@ -2,7 +2,7 @@ import m from 'mithril';
 import { TextInput, RoundIconButton, Icon } from 'mithril-materialized';
 import { TrialSvc, dashboardSvc } from '../../services';
 import { titleAndDescriptionFilter } from '../../utils';
-import { ITrial } from 'trial-manager-models';
+import { ITrial, ITrialOverview } from 'trial-manager-models';
 import { Dashboards, AppState } from '../../models';
 
 export const TrialList = () => {
@@ -39,7 +39,7 @@ export const TrialList = () => {
           }),
         ]),
         m(
-          '.row',
+          '.row.sb.large',
           filteredScenarios.map(scenario =>
             m('.col.s6.m4.l3', [
               m(
@@ -57,8 +57,7 @@ export const TrialList = () => {
                   ),
                   m('p', scenario.description),
                 ]),
-                m(
-                  '.card-action',
+                m('.card-action', [
                   m(
                     'a',
                     {
@@ -67,8 +66,28 @@ export const TrialList = () => {
                     m(Icon, {
                       iconName: 'cloud_download',
                     })
-                  )
-                )
+                  ),
+                  m(
+                    'a',
+                    {
+                      href: '#!',
+                      onclick: () => {
+                        m.request<ITrialOverview>({
+                          method: 'POST',
+                          url: `${AppState.apiService}/repo/clone/${scenario.id}`,
+                        }).then(to => {
+                          if (to && to.id) {
+                            TrialSvc.load(to.id);
+                          }
+                        });
+                      },
+                    },
+                    m(Icon, {
+                      iconName: 'content_copy',
+                    })
+                  ),
+
+                ])
               ),
             ])
           )

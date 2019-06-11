@@ -122,10 +122,6 @@ export const TrialForm = () => {
                 label: 'Delete',
                 iconName: 'delete',
                 class: 'red',
-                // onclick: (e: UIEvent) => {
-                //   TrialSvc.delete(trial.id);
-                //   close(e);
-                // },
               }),
             ])
           ),
