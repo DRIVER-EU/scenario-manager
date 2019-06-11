@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Database } from 'sqlite3';
 import { TrialOverview, IUploadedFile } from '../../models';
-import { ITrial, uniqueId } from 'trial-manager-models';
+import { ITrial, uniqueId, ITrialOverview } from 'trial-manager-models';
 import { logError, dbCallbackWrapper } from '../../utils';
 
 const TRIAL = 'trial';
@@ -20,8 +20,8 @@ export class TrialRepository {
     this.init();
   }
 
-  init() {
-    const dbs = this.openAllDatabases();
+  async init() {
+    const dbs = await this.openAllDatabases();
     this.createOverview(dbs);
     this.closeAllDatabasesOnExit();
   }
@@ -34,15 +34,62 @@ export class TrialRepository {
     return this.getTrial(id);
   }
 
-  async getTrialFilename(id: string) {
-    return new Promise<string>((resolve, reject) => {
-      const dbi = this.databases.hasOwnProperty(id)
-        ? this.databases[id]
-        : undefined;
-      if (!dbi) {
-        return reject(`Error, no database with id ${id} found!`);
+  getTrialFilename(id: string) {
+    const dbi = this.databases[id];
+    if (!dbi) {
+      return console.error(`Error, no database with id ${id} found!`);
+    }
+    return dbi.filename;
+  }
+
+  async clone(id: string) {
+    return new Promise<ITrialOverview>(async (resolve, reject) => {
+      const filename = this.getTrialFilename(id);
+      if (!filename) {
+        const msg = `${id} not found, cannot clone.`;
+        console.error(msg);
+        return reject(msg);
       }
-      resolve(dbi.filename);
+      console.log(`Cloning ${id} - ${filename}...`);
+      fs.exists(filename, exists => {
+        if (!exists) {
+          const msg = `${filename} no longer exists, cannot clone.`;
+          console.error(msg);
+          return reject(msg);
+        }
+        const newId = uniqueId();
+        const newFilename = this.toFilename(newId);
+        console.log(`...to ${newId} - ${newFilename}`);
+        fs.copyFile(filename, newFilename, err => {
+          if (err) {
+            const msg = `Error copying ${filename} to ${newFilename}:`;
+            console.error(msg);
+            return reject(msg);
+          }
+          const db = new Database(newFilename, async errDb => {
+            if (errDb) {
+              const msg = `Error opening database ${newFilename}:`;
+              console.error(msg);
+              return reject(msg);
+            }
+            this.databases[newId] = { filename: newFilename, db };
+            const trial = await this.getTrial(newId);
+            trial.id = newId;
+            trial.title += ' (copy)';
+            trial.creationDate = trial.lastEdit = new Date();
+            this.overview.push(new TrialOverview(trial));
+            this.overview.sort(sortTrialsByLastEdit);
+            this.updateTrial(newId, trial);
+            resolve({
+              id: newId,
+              title: trial.title,
+              creationDate: trial.creationDate,
+              lastEdit: trial.lastEdit,
+              description: trial.description,
+            });
+          });
+        });
+      });
     });
   }
 
@@ -59,7 +106,9 @@ export class TrialRepository {
   async createTrialFromFile(file: IUploadedFile) {
     const { originalname } = file;
     const ext = path.extname(originalname);
-    const baseName = path.basename(originalname).replace(new RegExp(`${ext}$`, 'g'), '');
+    const baseName = path
+      .basename(originalname)
+      .replace(new RegExp(`${ext}$`, 'g'), '');
     let p: string;
     let count = 0;
     do {
@@ -313,15 +362,35 @@ export class TrialRepository {
     });
   }
 
-  private openAllDatabases() {
+  private async openAllDatabases() {
     const files = fs.readdirSync(this.folder);
-    return files
+    const dbs = files
       .filter(f => path.extname(f) === EXT)
       .map(f => path.resolve(this.folder, f))
       .reduce(
-        (acc, f) => [...acc, { db: new Database(f, logError), filename: f }],
-        [] as Array<{ db: Database; filename: string }>,
+        (acc, f) => [...acc, this.openDatabase(f)],
+        [] as Array<Promise<{ db: Database; filename: string }>>,
       );
+    return await Promise.all(dbs);
+      // .reduce(
+      //   async (acc, f) => {
+      //     const result = await this.openDatabase(f);
+      //     return [...acc, result];
+      //   },
+      //   [] as Array<{ db: Database; filename: string }>,
+      // );
+  }
+
+  private openDatabase(filename: string) {
+    return new Promise<{ filename: string, db: Database }>((resolve, reject) => {
+      const db = new Database(filename, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ filename, db });
+        }
+      });
+    });
   }
 
   private async createOverview(dbs: Array<{ db: Database; filename: string }>) {
@@ -332,18 +401,26 @@ export class TrialRepository {
         return acc;
       }, []),
     );
-    this.databases = trials.reduce((acc, s, i) => {
+    trials.sort(sortTrialsByLastEdit);
+    // Remove duplicates, only keep the last version.
+    const uniqueTrials = trials.filter(
+      (t, i) => trials.slice(0, i + 1).filter(x => x.id === t.id).length === 1,
+    );
+    this.databases = uniqueTrials.reduce((acc, s, i) => {
       if (acc.hasOwnProperty(s.id)) {
-        console.warn(`Trial with duplicate ID found: ${s.title} (${s.creationDate.toString()}). Creating clone.`);
-        s.id = uniqueId();
-        s.title += ' (COPY)';
+        // Should not be reached
+        console.warn(
+          `Trial with duplicate ID found: ${s.title} (${
+            s.id
+          }: ${s.lastEdit.toString()}).`,
+        );
+      } else {
+        acc[s.id] = dbs[i];
       }
-      acc[s.id] = dbs[i];
       return acc;
     }, {});
-    trials.sort(sortTrialsByLastEdit);
-    console.log(`${trials.length} scenarios loaded...`);
-    this.overview = trials.map(s => new TrialOverview(s));
+    console.log(`${uniqueTrials.length} scenarios loaded...`);
+    this.overview = uniqueTrials.map(s => new TrialOverview(s));
   }
 
   private async createDb(trial: TrialOverview) {

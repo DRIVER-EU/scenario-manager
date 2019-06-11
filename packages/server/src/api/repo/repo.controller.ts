@@ -24,11 +24,20 @@ export class RepoController {
   @ApiOperation({ title: 'Download a trial as SQLite3 database by id' })
   @Get(':id')
   async findOne(@Res() res: Response, @Param('id') id: string) {
-    const filename = await this.trialService.getTrialFile(id);
-    res.download(filename);
+    const filename = this.trialService.getTrialFile(id);
+    if (filename) {
+      res.download(filename);
+    }
   }
 
-  @ApiOperation({ title: 'Upload a trial as SQLite3 database by id' })
+  @ApiOperation({ title: 'Create a copy of the Trial by id' })
+  @Post('clone/:id')
+  async clone(@Param('id') id: string) {
+    const to = await this.trialService.clone(id);
+    return to;
+  }
+
+  @ApiOperation({ title: 'Upload a trial as SQLite3 database' })
   @ApiConsumes('multipart/form-data')
   @ApiImplicitFile({
     name: 'file',

@@ -27,8 +27,15 @@ export class TrialService {
     return this.findById(id);
   }
 
-  async getTrialFile(id: string) {
+  getTrialFile(id: string) {
     return this.repo.getTrialFilename(id);
+  }
+
+  async clone(id: string) {
+    if (!id) {
+      return 'Error, no ID provided';
+    }
+    return this.repo.clone(id);
   }
 
   async create(newTrial: TrialOverview) {
