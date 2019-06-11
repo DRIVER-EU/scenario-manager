@@ -18,18 +18,29 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     inject: undefined as IInject | undefined,
     original: undefined as IInject | undefined,
     modal: undefined as M.Modal | undefined,
+    saving: undefined as boolean | undefined,
     subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
       if (Object.keys(cur).length === 0) {
         return;
       }
-      if (state.modal && !deepEqual(state.original, state.inject)) {
+      if (!state.saving && state.modal && !deepEqual(state.original, state.inject)) {
         state.oldInject = state.inject;
         state.modal.open();
       }
+      state.saving = false;
       state.inject = cur ? deepCopy(cur) : undefined;
       state.original = cur ? deepCopy(cur) : undefined;
       state.parent = cur.parentId ? getInject(cur.parentId, TrialSvc.getInjects()) : undefined;
     }),
+  };
+
+  const onsubmit = (e: UIEvent) => {
+    const { inject } = state;
+    e.preventDefault();
+    if (inject) {
+      TrialSvc.updateInject(inject);
+      state.saving = true;
+    }
   };
 
   return {
@@ -43,12 +54,6 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         m.redraw();
       };
       const hasChanged = !deepEqual(inject, original);
-      const onsubmit = (e: UIEvent) => {
-        e.preventDefault();
-        if (inject) {
-          TrialSvc.updateInject(inject);
-        }
-      };
       const previousInjects = findPreviousInjects(inject, TrialSvc.getInjects());
       const options = enumToOptions(MessageType).map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
 
