@@ -85,15 +85,18 @@ export const TrialForm = () => {
           ),
           trial.id
             ? undefined
-            : m('.row', [
-                m('h5', 'Upload an existing trial'),
-                m(FileInput, {
-                  placeholder: 'Upload an existing Trial',
-                  accept: ['.sqlite3', '.sqlite'],
-                  style: 'margin-bottom: 20px',
-                  onchange: upload,
-                }),
-              ]),
+            : m(
+                '.row',
+                m('.col.s12', [
+                  m('h5', 'Upload an existing trial'),
+                  m(FileInput, {
+                    placeholder: 'Upload an existing Trial',
+                    accept: ['.sqlite3', '.sqlite'],
+                    style: 'margin-bottom: 20px',
+                    onchange: upload,
+                  }),
+                ])
+              ),
           m(
             '.row',
             m('.col.s12.buttons', [
