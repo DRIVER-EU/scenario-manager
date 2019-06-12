@@ -113,8 +113,8 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
           placeholder: 'Sender',
           options: participants.map(p => ({ id: p.id || '', label: `${p.name} (${p.email})` })),
           checkedId: participants
-            .filter(p => p.email === alert.sender)
-            .map(p => p.email)
+            .filter(p => p.id === alert.sender)
+            .map(p => p.id)
             .shift(),
           onchange: v => {
             alert.sender = v[0] as string;
