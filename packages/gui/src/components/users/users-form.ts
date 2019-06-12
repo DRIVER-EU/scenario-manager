@@ -22,6 +22,10 @@ export const UsersForm = () => {
       }
     }),
   };
+  const options = iterEnum(UserRole).map(r => ({
+    id: +r,
+    label: userRoleToString(+r),
+  }));
 
   return {
     oninit: () => {
@@ -71,11 +75,8 @@ export const UsersForm = () => {
                       checkedId: user.roles,
                       isMandatory: true,
                       multiple: true,
-                      options: iterEnum(UserRole).map(r => ({
-                        id: +r,
-                        label: userRoleToString(+r),
-                      })),
-                      onchange: v => (user.roles = (v as number[]).sort()),
+                      options,
+                      onchange: v => (state.user ? state.user.roles = v as UserRole[] : undefined),
                     }),
                     m(EmailInput, {
                       id: 'email',
