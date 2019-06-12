@@ -367,30 +367,31 @@ export class TrialRepository {
     const dbs = files
       .filter(f => path.extname(f) === EXT)
       .map(f => path.resolve(this.folder, f))
-      .reduce(
-        (acc, f) => [...acc, this.openDatabase(f)],
-        [] as Array<Promise<{ db: Database; filename: string }>>,
-      );
+      .reduce((acc, f) => [...acc, this.openDatabase(f)], [] as Array<
+        Promise<{ db: Database; filename: string }>
+      >);
     return await Promise.all(dbs);
-      // .reduce(
-      //   async (acc, f) => {
-      //     const result = await this.openDatabase(f);
-      //     return [...acc, result];
-      //   },
-      //   [] as Array<{ db: Database; filename: string }>,
-      // );
+    // .reduce(
+    //   async (acc, f) => {
+    //     const result = await this.openDatabase(f);
+    //     return [...acc, result];
+    //   },
+    //   [] as Array<{ db: Database; filename: string }>,
+    // );
   }
 
   private openDatabase(filename: string) {
-    return new Promise<{ filename: string, db: Database }>((resolve, reject) => {
-      const db = new Database(filename, err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({ filename, db });
-        }
-      });
-    });
+    return new Promise<{ filename: string; db: Database }>(
+      (resolve, reject) => {
+        const db = new Database(filename, err => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({ filename, db });
+          }
+        });
+      },
+    );
   }
 
   private async createOverview(dbs: Array<{ db: Database; filename: string }>) {
@@ -401,26 +402,20 @@ export class TrialRepository {
         return acc;
       }, []),
     );
-    trials.sort(sortTrialsByLastEdit);
-    // Remove duplicates, only keep the last version.
-    const uniqueTrials = trials.filter(
-      (t, i) => trials.slice(0, i + 1).filter(x => x.id === t.id).length === 1,
-    );
-    this.databases = uniqueTrials.reduce((acc, s, i) => {
-      if (acc.hasOwnProperty(s.id)) {
-        // Should not be reached
-        console.warn(
-          `Trial with duplicate ID found: ${s.title} (${
-            s.id
-          }: ${s.lastEdit.toString()}).`,
-        );
-      } else {
-        acc[s.id] = dbs[i];
+    const indexedTrials = trials.map((trial, index ) => ({ trial, index }));
+    indexedTrials.sort((a, b) => sortTrialsByLastEdit(a.trial, b.trial));
+    this.databases = indexedTrials.reduce((acc, { trial, index }) => {
+      const db = dbs[index];
+      if (acc.hasOwnProperty(trial.id)) {
+        console.info(`Closing ${trial.title} (${trial.id}). A more recent version is already loaded.`);
+        db.db.close();
+        return acc;
       }
+      acc[trial.id] = db;
       return acc;
     }, {});
-    console.log(`${uniqueTrials.length} scenarios loaded...`);
-    this.overview = uniqueTrials.map(s => new TrialOverview(s));
+    console.log(`${Object.keys(this.databases).length} scenarios loaded...`);
+    this.overview = indexedTrials.map(({ trial }) => new TrialOverview(trial));
   }
 
   private async createDb(trial: TrialOverview) {
