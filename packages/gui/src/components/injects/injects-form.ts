@@ -59,7 +59,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
 
       return m(
         '.row.injects-form.sb.large',
-        { style: 'color: black; padding-bottom: 10px;', className },
+        { style: 'color: black; padding-bottom: 10px;', className, key: Date.now() },
         inject
           ? [
               m('.col.s12', [
@@ -84,8 +84,8 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                     ]),
                 [
                   m(MessageForm, { disabled, inject, onChange, key: inject.id }),
-                  m(InjectConditions, { disabled, inject, previousInjects }),
-                  m(SetObjectives, { disabled, inject }),
+                  m(InjectConditions, { disabled, inject, previousInjects, key: inject.id }),
+                  m(SetObjectives, { disabled, inject, key: inject.id }),
                 ],
                 m(
                   'row',

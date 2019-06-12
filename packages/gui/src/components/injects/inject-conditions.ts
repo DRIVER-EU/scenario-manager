@@ -63,7 +63,7 @@ export const InjectConditions: FactoryComponent<{
         } as IInjectCondition;
       }
       const { condition } = inject;
-      // console.table(inject);
+      console.table(condition);
       const dependency = getInject(condition.injectId, TrialSvc.getInjects());
       const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =
@@ -102,7 +102,7 @@ export const InjectConditions: FactoryComponent<{
                 disabled: !TrialSvc.getCurrent(),
               },
             ],
-            onchange: v => (condition.type = v[0] as InjectConditionType),
+            onchange: v => (inject.condition!.type = v[0] as InjectConditionType),
           }),
           condition.type === InjectConditionType.AT_TIME
             ? m(StartAt, { disabled, condition, inject })
@@ -115,7 +115,7 @@ export const InjectConditions: FactoryComponent<{
                   className: 'inline',
                   checkedId: condition.injectId,
                   options: previousInjectOptions,
-                  onchange: v => (condition.injectId = v[0] as InjectConditionType),
+                  onchange: v => (inject.condition!.injectId = v[0] as InjectConditionType),
                 }),
                 m('span.inline', ' has '),
                 m(Select, {
@@ -124,7 +124,7 @@ export const InjectConditions: FactoryComponent<{
                   className: 'inline small',
                   checkedId: condition.injectState,
                   options: injectStateOptions,
-                  onchange: v => (condition.injectState = v[0] as InjectState),
+                  onchange: v => (inject.condition!.injectState = v[0] as InjectState),
                 }),
               ],
           m('span.inline', '.'),
