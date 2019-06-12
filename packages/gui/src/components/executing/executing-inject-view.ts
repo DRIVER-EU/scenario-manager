@@ -5,7 +5,7 @@ import { Icon } from 'mithril-materialized';
 import { getMessageIcon, getMessageTitle, getInjectIcon } from '../../utils';
 import { ExecutingMessageView } from './executing-message-view';
 import { ManualTransition } from './manual-transition';
-import { MessageForm } from '../messages';
+import { MessageForm } from '../messages/message-form';
 
 export const ExecutingInjectView: FactoryComponent = () => {
   const state = {
