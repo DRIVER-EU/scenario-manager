@@ -48,10 +48,16 @@ export const InjectConditions: FactoryComponent<{
   inject: IInject;
   previousInjects: IInject[];
   disabled?: boolean;
+  onChange: (inject?: IInject) => void;
 }> = () => {
+  const state = {} as { inject: IInject };
+
   return {
-    view: ({ attrs: { inject, previousInjects, disabled = false } }) => {
-      if (inject.type === InjectType.SCENARIO) {
+    // oninit: ({ attrs: { inject }}) => state.inject = inject,
+    view: ({ attrs: { inject, previousInjects, disabled = false, onChange } }) => {
+      state.inject = inject;
+      // console.table(inject);
+      if (!inject || inject.type === InjectType.SCENARIO) {
         return undefined;
       }
       if (!inject.condition) {
@@ -81,6 +87,7 @@ export const InjectConditions: FactoryComponent<{
       }
       return m(
         '.row',
+        { key: inject.id },
         m('.col.s12.input-field', [
           // m('h5', 'Start condition'),
           // m(Icon, { iconName: 'playlist_play', class: 'small', style: 'margin: 0 0.5em;' }),
@@ -102,12 +109,17 @@ export const InjectConditions: FactoryComponent<{
                 disabled: !TrialSvc.getCurrent(),
               },
             ],
-            onchange: v => (inject.condition!.type = v[0] as InjectConditionType),
+            onchange: v => {
+              // console.table(state.inject);
+              condition.type = v[0] as InjectConditionType;
+              state.inject.condition = condition;
+              onChange(state.inject);
+            },
           }),
           condition.type === InjectConditionType.AT_TIME
             ? m(StartAt, { disabled, condition, inject })
             : [
-                m(Delay, { disabled, condition }),
+                m(Delay, { disabled, inject, onChange }),
                 m('span.inline', ' after '),
                 m(Select, {
                   disabled,
@@ -115,7 +127,11 @@ export const InjectConditions: FactoryComponent<{
                   className: 'inline',
                   checkedId: condition.injectId,
                   options: previousInjectOptions,
-                  onchange: v => (inject.condition!.injectId = v[0] as InjectConditionType),
+                  onchange: v => {
+                    condition.injectId = v[0] as InjectConditionType;
+                    state.inject.condition = condition;
+                    onChange(state.inject);
+                  },
                 }),
                 m('span.inline', ' has '),
                 m(Select, {
@@ -124,7 +140,11 @@ export const InjectConditions: FactoryComponent<{
                   className: 'inline small',
                   checkedId: condition.injectState,
                   options: injectStateOptions,
-                  onchange: v => (inject.condition!.injectState = v[0] as InjectState),
+                  onchange: v => {
+                    condition!.injectState = v[0] as InjectState;
+                    state.inject.condition = condition;
+                    onChange(state.inject);
+                  },
                 }),
               ],
           m('span.inline', '.'),
@@ -134,17 +154,27 @@ export const InjectConditions: FactoryComponent<{
   };
 };
 
-const Delay: FactoryComponent<{ condition: IInjectCondition; disabled?: boolean; }> = () => {
+const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (inject?: IInject) => void }> = () => {
+  const state = {} as { inject: IInject };
+
   return {
-    view: ({ attrs: { condition, disabled = false } }) =>
-      condition.type === InjectConditionType.DELAY || condition.type === InjectConditionType.MANUALLY
+    view: ({ attrs: { inject, disabled = false, onChange } }) => {
+      state.inject = inject;
+      const { condition } = inject;
+      // console.table(condition);
+      return condition &&
+        (condition.type === InjectConditionType.DELAY || condition.type === InjectConditionType.MANUALLY)
         ? [
             m(NumberInput, {
               disabled,
               className: 'inline xs',
               min: 0,
               initialValue: condition.delay,
-              onchange: (v: number) => (condition.delay = v),
+              onchange: (v: number) => {
+                condition.delay = v;
+                state.inject.condition = condition;
+                onChange(state.inject);
+              },
             }),
             m(Select, {
               disabled,
@@ -156,14 +186,19 @@ const Delay: FactoryComponent<{ condition: IInjectCondition; disabled?: boolean;
                 { id: 'minutes', label: condition.delay === 1 ? 'minute' : 'minutes' },
                 { id: 'hours', label: condition.delay === 1 ? 'hour' : 'hours' },
               ],
-              onchange: v => (condition.delayUnitType = v[0] as 'seconds' | 'minutes' | 'hours' | undefined),
+              onchange: v => {
+                condition.delayUnitType = v[0] as 'seconds' | 'minutes' | 'hours' | undefined;
+                state.inject.condition = condition;
+                onChange(state.inject);
+              },
             }),
           ]
-        : undefined,
+        : undefined;
+    },
   };
 };
 
-const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject; disabled?: boolean; }> = () => {
+const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject; disabled?: boolean }> = () => {
   return {
     view: ({ attrs: { condition, inject, disabled = false } }) => {
       const { delay = 0, delayUnitType = 'seconds' } = condition;

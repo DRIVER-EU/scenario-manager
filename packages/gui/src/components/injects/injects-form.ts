@@ -23,7 +23,13 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       if (Object.keys(cur).length === 0) {
         return;
       }
-      if (!state.saving && state.modal && !deepEqual(state.original, state.inject)) {
+      if (
+        !state.saving &&
+        state.modal &&
+        state.inject &&
+        cur.id !== state.inject.id &&
+        !deepEqual(state.original, state.inject)
+      ) {
         state.oldInject = state.inject;
         state.modal.open();
       }
@@ -31,6 +37,8 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       state.inject = cur ? deepCopy(cur) : undefined;
       state.original = cur ? deepCopy(cur) : undefined;
       state.parent = cur.parentId ? getInject(cur.parentId, TrialSvc.getInjects()) : undefined;
+      console.log(cur);
+      m.redraw();
     }),
   };
 
@@ -49,9 +57,12 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     },
     view: ({ attrs: { className, disabled = false } }) => {
       const { inject, original } = state;
-      const onChange = () => {
-        state.inject = inject;
-        m.redraw();
+      // console.table(inject);
+      const onChange = (inj?: IInject) => {
+        if (inj) {
+          state.inject = inj;
+        }
+        // m.redraw();
       };
       const hasChanged = !deepEqual(inject, original);
       const previousInjects = findPreviousInjects(inject, TrialSvc.getInjects());
@@ -59,7 +70,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
 
       return m(
         '.row.injects-form.sb.large',
-        { style: 'color: black; padding-bottom: 10px;', className, key: Date.now() },
+        { style: 'color: black; padding-bottom: 10px;', className },
         inject
           ? [
               m('.col.s12', [
@@ -71,8 +82,8 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                       checkedId: inject.messageType,
                       options,
                       onchange: v => {
-                        console.warn('Getting message form');
-                        inject.messageType = v && v.length > 0 ? (v[0] as MessageType) : undefined;
+                        // console.warn('Getting message form');
+                        state.inject!.messageType = v[0] as MessageType;
                       },
                     })
                   : m('h4', [
@@ -83,9 +94,9 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                       inject.type,
                     ]),
                 [
-                  m(MessageForm, { disabled, inject, onChange, key: inject.id }),
-                  m(InjectConditions, { disabled, inject, previousInjects, key: inject.id }),
-                  m(SetObjectives, { disabled, inject, key: inject.id }),
+                  m(MessageForm, { disabled, inject, onChange }),
+                  m(InjectConditions, { disabled, inject, previousInjects, onChange, key: inject.id }),
+                  m(SetObjectives, { disabled, inject, key: Date.now() }),
                 ],
                 m(
                   'row',
