@@ -67,7 +67,7 @@ export const TimelineView: FactoryComponent = () => {
         state.selectedId = id;
         const inject = executingInjects.filter(i => i.id === id).shift() as IExecutingInject;
         if (inject) {
-          console.table(inject);
+          // console.table(inject);
           executingChannel.publish(TopicNames.ITEM_SELECT, { cur: inject });
         }
       };

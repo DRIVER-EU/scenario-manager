@@ -62,6 +62,7 @@ export const Layout: FactoryComponent<{}> = () => {
                   ),
                   executeMode && time.state !== TimeState.Idle
                     ? m(MediaControls, {
+                        id: 'layout-controls',
                         className: 'right',
                         socket: SocketSvc.socket,
                         realtime: false,

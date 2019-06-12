@@ -19,6 +19,7 @@ const updateSpeed = (socket: SocketIOClient.Socket, trialTimeSpeed: number) => {
 };
 
 export const MediaControls: FactoryComponent<{
+  id?: string;
   socket: SocketIOClient.Socket;
   time: ITimeMessage;
   canChangeSpeed: boolean;
@@ -28,8 +29,8 @@ export const MediaControls: FactoryComponent<{
   className?: string;
 }> = () => {
   return {
-    view: ({ attrs: { time, socket, isPaused, canChangeSpeed, canStop = true, realtime, className } }) => {
-      return m('div', { className }, [
+    view: ({ attrs: { id, time, socket, isPaused, canChangeSpeed, canStop = true, realtime, className } }) => {
+      return m('div', { id, className }, [
         realtime
           ? undefined
           : m(FlatButton, {
