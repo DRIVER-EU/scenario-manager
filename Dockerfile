@@ -6,7 +6,7 @@
 #   docker run -it -p 8888:3210 trial-management-tool
 
 FROM node:alpine AS builder
-RUN apk add --no-cache --virtual .gyp python make g++ && \
+RUN apk add --no-cache --virtual .gyp python make g++ git && \
   npm i -g yalc
 # ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 # optionally if you want to run npm global bin without specifying path
