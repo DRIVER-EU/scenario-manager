@@ -15,7 +15,7 @@ import {
   SetAffectedAreaForm,
 } from '.';
 
-export const MessageForm: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange?: () => void }> = () => {
+export const MessageForm: FactoryComponent<{ inject?: IInject; disabled?: boolean; onChange?: () => void }> = () => {
   const getMessageForm = (inject: IInject, disabled: boolean, onChange?: () => void) => {
     switch (inject.messageType) {
       case MessageType.CHECKPOINT:
@@ -47,10 +47,12 @@ export const MessageForm: FactoryComponent<{ inject: IInject; disabled?: boolean
 
   return {
     view: ({ attrs: { inject, disabled = false, onChange } }) =>
-      inject.type === InjectType.INJECT
-        ? getMessageForm(inject, disabled, onChange)
-        : inject.type === InjectType.SCENARIO
-        ? m(ScenarioForm, { inject, disabled, onChange })
-        : m(DefaultMessageForm, { inject, disabled }),
+      inject
+        ? inject.type === InjectType.INJECT
+          ? getMessageForm(inject, disabled, onChange)
+          : inject.type === InjectType.SCENARIO
+          ? m(ScenarioForm, { inject, disabled, onChange })
+          : m(DefaultMessageForm, { inject, disabled })
+        : undefined,
   };
 };
