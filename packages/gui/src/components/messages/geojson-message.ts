@@ -15,7 +15,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
   const state = {
     overlay: undefined,
   } as {
-    assets: IAsset[];
+    assets?: IAsset[];
     overlay?: GeoJSON;
   };
 

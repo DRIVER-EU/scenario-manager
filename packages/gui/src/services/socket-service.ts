@@ -6,23 +6,27 @@ import { AppState } from '../models';
 const log = console.log;
 let socket: SocketIOClient.Socket;
 
-const setupSocket = () => {
-  if (socket) {
+const setupSocket = (autoConnect = true) => {
+  if (socket && socket.connected) {
     return socket;
   }
 
-  socket = io(AppState.apiService);
+  socket = autoConnect ? io() : io(AppState.apiService());
 
   socket.on('connect', () => {
     log('Connected');
-    // socket.emit('time-events', { test: 'test' });
-    // socket.emit('identity', 42, (response: number) => console.log('Identity:', response));
   });
   socket.on('time-events', (data: unknown) => {
     console.log('time-events: ', data);
   });
-  socket.on('exception', (data: unknown) => {
-    console.error('event', data);
+  socket.on('connect_error', (data: unknown) => {
+    socket.close();
+    if (autoConnect) {
+      AppState.usingDevServer = true;
+      SocketSvc.socket = setupSocket(false);
+    } else {
+      console.error('event', data);
+    }
   });
   socket.on('disconnect', () => log('Disconnected'));
   socket.on('stateUpdated', (state: TimeState) => {

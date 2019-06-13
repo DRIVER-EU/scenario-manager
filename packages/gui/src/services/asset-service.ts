@@ -13,14 +13,18 @@ export class AssetService extends RestService<IAsset> {
   }
   public async loadList() {
     const list = await super.loadList();
-    list.forEach(a => this.addUrl(a));
-    return list;
+    if (list) {
+      list.forEach(a => this.addUrl(a));
+      return list;
+    }
   }
 
   public async mapOverlays() {
     const list = await super.loadList();
-    list.filter(a => a.mimetype === 'application/json' || isJSON(a.filename)).forEach(a => this.addUrl(a));
-    return list;
+    if (list) {
+      list.filter(a => a.mimetype === 'application/json' || isJSON(a.filename)).forEach(a => this.addUrl(a));
+      return list;
+    }
   }
 
   public addUrl(a: IAsset) {

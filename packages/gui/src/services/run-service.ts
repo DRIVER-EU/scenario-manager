@@ -12,7 +12,7 @@ class RunService {
   protected baseUrl: string;
 
   constructor() {
-    this.baseUrl = `${AppState.apiService}/run/`;
+    this.baseUrl = `${AppState.apiService()}/run/`;
   }
 
   /** Get the active trial */

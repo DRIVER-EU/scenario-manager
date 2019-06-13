@@ -61,7 +61,7 @@ export const TrialList = () => {
                   m(
                     'a',
                     {
-                      href: `${AppState.apiService}/repo/${scenario.id}`,
+                      href: `${AppState.apiService()}/repo/${scenario.id}`,
                     },
                     m(Icon, {
                       iconName: 'cloud_download',
@@ -74,7 +74,7 @@ export const TrialList = () => {
                       onclick: () => {
                         m.request<ITrialOverview>({
                           method: 'POST',
-                          url: `${AppState.apiService}/repo/clone/${scenario.id}`,
+                          url: `${AppState.apiService()}/repo/clone/${scenario.id}`,
                         }).then(to => {
                           if (to && to.id) {
                             TrialSvc.load(to.id);

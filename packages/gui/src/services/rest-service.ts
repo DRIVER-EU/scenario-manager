@@ -15,7 +15,7 @@ export class RestService<T extends { id?: string | number }> {
   protected channel: IChannelDefinition<{ list: T[] } | { cur: T; old: T }>;
 
   constructor(protected urlFragment: string, protected channelName?: string) {
-    this.baseUrl = `${AppState.apiService}/${urlFragment}/`;
+    this.baseUrl = this.createBaseUrl();
     this.channel = messageBus.channel(channelName || urlFragment);
   }
 
@@ -125,15 +125,25 @@ export class RestService<T extends { id?: string | number }> {
     return this.current;
   }
 
-  public async loadList() {
-    const result = await m
+  public async loadList(): Promise<T[] | undefined> {
+    try {
+      const result = await m
       .request<T[]>({
         method: 'GET',
         url: this.baseUrl,
         withCredentials,
       });
-    this.setList(result);
-    return this.list;
+      this.setList(result);
+      return this.list;
+    } catch {
+      if (AppState.usingDevServer) {
+        const msg = 'Cannot connect to server!';
+        M.toast({ html: msg, classes: 'red' });
+        throw Error(msg);
+      }
+      this.baseUrl = this.createBaseUrl(true);
+      return this.loadList();
+    }
   }
 
   public async loadListInScenario(id: string) {
@@ -189,5 +199,11 @@ export class RestService<T extends { id?: string | number }> {
 
   private removeItemFromList(id?: string | number) {
     this.setList([...this.list.filter(i => i.id !== id)]);
+  }
+
+  /** Create the base URL, either using the apiService or the apiDevService */
+  private createBaseUrl(useDevServer = false): string {
+    AppState.usingDevServer = useDevServer;
+    return `${AppState.apiService()}/${this.urlFragment}/`;
   }
 }
