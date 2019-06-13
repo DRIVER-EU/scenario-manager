@@ -43,7 +43,7 @@ export default {
         TrialManagementPhaseMessageTopic,
         TrialManagementRolePlayerTopic,
         TrialManagementSessionMgmtTopic,
-        // 'flood_prediction_geojson',
+        'flood_prediction_geojson',
         'standard_cap',
         'standard_geojson',
         'sumo_SumoConfiguration',
