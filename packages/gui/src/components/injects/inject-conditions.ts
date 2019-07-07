@@ -87,7 +87,6 @@ export const InjectConditions: FactoryComponent<{
       }
       return m(
         '.row',
-        { key: inject.id },
         m('.col.s12.input-field', [
           // m('h5', 'Start condition'),
           // m(Icon, { iconName: 'playlist_play', class: 'small', style: 'margin: 0 0.5em;' }),
