@@ -20,13 +20,13 @@ WORKDIR /packages/models
 RUN npm install && \
   npm run build && \
   yalc publish --private
-COPY ./packages/gui /packages/gui
-WORKDIR /packages/gui
+COPY ./packages/server /packages/server
+WORKDIR /packages/server
 RUN yalc add trial-manager-models && \
   npm install && \
   npm run build
-COPY ./packages/server /packages/server
-WORKDIR /packages/server
+COPY ./packages/gui /packages/gui
+WORKDIR /packages/gui
 RUN yalc add trial-manager-models && \
   npm install && \
   npm run build
