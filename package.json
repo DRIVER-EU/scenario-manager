@@ -1,14 +1,15 @@
 {
 	"scripts": {
 		"postinstall": "lerna bootstrap",
+		"clean": "lerna run --parallel clean",
 		"start": "lerna run --parallel start",
 		"build": "lerna run build",
 		"docker:build": "docker build -t trial-management-tool .",
 		"docker:tag": "docker tag trial-management-tool drivereu/trial-management-tool",
 		"docker:publish": "docker push drivereu/trial-management-tool",
-		"docker": "npm run build && npm run docker:build && npm run docker:tag && npm run docker:publish",
-		"docker:local": "npm run build && npm run docker:build && npm run docker:tag",
-		"docker:run": "docker run -it -p 3210:3210 trial-management-tool",
+		"docker": "npm run docker:build && npm run docker:tag && npm run docker:publish",
+		"docker:local": "npm run docker:build && npm run docker:tag",
+		"docker:run": "docker run --name tmt -it -p 3210:3210 trial-management-tool",
 		"docker:sh": "docker run -it trial-management-tool sh"
 	},
 	"devDependencies": {

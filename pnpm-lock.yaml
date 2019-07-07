@@ -1,6 +1,6 @@
 devDependencies:
   lerna: 3.14.1
-lockfileVersion: 5
+lockfileVersion: 5.1
 packages:
   /@lerna/add/3.14.0:
     dependencies:

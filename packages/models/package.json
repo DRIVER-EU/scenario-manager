@@ -6,6 +6,7 @@
   "version": "0.0.1",
   "description": "Trial manager interfaces.",
   "scripts": {
+    "clean": "rimraf ./dist",
     "start": "tsc -w",
     "build": "tsc"
   },
@@ -16,8 +17,9 @@
     "type": "git",
     "url": "git+https://github.com/DRIVER-EU/scenario-manager.git"
   },
-  "dependencies": {
+  "devDependencies": {
     "@types/geojson": "^7946.0.7",
-    "typescript": "^3.4.5"
+    "typescript": "^3.5.2",
+    "rimraf": "^2.6.3"
   }
 }
