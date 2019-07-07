@@ -5,8 +5,7 @@ const getRootUrl = () => {
   const regex = /https?:\/\/.*(?=\/#)/i;
   const route = document.location.href;
   const m = route.match(regex);
-  const root = (m && m.length === 1) ? m[0].toString() : undefined;
-  return root || '';
+  return (m && m.length === 1) ? m[0].toString() : '';
 };
 
 /** During development, use this URL to access the server. */
