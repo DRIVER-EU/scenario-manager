@@ -49,10 +49,10 @@ export const MessageForm: FactoryComponent<{ inject?: IInject; disabled?: boolea
     view: ({ attrs: { inject, disabled = false, onChange } }) =>
       inject
         ? inject.type === InjectType.INJECT
-          ? getMessageForm(inject, disabled, onChange)
+          ? m('.message-form', getMessageForm(inject, disabled, onChange))
           : inject.type === InjectType.SCENARIO
-          ? m(ScenarioForm, { inject, disabled, onChange })
-          : m(DefaultMessageForm, { inject, disabled })
+          ? m(ScenarioForm, { inject, disabled, onChange, key: undefined })
+          : m(DefaultMessageForm, { inject, disabled, key: undefined })
         : undefined,
   };
 };

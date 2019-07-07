@@ -94,9 +94,9 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                       inject.type,
                     ]),
                 [
-                  m(MessageForm, { disabled, inject, onChange }),
-                  m(InjectConditions, { disabled, inject, previousInjects, onChange, key: inject.id }),
-                  m(SetObjectives, { disabled, inject, key: Date.now() }),
+                  m(MessageForm, { disabled, inject, onChange, key: 'message_form_' + inject.id }),
+                  m(InjectConditions, { disabled, inject, previousInjects, onChange, key: 'inject_cond_' + inject.id }),
+                  m(SetObjectives, { disabled, inject, key: 'set_obj_' + inject.id }),
                 ],
                 m(
                   'row',

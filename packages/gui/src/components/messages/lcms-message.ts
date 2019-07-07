@@ -57,6 +57,7 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
   return {
     oninit: ({ attrs: { inject } }) => {
       state.participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT) || [];
+      console.log(state.participants);
       const alert = getMessage<IAlert>(inject, MessageType.CAP_MESSAGE);
       alert.identifier = inject.id;
       alert.msgType = alert.msgType || MsgType.Alert;
