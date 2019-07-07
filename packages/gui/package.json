@@ -26,7 +26,7 @@
     "materialize-css": "^1.0.0",
     "mithril-leaflet": "^0.1.5",
     "mithril-markdown": "^0.2.1",
-    "mithril-materialized": "^0.13.13",
+    "mithril-materialized": "^0.13.14",
     "mithril-scenario-timeline": "^0.0.10",
     "mithril-table": "^0.2.2",
     "mithril-tree-component": "^0.6.5",
