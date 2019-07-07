@@ -12,16 +12,19 @@ class RunService {
   protected baseUrl: string;
 
   constructor() {
-    this.baseUrl = `${AppState.apiService()}/run/`;
+    this.baseUrl = this.createBaseUrl('run');
+    this.active();
   }
 
   /** Get the active trial */
   public async active() {
-    return m.request<ISessionMgmt>({
-      method: 'GET',
-      url: this.baseUrl + 'active',
-      withCredentials,
-    });
+    return m
+      .request<ISessionMgmt>({
+        method: 'GET',
+        url: this.baseUrl + 'active',
+        withCredentials,
+      })
+      .catch(_ => (this.baseUrl = this.createBaseUrl('run', true)));
   }
 
   /** Unload the active scenario */
@@ -51,6 +54,12 @@ class RunService {
       withCredentials,
       body: st,
     });
+  }
+
+  /** Create the base URL, either using the apiService or the apiDevService */
+  private createBaseUrl(urlFragment: string, useDevServer = false): string {
+    AppState.usingDevServer = useDevServer;
+    return `${AppState.apiService()}/${urlFragment}/`;
   }
 }
 

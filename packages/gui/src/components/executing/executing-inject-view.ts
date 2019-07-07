@@ -32,25 +32,25 @@ export const ExecutingInjectView: FactoryComponent = () => {
               ? isGroupInject
                 ? [
                     m(ManualTransition, { inject, key: inject.id }),
-                    m('h4', [
+                    m('h4', { key: -1 }, [
                       m(Icon, {
                         iconName: getInjectIcon(inject.type),
                         style: 'margin-right: 12px;',
                       }),
                       inject.title,
                     ]),
-                    m(MessageForm, { inject, disabled: true }),
+                    m(MessageForm, { inject, disabled: true, key: inject.id }),
                   ]
                 : [
                     m(ManualTransition, { inject, key: inject.id }),
-                    m('h4', [
+                    m('h4', { key: -1 }, [
                       m(Icon, {
                         iconName: getMessageIcon(inject.messageType),
                         style: 'margin-right: 12px;',
                       }),
                       getMessageTitle(inject.messageType),
                     ]),
-                    m(ExecutingMessageView, { inject }),
+                    m(ExecutingMessageView, { inject, key: inject.id }),
                   ]
               : undefined
           )

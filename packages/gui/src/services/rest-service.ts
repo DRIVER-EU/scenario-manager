@@ -136,11 +136,6 @@ export class RestService<T extends { id?: string | number }> {
       this.setList(result);
       return this.list;
     } catch {
-      if (AppState.usingDevServer) {
-        const msg = 'Cannot connect to server!';
-        M.toast({ html: msg, classes: 'red' });
-        throw Error(msg);
-      }
       this.baseUrl = this.createBaseUrl(true);
       return this.loadList();
     }

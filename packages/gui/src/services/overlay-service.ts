@@ -74,7 +74,9 @@ class OverlayService {
       const data = await Promise.all(geojsonAssets.map(a => TrialSvc.loadMapOverlay(a.assetId!)));
       const layers = data.reduce(
         (acc, d, i) => {
-          const { assetId = 0, alias } = geojsonAssets[i];
+          const { assetId = 0 } = geojsonAssets[i];
+          const asset = TrialSvc.assets && TrialSvc.assets.filter(a => assetId === a.id);
+          const alias = (asset && asset[0].alias || '').replace('_', ' ');
           acc[alias || assetId.toString()] = geoJSON(d);
           return acc;
         },
