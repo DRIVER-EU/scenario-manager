@@ -13,7 +13,7 @@ import { StakeholdersView } from '../components/stakeholders/stakeholders-list';
 import { AssetsView } from '../components/assets';
 import { SessionState } from '../components/session/session-state';
 import { TrialSettings } from '../components/configuration/trial-settings';
-import { SimulationView } from '../components/simulation';
+// import { SimulationView } from '../components/simulation';
 import { SessionView } from '../components/session/session-view';
 import { OverviewMap } from '../components/map/overview-map';
 
@@ -178,14 +178,14 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     component: OverviewMap,
     level: Dashboards.TRIAL,
   },
-  {
-    id: Dashboards.SIMULATION,
-    title: 'simulation',
-    route: '/edit/simulation',
-    visible: false,
-    component: SimulationView,
-    level: Dashboards.TRIAL,
-  },
+  // {
+  //   id: Dashboards.SIMULATION,
+  //   title: 'simulation',
+  //   route: '/edit/simulation',
+  //   visible: false,
+  //   component: SimulationView,
+  //   level: Dashboards.TRIAL,
+  // },
   {
     id: Dashboards.SESSIONS,
     title: 'Sessions',
