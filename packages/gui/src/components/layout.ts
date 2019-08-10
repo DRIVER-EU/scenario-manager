@@ -45,8 +45,8 @@ export const Layout: FactoryComponent<{}> = () => {
                   m(
                     `li${isActive(mainPath(d.route))}`,
                     m(
-                      'a',
-                      { href: d.route, oncreate: m.route.link },
+                      m.route.Link,
+                      { href: d.route },
                       d.iconName ? m(Icon, { iconName: d.iconName }) : d.title
                     )
                   )
@@ -58,7 +58,7 @@ export const Layout: FactoryComponent<{}> = () => {
                 '.nav-content',
                 m('ul.tabs.tabs-transparent', [
                   ...subDashboards.map(d =>
-                    m(`li.tab${isActive(d.route)}`, m('a', { href: d.route, oncreate: m.route.link }, d.title))
+                    m(`li.tab${isActive(d.route)}`, m(m.route.Link, { href: d.route }, d.title))
                   ),
                   executeMode && time.state !== TimeState.Idle
                     ? m(MediaControls, {
