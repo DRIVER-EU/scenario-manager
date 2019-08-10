@@ -12,7 +12,6 @@ export const StakeholdersForm = () => {
     stakeholder: undefined as IStakeholder | undefined,
     original: undefined as IStakeholder | undefined,
     subscription: stakeholdersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
-      console.warn(cur);
       if (envelope.topic === TopicNames.ITEM_DELETE) {
         state.stakeholder = undefined;
         state.original = undefined;
