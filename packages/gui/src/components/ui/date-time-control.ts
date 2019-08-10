@@ -14,17 +14,35 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
   const state = {
     time: '09:00',
     date: new Date(),
+    hours: 9,
+    min: 0,
+  } as {
+    hours: number;
+    min: number;
+    time: string;
+    date: Date;
+    onchange?: (d: Date) => void;
   };
-  const getTime = () => new Date(state.date);
+  const timeRegex = /(\d{1,2}):(\d{1,2})/g;
+
+  const getTime = () => {
+    const { date, hours, min } = state;
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, min, 0, 0);
+  };
+
+  const changeTime = () => (state.onchange ? state.onchange(getTime()) : undefined);
+
   return {
-    view: ({ attrs: { prefix, icon, onchange, dt, class: className, disabled } }) => {
+    oninit: ({ attrs: { onchange }}) => state.onchange = onchange,
+    view: ({ attrs: { dt, prefix, icon, className = 'col s12', disabled } }) => {
       if (dt) {
-        state.date = new Date(dt);
-        state.time = `${padLeft(state.date.getHours())}:${padLeft(state.date.getMinutes())}`;
+        state.date = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+        state.hours = dt.getHours();
+        state.min = dt.getMinutes();
+        state.time = `${padLeft(state.hours)}:${padLeft(state.min)}`;
       }
-      const changeTime = () => (onchange ? onchange(getTime()) : undefined);
-      return m('.input-field', { class: className || 'col s12', style: 'margin: 0 auto;' }, [
-        m(Icon, { iconName: icon || 'timer', class: 'prefix', style: 'margin-top: 0.8em;' }),
+      return m('.input-field', { className, style: 'margin: 0 auto;' }, [
+        m(Icon, { iconName: icon || 'timer', className: 'prefix', style: 'margin-top: 0.8em;' }),
         m('label[for=tp]', `${prefix} time:`),
         m('.list-inline', { style: 'margin-left: 1.6rem; margin-top: 0.7em;' }, [
           m(
@@ -34,14 +52,12 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
               initialValue: state.time,
               twelveHour: false,
               onchange: (time: string) => {
-                const regex = /(\d{1,2}):(\d{1,2})/g;
-                const match = regex.exec(time);
-                if (!match || match.length < 2) {
-                  return;
+                const match = timeRegex.exec(time);
+                if (match && match.length >= 2) {
+                  state.hours = +match[1];
+                  state.min = +match[2];
+                  state.time = `${padLeft(state.hours)}:${padLeft(state.min)}`;
                 }
-                const hrs = +match[1];
-                const min = +match[2];
-                state.date.setHours(hrs, min, 0, 0);
                 changeTime();
               },
             })
