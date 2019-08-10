@@ -62,7 +62,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         if (inj) {
           state.inject = inj;
         }
-        // m.redraw();
+        m.redraw();
       };
       const hasChanged = !deepEqual(inject, original);
       const previousInjects = findPreviousInjects(inject, TrialSvc.getInjects());
@@ -70,10 +70,10 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
 
       return m(
         '.row.injects-form.sb.large',
-        { style: 'color: black; padding-bottom: 10px;', className },
+        { className },
         inject
           ? [
-              m('.col.s12', [
+              m('.col.s12', { style: 'color: #b4790c' }, [
                 inject.type === InjectType.INJECT
                   ? m(Select, {
                       disabled,
