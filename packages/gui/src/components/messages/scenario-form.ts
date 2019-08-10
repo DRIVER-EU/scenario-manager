@@ -4,62 +4,53 @@ import { DateTimeControl } from '../ui/date-time-control';
 import { DefaultMessageForm } from '.';
 import { Checklist } from '../ui/checklist';
 
-const DEFAULT_TRIAL_DURATION = 8;
+const DEFAULT_TRIAL_DURATION = 2;
 
 /**
  * Default message form with a title and description.
  */
-export const ScenarioForm: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange?: () => void }> = () => {
-  const setEndDate = (d: Date) => {
-    const end = new Date(d.valueOf());
-    end.setHours(d.getHours() + DEFAULT_TRIAL_DURATION);
-    return end;
-  };
-  const setTime = (i: IScenario) => {
-    state.startDate = i.startDate ? new Date(i.startDate) : new Date();
-    state.endDate = i.endDate ? new Date(i.endDate) : setEndDate(state.startDate);
-  };
-  const state = {} as {
-    startDate: Date;
-    endDate: Date;
-  };
-
+export const ScenarioForm: FactoryComponent<{
+  inject: IInject;
+  disabled?: boolean;
+  onChange?: (inj?: IInject) => void;
+}> = () => {
   return {
-    oninit: ({ attrs: { inject } }) => {
-      setTime(inject);
-    },
-    onupdate: ({ attrs: { inject } }) => {
-      setTime(inject);
-    },
     view: ({ attrs }) => {
       const { onChange, disabled = false } = attrs;
       const scenario = attrs.inject as IScenario;
+      const startDate = scenario.startDate ? new Date(scenario.startDate) : new Date();
+      const endDate = scenario.endDate
+        ? new Date(scenario.endDate)
+        : new Date(startDate.valueOf() + DEFAULT_TRIAL_DURATION * 3600000);
 
+      if (endDate < startDate) {
+        M.toast({ html: 'End time must be later than start time!', classes: 'orange' });
+      }
       return [
         m(DefaultMessageForm, { inject: scenario, disabled }),
         disabled
           ? undefined
           : [
               m(DateTimeControl, {
-                class: 'col s12 m6',
+                className: 'col s12 m6',
                 prefix: 'Start',
-                dt: state.startDate,
+                dt: startDate,
                 onchange: (d: Date) => {
-                  scenario.startDate = d.toUTCString();
+                  scenario.startDate = d.toISOString();
                   if (onChange) {
-                    onChange();
+                    onChange(scenario);
                   }
                 },
               }),
               m(DateTimeControl, {
-                class: 'col s12 m6',
+                className: 'col s12 m6',
                 prefix: 'End',
                 icon: 'timer_off',
-                dt: state.endDate,
+                dt: endDate,
                 onchange: (d: Date) => {
-                  scenario.endDate = d.toUTCString();
+                  scenario.endDate = d.toISOString();
                   if (onChange) {
-                    onChange();
+                    onChange(scenario);
                   }
                 },
               }),
