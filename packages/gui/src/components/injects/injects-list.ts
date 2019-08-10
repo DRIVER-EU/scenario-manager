@@ -149,6 +149,8 @@ export const InjectsList = () => {
                 iconName: getInjectIcon(InjectType.SCENARIO),
                 onchange: ids => {
                   AppState.scenarioId = ids[0] as string;
+                  const cur = scenarios.filter(s => s.id === ids[0]).shift() as IScenario;
+                  injectsChannel.publish(TopicNames.ITEM_CREATE, { cur });
                 },
               } as ISelectOptions),
             ]),
