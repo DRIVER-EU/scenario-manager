@@ -231,6 +231,7 @@ const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject; 
           const oldTime = trialStart.getTime();
           const dtInSec = (newTime - oldTime) / 1000;
           if (dtInSec < 0) {
+            M.toast({ html: 'Cannot start before the scenario starts!', classes: 'red' });
             console.warn('Cannot start before the scenario starts!');
             return;
           }
