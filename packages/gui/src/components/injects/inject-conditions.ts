@@ -111,7 +111,6 @@ export const InjectConditions: FactoryComponent<{
               },
             ],
             onchange: v => {
-              console.table(condition);
               if (
                 inject.condition && inject.condition.type === InjectConditionType.AT_TIME &&
                 (v[0] as InjectConditionType) !== InjectConditionType.AT_TIME
