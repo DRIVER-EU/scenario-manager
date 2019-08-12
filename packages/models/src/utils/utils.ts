@@ -34,6 +34,18 @@ export const getAncestors = (injects: IInject[], inject: IInject) => {
   return ancestors;
 };
 
+/** Check if the inject is a parent */
+export const isAncestor = (injects: IInject[], inject: IInject, potentialParent?: IInject) => {
+  if (!potentialParent) {
+    return false;
+  }
+  if (inject.parentId === potentialParent.id) {
+    return true;
+  }
+  const ancestors = getAncestors(injects, inject);
+  return ancestors.filter(i => i.id === potentialParent.id).length > 0;
+};
+
 /** Get the parent of an inject, specifying the inject level */
 export const getParent = (injects: IInject[], id?: string, level = InjectType.SCENARIO): IInject | undefined => {
   if (!id) {

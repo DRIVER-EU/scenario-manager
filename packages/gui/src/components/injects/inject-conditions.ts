@@ -8,6 +8,7 @@ import {
   IScenario,
   getParent,
   getInject,
+  isAncestor,
 } from 'trial-manager-models';
 import { Select, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
@@ -45,6 +46,7 @@ For acts and storylines, which are at the beginning of a sequence
 
 /** Allows to set the inject conditions, i.e. when does the inject get executed. */
 export const InjectConditions: FactoryComponent<{
+  injects: IInject[];
   inject: IInject;
   previousInjects: IInject[];
   disabled?: boolean;
@@ -54,7 +56,7 @@ export const InjectConditions: FactoryComponent<{
 
   return {
     // oninit: ({ attrs: { inject }}) => state.inject = inject,
-    view: ({ attrs: { inject, previousInjects, disabled = false, onChange } }) => {
+    view: ({ attrs: { injects, inject, previousInjects, disabled = false, onChange } }) => {
       state.inject = inject;
       // console.table(inject);
       if (!inject || inject.type === InjectType.SCENARIO) {
@@ -73,7 +75,7 @@ export const InjectConditions: FactoryComponent<{
       const dependency = getInject(condition.injectId, TrialSvc.getInjects());
       const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =
-        dependency && dependency.type !== InjectType.SCENARIO ? [{ id: InjectState.EXECUTED, label: 'finished' }] : [];
+        dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'finished' }] : [];
       injectStateOptions.push({
         id: InjectState.IN_PROGRESS,
         // disabled: dependency && dependency.type === InjectType.SCENARIO,
