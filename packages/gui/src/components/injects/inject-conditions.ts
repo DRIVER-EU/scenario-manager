@@ -75,11 +75,11 @@ export const InjectConditions: FactoryComponent<{
       const dependency = getInject(condition.injectId, TrialSvc.getInjects());
       const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =
-        dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'finished' }] : [];
+        dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'after' }] : [];
       injectStateOptions.push({
         id: InjectState.IN_PROGRESS,
         // disabled: dependency && dependency.type === InjectType.SCENARIO,
-        label: 'started',
+        label: 'with',
       });
       if (!condition.injectId && previousInjectOptions.length > 0) {
         condition.injectId = previousInjectOptions[previousInjectOptions.length - 1].id;
@@ -101,7 +101,7 @@ export const InjectConditions: FactoryComponent<{
             isMandatory: true,
             checkedId: condition.type,
             options: [
-              { id: InjectConditionType.MANUALLY, label: 'manually' },
+              { id: InjectConditionType.MANUALLY, label: 'manually after' },
               { id: InjectConditionType.IMMEDIATELY, label: 'immediately' },
               { id: InjectConditionType.DELAY, label: 'after' },
               {
@@ -111,7 +111,13 @@ export const InjectConditions: FactoryComponent<{
               },
             ],
             onchange: v => {
-              // console.table(state.inject);
+              console.table(condition);
+              if (
+                inject.condition && inject.condition.type === InjectConditionType.AT_TIME &&
+                (v[0] as InjectConditionType) !== InjectConditionType.AT_TIME
+              ) {
+                condition.delay = 0;
+              }
               condition.type = v[0] as InjectConditionType;
               state.inject.condition = condition;
               onChange(state.inject);
@@ -121,7 +127,19 @@ export const InjectConditions: FactoryComponent<{
             ? m(StartAt, { disabled, condition, inject, onChange })
             : [
                 m(Delay, { disabled, inject, onChange }),
-                m('span.inline', ' after '),
+                // m('span.inline', ' after '),
+                m(Select, {
+                  disabled,
+                  placeholder: 'When...',
+                  className: 'inline small',
+                  checkedId: condition.injectState,
+                  options: injectStateOptions,
+                  onchange: v => {
+                    condition!.injectState = v[0] as InjectState;
+                    state.inject.condition = condition;
+                    onChange(state.inject);
+                  },
+                }),
                 m(Select, {
                   disabled,
                   placeholder: 'Pick one',
@@ -134,19 +152,19 @@ export const InjectConditions: FactoryComponent<{
                     onChange(state.inject);
                   },
                 }),
-                m('span.inline', ' has '),
-                m(Select, {
-                  disabled,
-                  placeholder: 'Pick one',
-                  className: 'inline small',
-                  checkedId: condition.injectState,
-                  options: injectStateOptions,
-                  onchange: v => {
-                    condition!.injectState = v[0] as InjectState;
-                    state.inject.condition = condition;
-                    onChange(state.inject);
-                  },
-                }),
+                // m('span.inline', ' has '),
+                // m(Select, {
+                //   disabled,
+                //   placeholder: 'Pick one',
+                //   className: 'inline small',
+                //   checkedId: condition.injectState,
+                //   options: injectStateOptions,
+                //   onchange: v => {
+                //     condition!.injectState = v[0] as InjectState;
+                //     state.inject.condition = condition;
+                //     onChange(state.inject);
+                //   },
+                // }),
               ],
           m('span.inline', '.'),
         ])
