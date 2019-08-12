@@ -170,8 +170,8 @@ export const getMessageTitle = (type?: string) => {
       return 'COMMON ALERTING PROTOCOL MESSAGE';
     case MessageType.PHASE_MESSAGE:
       return 'NEW PHASE';
-    case MessageType.POST_MESSAGE:
-      return 'POST A MESSAGE';
+    // case MessageType.POST_MESSAGE:
+    //   return 'POST A MESSAGE';
     case MessageType.ROLE_PLAYER_MESSAGE:
       return 'ROLE PLAYER MESSAGE';
     case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
