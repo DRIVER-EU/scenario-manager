@@ -1,5 +1,5 @@
 import m, { FactoryComponent, Attributes } from 'mithril';
-import { Button, Icon, Dropdown, Select, ModalPanel } from 'mithril-materialized';
+import { Button, Icon, Dropdown, Select } from 'mithril-materialized';
 import { getInjectIcon, findPreviousInjects, getMessageIcon, getMessageTitle, enumToOptions } from '../../utils';
 import { TrialSvc } from '../../services';
 import { IInject, InjectType, IInjectGroup, deepCopy, deepEqual, getInject, MessageType } from 'trial-manager-models';
@@ -17,23 +17,24 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     oldInject: undefined as IInject | undefined,
     inject: undefined as IInject | undefined,
     original: undefined as IInject | undefined,
-    modal: undefined as M.Modal | undefined,
     saving: undefined as boolean | undefined,
-    subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
+    subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
       if (Object.keys(cur).length === 0) {
         return;
       }
       if (
         !state.saving &&
-        state.modal &&
         state.inject &&
         cur.id !== state.inject.id &&
         !deepEqual(state.original, state.inject)
       ) {
         state.oldInject = state.inject;
-        state.modal.open();
+        TrialSvc.updateInject(state.oldInject);
       }
       state.saving = false;
+      if (envelope.topic === TopicNames.ITEM_UPDATE && state.inject && state.inject.id !== cur.id) {
+        return;
+      }
       state.inject = cur ? deepCopy(cur) : undefined;
       state.original = cur ? deepCopy(cur) : undefined;
       state.parent = cur.parentId ? getInject(cur.parentId, TrialSvc.getInjects()) : undefined;
@@ -95,7 +96,14 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                     ]),
                 [
                   m(MessageForm, { disabled, inject, onChange, key: 'message_form_' + inject.id }),
-                  m(InjectConditions, { disabled, inject, previousInjects, onChange, key: 'inject_cond_' + inject.id }),
+                  m(InjectConditions, {
+                    injects: TrialSvc.getInjects() || [],
+                    disabled,
+                    inject,
+                    previousInjects,
+                    onChange,
+                    key: 'inject_cond_' + inject.id,
+                  }),
                   m(SetObjectives, { disabled, inject, key: 'set_obj_' + inject.id }),
                 ],
                 m(
@@ -131,26 +139,6 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                       ]
                 ),
               ]),
-              m(ModalPanel, {
-                onCreate: modal => (state.modal = modal),
-                id: 'discard',
-                title: `Unsaved changes`,
-                description: `There are unsaved changes. Do you want to save or discard them?`,
-                options: { opacity: 0.7 },
-                buttons: [
-                  {
-                    label: 'Save',
-                    onclick: async () => {
-                      if (state.oldInject) {
-                        await TrialSvc.updateInject(state.oldInject);
-                      }
-                    },
-                  },
-                  {
-                    label: 'Discard',
-                  },
-                ],
-              }),
             ]
           : undefined
       );
