@@ -116,7 +116,7 @@ export const InjectConditions: FactoryComponent<{
             },
           }),
           condition.type === InjectConditionType.AT_TIME
-            ? m(StartAt, { disabled, condition, inject })
+            ? m(StartAt, { disabled, condition, inject, onChange })
             : [
                 m(Delay, { disabled, inject, onChange }),
                 m('span.inline', ' after '),
@@ -197,9 +197,14 @@ const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (
   };
 };
 
-const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject; disabled?: boolean }> = () => {
+const StartAt: FactoryComponent<{
+  condition: IInjectCondition;
+  inject: IInject;
+  disabled?: boolean;
+  onChange: (inject?: IInject) => void;
+}> = () => {
   return {
-    view: ({ attrs: { condition, inject, disabled = false } }) => {
+    view: ({ attrs: { condition, inject, disabled = false, onChange } }) => {
       const { delay = 0, delayUnitType = 'seconds' } = condition;
       const trial = TrialSvc.getCurrent();
       if (!trial) {
@@ -237,6 +242,8 @@ const StartAt: FactoryComponent<{ condition: IInjectCondition; inject: IInject; 
           }
           condition.delay = dtInSec;
           condition.delayUnitType = 'seconds';
+          inject.condition = condition;
+          onChange(inject);
           m.redraw();
         },
       });
