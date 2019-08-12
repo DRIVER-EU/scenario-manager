@@ -8,7 +8,7 @@ import { isInjectGroup } from '../../utils';
 
 export const InjectsView = () => {
   const state = {
-    selectedTabId: 'timeline' as 'timeline' | 'message',
+    selectedTabId: 'message' as 'timeline' | 'message',
     subscriptionSelect: injectsChannel.subscribe(TopicNames.ITEM_SELECT, ({ cur }) => {
       if (!isInjectGroup(cur)) {
         state.selectedTabId = 'message';
@@ -36,15 +36,15 @@ export const InjectsView = () => {
             onShow: newContent => state.selectedTabId = newContent.id === 'timeline' ? 'timeline' : 'message',
             tabs: [
               {
-                id: 'timeline',
-                title: 'Timeline',
-                vnode: m(InjectsTimeline),
-              },
-              {
                 id: 'message',
                 title: 'Message',
                 // contentClass: 'sb large',
                 vnode: m(InjectsForm),
+              },
+              {
+                id: 'timeline',
+                title: 'Timeline',
+                vnode: m(InjectsTimeline),
               },
             ],
           })
