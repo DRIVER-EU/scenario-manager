@@ -51,6 +51,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
             m(TextInput, {
               disabled,
               id: 'title',
+              isMandatory: true,
               initialValue: inject.title,
               onchange: (v: string) => {
                 inject.title = v;
@@ -72,6 +73,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
           m(Select, {
             disabled,
             label: 'Asset',
+            isMandatory: true,
             placeholder: 'Select a geojson file',
             className: 'col s6 m4',
             checkedId: pm.assetId,
@@ -151,7 +153,8 @@ export const GeoJsonMessageForm: FactoryComponent<{
           description: m(UploadAsset, {
             accept: ['.json', '.geojson'],
             placeholder: '',
-            assetUploaded: (a: IAsset) => {
+            assetUploaded: async (a: IAsset) => {
+              state.assets = await TrialSvc.mapOverlays();
               pm.assetId = a.id;
               const el = document.getElementById('upload');
               if (el) {
