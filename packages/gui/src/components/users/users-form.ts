@@ -19,6 +19,7 @@ export const UsersForm = () => {
       } else {
         state.user = cur && cur.id ? deepCopy(cur) : undefined;
         state.original = cur && cur.id ? deepCopy(cur) : undefined;
+        m.redraw();
       }
     }),
   };
@@ -26,6 +27,13 @@ export const UsersForm = () => {
     id: +r,
     label: userRoleToString(+r),
   }));
+  const onsubmit = (e: UIEvent) => {
+    e.preventDefault();
+    log('submitting...');
+    if (state.user) {
+      TrialSvc.updateUser(state.user);
+    }
+  };
 
   return {
     oninit: () => {
@@ -37,13 +45,7 @@ export const UsersForm = () => {
     view: () => {
       const { user } = state;
       const hasChanged = !deepEqual(user, state.original);
-      const onsubmit = (e: UIEvent) => {
-        e.preventDefault();
-        log('submitting...');
-        if (user) {
-          TrialSvc.updateUser(user);
-        }
-      };
+
       return m(
         '.row',
         { style: 'color: black' },
