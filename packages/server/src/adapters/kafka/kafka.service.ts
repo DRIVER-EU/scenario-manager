@@ -57,6 +57,7 @@ export class KafkaService extends EventEmitter implements TimeService {
       schemaRegistry: options.schemaRegistry,
       ssl: options.sslOptions ? true : false,
     });
+    console.log(`Produce topics: ${options.produce.join(', ')}`);
     this.kafkaHost = options.kafkaHost;
     this.adapter = new TestBedAdapter(options);
     this.adapter.on('ready', () => {
