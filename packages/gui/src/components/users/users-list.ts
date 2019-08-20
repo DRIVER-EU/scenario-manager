@@ -32,15 +32,16 @@ const UsersList: FactoryComponent<IPerson> = () => {
         }, 0);
       }
       const items = users.map(
-        cur =>
+        user =>
           ({
-            title: cur.name || '?',
+            id: user.id,
+            title: user.name || '?',
             iconName: 'create',
-            avatar: userIcon(cur),
+            avatar: userIcon(user),
             className: 'yellow black-text',
-            active: state.currentUserId === cur.id,
-            content: userRolesToString(cur) + (cur.notes ? `<br><i>${cur.notes}</i>` : ''),
-            onclick: selectUser(cur),
+            active: state.currentUserId === user.id,
+            content: userRolesToString(user) + (user.notes ? `<br><i>${user.notes}</i>` : ''),
+            onclick: selectUser(user),
           } as ICollectionItem)
       );
 
