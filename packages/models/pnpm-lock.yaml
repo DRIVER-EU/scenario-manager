@@ -1,11 +1,12 @@
-devDependencies:
+dependencies:
   '@types/geojson': 7946.0.7
+devDependencies:
   rimraf: 2.6.3
-  typescript: 3.5.2
+  typescript: 3.5.3
 lockfileVersion: 5.1
 packages:
   /@types/geojson/7946.0.7:
-    dev: true
+    dev: false
     resolution:
       integrity: sha512-wE2v81i4C4Ol09RtsWFAqg3BUitWbHSpSlIo+bNdsCJijO9sjme+zm+73ZMCa/qMC8UEERxzGbvmr1cffo2SiQ==
   /balanced-match/1.0.0:
@@ -74,13 +75,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==
-  /typescript/3.5.2:
+  /typescript/3.5.3:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-7KxJovlYhTX5RaRbUdkAXN1KUZ8PwWlTzQdHV6xNqvuFOs7+WBo10TQUqT19Q/Jz2hk5v9TQDIhyLhhJY4p5AA==
+      integrity: sha512-ACzBtm/PhXBDId6a6sDJfroT2pOWt/oOnk4/dElG5G33ZL776N3Y6/6bKZJBFpd+b05F3Ct9qDjMeJmRWtE2/g==
   /wrappy/1.0.2:
     dev: true
     resolution:
@@ -88,4 +89,4 @@ packages:
 specifiers:
   '@types/geojson': ^7946.0.7
   rimraf: ^2.6.3
-  typescript: ^3.5.2
+  typescript: ^3.5.3

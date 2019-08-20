@@ -26,18 +26,18 @@
     "materialize-css": "^1.0.0",
     "mithril-leaflet": "^0.1.5",
     "mithril-markdown": "^0.2.2",
-    "mithril-materialized": "^0.14.0",
+    "mithril-materialized": "^0.14.1",
     "mithril-scenario-timeline": "^0.0.10",
     "mithril-table": "^0.2.2",
-    "mithril-tree-component": "^0.6.5",
+    "mithril-tree-component": "^0.6.6",
     "socket.io-client": "^2.2.0",
-    "mithril": "^2.0.1",
+    "mithril": "^2.0.4",
     "trial-manager-models": "^0.0.1"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.7",
-    "@types/leaflet": "^1.5.0",
-    "@types/leaflet-draw": "^0.4.14",
+    "@types/leaflet": "^1.5.1",
+    "@types/leaflet-draw": "^1.0.0",
     "@types/materialize-css": "^1.0.6",
     "@types/mithril": "^2.0.0",
     "@types/socket.io-client": "^1.4.32",
@@ -51,9 +51,9 @@
     "style-loader": "^1.0.0",
     "tslib": "^1.10.0",
     "typescript": "^3.5.3",
-    "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2",
-    "rimraf": "^2.6.3"
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7",
+    "webpack-dev-server": "^3.8.0",
+    "rimraf": "^3.0.0"
   }
 }
