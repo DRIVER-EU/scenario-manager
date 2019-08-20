@@ -31,7 +31,7 @@ class TrialService extends RestService<ITrial> {
     this.validateInjects();
     s.lastEdit = new Date();
     const trial = await super.save(s);
-    if (trial) {
+    if (trial && (!this.assetSvc || this.assetSvc.trialId !== trial.id)) {
       this.assetSvc = new AssetService(trial.id);
       return this.assetSvc.loadList();
     }
@@ -109,7 +109,7 @@ class TrialService extends RestService<ITrial> {
       user.id = user.id || uniqueId();
       users.push(user);
     }
-    await this.saveTrial();
+    // await this.saveTrial();
     usersChannel.publish(TopicNames.ITEM_CREATE, { cur: user });
   }
 
