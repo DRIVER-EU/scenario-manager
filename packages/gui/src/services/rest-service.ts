@@ -197,8 +197,10 @@ export class RestService<T extends { id?: string | number }> {
   }
 
   /** Create the base URL, either using the apiService or the apiDevService */
-  private createBaseUrl(useDevServer = false): string {
-    AppState.usingDevServer = useDevServer;
+  private createBaseUrl(switchToDev = false): string {
+    if (switchToDev) {
+      AppState.useDevServer();
+    }
     return `${AppState.apiService()}/${this.urlFragment}/`;
   }
 }

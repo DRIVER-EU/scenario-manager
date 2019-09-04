@@ -1,4 +1,5 @@
 import { ITimeMessage, ISessionMgmt, IInjectSimStates } from 'trial-manager-models';
+import { messageBus } from '../services';
 
 const getRootUrl = () => {
   // Regex matching everything until the first hash symbol, so should also be able to deal with route rewriting...
@@ -33,4 +34,9 @@ export const AppState = {
   } as Partial<ISessionMgmt>,
   scenarioId: '',
   injectStates: {} as IInjectSimStates,
+  useDevServer: () => {
+    console.warn('Switching to dev server');
+    AppState.usingDevServer = true;
+    messageBus.publish({ channel: 'apiServer', topic: 'update', data: AppState.apiService() });
+  },
 };

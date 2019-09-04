@@ -1,6 +1,7 @@
 import m from 'mithril';
 import { AppState } from '../models';
 import { IStateTransitionRequest, ISessionMgmt } from 'trial-manager-models';
+import { messageBus } from '.';
 
 const withCredentials = false;
 
@@ -9,10 +10,16 @@ const withCredentials = false;
  * stopping, loading and unloading a Trial.
  */
 class RunService {
-  protected baseUrl: string;
+  protected baseUrl!: string;
+  private urlFragment = 'run';
 
   constructor() {
-    this.baseUrl = this.createBaseUrl('run');
+    this.updateBaseUrl(AppState.apiService());
+    messageBus.channel<string>('apiServer').subscribe('update', apiService => {
+      console.warn('RunService: ' + apiService);
+      this.updateBaseUrl(apiService);
+      this.active();
+    });
     this.active();
   }
 
@@ -23,8 +30,7 @@ class RunService {
         method: 'GET',
         url: this.baseUrl + 'active',
         withCredentials,
-      })
-      .catch(_ => (this.baseUrl = this.createBaseUrl('run', true)));
+      }).catch(() => undefined);
   }
 
   /** Unload the active scenario */
@@ -57,9 +63,8 @@ class RunService {
   }
 
   /** Create the base URL, either using the apiService or the apiDevService */
-  private createBaseUrl(urlFragment: string, useDevServer = false): string {
-    AppState.usingDevServer = useDevServer;
-    return `${AppState.apiService()}/${urlFragment}/`;
+  private updateBaseUrl(apiService: string) {
+    this.baseUrl = `${apiService}/${this.urlFragment}/`;
   }
 }
 
