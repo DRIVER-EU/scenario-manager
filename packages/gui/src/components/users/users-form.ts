@@ -52,6 +52,7 @@ export const UsersForm = () => {
         m('form.col.s12', [
           m(
             '.contact-form',
+            { key: user ? user.id : undefined },
             user
               ? [
                   m('h4', [
@@ -78,7 +79,7 @@ export const UsersForm = () => {
                       isMandatory: true,
                       multiple: true,
                       options,
-                      onchange: v => (state.user ? state.user.roles = v as UserRole[] : undefined),
+                      onchange: v => (state.user ? (state.user.roles = v as UserRole[]) : undefined),
                     }),
                     m(EmailInput, {
                       id: 'email',
