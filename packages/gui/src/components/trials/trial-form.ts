@@ -138,7 +138,7 @@ export const TrialForm = () => {
             {
               label: 'Delete',
               onclick: async () => {
-                TrialSvc.delete(trial.id);
+                await TrialSvc.delete(trial.id);
                 close();
               },
             },
