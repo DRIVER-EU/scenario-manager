@@ -15,7 +15,7 @@ export class TrialService {
       console.log('No data folder found. Creating new one: ' + folder);
       fs.mkdirSync(folder);
     } else {
-      console.log(`Using trial repository folder ${folder}.`)
+      console.log(`Using trial repository folder ${folder}.`);
     }
     this.repo = new TrialRepository(folder);
   }
