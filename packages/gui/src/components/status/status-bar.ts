@@ -2,7 +2,7 @@ import m, { FactoryComponent } from 'mithril';
 import { AppState } from '../../models';
 import { SocketSvc } from '../../services';
 import { ITimeMessage, TimeState, deepCopy } from 'trial-manager-models';
-import { formatTime } from '../../utils';
+import { formatTime, formatMsec } from '../../utils';
 
 export const StatusBar: FactoryComponent<null> = () => {
   const socket = SocketSvc.socket;
@@ -46,7 +46,7 @@ export const StatusBar: FactoryComponent<null> = () => {
       m('span', '|'),
       m('span', hasTimeInfo ? `${formatTime(dt)}, ${dt.toDateString()}` : ''),
       m('span', '|'),
-      m('span', hasTimeInfo ? `Elapsed ${formatTime(new Date(timeElapsed), true, true)}` : ''),
+      m('span', hasTimeInfo ? `Elapsed ${formatMsec(timeElapsed)}` : ''),
     ]);
   };
 

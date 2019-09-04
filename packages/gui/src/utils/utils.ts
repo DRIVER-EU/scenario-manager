@@ -278,6 +278,25 @@ export const formatTime = (t: Date, includeSeconds = true, includeDate = false) 
     ? `${includeDate ? formatDate(t) : ''}${formatHHmm(t)}:${padLeft(t.getSeconds())}`
     : `${includeDate ? formatDate(t) : ''}${formatHHmm(t)}`;
 
+const msecPerMinute = 60000;
+const msecPerHour = 3600000;
+const msecPerDay = 24 * msecPerHour;
+
+/** Format a msec to days, hours, min and second, e.g. 2d 05:35:12. When days is 0, it is omitted. */
+export const formatMsec = (t: number) => {
+  const days = Math.floor(t / msecPerDay);
+  if (days > 1000) {
+    return '';
+  }
+  t -= days * msecPerDay;
+  const hours = Math.floor(t / msecPerHour);
+  t -= hours * msecPerHour;
+  const min = Math.floor(t / msecPerMinute);
+  t -= min * msecPerMinute;
+  const sec = Math.floor(t / 1000);
+  return `${days > 0 ? `${days}d ` : ''}${padLeft(hours)}:${padLeft(min)}:${padLeft(sec)}`;
+};
+
 /**
  * For injects, find injects in the same act that have been executed earlier, including the parent act itself.
  * For acts, find other acts in the same storyline that have been executed earlier, including the parent storyline.
