@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { MessageType, InjectType, InjectState, InjectConditionType } from 'trial-manager-models';
+import { MessageType, InjectType, InjectState } from 'trial-manager-models';
 import { IExecutingInject } from '../../models';
 import {
   RolePlayerMessageView,
