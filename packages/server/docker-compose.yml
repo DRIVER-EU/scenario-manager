@@ -1,31 +1,22 @@
 ---
 version: '3'
 services:
-  postgres:
-    image: postgres
-    hostname: postgres
+  trial_management_tool:
+    image: drivereu/trial-management-tool:latest
     ports:
-      - "6543:5432"
+      - '3210:3210'
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: TEST_SM
+      CLIENT_ID: TB-TrialMgmt
+      KAFKA_HOST: localhost:3501
+      SCHEMA_REGISTRY: http://schema_registry:3502
+      TRIAL_MANAGER_SERVER_PORT: 3210
+      PRODUCE: system_request_change_of_trial_stage,system_tm_phase_message,system_tm_role_player,system_tm_session_mgmt,system_large_data_update,system_large_data_update
+      SSL: 'false'
+      SSL_PFX: certs/TB-TrialMgmt.p12
+      SSL_PASSPHRASE: changeit
+      SSL_CA: certs/test-ca.pem
     volumes:
-       - postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
-
-  # User: pgadmin4@pgadmin.org, pwd: admin,
-  # Connection settings from Docker-based pgadmin. Add server, hostname postgres, port 5432
-  pgadmin:
-    image: dpage/pgadmin4
-    depends_on:
-      - postgres
-    ports:
-      - "5555:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
-      PGADMIN_DEFAULT_PASSWORD: admin
-    restart: unless-stopped
+      - trial-data:/app/trials
 
 volumes:
-  postgres-data:
+  trial-data:
