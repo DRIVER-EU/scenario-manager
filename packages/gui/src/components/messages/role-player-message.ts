@@ -57,7 +57,7 @@ export const RolePlayerMessageForm: FactoryComponent<{
               disabled,
               iconName: 'person',
               className: 'col s12 m4',
-              placeholder: 'Participant',
+              placeholder: 'Pick one',
               multiple: true,
               options: participants,
               checkedId: rpm.participantIds,
@@ -94,6 +94,7 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject;
       case RolePlayerMessageType.MESSAGE:
       case RolePlayerMessageType.CALL:
         return m('.call', [
+          m('h6', 'Call the following participants'),
           participants
             ? m(Collection, {
                 mode: CollectionMode.BASIC,
@@ -151,14 +152,16 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject;
           '.row',
           m(
             '.col.s12',
-            m('h5', [m(Icon, { iconName: getRolePlayerMessageIcon(rpm.type) }), `${rpm.title} [${rolePlayer.name}]`])
+            m('h5', [
+              m(Icon, { iconName: getRolePlayerMessageIcon(rpm.type) }),
+              ` ${rpm.headline} [${rolePlayer.name}]`,
+            ])
           )
         ),
         m(
           '.row',
           m('.col.s12', [
-            rpm.headline ? [m('h6', 'Headline'), m('p', m('i', rpm.headline))] : undefined,
-            rpm.description ? [m('h6', 'Description'), m('p', rpm.description)] : undefined,
+            rpm.description ? m('p', rpm.description) : undefined,
             msgDetails(rpm, rolePlayer, participants),
           ])
         ),
