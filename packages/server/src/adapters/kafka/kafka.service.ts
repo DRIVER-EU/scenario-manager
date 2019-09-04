@@ -39,31 +39,36 @@ export interface KafkaService {
 
 @Injectable()
 export class KafkaService extends EventEmitter implements TimeService {
-  private adapter: TestBedAdapter;
+  private adapter?: TestBedAdapter;
+  private options: ITestBedOptions;
   private kafkaHost: string;
   private session?: ISessionMgmt;
   private log = Logger.instance;
 
   constructor(config: ConfigService) {
     super();
-    const options = config.get('kafka') as ITestBedOptions;
-    if (!options.produce) {
-      options.produce = [TimeControlTopic];
-    } else if (options.produce.indexOf(TimeControlTopic) < 0) {
-      options.produce.push(TimeControlTopic);
+    this.options = config.get('kafka') as ITestBedOptions;
+    if (!this.options.produce) {
+      this.options.produce = [TimeControlTopic];
+    } else if (this.options.produce.indexOf(TimeControlTopic) < 0) {
+      this.options.produce.push(TimeControlTopic);
     }
     console.table({
-      kafkaHost: options.kafkaHost,
-      schemaRegistry: options.schemaRegistry,
-      ssl: options.sslOptions ? true : false,
+      kafkaHost: this.options.kafkaHost,
+      schemaRegistry: this.options.schemaRegistry,
+      ssl: this.options.sslOptions ? true : false,
     });
-    console.log(`Produce topics: ${options.produce.join(', ')}`);
-    this.kafkaHost = options.kafkaHost;
-    this.adapter = new TestBedAdapter(options);
+    console.log(`Produce topics: ${this.options.produce.join(', ')}`);
+    this.kafkaHost = this.options.kafkaHost;
+  }
+
+  public connect() {
+    console.log('Connecting...');
+    this.adapter = new TestBedAdapter(this.options);
     this.adapter.on('ready', () => {
       this.subscribe();
       this.log.info(
-        `Consumer is connected to broker running at ${options.kafkaHost}.`,
+        `Consumer is connected to broker running at ${this.options.kafkaHost}.`,
       );
       // See if we are running a session that was not initialized by this trial.
       this.adapter.addConsumerTopics(
@@ -74,20 +79,15 @@ export class KafkaService extends EventEmitter implements TimeService {
         true,
       );
     });
-  }
-
-  public connect() {
-    console.log('Connecting...');
     return this.adapter.connect();
   }
 
   public disconnect() {
-    // TODO Add disconnect to adapter
-    // return this.adapter.disconnect();
+    return this.adapter && this.adapter.disconnect();
   }
 
   public isConnected() {
-    return this.adapter.isConnected;
+    return this.adapter && this.adapter.isConnected;
   }
 
   public get currentSession() {

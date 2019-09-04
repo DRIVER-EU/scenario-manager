@@ -2,7 +2,7 @@ import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
 import { SocketSvc, TrialSvc, RunSvc } from '../../services';
 import { AppState, injectsChannel, TopicNames } from '../../models';
-import { Select, ISelectOptions, TextInput, TextArea, Switch, Icon, FlatButton } from 'mithril-materialized';
+import { Select, ISelectOptions, TextInput, TextArea, Switch, Icon, ModalPanel } from 'mithril-materialized';
 import {
   ITrial,
   IScenario,
@@ -105,7 +105,7 @@ const SessionSettings: FactoryComponent<{}> = () => {
       return [
         m('.row', [
           m(
-            '.col.s7',
+            '.col.s12',
             m(Select, {
               label: 'Run scenario',
               checkedId: scenario ? scenario.id : undefined,
@@ -122,9 +122,22 @@ const SessionSettings: FactoryComponent<{}> = () => {
               },
             } as ISelectOptions)
           ),
-          !isConnected
-            ? undefined
-            : m(
+        ]),
+        !isConnected
+          ? undefined
+          : m('.row', [
+              m(
+                '.col.s7',
+                m(TextInput, {
+                  initialValue: session.sessionName,
+                  label: 'Session name',
+                  disabled,
+                  isMandatory: true,
+                  onchange: (v: string) => (AppState.session.sessionName = v),
+                  iconName: 'title',
+                })
+              ),
+              m(
                 '.col.s5',
                 m(Switch, {
                   disabled: AppState.time && AppState.time.state !== TimeState.Idle,
@@ -135,34 +148,30 @@ const SessionSettings: FactoryComponent<{}> = () => {
                   onchange: v => sessionManager(v ? 'start' : 'stop', trial, scenario),
                 })
               ),
-        ]),
-        m(
-          '.row',
-          m(
-            '.col.s12',
-            m(TextInput, {
-              initialValue: session.sessionName,
-              label: 'Session name',
-              disabled,
-              isMandatory: true,
-              onchange: (v: string) => (AppState.session.sessionName = v),
-              iconName: 'title',
-            })
-          )
-        ),
-        m(
-          '.row',
-          m(
-            '.col.s12',
-            m(TextArea, {
-              initialValue: session.comment || undefined,
-              label: 'Comments',
-              disabled,
-              onchange: (v: string) => (AppState.session.comment = v),
-              iconName: 'note',
-            })
-          )
-        ),
+              m(
+                '.col.s12',
+                m(TextArea, {
+                  initialValue: session.comment || undefined,
+                  label: 'Comments',
+                  disabled,
+                  onchange: (v: string) => (AppState.session.comment = v),
+                  iconName: 'note',
+                })
+              ),
+            ]),
+        // m(
+        //   '.row',
+        //   m(
+        //     '.col.s12',
+        //     m(TextArea, {
+        //       initialValue: session.comment || undefined,
+        //       label: 'Comments',
+        //       disabled,
+        //       onchange: (v: string) => (AppState.session.comment = v),
+        //       iconName: 'note',
+        //     })
+        //   )
+        // ),
       ];
     },
   };
@@ -177,6 +186,7 @@ export const SessionControl: FactoryComponent = () => {
     isConnected: false,
     isConnecting: false,
     time: {} as ITimeMessage,
+    disconnectModal: undefined as undefined | M.Modal,
   };
 
   const updateTime = (tm: ITimeMessage) => {
@@ -239,9 +249,9 @@ export const SessionControl: FactoryComponent = () => {
       return [
         m(
           '.row',
-          m('.col.s12.m6', [
+          m('.col.s12', [
             isConnecting
-              ? m('.row', [m('span', 'Connecting...'), m('.progress', m('.indeterminate'))])
+              ? m('.row', m('.col.s12', [m('span', 'Connecting...'), m('.progress', m('.indeterminate'))]))
               : m(
                   '.row',
                   { style: 'margin: 10px 0 20px 0;' },
@@ -253,7 +263,9 @@ export const SessionControl: FactoryComponent = () => {
                       checked: isConnected,
                       onchange: () => {
                         if (isConnected) {
-                          socket.emit('test-bed-disconnect');
+                          if (state.disconnectModal) {
+                            state.disconnectModal.open();
+                          }
                         } else {
                           state.isConnecting = true;
                           socket.emit('test-bed-connect');
@@ -261,15 +273,17 @@ export const SessionControl: FactoryComponent = () => {
                       },
                     })
                   ),
-                  m(
-                    '.col.s6',
-                    m(Switch, {
-                      left: '',
-                      right: 'Real time',
-                      checked: realtime,
-                      onchange: s => (AppState.sessionControl.realtime = s),
-                    })
-                  )
+                  isConnected
+                    ? m(
+                        '.col.s6',
+                        m(Switch, {
+                          left: '',
+                          right: 'Real time',
+                          checked: realtime,
+                          onchange: s => (AppState.sessionControl.realtime = s),
+                        })
+                      )
+                    : undefined
                 ),
           ])
         ),
@@ -305,6 +319,21 @@ export const SessionControl: FactoryComponent = () => {
                 key,
               })
           : undefined,
+        m(ModalPanel, {
+          onCreate: modal => {
+            state.disconnectModal = modal;
+          },
+          id: 'disconnect',
+          title: 'Are you certain you want to disconnect?',
+          description: 'After disconnecting, you will not receive updates anymore.',
+          buttons: [
+            { label: 'No, bring me back to safety' },
+            {
+              label: 'Yes, I am sure!',
+              onclick: () => socket.emit('test-bed-disconnect'),
+            },
+          ],
+        }),
       ];
     },
   };

@@ -416,6 +416,7 @@ export class TrialRepository {
       }
       return acc;
     }, {});
+
     console.log(`${Object.keys(this.databases).length} scenarios loaded...`);
   }
 

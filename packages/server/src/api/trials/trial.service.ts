@@ -9,12 +9,13 @@ export class TrialService {
   private repo: TrialRepository;
 
   constructor() {
-    const trialsFolder =
-      process.env.TRIAL_MANAGER_SERVER_FOLDER || 'trials';
-    const folder = path.resolve(process.cwd(), trialsFolder);
+    const trialsFolder = process.env.TRIAL_MANAGER_SERVER_FOLDER || 'trials';
+    const folder = path.resolve(trialsFolder);
     if (!fs.existsSync(folder)) {
       console.log('No data folder found. Creating new one: ' + folder);
       fs.mkdirSync(folder);
+    } else {
+      console.log(`Using trial repository folder ${folder}.`)
     }
     this.repo = new TrialRepository(folder);
   }
@@ -74,7 +75,12 @@ export class TrialService {
     return this.repo.createAsset(id, file, alias);
   }
 
-  async updateAsset(id: string, assetId: string, file: IUploadedFile, alias: string) {
+  async updateAsset(
+    id: string,
+    assetId: string,
+    file: IUploadedFile,
+    alias: string,
+  ) {
     return this.repo.updateAsset(id, assetId, file, alias);
   }
 
