@@ -404,18 +404,19 @@ export class TrialRepository {
     );
     const indexedTrials = trials.map((trial, index ) => ({ trial, index }));
     indexedTrials.sort((a, b) => sortTrialsByLastEdit(a.trial, b.trial));
+    this.overview = [];
     this.databases = indexedTrials.reduce((acc, { trial, index }) => {
       const db = dbs[index];
       if (acc.hasOwnProperty(trial.id)) {
         console.info(`Closing ${trial.title} (${trial.id}). A more recent version is already loaded.`);
-        db.db.close();
-        return acc;
+        db.db.close(error => error && console.error(`Error closing ${trial.id}: ${error}!`));
+      } else {
+        acc[trial.id] = db;
+        this.overview.push(new TrialOverview(trial));
       }
-      acc[trial.id] = db;
       return acc;
     }, {});
     console.log(`${Object.keys(this.databases).length} scenarios loaded...`);
-    this.overview = indexedTrials.map(({ trial }) => new TrialOverview(trial));
   }
 
   private async createDb(trial: TrialOverview) {
