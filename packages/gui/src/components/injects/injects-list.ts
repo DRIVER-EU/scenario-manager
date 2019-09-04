@@ -126,10 +126,20 @@ export const InjectsList = () => {
       }
       return injects
         ? m('.row.injects-list', [
-            m('.col.s12', [
-              m(RoundIconButton, {
+            m('.row', [
+              m('.col.s10', m(Select, {
+                options: scenarioOptions,
+                checkedId: scenarioId,
+                iconName: getInjectIcon(InjectType.SCENARIO),
+                onchange: ids => {
+                  AppState.scenarioId = ids[0] as string;
+                  const cur = scenarios.filter(s => s.id === ids[0]).shift() as IScenario;
+                  injectsChannel.publish(TopicNames.ITEM_CREATE, { cur });
+                },
+              } as ISelectOptions)),
+              m('.col.s2', m(RoundIconButton, {
                 iconName: 'add',
-                class: 'green right btn-small',
+                class: 'green btn-small',
                 style: 'margin: 1em;',
                 onclick: async () => {
                   const newScenario = {
@@ -141,18 +151,7 @@ export const InjectsList = () => {
                   await TrialSvc.createInject(newScenario);
                   injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: newScenario });
                 },
-              }),
-              m(Select, {
-                options: scenarioOptions,
-                checkedId: scenarioId,
-                className: 'right',
-                iconName: getInjectIcon(InjectType.SCENARIO),
-                onchange: ids => {
-                  AppState.scenarioId = ids[0] as string;
-                  const cur = scenarios.filter(s => s.id === ids[0]).shift() as IScenario;
-                  injectsChannel.publish(TopicNames.ITEM_CREATE, { cur });
-                },
-              } as ISelectOptions),
+              })),
             ]),
             filteredInjects && filteredInjects.length > 0
               ? m('.col.s12.sb.large', m(TreeContainer, { tree: filteredInjects, options }))
