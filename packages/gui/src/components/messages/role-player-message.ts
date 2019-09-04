@@ -57,7 +57,7 @@ export const RolePlayerMessageForm: FactoryComponent<{
               disabled,
               iconName: 'person',
               className: 'col s12 m4',
-              placeholder: 'Pick one',
+              placeholder: 'Pick one or more',
               multiple: true,
               options: participants,
               checkedId: rpm.participantIds,

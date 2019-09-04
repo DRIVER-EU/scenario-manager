@@ -13,6 +13,7 @@ import {
   RequestUnitTransportForm,
   SetAffectedAreaForm,
   RolePlayerMessageForm,
+  LargeDataUpdateMessageForm,
 } from '../messages';
 
 export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject }> = () => {
@@ -35,6 +36,8 @@ export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject 
         return m(OstChangeStageMessageForm, { inject, disabled });
       case MessageType.START_INJECT:
         return m(StartInjectForm, { inject, disabled });
+      case MessageType.LARGE_DATA_UPDATE:
+        return m(LargeDataUpdateMessageForm, { inject, disabled });
       case MessageType.SUMO_CONFIGURATION:
         return m(SumoConfigurationForm, { inject, disabled });
       case MessageType.REQUEST_UNIT_TRANSPORT:

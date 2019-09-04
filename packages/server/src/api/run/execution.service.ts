@@ -20,6 +20,7 @@ import {
   IAffectedArea,
   ISumoConfiguration,
   IValueNamePair,
+  ILargeDataUpdate,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -62,6 +63,9 @@ export class ExecutionService implements IExecutionService {
         break;
       case MessageType.START_INJECT:
         this.sendStartInjectMessage(i, comment);
+        break;
+      case MessageType.LARGE_DATA_UPDATE:
+        this.sendLargeDataUpdateMessage(i, comment);
         break;
       case MessageType.REQUEST_UNIT_TRANSPORT:
         this.sendRequestUnitTransport(i, comment);
@@ -179,6 +183,11 @@ export class ExecutionService implements IExecutionService {
   private async sendStartInjectMessage(i: IInject, comment?: string) {
     const msg = getMessage<IRequestStartInject>(i, MessageType.START_INJECT);
     this.kafkaService.sendStartInjectMessage(msg);
+  }
+
+  private async sendLargeDataUpdateMessage(i: IInject, comment?: string) {
+    const msg = getMessage<ILargeDataUpdate>(i, MessageType.LARGE_DATA_UPDATE);
+    this.kafkaService.sendLargeDataUpdateMessage(msg);
   }
 
   private async sendRequestUnitTransport(i: IInject, comment?: string) {

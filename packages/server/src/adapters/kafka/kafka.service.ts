@@ -22,6 +22,7 @@ import {
   IRequestUnitTransport,
   IAffectedArea,
   ISumoConfiguration,
+  ILargeDataUpdate,
 } from 'trial-manager-models';
 export { ITimingControl } from 'node-test-bed-adapter';
 
@@ -135,6 +136,10 @@ export class KafkaService extends EventEmitter implements TimeService {
 
   public sendStartInjectMessage(m: IRequestStartInject) {
     return this.sendMessage(m, 'simulation_request_startinject');
+  }
+
+  public sendLargeDataUpdateMessage(m: ILargeDataUpdate) {
+    return this.sendMessage(m, 'system_large_data_update');
   }
 
   public sendRequestUnitTransport(m: IRequestUnitTransport) {

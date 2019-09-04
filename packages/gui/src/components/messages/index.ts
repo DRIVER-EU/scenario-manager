@@ -11,3 +11,4 @@ export * from './start-inject-form';
 export * from './sumo-configuration-form';
 export * from './request-unit-transport-form';
 export * from './set-affected-area-form';
+export * from './large-data-message';

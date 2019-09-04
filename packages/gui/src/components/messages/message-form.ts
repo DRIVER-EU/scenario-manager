@@ -13,6 +13,7 @@ import {
   SumoConfigurationForm,
   RequestUnitTransportForm,
   SetAffectedAreaForm,
+  LargeDataUpdateMessageForm,
 } from '.';
 
 export const MessageForm: FactoryComponent<{ inject?: IInject; disabled?: boolean; onChange?: () => void }> = () => {
@@ -34,6 +35,8 @@ export const MessageForm: FactoryComponent<{ inject?: IInject; disabled?: boolea
         return m(OstChangeStageMessageForm, { inject, disabled, onChange });
       case MessageType.START_INJECT:
         return m(StartInjectForm, { inject, disabled, onChange });
+      case MessageType.LARGE_DATA_UPDATE:
+        return m(LargeDataUpdateMessageForm, { inject, disabled, onChange });
       case MessageType.SUMO_CONFIGURATION:
         return m(SumoConfigurationForm, { inject, disabled, onChange });
       case MessageType.REQUEST_UNIT_TRANSPORT:

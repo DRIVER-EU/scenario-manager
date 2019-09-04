@@ -126,6 +126,8 @@ export const getMessageIcon = (type?: string) => {
       return 'event_seat';
     case MessageType.START_INJECT:
       return 'colorize';
+    case MessageType.LARGE_DATA_UPDATE:
+      return 'link';
     case MessageType.REQUEST_UNIT_TRANSPORT:
       return 'directions';
     case MessageType.SET_AFFECTED_AREA:
@@ -182,6 +184,8 @@ export const getMessageTitle = (type?: string) => {
       return 'LCMS MESSAGE';
     case MessageType.START_INJECT:
       return 'START INJECT';
+    case MessageType.LARGE_DATA_UPDATE:
+      return 'SEND LINK';
     case MessageType.REQUEST_UNIT_TRANSPORT:
       return 'REQUEST UNIT TRANSPORT';
     case MessageType.SET_AFFECTED_AREA:

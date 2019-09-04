@@ -12,3 +12,4 @@ export * from './simulation_request_startinject-value';
 export * from './simulation_request_unittransport-value';
 export * from './sumo_AffectedArea-value';
 export * from './sumo_SumoConfiguration-value';
+export * from './system_large_data_update-value';
