@@ -238,7 +238,7 @@ export const SessionControl: FactoryComponent = () => {
         sessionControl: { realtime, activeSession },
       } = AppState;
       const key = scenario ? scenario.id : undefined;
-      const canStart = AppState.sessionControl.activeSession && isComplete(AppState.session);
+      const canStart = activeSession && isComplete(AppState.session);
       const iconName = time
         ? time.state === TimeState.Idle
           ? 'timer'
