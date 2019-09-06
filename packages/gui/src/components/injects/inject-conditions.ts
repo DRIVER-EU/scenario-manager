@@ -52,11 +52,14 @@ export const InjectConditions: FactoryComponent<{
   disabled?: boolean;
   onChange: (inject?: IInject) => void;
 }> = () => {
-  const state = {} as { inject: IInject };
+  const state = {
+    dropdownOptions: { container: document.body },
+  } as { dropdownOptions: Partial<M.DropdownOptions>; inject?: IInject };
 
   return {
     // oninit: ({ attrs: { inject }}) => state.inject = inject,
     view: ({ attrs: { injects, inject, previousInjects, disabled = false, onChange } }) => {
+      const { dropdownOptions } = state;
       state.inject = inject;
       // console.table(inject);
       if (!inject || inject.type === InjectType.SCENARIO) {
@@ -112,13 +115,14 @@ export const InjectConditions: FactoryComponent<{
             ],
             onchange: v => {
               if (
-                inject.condition && inject.condition.type === InjectConditionType.AT_TIME &&
+                inject.condition &&
+                inject.condition.type === InjectConditionType.AT_TIME &&
                 (v[0] as InjectConditionType) !== InjectConditionType.AT_TIME
               ) {
                 condition.delay = 0;
               }
               condition.type = v[0] as InjectConditionType;
-              state.inject.condition = condition;
+              state.inject!.condition = condition;
               onChange(state.inject);
             },
           }),
@@ -135,11 +139,12 @@ export const InjectConditions: FactoryComponent<{
                   options: injectStateOptions,
                   onchange: v => {
                     condition!.injectState = v[0] as InjectState;
-                    state.inject.condition = condition;
+                    state.inject!.condition = condition;
                     onChange(state.inject);
                   },
                 }),
                 m(Select, {
+                  dropdownOptions,
                   disabled,
                   placeholder: 'Pick one',
                   className: 'inline',
@@ -147,7 +152,7 @@ export const InjectConditions: FactoryComponent<{
                   options: previousInjectOptions,
                   onchange: v => {
                     condition.injectId = v[0] as InjectConditionType;
-                    state.inject.condition = condition;
+                    state.inject!.condition = condition;
                     onChange(state.inject);
                   },
                 }),
