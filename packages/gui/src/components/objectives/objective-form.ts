@@ -58,7 +58,7 @@ export const ObjectiveForm = () => {
       return m(
         '.row',
         { style: 'color: black' },
-        m('.col.s12', [
+        m('.col.s12', { key: objective ? objective.id : undefined }, [
           objective
             ? [
                 m('h4', [
