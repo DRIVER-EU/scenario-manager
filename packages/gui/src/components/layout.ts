@@ -76,7 +76,7 @@ export const Layout: FactoryComponent<{}> = () => {
               )
             : undefined,
         ]),
-        m('section.main', vnode.children),
+        m('section.main[id=main]', vnode.children),
         // m('section.main', { style: 'height: 80vh; overflow-y: auto;' }, vnode.children),
         executeMode ? m(StatusBar) : undefined,
       ]);
