@@ -9,7 +9,7 @@ class InjectService extends RestService<IInject> {
     super('inject', ChannelNames.INJECT);
     this.updateBaseUrl();
     messageBus.channel<string>('apiServer').subscribe('update', apiService => {
-      console.warn('InjectService: ' + apiService);
+      // console.warn('InjectService: ' + apiService);
       this.updateBaseUrl(apiService);
     });
   }

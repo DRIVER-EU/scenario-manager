@@ -10,7 +10,7 @@ export class AssetService extends RestService<IAsset> {
     super('', ChannelNames.ASSETS);
     this.updateBaseUrl();
     messageBus.channel<string>('apiServer').subscribe('update', apiService => {
-      console.warn('AssetService: ' + apiService);
+      // console.warn('AssetService: ' + apiService);
       this.updateBaseUrl(apiService);
     });
   }

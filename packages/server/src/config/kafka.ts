@@ -46,6 +46,7 @@ export default {
         // 'flood_prediction_geojson',
         // 'standard_cap',
         // 'standard_geojson',
+        // 'system_large_data_update',
         // 'sumo_SumoConfiguration',
         // 'sumo_AffectedArea',
         // 'simulation_request_startinject',

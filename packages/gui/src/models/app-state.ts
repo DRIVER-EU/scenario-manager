@@ -35,7 +35,7 @@ export const AppState = {
   scenarioId: '',
   injectStates: {} as IInjectSimStates,
   useDevServer: () => {
-    console.warn('Switching to dev server');
+    // console.warn('Switching to dev server');
     AppState.usingDevServer = true;
     messageBus.publish({ channel: 'apiServer', topic: 'update', data: AppState.apiService() });
   },

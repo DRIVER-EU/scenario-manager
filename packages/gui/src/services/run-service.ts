@@ -16,7 +16,7 @@ class RunService {
   constructor() {
     this.updateBaseUrl(AppState.apiService());
     messageBus.channel<string>('apiServer').subscribe('update', apiService => {
-      console.warn('RunService: ' + apiService);
+      // console.warn('RunService: ' + apiService);
       this.updateBaseUrl(apiService);
       this.active();
     });
