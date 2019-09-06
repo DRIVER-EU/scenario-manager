@@ -71,7 +71,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
 
       return m(
         '.row.injects-form.sb.large',
-        { className },
+        { className, key: inject ? inject.id : undefined },
         inject
           ? [
               m('.col.s12', { style: 'color: #b4790c' }, [
