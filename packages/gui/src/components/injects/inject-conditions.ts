@@ -53,7 +53,7 @@ export const InjectConditions: FactoryComponent<{
   onChange: (inject?: IInject) => void;
 }> = () => {
   const state = {
-    dropdownOptions: { container: document.body },
+    dropdownOptions: { container: document.body, constrainWidth: false },
   } as { dropdownOptions: Partial<M.DropdownOptions>; inject?: IInject };
 
   return {
