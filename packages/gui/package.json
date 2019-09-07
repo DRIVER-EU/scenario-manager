@@ -26,7 +26,7 @@
     "materialize-css": "^1.0.0",
     "mithril-leaflet": "^0.1.6",
     "mithril-markdown": "^0.2.2",
-    "mithril-materialized": "^0.14.5",
+    "mithril-materialized": "^0.14.8",
     "mithril-scenario-timeline": "^0.0.10",
     "mithril-table": "^0.2.2",
     "mithril-tree-component": "^0.6.6",
@@ -52,7 +52,7 @@
     "tslib": "^1.10.0",
     "typescript": "^3.6.2",
     "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.7",
+    "webpack-cli": "^3.3.8",
     "webpack-dev-server": "^3.8.0",
     "rimraf": "^3.0.0"
   }
