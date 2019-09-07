@@ -50,7 +50,7 @@ export const TrialList = () => {
                     {
                       onclick: () => {
                         console.log('Set scenario to ' + scenario.title);
-                        return TrialSvc.load(scenario.id);
+                        TrialSvc.load(scenario.id);
                       },
                     },
                     scenario.title || 'Untitled'
