@@ -56,7 +56,7 @@ export const StakeholdersForm = () => {
         { style: 'color: black' },
         m('form.col.s12', [
           m(
-            '.contact-form',
+            '.contact-form', { key: stakeholder ? stakeholder.id : undefined },
             stakeholder
               ? [
                   m('h4', [
