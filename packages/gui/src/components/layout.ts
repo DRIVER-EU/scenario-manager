@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import owl from '../assets/owl.svg';
-import { dashboardSvc, SocketSvc } from '../services';
+import { dashboardSvc, SocketSvc, TrialSvc } from '../services';
 import { Dashboards } from '../models/dashboards';
 import { StatusBar } from './status/status-bar';
 import { Icon } from 'mithril-materialized';
@@ -27,6 +27,8 @@ export const Layout: FactoryComponent<{}> = () => {
         ? curDashboard.id === Dashboards.EXECUTE || curDashboard.level === Dashboards.EXECUTE
         : false;
       const time = AppState.time;
+      const trial = TrialSvc.getCurrent();
+      const trialTitle = trial && trial.title ? trial.title.toUpperCase() : '';
 
       return m('container', [
         m('nav', { class: hasSubDashboards ? 'nav-extended' : '' }, [
@@ -34,7 +36,10 @@ export const Layout: FactoryComponent<{}> = () => {
             m(
               'a.brand-logo',
               { style: 'margin-left: 20px' },
-              m(`img[width=32][height=32][src=${owl}]`, { style: 'margin-top: 5px; margin-left: -5px;' })
+              [
+                m(`img[width=32][height=32][src=${owl}]`, { style: 'margin: 5px 10px 0 -5px;' }),
+                m('span.black-text', { style: 'vertical-align: top;' }, trialTitle),
+              ]
             ),
             m(
               'ul.right',
