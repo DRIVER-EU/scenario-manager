@@ -1,7 +1,7 @@
 import { RestService, AssetService } from '.';
 import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
 import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, uniqueId, UserRole } from 'trial-manager-models';
-import { userRolesFilter } from '../utils';
+import { userRolesFilter, arrayMove } from '../utils';
 import { OverlaySvc } from './overlay-service';
 
 /**
@@ -195,11 +195,13 @@ class TrialService extends RestService<ITrial> {
       : this.current.injects;
   }
 
-  public async setInjects(injects?: IInject[]) {
-    if (this.current && injects) {
-      this.current.injects = injects;
+  public async moveInject(source: IInject, after: IInject) {
+    if (this.current && this.current.injects) {
+      const sourceIndex = this.current.injects.indexOf(source);
+      const afterIndex = this.current.injects.indexOf(after);
+      arrayMove(this.current.injects, sourceIndex, sourceIndex < afterIndex ? afterIndex : afterIndex + 1);
+      await this.saveTrial();
     }
-    await this.saveTrial();
   }
 
   /** Create a new inject and save it */
@@ -274,9 +276,12 @@ class TrialService extends RestService<ITrial> {
 
   // Delete inject, including all children
   public async deleteInject(i: IInject) {
-    let injects = this.current ? this.current.injects : [];
+    if (!this.current) { return; }
+    console.warn(this.current.injects.length);
+    let injects = this.current.injects;
     const findChildren = (inject: IInject) => injects.filter(s => s.parentId === inject.id);
     const deleteOne = (inject: IInject) => {
+      console.warn('Deleting: ' + inject.title);
       injects = injects.filter(s => s.id !== inject.id);
       findChildren(inject).forEach(deleteOne);
     };

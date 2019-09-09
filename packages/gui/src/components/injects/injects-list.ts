@@ -61,7 +61,11 @@ export const InjectsList = () => {
       if (action === 'edit') {
         TrialSvc.updateInject(ti as IInject);
       } else {
-        TrialSvc.setInjects(state.injects);
+        // action === move
+        if (state.injects) {
+          const index = state.injects.indexOf(ti as IInject);
+          TrialSvc.moveInject(ti as IInject, state.injects[index - 1]);
+        }
       }
     },
     create: (parent?: IInject, depth?: number) => {
