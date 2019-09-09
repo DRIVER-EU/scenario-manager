@@ -22,12 +22,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       if (Object.keys(cur).length === 0) {
         return;
       }
-      if (
-        !state.saving &&
-        state.inject &&
-        cur.id !== state.inject.id &&
-        !deepEqual(state.original, state.inject)
-      ) {
+      if (!state.saving && state.inject && cur.id !== state.inject.id && !deepEqual(state.original, state.inject)) {
         state.oldInject = state.inject;
         TrialSvc.updateInject(state.oldInject);
       }
@@ -71,75 +66,73 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
 
       return m(
         '.row.injects-form.sb.large',
-        { className, key: inject ? inject.id : undefined },
+        { className },
         inject
-          ? [
-              m('.col.s12', { style: 'color: #b4790c' }, [
-                inject.type === InjectType.INJECT
-                  ? m(Select, {
-                      disabled,
-                      iconName: getMessageIcon(inject.messageType),
-                      placeholder: 'Select the message type',
-                      checkedId: inject.messageType,
-                      options,
-                      onchange: v => {
-                        // console.warn('Getting message form');
-                        state.inject!.messageType = v[0] as MessageType;
-                      },
-                    })
-                  : m('h4', [
-                      m(Icon, {
-                        iconName: getInjectIcon(inject.type),
-                        style: 'margin-right: 12px;',
-                      }),
-                      inject.type,
-                    ]),
-                [
-                  m(MessageForm, { disabled, inject, onChange, key: 'message_form_' + inject.id }),
-                  m(InjectConditions, {
-                    injects: TrialSvc.getInjects() || [],
+          ? m('.col.s12', { key: inject.id, style: 'color: #b4790c' }, [
+              inject.type === InjectType.INJECT
+                ? m(Select, {
                     disabled,
-                    inject,
-                    previousInjects,
-                    onChange,
-                    key: 'inject_cond_' + inject.id,
-                  }),
-                  m(SetObjectives, { disabled, inject, key: 'set_obj_' + inject.id }),
-                ],
-                m(
-                  'row',
-                  disabled
-                    ? undefined
-                    : [
-                        m(Button, {
-                          iconName: 'undo',
-                          class: `green ${hasChanged ? '' : 'disabled'}`,
-                          onclick: () => (state.inject = deepCopy(state.original)),
-                        }),
-                        ' ',
-                        m(Button, {
-                          iconName: 'save',
-                          class: `green ${hasChanged ? '' : 'disabled'}`,
-                          onclick: onsubmit,
-                        }),
-                        ' ',
-                        m(Button, {
-                          iconName: 'delete',
-                          class: 'red',
-                          disabled: !TrialSvc.canDeleteInject(inject),
-                          onclick: async () => {
-                            const { parentId } = inject;
-                            state.inject = undefined;
-                            const injects = TrialSvc.getInjects() || [];
-                            const parent = injects.filter(i => i.id === parentId).shift() || injects[0];
-                            await TrialSvc.deleteInject(inject);
-                            injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: parent });
-                          },
-                        }),
-                      ]
-                ),
-              ]),
-            ]
+                    iconName: getMessageIcon(inject.messageType),
+                    placeholder: 'Select the message type',
+                    checkedId: inject.messageType,
+                    options,
+                    onchange: v => {
+                      // console.warn('Getting message form');
+                      state.inject!.messageType = v[0] as MessageType;
+                    },
+                  })
+                : m('h4', [
+                    m(Icon, {
+                      iconName: getInjectIcon(inject.type),
+                      style: 'margin-right: 12px;',
+                    }),
+                    inject.type,
+                  ]),
+              [
+                m(MessageForm, { disabled, inject, onChange, key: 'message_form_' + inject.id }),
+                m(InjectConditions, {
+                  injects: TrialSvc.getInjects() || [],
+                  disabled,
+                  inject,
+                  previousInjects,
+                  onChange,
+                  key: 'inject_cond_' + inject.id,
+                }),
+                m(SetObjectives, { disabled, inject, key: 'set_obj_' + inject.id }),
+              ],
+              m(
+                'row',
+                disabled
+                  ? undefined
+                  : [
+                      m(Button, {
+                        iconName: 'undo',
+                        class: `green ${hasChanged ? '' : 'disabled'}`,
+                        onclick: () => (state.inject = deepCopy(state.original)),
+                      }),
+                      ' ',
+                      m(Button, {
+                        iconName: 'save',
+                        class: `green ${hasChanged ? '' : 'disabled'}`,
+                        onclick: onsubmit,
+                      }),
+                      ' ',
+                      m(Button, {
+                        iconName: 'delete',
+                        class: 'red',
+                        disabled: !TrialSvc.canDeleteInject(inject),
+                        onclick: async () => {
+                          const { parentId } = inject;
+                          state.inject = undefined;
+                          const injects = TrialSvc.getInjects() || [];
+                          const parent = injects.filter(i => i.id === parentId).shift() || injects[0];
+                          await TrialSvc.deleteInject(inject);
+                          injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: parent });
+                        },
+                      }),
+                    ]
+              ),
+            ])
           : undefined
       );
     },

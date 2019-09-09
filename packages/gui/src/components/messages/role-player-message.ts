@@ -29,6 +29,9 @@ export const RolePlayerMessageForm: FactoryComponent<{
         rpm.type = RolePlayerMessageType.ACTION;
       }
       const isAction = rpm.type === RolePlayerMessageType.ACTION;
+      if (rpm && !rpm.rolePlayerId && rolePlayers && rolePlayers.length === 1) {
+        rpm.rolePlayerId = rolePlayers[0].id;
+      }
 
       return [
         m(Select, {
