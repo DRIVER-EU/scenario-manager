@@ -95,7 +95,7 @@ const SessionSettings: FactoryComponent<{}> = () => {
       const { session, sessionControl } = AppState;
       const { activeSession } = sessionControl;
       const isConnected = sessionControl && sessionControl.isConnected;
-      const disabled = !isConnected || sessionControl.activeSession;
+      const disabled = activeSession;
       const options = state.scenarios.map(s => ({ id: s.id, label: s.title }));
 
       if (session && !session.sessionName) {
