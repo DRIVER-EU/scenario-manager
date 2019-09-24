@@ -133,28 +133,31 @@ const MediaStateControl: FactoryComponent<{
                 ),
             m(
               '.row',
-              m(FlatButton, {
-                label: 'Initialize scenario',
-                className: 'btn-flat-large',
-                // iconName: 'timer',
-                disabled: !canStart,
-                onclick: () => {
-                  if (realtime) {
-                    sendCmd(socket, {
-                      trialTime: Date.now(),
-                      trialTimeSpeed: 1,
-                      command: TimingControlCommand.Init,
-                    });
-                    sendCmd(socket, { command: TimingControlCommand.Start });
-                  } else {
-                    sendCmd(socket, {
-                      trialTime: newTime(),
-                      trialTimeSpeed: 1,
-                      command: TimingControlCommand.Init,
-                    });
-                  }
-                },
-              })
+              m(
+                '.col.s12',
+                m(FlatButton, {
+                  label: 'Initialize scenario',
+                  className: 'btn-flat-large',
+                  // iconName: 'timer',
+                  disabled: !canStart,
+                  onclick: () => {
+                    if (realtime) {
+                      sendCmd(socket, {
+                        trialTime: Date.now(),
+                        trialTimeSpeed: 1,
+                        command: TimingControlCommand.Init,
+                      });
+                      sendCmd(socket, { command: TimingControlCommand.Start });
+                    } else {
+                      sendCmd(socket, {
+                        trialTime: newTime(),
+                        trialTimeSpeed: 1,
+                        command: TimingControlCommand.Init,
+                      });
+                    }
+                  },
+                })
+              )
             ),
           ];
         case TimeState.Initialized:

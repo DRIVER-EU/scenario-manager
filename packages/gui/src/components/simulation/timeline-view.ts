@@ -81,7 +81,7 @@ export const TimelineView: FactoryComponent = () => {
         return;
       }
       state.simStates = simStates;
-      console.table(simStates);
+      // console.table(simStates);
       if (!simStates) {
         return undefined;
       }
