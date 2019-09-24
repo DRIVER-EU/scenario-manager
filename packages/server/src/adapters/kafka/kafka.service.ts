@@ -36,6 +36,7 @@ export interface KafkaService {
   // on(event: 'message', listener: (message: IAdapterMessage) => void): this;
   once(event: 'time', listener: (message: ITiming) => void): this;
   on(event: 'time', listener: (message: ITiming) => void): this;
+  on(event: 'session-update', listener: (message: ISessionMgmt) => void): this;
 }
 
 @Injectable()
@@ -139,7 +140,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public sendLargeDataUpdateMessage(m: ILargeDataUpdate) {
-    return this.sendMessage(m, 'system_large_data_update');
+    return this.sendMessage(m, 'large_data_update');
   }
 
   public sendRequestUnitTransport(m: IRequestUnitTransport) {
@@ -179,7 +180,7 @@ export class KafkaService extends EventEmitter implements TimeService {
 
       this.adapter.send(payload, (err, data) => {
         if (err) {
-          this.log.error(err);
+          this.log.error(`TMT error for payload topic ${topic}: ${err}`);
           reject(err);
         } else if (data) {
           this.log.info(data);
@@ -193,6 +194,7 @@ export class KafkaService extends EventEmitter implements TimeService {
     switch (message.topic) {
       case TrialManagementSessionMgmtTopic:
         this.session = message.value as ISessionMgmt;
+        this.emit('session-update', this.session);
         break;
       default:
         console.warn('Unhandled message: ' + message.value);

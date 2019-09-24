@@ -15,9 +15,8 @@ export class TimeEventsGateway {
   constructor(
     @Inject('KafkaService') private readonly kafkaService: KafkaService,
   ) {
-    kafkaService.on('time', time => {
-      this.server.emit('time', time);
-    });
+    kafkaService.on('time', time => this.server.emit('time', time));
+    kafkaService.on('session-update', _ => this.sendConnectionStatus());
   }
 
   @SubscribeMessage('test-bed-disconnect')
@@ -30,13 +29,20 @@ export class TimeEventsGateway {
     return this.isConnected();
   }
 
+  async sendConnectionStatus() {
+    const ic = await this.isConnected();
+    this.server.emit(ic.event, ic.data);
+  }
+
   @SubscribeMessage('test-bed-connect')
   async connect() {
     // console.log('connect received');
     if (this.kafkaService.isConnected()) {
+      this.sendConnectionStatus();
       return this.isConnected();
     }
     await this.kafkaService.connect();
+    this.sendConnectionStatus();
     return this.isConnected();
   }
 

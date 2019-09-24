@@ -15,7 +15,7 @@ import {
   executeInjects,
   createInitialState,
   IInjectSimStates,
-  InjectState,
+  IConnectMessage,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -66,6 +66,7 @@ export class RunService {
 
     this.injects = pruneInjects(this.scenario, this.trial.injects);
 
+    this.sendConnectionStatus();
     this.kafkaService.sendSessionMessage(this.session);
 
     const startUpdateLoop = () => {
@@ -96,7 +97,18 @@ export class RunService {
     this.scenario = undefined;
     this.injects = [];
     this.states = {};
+    this.sendConnectionStatus();
     // }, 1000);
+  }
+
+  private sendConnectionStatus() {
+    const cm = ({
+      isConnected: this.kafkaService.isConnected(),
+      time: this.kafkaService.timeMessage,
+      session: this.kafkaService.currentSession,
+      host: this.kafkaService.hostname,
+    } as IConnectMessage);
+    this.server.emit('is-connected', cm);
   }
 
   /** Add a request for a state transition */
