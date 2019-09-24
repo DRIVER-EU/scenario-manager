@@ -38,11 +38,10 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     }),
   };
 
-  const onsubmit = (e: UIEvent) => {
+  const onsubmit = async () => {
     const { inject } = state;
-    e.preventDefault();
     if (inject) {
-      TrialSvc.updateInject(inject);
+      await TrialSvc.updateInject(inject);
       state.saving = true;
     }
   };
@@ -61,6 +60,9 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         m.redraw();
       };
       const hasChanged = !deepEqual(inject, original);
+      if (hasChanged) {
+        onsubmit();
+      }
       const previousInjects = findPreviousInjects(inject, TrialSvc.getInjects());
       const options = enumToOptions(MessageType).map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
 
@@ -105,20 +107,21 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                 disabled
                   ? undefined
                   : [
-                      m(Button, {
-                        iconName: 'undo',
-                        class: `green ${hasChanged ? '' : 'disabled'}`,
-                        onclick: () => (state.inject = deepCopy(state.original)),
-                      }),
-                      ' ',
-                      m(Button, {
-                        iconName: 'save',
-                        class: `green ${hasChanged ? '' : 'disabled'}`,
-                        onclick: onsubmit,
-                      }),
-                      ' ',
+                      // m(Button, {
+                      //   iconName: 'undo',
+                      //   class: `green ${hasChanged ? '' : 'disabled'}`,
+                      //   onclick: () => (state.inject = deepCopy(state.original)),
+                      // }),
+                      // ' ',
+                      // m(Button, {
+                      //   iconName: 'save',
+                      //   class: `green ${hasChanged ? '' : 'disabled'}`,
+                      //   onclick: onsubmit,
+                      // }),
+                      // ' ',
                       m(Button, {
                         iconName: 'delete',
+                        label: 'Delete',
                         class: 'red',
                         disabled: !TrialSvc.canDeleteInject(inject),
                         onclick: async () => {
@@ -149,8 +152,13 @@ export const SetObjectives: FactoryComponent<{ inject: IInject; disabled?: boole
         label: o.title,
       }));
       const injectGroup = inject as IInjectGroup;
+      const hasObjectives = () =>
+        objectives.length > 1 &&
+        (injectGroup.mainObjectiveId || injectGroup.secondaryObjectiveId) &&
+        objectives.filter(o => o.id === injectGroup.mainObjectiveId || o.id === injectGroup.secondaryObjectiveId)
+          .length > 0;
 
-      return isGroup
+      return isGroup && !(disabled && !hasObjectives())
         ? m('.row', [
             m(Dropdown, {
               disabled,
