@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { TextInput, RoundIconButton, Icon } from 'mithril-materialized';
 import { TrialSvc, dashboardSvc } from '../../services';
-import { titleAndDescriptionFilter } from '../../utils';
+import { titleAndDescriptionFilter, padLeft } from '../../utils';
 import { ITrial, ITrialOverview } from 'trial-manager-models';
 import { Dashboards, AppState } from '../../models';
 
@@ -9,6 +9,12 @@ export const TrialList = () => {
   const state = {
     filterValue: undefined as string | undefined,
   };
+
+  const formatDate = (date: Date | string) => {
+    const d = new Date(date);
+    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${padLeft(d.getHours())}:${padLeft(d.getMinutes())}`;
+  };
+
   return {
     oninit: () => TrialSvc.loadList(),
     view: () => {
@@ -53,9 +59,16 @@ export const TrialList = () => {
                         TrialSvc.load(scenario.id);
                       },
                     },
-                    scenario.title || 'Untitled'
+                    `${scenario.title || 'Untitled'}${
+                      scenario.lastEdit ? ` (${formatDate(scenario.lastEdit)})` : ''
+                    }`
                   ),
-                  m('p', scenario.description),
+                  m(
+                    'p',
+                    scenario.description && scenario.description.length > 120
+                      ? `${scenario.description.substr(0, 119)}...`
+                      : scenario.description
+                  ),
                 ]),
                 m('.card-action', [
                   m(
@@ -86,7 +99,6 @@ export const TrialList = () => {
                       iconName: 'content_copy',
                     })
                   ),
-
                 ])
               ),
             ])
