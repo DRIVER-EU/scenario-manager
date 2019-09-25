@@ -98,6 +98,10 @@ const SessionSettings: FactoryComponent<{}> = () => {
       const disabled = activeSession;
       const options = state.scenarios.map(s => ({ id: s.id, label: s.title }));
 
+      // console.log(activeSession);
+      // console.log(session);
+      // console.log(sessionControl);
+
       if (session && !session.sessionName) {
         session.sessionId = uniqueId();
         session.sessionName = 'New session';
@@ -210,7 +214,11 @@ export const SessionControl: FactoryComponent = () => {
     AppState.sessionControl.isConnected = isConnected;
     AppState.sessionControl.host = host;
     AppState.sessionControl.realtime = Math.abs(data.time.trialTime - Date.now()) < 10000;
-    if (session.trialId && TrialSvc.getCurrent().id !== session.trialId) {
+    if (
+      session.trialId &&
+      session.sessionState === SessionState.START &&
+      TrialSvc.getCurrent().id !== session.trialId
+    ) {
       M.toast({
         html: `The Test-bed is currently running another trial: ${session.trialName}`,
         classes: 'orange',
@@ -290,27 +298,28 @@ export const SessionControl: FactoryComponent = () => {
         m(SessionSettings),
         activeSession
           ? realtime
-            ? canStart
-              ? m(
-                  '.row',
-                  m(
-                    '.col.s12.m6',
-                    m('.input-field.col.s12', [
-                      isConnected ? m(Icon, { iconName, className: 'prefix' }) : undefined,
-                      m(TimeControl, {
-                        style: 'margin-left: 3em',
-                        scenario: state.scenario,
-                        isConnected,
-                        time,
-                        canStart,
-                        realtime,
-                        key,
-                      }),
-                    ])
-                  )
+            ? // ? canStart
+              m(
+                '.row',
+                m(
+                  '.col.s12.m6',
+                  m('.input-field.col.s12', [
+                    m(Icon, { iconName, className: 'prefix' }),
+                    m(TimeControl, {
+                      style: 'margin-left: 3em',
+                      scenario: state.scenario,
+                      isConnected,
+                      time,
+                      canStart,
+                      realtime,
+                      key,
+                    }),
+                  ])
                 )
-              : undefined
-            : m(TimeControl, {
+              )
+            : // : undefined
+              m(TimeControl, {
+                // style: 'margin-left: 3em',
                 scenario: state.scenario,
                 isConnected,
                 time,
