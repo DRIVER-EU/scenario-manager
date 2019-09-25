@@ -11,7 +11,7 @@ import {
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { IExecutingInject } from '../../models';
-import { createEmailLink, createPhoneLink, getMessageIcon, getRolePlayerMessageIcon } from '../../utils';
+import { createEmailLink, createPhoneLink, getRolePlayerMessageIcon } from '../../utils';
 
 export const RolePlayerMessageForm: FactoryComponent<{
   inject: IInject;
@@ -36,8 +36,9 @@ export const RolePlayerMessageForm: FactoryComponent<{
       return [
         m(Select, {
           disabled,
+          label: 'Role player',
           iconName: 'record_voice_over',
-          className: checkpoint ? 'col s12' : isAction ? 'col s12 m6' : 'col s12 m4',
+          className: checkpoint ? 'col s12' : isAction ? 'col s12 m6' : 'col s12 m3',
           placeholder: 'Pick role player',
           options: rolePlayers,
           checkedId: rpm.rolePlayerId,
@@ -47,8 +48,9 @@ export const RolePlayerMessageForm: FactoryComponent<{
           ? undefined
           : m(Select, {
               disabled,
+              label: 'Message type',
               iconName: getRolePlayerMessageIcon(rpm.type),
-              className: isAction ? 'col s12 m6' : 'col s12 m4',
+              className: isAction ? 'col s12 m6' : 'col s12 m3',
               placeholder: 'Select type',
               options: types,
               checkedId: rpm.type,
@@ -57,13 +59,15 @@ export const RolePlayerMessageForm: FactoryComponent<{
         isAction
           ? undefined
           : m(Select, {
+              label: 'Participant(s)',
+              id: 'person',
               disabled,
               iconName: 'person',
-              className: 'col s12 m4',
+              className: 'col s12 m6',
               placeholder: 'Pick one or more',
               multiple: true,
               options: participants,
-              checkedId: rpm.participantIds,
+              initialValue: rpm.participantIds,
               onchange: v => (rpm.participantIds = v as string[]),
             }),
         m(TextInput, {
