@@ -409,6 +409,15 @@ export const isInjectGroup = (i: IInject): i is IInjectGroup => i.type !== Injec
 /** Type guard check if we are dealing with a scenario  */
 export const isScenario = (i: IInject): i is IScenario => i.type === InjectType.SCENARIO;
 
+/** Type guard check if we are dealing with a storyline  */
+export const isStoryline = (i: IInject): i is IScenario => i.type === InjectType.STORYLINE;
+
+/** Type guard check if we are dealing with an act  */
+export const isAct = (i: IInject): i is IScenario => i.type === InjectType.ACT;
+
+/** Type guard check if we are dealing with a pure inject  */
+export const isInject = (i: IInject): i is IScenario => i.type === InjectType.INJECT;
+
 /** Filter for selecting all injects that represent a GeoJSON message */
 export const isGeoJSONMessage = (i: IInject) => i.messageType === MessageType.GEOJSON_MESSAGE;
 
