@@ -1,5 +1,5 @@
 import { FeatureCollection } from 'geojson';
-import { IInject, InjectType, MessageType, UnitType } from '..';
+import { IInject, InjectType, MessageType, UnitType, IInjectGroup } from '..';
 
 /**
  * Create a unique ID
@@ -66,13 +66,20 @@ export const getParent = (injects: IInject[], id?: string, level = InjectType.SC
   }
 };
 
-/** Get the children of an inject */
+/** Get the direct children of an inject */
 export const getChildren = (injects: IInject[], id?: string) => {
   if (!id) {
     return [];
   }
   return injects.filter(i => i.parentId === id);
 };
+
+/** Get all children of an inject, including grandchildren */
+export const getAllChildren = (injects: IInject[], id: string): Array<IInjectGroup | IInject> => {
+  const children = injects.filter(i => i.parentId === id);
+  return children.reduce((acc, c) => [...acc, ...getAllChildren(injects, c.id)], children);
+};
+
 
 /**
  * Find an inject by ID
