@@ -1,7 +1,7 @@
 import { RestService, AssetService } from '.';
 import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
 import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, uniqueId, UserRole } from 'trial-manager-models';
-import { userRolesFilter, arrayMove } from '../utils';
+import { userRolesFilter, arrayMove, debounce } from '../utils';
 import { OverlaySvc } from './overlay-service';
 
 /**
@@ -11,30 +11,34 @@ import { OverlaySvc } from './overlay-service';
  */
 class TrialService extends RestService<ITrial> {
   private assetSvc?: AssetService;
+  private debouncedSave: (trial: ITrial) => void;
 
   constructor() {
     super('trials', ChannelNames.SCENARIO);
+    const save = async (t: ITrial) => {
+      this.validateInjects();
+      t.lastEdit = new Date();
+      const trial = await super.save(t);
+      if (trial && (!this.assetSvc || this.assetSvc.trialId !== trial.id)) {
+        this.assetSvc = new AssetService(trial.id);
+        return this.assetSvc.loadList();
+      }
+    };
+    this.debouncedSave = debounce(save, 1000);
   }
 
-  public load(id: string): Promise<ITrial> {
-    return super.load(id).then(async s => {
-      // s.startDate = s.startDate ? new Date(s.startDate) : new Date();
-      // s.endDate = s.endDate ? new Date(s.endDate) : new Date();
-      this.current = s;
-      this.assetSvc = new AssetService(id);
-      await this.assetSvc.loadList();
-      return s;
-    });
+  public async load(id: string): Promise<ITrial> {
+    const s = await super.load(id);
+    // s.startDate = s.startDate ? new Date(s.startDate) : new Date();
+    // s.endDate = s.endDate ? new Date(s.endDate) : new Date();
+    this.current = s;
+    this.assetSvc = new AssetService(id);
+    await this.assetSvc.loadList();
+    return s;
   }
 
   public async saveTrial(s: ITrial = this.current) {
-    this.validateInjects();
-    s.lastEdit = new Date();
-    const trial = await super.save(s);
-    if (trial && (!this.assetSvc || this.assetSvc.trialId !== trial.id)) {
-      this.assetSvc = new AssetService(trial.id);
-      return this.assetSvc.loadList();
-    }
+    this.debouncedSave(s);
   }
 
   /** OBJECTIVES */
@@ -206,13 +210,19 @@ class TrialService extends RestService<ITrial> {
 
   /** Create a new inject and save it */
   public async createInject(i: IInject) {
+    this.newInject(i);
+    await this.saveTrial();
+    injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: i });
+    return i;
+  }
+
+  public newInject(i: IInject) {
     const injects = this.getInjects();
     if (injects) {
       i.id = i.id || uniqueId();
       injects.push(i);
     }
-    await this.saveTrial();
-    injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: i });
+    return i;
   }
 
   /** Update an existing inject and save it */
