@@ -1,4 +1,4 @@
-import { ITimeMessage, ISessionMgmt, IInjectSimStates } from 'trial-manager-models';
+import { ITimeMessage, ISessionMgmt, IInjectSimStates, IInject } from 'trial-manager-models';
 import { messageBus } from '../services';
 
 const getRootUrl = () => {
@@ -39,4 +39,6 @@ export const AppState = {
     AppState.usingDevServer = true;
     messageBus.publish({ channel: 'apiServer', topic: 'update', data: AppState.apiService() });
   },
+  copiedInjectIsCut: false,
+  copiedInjects: undefined as undefined | IInject | IInject[],
 };
