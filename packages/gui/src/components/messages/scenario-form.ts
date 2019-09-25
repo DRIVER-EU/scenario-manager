@@ -27,7 +27,7 @@ export const ScenarioForm: FactoryComponent<{
         M.toast({ html: 'End time must be later than start time!', classes: 'orange' });
       }
       return [
-        m(DefaultMessageForm, { inject: scenario, disabled }),
+        m(DefaultMessageForm, { inject: scenario, disabled, onChange }),
         disabled
           ? undefined
           : [

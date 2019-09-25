@@ -2,6 +2,7 @@
 	"scripts": {
 		"postinstall": "lerna bootstrap",
 		"clean": "lerna run --parallel clean",
+		"run-proxy": "lerna run --parallel run-proxy",
 		"start": "lerna run --parallel start",
 		"build": "lerna run build",
 		"docker:build": "docker build -t trial-management-tool .",
