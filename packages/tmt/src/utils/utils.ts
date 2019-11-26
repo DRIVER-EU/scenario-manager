@@ -29,7 +29,7 @@ export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
 
 /** Map a string enum to a list of options */
 export const enumToOptions = <E extends { [P in keyof E]: string }>(e: E) =>
-  Object.keys(e).map(id => ({ id, label: id }));
+  Object.keys(e).map(id => ({ id, label: id.replace(/_/g, ' ') }));
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.

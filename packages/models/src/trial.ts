@@ -41,4 +41,6 @@ export interface ITrial extends ITrialOverview {
   objectives: IObjective[];
   /** The actual messages that encompass the scenario */
   injects: Array<IInject | IInjectGroup>;
+  /** The actual message types that will be used */
+  selectedMessageTypes: string[];
 }

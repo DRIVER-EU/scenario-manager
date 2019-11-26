@@ -85,7 +85,10 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         onsubmit();
       }
       const previousInjects = findPreviousInjects(inject, TrialSvc.getInjects());
-      const options = enumToOptions(MessageType).map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
+      const selectedMessageTypes = TrialSvc.getCurrent().selectedMessageTypes;
+      const options = enumToOptions(MessageType)
+        .filter(({ id }) => !selectedMessageTypes || selectedMessageTypes.indexOf(id) >= 0)
+        .map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
 
       const canDelete = inject && TrialSvc.canDeleteInject(inject);
 
@@ -121,71 +124,6 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         }
       };
 
-      // /** Copy from Act to Storyline */
-      // const copyFromActToStoryline = (injects: IInject[], fromAct: IInject, toStoryline: IInjectGroup) => {
-      //   const parentId = toStoryline.id;
-      //   const newParent = TrialSvc.newInject({ ...fromAct, id: '', parentId });
-      //   getChildren(injects, fromAct.id)
-      //     .map(deepCopy)
-      //     .map(child => ({ ...child, id: '', parentId: newParent.id }))
-      //     .forEach(TrialSvc.newInject);
-      // };
-
-      // const copyFromStorylineToScenario = (injects: IInject[], fromStoryline: IInject, toScenario: IInjectGroup) => {
-      //   const parentId = toScenario.id;
-      //   const newParent = TrialSvc.newInject({ ...fromStoryline, id: '', parentId });
-      //   getChildren(injects, fromStoryline.id)
-      //     .map(deepCopy)
-      //     .forEach(act => copyFromActToStoryline(injects, act, newParent));
-      // };
-
-      // const pasteInject = async () => {
-      //   debugger;
-      //   if (inject && AppState.copiedInject) {
-      //     const injects = TrialSvc.getInjects() || [];
-      //     const copy = AppState.copiedInject;
-      //     const isCut = AppState.copiedInjectIsCut;
-      //     const parentId = inject.id;
-      //     if (isScenario(inject)) {
-      //       if (isStoryline(copy)) {
-      //         copyFromStorylineToScenario(injects, copy, inject);
-      //       } else if (isScenario(copy)) {
-      //         getChildren(injects, copy.id).forEach(s => copyFromStorylineToScenario(injects, s, inject));
-      //       }
-      //     } else if (isStoryline(inject)) {
-      //       if (isAct(copy)) {
-      //         copyFromActToStoryline(injects, copy, inject);
-      //       } else if (isStoryline(copy)) {
-      //         getChildren(injects, copy.id).forEach(act => copyFromActToStoryline(injects, act, inject));
-      //       }
-      //     } else if (isAct(inject)) {
-      //       if (isInject(copy)) {
-      //         copy.parentId = parentId;
-      //         if (!isCut) {
-      //           copy.id = '';
-      //         }
-      //         TrialSvc.newInject(copy);
-      //       } else if (isAct(copy)) {
-      //         getChildren(injects, copy.id)
-      //           .map(deepCopy)
-      //           .map(child => ({ ...child, id: '', parentId }))
-      //           .forEach(child => TrialSvc.newInject(child));
-      //       }
-      //     } else if (isInject(inject) && isInject(copy)) {
-      //       if (isCut && copy.parentId === inject.parentId) {
-      //         TrialSvc.newInject(copy);
-      //         return;
-      //       }
-      //       if (!isCut) {
-      //         copy.id = '';
-      //       }
-      //       copy.parentId = inject.parentId;
-      //       TrialSvc.newInject(copy);
-      //     }
-      //     // await TrialSvc.saveTrial();
-      //   }
-      // };
-
       /**
        * Create a deep copy of all injects, give them a new ID, and map their parent IDs
        * to keep the hierarchy intact.
@@ -220,13 +158,13 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
             if (isStoryline(copy)) {
               createFreshInjects(injects, copy.parentId!, npi).map(i => TrialSvc.newInject(i));
             } else if (isScenario(copy)) {
-              createFreshInjects((injects).slice(1), copy.id, npi).map(i => TrialSvc.newInject(i));
+              createFreshInjects(injects.slice(1), copy.id, npi).map(i => TrialSvc.newInject(i));
             }
           } else if (isStoryline(inject)) {
             if (isAct(copy)) {
               createFreshInjects(injects, copy.parentId!, npi).map(i => TrialSvc.newInject(i));
             } else if (isStoryline(copy)) {
-              createFreshInjects((injects).slice(1), copy.id, npi).map(i => TrialSvc.newInject(i));
+              createFreshInjects(injects.slice(1), copy.id, npi).map(i => TrialSvc.newInject(i));
             }
           } else if (isAct(inject)) {
             if (isInject(copy)) {
@@ -236,7 +174,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
               }
               TrialSvc.newInject(copy);
             } else if (isAct(copy)) {
-              createFreshInjects((injects).slice(1), copy.id, npi).map(i => TrialSvc.newInject(i));
+              createFreshInjects(injects.slice(1), copy.id, npi).map(i => TrialSvc.newInject(i));
             }
           } else if (isInject(inject) && isInject(copy)) {
             if (isCut && copy.parentId === inject.parentId) {

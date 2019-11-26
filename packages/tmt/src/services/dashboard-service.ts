@@ -16,6 +16,7 @@ import { TrialSettings } from '../components/configuration/trial-settings';
 // import { SimulationView } from '../components/simulation';
 import { SessionView } from '../components/session/session-view';
 import { OverviewMap } from '../components/map/overview-map';
+import { SelectMessageTypesForm } from '../components/select-message-types';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -144,6 +145,14 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     route: '/settings/assets',
     visible: false,
     component: AssetsView,
+    level: Dashboards.SETTINGS,
+  },
+  {
+    id: Dashboards.MESSAGES,
+    title: 'Messages',
+    route: '/settings/messages',
+    visible: false,
+    component: SelectMessageTypesForm,
     level: Dashboards.SETTINGS,
   },
   {
