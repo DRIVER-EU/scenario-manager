@@ -201,9 +201,15 @@ i.material-icons {
   vertical-align: bottom;
 }
 
-.mst__title {
-  min-width: 400px;
+.mst__item .mst__title {
+  min-width: 600px;
   /* overflow: hidden; */
+}
+.mst__title > div > span {
+  white-space: nowrap;
+  /* text-overflow: ellipsis; */
+  max-width: 600px;
+  display: inline-block;
 }
 
 .html-area ul {
