@@ -85,24 +85,28 @@ export const Checklist: FactoryComponent<{ scenario: IScenario; disabled?: boole
                 } as IKanban<ITodo>),
               ],
             ]),
-            m(
-              '.col.s12',
-              m(FlatButton, {
-                label: 'Clear all done',
-                iconName: 'clear_all',
-                onclick: () => {
-                  if (todoBefore) {
-                    scenario.todoBefore = todoBefore.map(todo => ({ ...todo, done: false }));
-                    onchange(scenario, 'before');
-                  }
-                  if (todoAfter) {
-                    scenario.todoAfter = todoAfter.map(todo => ({ ...todo, done: false }));
-                    onchange(scenario, 'after');
-                  }
-                  state.key++;
-                },
-              })
-            ),
+            disabled &&
+              m(
+                '.row',
+                m(
+                  '.col.s12',
+                  m(FlatButton, {
+                    label: 'Clear all todos',
+                    iconName: 'clear_all',
+                    onclick: () => {
+                      if (todoBefore) {
+                        scenario.todoBefore = todoBefore.map(todo => ({ ...todo, done: false }));
+                        onchange(scenario, 'before');
+                      }
+                      if (todoAfter) {
+                        scenario.todoAfter = todoAfter.map(todo => ({ ...todo, done: false }));
+                        onchange(scenario, 'after');
+                      }
+                      state.key++;
+                    },
+                  })
+                )
+              ),
           ])
         : undefined;
     },
