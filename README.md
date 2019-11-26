@@ -24,17 +24,19 @@ The application is a mono repository split into 3 packages:
 - GUI: user interface for the creators of a scenario, managers of a scenario run (a.k.a. session) and role players
 - Models: shared interfaces between GUI and server
 
-The first time, run `npm run bootstrap` in order to sym link the Models package to the GUI and Server. Next, install the dependencies using `pnpm` (`npm i -g pnpm`):
+To run it locally, it assumes you have [nodejs](http://nodejs.org/en/download) installed. Next, install the package manager using `npm i -g pnpm`. Use git to clone this repository with `git clone https://github.com/DRIVER-EU/scenario-manager.git`. Enter the new folder (`cd scenario-manager`) and install all dependencies with:
 
 ```console
 pnpm m i
 ```
 
-## Running the application
+To run the application, enter:
 
 ```console
 npm start
 ```
+
+This will run a [local server on port 8081](http://localhost:8081).
 
 ## State management
 
