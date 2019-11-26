@@ -3,7 +3,15 @@ import { Icon, Select, ISelectOptions, RoundIconButton } from 'mithril-materiali
 import { getIcon, isScenario, getInjectIcon } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { TrialSvc } from '../../services';
-import { IInject, InjectType, pruneInjects, uniqueId, IScenario } from 'trial-manager-models';
+import {
+  IInject,
+  InjectType,
+  pruneInjects,
+  uniqueId,
+  IScenario,
+  InjectConditionType,
+  IInjectCondition,
+} from 'trial-manager-models';
 import { TopicNames, injectsChannel, AppState } from '../../models';
 
 export const InjectsList = () => {
@@ -73,13 +81,20 @@ export const InjectsList = () => {
         if (!parent) {
           return { title: 'New scenario', type: InjectType.SCENARIO };
         }
+        const parentId = parent.id;
+        const condition = {
+          delay: 0,
+          delayUnitType: 'minutes',
+          type: InjectConditionType.MANUALLY,
+          injectId: parentId,
+        } as IInjectCondition;
         switch (depth) {
           case 0:
-            return { title: 'New storyline', type: InjectType.STORYLINE, parentId: parent.id };
+            return { title: 'New storyline', type: InjectType.STORYLINE, parentId, condition };
           case 1:
-            return { title: 'New act', type: InjectType.ACT, parentId: parent.id };
+            return { title: 'New act', type: InjectType.ACT, parentId, condition };
           default:
-            return { title: 'New inject', type: InjectType.INJECT, parentId: parent.id };
+            return { title: 'New inject', type: InjectType.INJECT, parentId, condition };
         }
       };
       return itemFactory() as ITreeItem;
@@ -131,31 +146,37 @@ export const InjectsList = () => {
       return injects
         ? m('.row.injects-list', [
             m('.row', [
-              m('.col.s10', m(Select, {
-                options: scenarioOptions,
-                checkedId: scenarioId,
-                iconName: getInjectIcon(InjectType.SCENARIO),
-                onchange: ids => {
-                  AppState.scenarioId = ids[0] as string;
-                  const cur = scenarios.filter(s => s.id === ids[0]).shift() as IScenario;
-                  injectsChannel.publish(TopicNames.ITEM_CREATE, { cur });
-                },
-              } as ISelectOptions)),
-              m('.col.s2', m(RoundIconButton, {
-                iconName: 'add',
-                class: 'green btn-small',
-                style: 'margin: 1em;',
-                onclick: async () => {
-                  const newScenario = {
-                    id: uniqueId(),
-                    title: 'New scenario',
-                    type: InjectType.SCENARIO,
-                  } as IScenario;
-                  AppState.scenarioId = newScenario.id;
-                  await TrialSvc.createInject(newScenario);
-                  injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: newScenario });
-                },
-              })),
+              m('.col.s10', [
+                m(Select, {
+                  key: scenarioId + scenario.title,
+                  options: scenarioOptions,
+                  checkedId: scenarioId,
+                  iconName: getInjectIcon(InjectType.SCENARIO),
+                  onchange: ids => {
+                    AppState.scenarioId = ids[0] as string;
+                    const cur = scenarios.filter(s => s.id === ids[0]).shift() as IScenario;
+                    injectsChannel.publish(TopicNames.ITEM_CREATE, { cur });
+                  },
+                } as ISelectOptions),
+              ]),
+              m(
+                '.col.s2',
+                m(RoundIconButton, {
+                  iconName: 'add',
+                  class: 'green btn-small',
+                  style: 'margin: 1em;',
+                  onclick: async () => {
+                    const newScenario = {
+                      id: uniqueId(),
+                      title: 'New scenario',
+                      type: InjectType.SCENARIO,
+                    } as IScenario;
+                    AppState.scenarioId = newScenario.id;
+                    await TrialSvc.createInject(newScenario);
+                    injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: newScenario });
+                  },
+                })
+              ),
             ]),
             filteredInjects && filteredInjects.length > 0
               ? m('.col.s12.sb.large', m(TreeContainer, { tree: filteredInjects, options }))
