@@ -27,7 +27,11 @@ import { TrialSvc } from '../../services';
 import { debounce } from '../../utils';
 
 /** LCMS message, currently a wrapped CAP message */
-export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () => void; disabled?: boolean }> = () => {
+export const LcmsMessageForm: FactoryComponent<{
+  inject: IInject;
+  onChange?: (i: IInject) => void;
+  disabled?: boolean;
+}> = () => {
   const state = {} as {
     alert: IAlert;
     alertInfo: IInfo;
@@ -92,8 +96,9 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
       const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
       state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
     },
-    view: ({ attrs: { inject, disabled } }) => {
+    view: ({ attrs: { inject, disabled, onChange } }) => {
       const { alert, alertInfo, actionList, parameters, participants } = state;
+      const update = () => onChange && onChange(inject);
       // console.table(statusOptions);
 
       return [
@@ -108,7 +113,7 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
         }),
         m(Select, {
           disabled,
-          label: 'Sender',
+          label: 'Participant sending the message',
           iconName: 'person',
           className: 'col s12 m6',
           placeholder: 'Sender',
@@ -120,6 +125,7 @@ export const LcmsMessageForm: FactoryComponent<{ inject: IInject; onChange?: () 
           onchange: v => {
             alert.sender = v[0] as string;
             alertInfo.senderName = (participants.filter(p => p.id === v[0]).shift() || ({} as IPerson)).name;
+            update();
           },
         }),
         m(TextArea, {

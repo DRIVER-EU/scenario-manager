@@ -23,7 +23,11 @@ import {
 import { TrialSvc } from '../../services';
 import { enumToOptions } from '../../utils';
 
-export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () => void, disabled?: boolean; }> = () => {
+export const CapMessageForm: FactoryComponent<{
+  inject: IInject;
+  onChange?: (i: IInject) => void;
+  disabled?: boolean;
+}> = () => {
   const state = {} as {
     alert: IAlert;
     alertInfo: IInfo;
@@ -77,7 +81,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
       const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
       state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
     },
-    view: ({ attrs: { inject, disabled } }) => {
+    view: ({ attrs: { inject, disabled, onChange } }) => {
       const {
         alert,
         alertInfo,
@@ -92,6 +96,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
         certaintyOptions,
       } = state;
       // console.table(statusOptions);
+      const update = () => onChange && onChange(inject);
 
       return [
         m(TextInput, {
@@ -117,6 +122,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           onchange: v => {
             alert.sender = v[0] as string;
             alertInfo.senderName = (participants.filter(p => p.id === v[0]).shift() || ({} as IPerson)).name;
+            update();
           },
         }),
         m(TextArea, {
@@ -137,6 +143,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           checkedId: alert.status,
           onchange: v => {
             alert.status = v[0] as Status;
+            update();
           },
         }),
         m(Select, {
@@ -149,6 +156,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           checkedId: alert.msgType,
           onchange: v => {
             alert.msgType = v[0] as MsgType;
+            update();
           },
         }),
         m(Select, {
@@ -161,6 +169,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           checkedId: alert.scope,
           onchange: v => {
             alert.scope = v[0] as Scope;
+            update();
           },
         }),
         m(Select, {
@@ -173,6 +182,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           checkedId: alertInfo.urgency,
           onchange: v => {
             alertInfo.urgency = v[0] as Urgency;
+            update();
           },
         }),
         m(Select, {
@@ -185,6 +195,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           checkedId: alertInfo.severity,
           onchange: v => {
             alertInfo.severity = v[0] as Severity;
+            update();
           },
         }),
         m(Select, {
@@ -197,6 +208,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           checkedId: alertInfo.certainty,
           onchange: v => {
             alertInfo.certainty = v[0] as Certainty;
+            update();
           },
         }),
         m(Select, {
@@ -210,6 +222,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           checkedId: alertInfo.category,
           onchange: v => {
             alertInfo.category = v as Category | Category[];
+            update();
           },
         }),
         m(EditableTable, {
@@ -231,6 +244,7 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
               value: JSON.stringify(data),
             });
             alertInfo.parameter = state.parameters = updatedActionList;
+            update();
           },
         } as IEditableTable<IActionList>),
         m(MapEditor, {
@@ -241,17 +255,15 @@ export const CapMessageForm: FactoryComponent<{ inject: IInject; onChange?: () =
           disallowArrays: true,
           keyClass: '.col.s4.m3',
           valueClass: '.col.s8.m9',
-          properties: parameters.reduce(
-            (acc, cur) => {
-              acc[cur.valueName] = cur.value;
-              return acc;
-            },
-            {} as { [key: string]: string }
-          ),
+          properties: parameters.reduce((acc, cur) => {
+            acc[cur.valueName] = cur.value;
+            return acc;
+          }, {} as { [key: string]: string }),
           onchange: (props: { [key: string]: string | number | boolean | Array<string | number> }) => {
             alertInfo.parameter = state.parameters = Object.keys(props).map(
               p => ({ valueName: p, value: props[p] } as IValueNamePair)
             );
+            update();
           },
         }),
       ];

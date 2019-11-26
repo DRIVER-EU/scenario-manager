@@ -5,14 +5,15 @@ import { getMessage, IInject, MessageType, IPhaseMessage, Phase } from 'trial-ma
 export const PhaseMessageForm: FactoryComponent<{
   inject: IInject;
   disabled?: boolean;
-  onChange?: () => void;
+  onChange?: (i: IInject) => void;
 }> = () => {
   const setTitle = (inject: IInject, pm: IPhaseMessage) => {
     const name = pm.phase === Phase.PROPER_NAME ? pm.alternativeName : Phase[pm.phase];
     inject.title = `${pm.isStarting ? 'START' : 'END'} ${name}`;
   };
   return {
-    view: ({ attrs: { inject, disabled } }) => {
+    view: ({ attrs: { inject, disabled, onChange } }) => {
+      const update = () => onChange && onChange(inject);
       const pm = getMessage(inject, MessageType.PHASE_MESSAGE) as IPhaseMessage;
       const options = Object.keys(Phase).map(p => ({ id: p, label: p }));
       // console.table(pm);
@@ -30,6 +31,7 @@ export const PhaseMessageForm: FactoryComponent<{
               pm.isStarting = true;
             }
             setTitle(inject, pm);
+            update();
           },
         }),
         pm.phase === Phase.PROPER_NAME

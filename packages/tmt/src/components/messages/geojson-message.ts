@@ -9,7 +9,7 @@ import { geoJSON, GeoJSON } from 'leaflet';
 
 export const GeoJsonMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: () => void;
+  onChange?: (inject: IInject) => void;
   disabled?: boolean;
 }> = () => {
   const state = {
@@ -23,7 +23,8 @@ export const GeoJsonMessageForm: FactoryComponent<{
     oninit: async () => {
       state.assets = await TrialSvc.mapOverlays();
     },
-    view: ({ attrs: { inject, disabled } }) => {
+    view: ({ attrs: { inject, disabled, onChange } }) => {
+      const update = () => onChange && onChange(inject);
       const { overlay, assets = [] } = state;
       const pm = getMessage<IGeoJsonMessage>(inject, MessageType.GEOJSON_MESSAGE);
       const subjects = getMessageSubjects(MessageType.GEOJSON_MESSAGE);
@@ -68,7 +69,10 @@ export const GeoJsonMessageForm: FactoryComponent<{
             isMandatory: true,
             options: subjects,
             checkedId: pm.subjectId,
-            onchange: v => (pm.subjectId = v[0] as string),
+            onchange: v => {
+              pm.subjectId = v[0] as string;
+              update();
+            },
           }),
           m(Select, {
             disabled,
@@ -83,6 +87,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
               pm.assetId = assetId;
               const asset = assets.filter(a => a.id === assetId).shift();
               pm.alias = asset ? asset.alias : undefined;
+              update();
             },
           }),
           m(FlatButton, {

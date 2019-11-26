@@ -15,12 +15,13 @@ import { createEmailLink, createPhoneLink, getRolePlayerMessageIcon } from '../.
 
 export const RolePlayerMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: () => void;
+  onChange?: (i: IInject) => void;
   disabled?: boolean;
   checkpoint?: boolean;
 }> = () => {
   return {
-    view: ({ attrs: { inject, disabled, checkpoint = false } }) => {
+    view: ({ attrs: { inject, disabled, checkpoint = false, onChange } }) => {
+      const update = () => onChange && onChange(inject);
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayers = TrialSvc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
       const participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name }));
@@ -42,7 +43,10 @@ export const RolePlayerMessageForm: FactoryComponent<{
           placeholder: 'Pick role player',
           options: rolePlayers,
           checkedId: rpm.rolePlayerId,
-          onchange: v => (rpm.rolePlayerId = v[0] as string),
+          onchange: v => {
+            rpm.rolePlayerId = v[0] as string;
+            update();
+          },
         }),
         checkpoint
           ? undefined
@@ -54,7 +58,10 @@ export const RolePlayerMessageForm: FactoryComponent<{
               placeholder: 'Select type',
               options: types,
               checkedId: rpm.type,
-              onchange: v => (rpm.type = v[0] as RolePlayerMessageType),
+              onchange: v => {
+                rpm.type = v[0] as RolePlayerMessageType;
+                update();
+              },
             }),
         isAction
           ? undefined
@@ -68,7 +75,10 @@ export const RolePlayerMessageForm: FactoryComponent<{
               multiple: true,
               options: participants,
               initialValue: rpm.participantIds,
-              onchange: v => (rpm.participantIds = v as string[]),
+              onchange: v => {
+                rpm.participantIds = v as string[];
+                update();
+              },
             }),
         m(TextInput, {
           disabled,
@@ -145,7 +155,7 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject;
   };
 
   return {
-    view: ({ attrs: { inject, disabled } }) => {
+    view: ({ attrs: { inject } }) => {
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayer =
         TrialSvc.getUsers()
