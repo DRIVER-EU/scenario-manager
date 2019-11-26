@@ -164,7 +164,7 @@ const MediaStateControl: FactoryComponent<{
           return m('.row', [
             m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time, realtime }),
             m(FlatButton, {
-              label: 'Reset time',
+              label: 'Reset session',
               // iconName: 'timer_off',
               onclick: async () => {
                 await RunSvc.unload();
@@ -215,7 +215,7 @@ const MediaStateControl: FactoryComponent<{
           return m(
             '.row',
             m(FlatButton, {
-              label: 'Reset time',
+              label: 'Reset session',
               // iconName: 'timer_off',
               onclick: () => {
                 sendCmd(socket, { command: TimingControlCommand.Reset });
