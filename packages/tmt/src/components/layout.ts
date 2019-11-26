@@ -6,7 +6,7 @@ import { StatusBar } from './status/status-bar';
 import { Icon } from 'mithril-materialized';
 import { MediaControls } from './session/time-control';
 import { AppState } from '../models';
-import { TimeState } from 'trial-manager-models';
+import { TimeState, SessionState } from 'trial-manager-models';
 
 export const Layout: FactoryComponent<{}> = () => {
   return {
@@ -29,18 +29,19 @@ export const Layout: FactoryComponent<{}> = () => {
       const time = AppState.time;
       const trial = TrialSvc.getCurrent();
       const trialTitle = trial && trial.title ? trial.title.toUpperCase() : '';
+      const isRunning = AppState.session && AppState.session.sessionState === SessionState.START;
+      const title =
+        isRunning && AppState.session.sessionName
+          ? `${trialTitle} - ${AppState.session.sessionName.toLowerCase()}`
+          : trialTitle;
 
       return m('container', [
         m('nav', { class: hasSubDashboards ? 'nav-extended' : '' }, [
           m('.nav-wrapper', [
-            m(
-              'a.brand-logo',
-              { style: 'margin-left: 20px' },
-              [
-                m(`img[width=32][height=32][src=${owl}]`, { style: 'margin: 5px 10px 0 -5px;' }),
-                m('span.black-text', { style: 'vertical-align: top;' }, trialTitle),
-              ]
-            ),
+            m('a.brand-logo', { style: 'margin-left: 20px' }, [
+              m(`img[width=32][height=32][src=${owl}]`, { style: 'margin: 5px 10px 0 -5px;' }),
+              m('span.black-text', { style: 'vertical-align: top;' }, title),
+            ]),
             m(
               'ul.right',
               dashboardSvc
@@ -49,11 +50,7 @@ export const Layout: FactoryComponent<{}> = () => {
                 .map(d =>
                   m(
                     `li${isActive(mainPath(d.route))}`,
-                    m(
-                      m.route.Link,
-                      { href: d.route },
-                      d.iconName ? m(Icon, { iconName: d.iconName }) : d.title
-                    )
+                    m(m.route.Link, { href: d.route }, d.iconName ? m(Icon, { iconName: d.iconName }) : d.title)
                   )
                 )
             ),
