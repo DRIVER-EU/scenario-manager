@@ -220,7 +220,7 @@ export const SessionControl: FactoryComponent = () => {
       TrialSvc.getCurrent().id !== session.trialId
     ) {
       M.toast({
-        html: `The Test-bed is currently running another trial: ${session.trialName}`,
+        html: `There is currently another trial running: ${session.trialName}`,
         classes: 'orange',
       });
     }
