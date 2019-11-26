@@ -1,6 +1,17 @@
 import { RestService, AssetService } from '.';
 import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
-import { IObjective, IPerson, IStakeholder, IInject, IAsset, ITrial, uniqueId, UserRole } from 'trial-manager-models';
+import {
+  IObjective,
+  IPerson,
+  IStakeholder,
+  IInject,
+  IAsset,
+  ITrial,
+  uniqueId,
+  UserRole,
+  InjectConditionType,
+  InjectType,
+} from 'trial-manager-models';
 import { userRolesFilter, arrayMove, debounce } from '../utils';
 import { OverlaySvc } from './overlay-service';
 
@@ -263,6 +274,12 @@ class TrialService extends RestService<ITrial> {
         errors.push(`Inject ${i.title} depends on a non-existing condition.`);
         i.isValid = 'invalid';
         invalidateParents(i.parentId);
+      } else if (
+        i.condition &&
+        !(i.type === InjectType.SCENARIO || i.condition.type === InjectConditionType.AT_TIME || i.condition.injectId)
+      ) {
+        errors.push(`Inject ${i.title} has not defined the inject it depends on.`);
+        i.isValid = 'invalid';
       } else {
         i.isValid = 'valid';
       }
@@ -286,7 +303,9 @@ class TrialService extends RestService<ITrial> {
 
   // Delete inject, including all children
   public async deleteInject(i: IInject) {
-    if (!this.current) { return; }
+    if (!this.current) {
+      return;
+    }
     console.warn(this.current.injects.length);
     let injects = this.current.injects;
     const findChildren = (inject: IInject) => injects.filter(s => s.parentId === inject.id);
@@ -304,7 +323,9 @@ class TrialService extends RestService<ITrial> {
 
   /* ASSETS */
 
-  public async mapOverlays() { return this.assetSvc ? this.assetSvc.mapOverlays() || [] : [] as IAsset[]; }
+  public async mapOverlays() {
+    return this.assetSvc ? this.assetSvc.mapOverlays() || [] : ([] as IAsset[]);
+  }
 
   public async loadMapOverlay(id: number | string) {
     return this.assetSvc && this.assetSvc.loadMapOverlay(id);
@@ -314,7 +335,9 @@ class TrialService extends RestService<ITrial> {
     if (!this.current) {
       return;
     }
-    assetsChannel.publish(TopicNames.ITEM_CREATE, { cur: { alias: 'New_asset' } as IAsset });
+    assetsChannel.publish(TopicNames.ITEM_CREATE, {
+      cur: { alias: 'New_asset' } as IAsset,
+    });
   }
 
   /** Create or update an asset */
