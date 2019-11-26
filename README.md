@@ -50,6 +50,13 @@ During execution, all messages (a.k.a. injects) are pass through 5 states:
 
 ## TODO
 
+- Check why role player's participant multi-select closes on each click
+- When setting the send link's link type, it is not automatically saved
+- When creating a new scenario, the title is not updated in the dropdown
+- Add user selection
+- Add user authorization
+- Create default user/stakeholder/role-player etc when creating a new trial
+
 - Add Tactical Simulation Object (EMSI) message.
 - Add settings/items (e.g. buildings, vehicles, weapons, etc.)
   - Properties: Alias, title, description, picture.

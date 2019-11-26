@@ -9,12 +9,12 @@ import {
 } from 'node-test-bed-adapter';
 
 export default {
+  // kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
+  // schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
+  kafkaHost: process.env.KAFKA_HOST || 'tb3.driver-testbed.eu:3531',
+  schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb3.driver-testbed.eu:3532',
   // kafkaHost: process.env.KAFKA_HOST || 'tb4.driver-testbed.eu:3541',
   // schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb4.driver-testbed.eu:3542',
-  kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
-  schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
-  // kafkaHost: process.env.KAFKA_HOST || 'driver-testbed.eu:3551',
-  // schemaRegistry: process.env.SCHEMA_REGISTRY || 'driver-testbed.eu:3552',
   // kafkaHost: process.env.KAFKA_HOST || 'tb5.driver-testbed.eu:3551',
   // schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb5.driver-testbed.eu:3552',
   // kafkaHost: 'driver-testbed.eu:3501',
@@ -46,7 +46,8 @@ export default {
         // 'flood_prediction_geojson',
         // 'standard_cap',
         // 'standard_geojson',
-        // 'system_large_data_update',
+        'large_data_update',
+        'simulation_request_startinject',
         // 'sumo_SumoConfiguration',
         // 'sumo_AffectedArea',
         // 'simulation_request_startinject',
