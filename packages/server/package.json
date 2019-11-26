@@ -16,13 +16,13 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@nestjs/common": "^6.6.7",
-    "@nestjs/core": "^6.6.7",
+    "@nestjs/common": "^6.10.2",
+    "@nestjs/core": "^6.10.2",
     "@nestjs/swagger": "^3.1.0",
-    "@nestjs/websockets": "^6.6.7",
-    "@nestjs/platform-express": "^6.6.7",
-    "@nestjs/platform-socket.io": "^6.6.7",
-    "swagger-ui-express": "^4.0.7",
+    "@nestjs/websockets": "^6.10.2",
+    "@nestjs/platform-express": "^6.10.2",
+    "@nestjs/platform-socket.io": "^6.10.2",
+    "swagger-ui-express": "^4.1.2",
     "express": "^4.17.1",
     "body-parser": "^1.19.0",
     "link": "^0.1.5",
@@ -36,15 +36,15 @@
     "trial-manager-models": "^0.0.1"
   },
   "devDependencies": {
-    "@types/express": "^4.17.1",
-    "@types/express-serve-static-core": "^4.16.9",
-    "@types/node": "^12.7.4",
-    "@types/socket.io": "^2.1.2",
+    "@types/express": "^4.17.2",
+    "@types/express-serve-static-core": "^4.17.0",
+    "@types/node": "^12.12.14",
+    "@types/socket.io": "^2.1.4",
     "@types/sqlite3": "^3.1.5",
-    "@types/marked": "^0.6.5",
-    "tsc-watch": "^2.4.0",
-    "tsconfig-paths": "^3.8.0",
-    "typescript": "^3.6.2",
+    "@types/marked": "^0.7.2",
+    "tsc-watch": "^4.0.0",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^3.7.2",
     "rimraf": "^3.0.0"
   }
 }

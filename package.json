@@ -14,7 +14,7 @@
 		"docker:sh": "docker run -it trial-management-tool sh"
 	},
 	"devDependencies": {
-		"lerna": "^3.16.4"
+		"lerna": "^3.19.0"
 	},
 	"name": "trial-management-tool",
 	"dependencies": {}
