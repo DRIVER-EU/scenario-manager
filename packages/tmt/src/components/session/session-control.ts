@@ -218,7 +218,6 @@ export const SessionControl: FactoryComponent = () => {
       session.sessionState === SessionState.START &&
       TrialSvc.getCurrent().id !== session.trialId
     ) {
-      debugger;
       M.toast({
         html: `There is currently another trial running: ${session.trialName}`,
         classes: 'orange',
