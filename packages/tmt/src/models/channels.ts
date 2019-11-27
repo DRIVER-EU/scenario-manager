@@ -7,8 +7,8 @@ import {
   IStakeholder,
   IAsset,
   ITimingControlMessage,
+  IExecutingInject,
 } from 'trial-manager-models';
-import { IExecutingInject } from './executing-inject';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',

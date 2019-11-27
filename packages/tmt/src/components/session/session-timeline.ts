@@ -10,8 +10,8 @@ import {
   toMsec,
   ITimeMessage,
   IInjectSimState,
+  IExecutingInject,
 } from 'trial-manager-models';
-import { IExecutingInject } from '../../models/executing-inject';
 import { TopicNames, AppState, executingChannel } from '../../models';
 import { ScenarioTimeline, ITimelineItem, IExecutingTimelineItem } from 'mithril-scenario-timeline';
 import { Icon } from 'mithril-materialized';
