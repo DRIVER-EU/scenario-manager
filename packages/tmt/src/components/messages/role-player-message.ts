@@ -8,9 +8,9 @@ import {
   IRolePlayerMsg,
   RolePlayerMessageType,
   IPerson,
+  IExecutingInject,
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
-import { IExecutingInject } from '../../models';
 import { createEmailLink, createPhoneLink, getRolePlayerMessageIcon } from '../../utils';
 
 export const RolePlayerMessageForm: FactoryComponent<{

@@ -1,6 +1,12 @@
 import m, { FactoryComponent } from 'mithril';
-import { InjectState, InjectConditionType, ITimingControlMessage, TimingControlCommand } from 'trial-manager-models';
-import { IExecutingInject, timeControlChannel, TopicNames } from '../../models';
+import {
+  InjectState,
+  InjectConditionType,
+  ITimingControlMessage,
+  TimingControlCommand,
+  IExecutingInject,
+} from 'trial-manager-models';
+import { timeControlChannel, TopicNames } from '../../models';
 import { FlatButton } from 'mithril-materialized';
 import { RunSvc, SocketSvc } from '../../services';
 import { formatTime } from '../../utils';

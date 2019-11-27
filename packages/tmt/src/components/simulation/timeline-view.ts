@@ -7,12 +7,13 @@ import {
   InjectConditionType,
   getAncestors,
   IInjectSimStates,
+  IExecutingInject,
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { simulationEngine } from './simulation-engine';
 import { Select, ISelectOptions, ITimelineItem } from 'mithril-materialized';
 import { getInjectIcon, getIcon, padLeft } from '../../utils';
-import { IExecutingInject, AppState, executingChannel, TopicNames } from '../../models';
+import { AppState, executingChannel, TopicNames } from '../../models';
 import { Timeline } from 'mithril-materialized';
 
 export const TimelineView: FactoryComponent = () => {
@@ -33,18 +34,15 @@ export const TimelineView: FactoryComponent = () => {
       if (!trial) {
         return;
       }
-      const injectNames = trial.injects.reduce(
-        (acc, cur) => {
-          const ancestors = getAncestors(trial.injects, cur);
-          ancestors.pop(); // Remove scenario
-          acc[cur.id] = ancestors
-            .reverse()
-            .map(i => i.title)
-            .join(' > ');
-          return acc;
-        },
-        {} as { [key: string]: string }
-      );
+      const injectNames = trial.injects.reduce((acc, cur) => {
+        const ancestors = getAncestors(trial.injects, cur);
+        ancestors.pop(); // Remove scenario
+        acc[cur.id] = ancestors
+          .reverse()
+          .map(i => i.title)
+          .join(' > ');
+        return acc;
+      }, {} as { [key: string]: string });
       const scenarios = trial.injects.filter(i => i.type === InjectType.SCENARIO);
       if (!scenarios || scenarios.length === 0) {
         return;

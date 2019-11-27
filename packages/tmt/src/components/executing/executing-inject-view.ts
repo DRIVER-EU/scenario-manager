@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
-import { deepCopy, InjectType } from 'trial-manager-models';
-import { executingChannel, TopicNames, IExecutingInject } from '../../models';
+import { deepCopy, InjectType, IExecutingInject } from 'trial-manager-models';
+import { executingChannel, TopicNames } from '../../models';
 import { Icon } from 'mithril-materialized';
 import { getMessageIcon, getMessageTitle, getInjectIcon } from '../../utils';
 import { ExecutingMessageView } from './executing-message-view';

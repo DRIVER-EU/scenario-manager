@@ -15,9 +15,9 @@ import {
   IScenario,
   IareaPoly,
   ILocation,
+  IExecutingInject,
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
-import { IExecutingInject } from '../models';
 import { geoJSON, LatLngExpression } from 'leaflet';
 import { Polygon, FeatureCollection, LineString } from 'geojson';
 
@@ -492,13 +492,10 @@ export const geoJSONtoAffectedArea = (geojson: FeatureCollection<Polygon>) =>
     ? undefined
     : {
         type: 'MultiPolygon',
-        coordinates: geojson.features.reduce(
-          (acc, f) => {
-            acc.push(f.geometry.coordinates);
-            return acc;
-          },
-          [] as number[][][][]
-        ),
+        coordinates: geojson.features.reduce((acc, f) => {
+          acc.push(f.geometry.coordinates);
+          return acc;
+        }, [] as number[][][][]),
       };
 
 export const routeToGeoJSON = (route?: ILocation[] | null) => {
@@ -512,13 +509,10 @@ export const routeToGeoJSON = (route?: ILocation[] | null) => {
       properties: {},
       geometry: {
         type: 'LineString',
-        coordinates: route.reduce(
-          (acc, loc) => {
-            acc.push([loc.longitude, loc.latitude, loc.altitude || 0]);
-            return acc;
-          },
-          [] as number[][]
-        ),
+        coordinates: route.reduce((acc, loc) => {
+          acc.push([loc.longitude, loc.latitude, loc.altitude || 0]);
+          return acc;
+        }, [] as number[][]),
       },
     });
   }
@@ -538,7 +532,9 @@ export const geoJSONtoRoute = (geojson: FeatureCollection<LineString>) =>
       );
 
 export const arrayMove = <T>(arr: Array<T | undefined>, oldIndex: number, newIndex: number) => {
-  if (oldIndex < 0 || newIndex < 0) { return; }
+  if (oldIndex < 0 || newIndex < 0) {
+    return;
+  }
   if (newIndex >= arr.length) {
     let k = newIndex - arr.length + 1;
     while (k--) {
