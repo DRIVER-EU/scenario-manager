@@ -9,7 +9,7 @@ import { IInject, InjectType, MessageType, UnitType, IInjectGroup } from '..';
  */
 export const uniqueId = () => {
   // tslint:disable-next-line:no-bitwise
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     // tslint:disable-next-line:no-bitwise
     const r = (Math.random() * 16) | 0;
     // tslint:disable-next-line:no-bitwise
@@ -79,7 +79,6 @@ export const getAllChildren = (injects: IInject[], id: string): Array<IInjectGro
   const children = injects.filter(i => i.parentId === id);
   return children.reduce((acc, c) => [...acc, ...getAllChildren(injects, c.id)], children);
 };
-
 
 /**
  * Find an inject by ID
@@ -185,20 +184,72 @@ export const geojsonToAvro = (geojson?: FeatureCollection) => {
 /** Convert a flat object to an AVRO representation, where all numbers will either be int or double. */
 export const mapToAvro = (props: { [key: string]: any } | null) => {
   if (props && Object.keys(props).length > 0) {
-    return Object.keys(props).reduce(
-      (acc, key) => {
-        const val = props[key];
-        acc[key] = {} as { [key: string]: any };
-        if (typeof val === 'object') {
-          acc[key].string = JSON.stringify(val);
-        } else if (typeof val === 'number') {
-          acc[key][isInt(val) ? 'int' : 'double'] = val;
-        } else {
-          acc[key][typeof val] = val;
-        }
-        return acc;
-      },
-      {} as { [key: string]: any }
-    );
+    return Object.keys(props).reduce((acc, key) => {
+      const val = props[key];
+      acc[key] = {} as { [key: string]: any };
+      if (typeof val === 'object') {
+        acc[key].string = JSON.stringify(val);
+      } else if (typeof val === 'number') {
+        acc[key][isInt(val) ? 'int' : 'double'] = val;
+      } else {
+        acc[key][typeof val] = val;
+      }
+      return acc;
+    }, {} as { [key: string]: any });
   }
 };
+
+/**
+ * A function that emits a side effect and does not return anything.
+ */
+export type Procedure = (...args: any[]) => void;
+
+export type Options = {
+  isImmediate: boolean;
+};
+
+export const debounce = <F extends Procedure>(
+  func: F,
+  waitMilliseconds = 50,
+  options: Options = {
+    isImmediate: false,
+  }
+): F => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  return function(this: any, ...args: any[]) {
+    const context = this;
+
+    const doLater = () => {
+      timeoutId = undefined;
+      if (!options.isImmediate) {
+        func.apply(context, args);
+      }
+    };
+
+    const shouldCallNow = options.isImmediate && timeoutId === undefined;
+
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+    }
+
+    timeoutId = setTimeout(doLater, waitMilliseconds);
+
+    if (shouldCallNow) {
+      func.apply(context, args);
+    }
+  } as any;
+};
+// /**
+//  * A function that emits a side effect and does not return anything.
+//  */
+// export type Procedure = (...args: any[]) => any;
+
+// export const debounce = <T extends Procedure>(cb: T, waitMilliseconds = 20) => {
+//   let h = 0;
+//   const callable = (...args: any) => {
+//     clearTimeout(h);
+//     h = setTimeout(() => cb(...args), waitMilliseconds);
+//   };
+//   return callable;
+// };

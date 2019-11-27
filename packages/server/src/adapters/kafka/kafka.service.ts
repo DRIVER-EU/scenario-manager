@@ -23,6 +23,7 @@ import {
   IAffectedArea,
   ISumoConfiguration,
   ILargeDataUpdate,
+  debounce,
 } from 'trial-manager-models';
 export { ITimingControl } from 'node-test-bed-adapter';
 
@@ -45,6 +46,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   private options: ITestBedOptions;
   private kafkaHost: string;
   private session?: ISessionMgmt;
+  private debouncedEmit: (event: string | symbol, ...args: any[]) => void;
   private log = Logger.instance;
 
   constructor(config: ConfigService) {
@@ -62,6 +64,7 @@ export class KafkaService extends EventEmitter implements TimeService {
     });
     console.log(`Produce topics: ${this.options.produce.join(', ')}`);
     this.kafkaHost = this.options.kafkaHost;
+    this.debouncedEmit = debounce(this.emit, 1000);
   }
 
   public connect() {
@@ -194,7 +197,7 @@ export class KafkaService extends EventEmitter implements TimeService {
     switch (message.topic) {
       case TrialManagementSessionMgmtTopic:
         this.session = message.value as ISessionMgmt;
-        this.emit('session-update', this.session);
+        this.debouncedEmit('session-update', this.session);
         break;
       default:
         console.warn('Unhandled message: ' + message.value);

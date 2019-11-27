@@ -9,7 +9,6 @@ marked.setOptions({
   langPrefix: 'ts',
   pedantic: false,
   gfm: true,
-  tables: true,
   breaks: true,
   sanitize: false,
   smartLists: true,
