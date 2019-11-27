@@ -31,24 +31,30 @@ export const pruneInjects = (scenario: IScenario, allInjects: IInject[]) => {
 };
 
 /**
+ * Create a sim state.
+ *
+ * @param trialTime current trial time
+ * @param injects all relevant injects for the active scenario
+ */
+export const createSimState = (trialTime: Date, i: IInject) =>
+  ({
+    state: i.condition ? InjectState.ON_HOLD : InjectState.IN_PROGRESS,
+    lastTransitionAt: trialTime,
+    title: `${i.type}: ${i.title}`,
+    delayInSeconds: 0,
+  } as IInjectSimState);
+
+/**
  * Create the initial state.
  *
  * @param trialTime current trial time
  * @param injects all relevant injects for the active scenario
  */
 export const createInitialState = (trialTime: Date, injects: IInject[]) => {
-  return injects.reduce(
-    (acc, i) => {
-      acc[i.id] = {
-        state: i.condition ? InjectState.ON_HOLD : InjectState.IN_PROGRESS,
-        lastTransitionAt: trialTime,
-        title: `${i.type}: ${i.title}`,
-        delayInSeconds: 0,
-      } as IInjectSimState;
-      return acc;
-    },
-    {} as IInjectSimStates
-  );
+  return injects.reduce((acc, i) => {
+    acc[i.id] = createSimState(trialTime, i);
+    return acc;
+  }, {} as IInjectSimStates);
 };
 
 /**
