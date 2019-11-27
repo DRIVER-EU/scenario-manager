@@ -26,6 +26,8 @@ import { StateTransitionRequest } from '../../adapters/models';
 export class RunService {
   @WebSocketServer() private server: Server;
   private session: ISessionMgmt;
+  /** Queue fr new and updated injects */
+  private readonly injectsQueue: IInject[] = [];
   private readonly transitionQueue: StateTransitionRequest[] = [];
   private trial: ITrial;
   private scenario: IScenario;
@@ -67,6 +69,7 @@ export class RunService {
     this.injects = pruneInjects(this.scenario, this.trial.injects);
 
     this.sendConnectionStatus();
+    console.table(this.session);
     this.kafkaService.sendSessionMessage(this.session);
 
     const startUpdateLoop = () => {
@@ -120,6 +123,13 @@ export class RunService {
     return true;
   }
 
+  /** Update or create a new inject */
+  public updateOrCreateInject(i: IInject) {
+    this.injectsQueue.push(i);
+    // console.dir("Inject Found: " + x.title + " with ID: " + x.id);
+    console.dir('run.service received inject: ' + i.title);
+  }
+
   /** Process all injects and update the states */
   private updateLoop() {
     const scheduleRestart = () => {
@@ -138,6 +148,7 @@ export class RunService {
       scheduleRestart();
     }
     this.trialTime = time;
+    this.processInjectsQueue();
     this.transitionInjects();
     this.processTransitionQueue();
     this.executeInjects();
@@ -154,6 +165,24 @@ export class RunService {
         `${new Date()}: Processing one transmission request from ${tr.from}.`,
       );
       this.transition(tr, t);
+    }
+  }
+
+  /** Process all manual requests to transition a state. */
+  private processInjectsQueue() {
+    while (this.injectsQueue.length > 0) {
+      const inject = this.injectsQueue.shift();
+      const { id } = inject;
+      const found = this.injects.findIndex(u => u.id === id);
+      if (found) {
+        console.log(`${new Date()}: Updating inject ${inject.title}.`);
+        this.injects[found] = inject;
+        this.server.emit('updatedInject', inject);
+      } else {
+        console.log(`${new Date()}: Adding inject ${inject.title}.`);
+        this.injects.push(inject);
+        this.server.emit('createdInject', inject);
+      }
     }
   }
 

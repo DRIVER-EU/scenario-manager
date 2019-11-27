@@ -12,12 +12,14 @@ import {
   Delete,
   Inject,
   Body,
+  Header,
   HttpStatus,
-  HttpException,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { RunService } from './run.service';
 import { SessionMessage } from '../../adapters/models';
-import { StateTransitionRequest } from '../../adapters/models/state-transition-request';
+import { StateTransitionRequest, Inject as ScenarioInject } from '../../adapters/models';
 import { SessionState } from 'trial-manager-models';
 
 @ApiUseTags('run')
@@ -33,69 +35,89 @@ export class RunController {
     description: 'Session message',
     type: SessionMessage,
   })
-  @ApiResponse({ status: 503, description: 'Error message', type: String })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Reason message',
+    type: String,
+  })
   @Get('active')
-  loaded() {
+  @Header('Cache-Control', 'max-age=1')
+  loaded(@Res() response: Response) {
     if (this.isLoading) {
-      throw new HttpException(
-        'Currently loading a new scenario',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      return response
+        .status(HttpStatus.NO_CONTENT)
+        .send('Currently loading a new scenario');
     }
     const session = this.runService.activeSession;
     if (!session) {
-      throw new HttpException(
-        'No session is created',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+      return response.status(HttpStatus.NO_CONTENT).send('No active session');
     }
-    return session;
+    return response.send(session);
   }
 
   @ApiOperation({ title: 'Deactivate trial scenario' })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'No scenario active',
+    type: String,
+  })
   @Delete('unload')
-  async unload() {
-    if (!this.runService.activeSession) {
-      throw new HttpException(
-        'No scenario is loaded, please activate one first',
-        HttpStatus.SERVICE_UNAVAILABLE,
-      );
+  async unload(@Res() response: Response) {
+    if (
+      !this.runService.activeSession ||
+      this.runService.activeSession.sessionState !== SessionState.START
+    ) {
+      return response
+        .status(HttpStatus.NOT_FOUND)
+        .send('No scenario active, please activate one first');
     }
     if (this.runService.activeSession.sessionState === SessionState.START) {
       await this.runService.close();
+      return response.sendStatus(HttpStatus.OK);
     }
   }
 
-  @ApiOperation({ title: 'Load a trial scenario' })
+  @ApiOperation({ title: 'Load a trial scenario and start a new session' })
+  @ApiResponse({
+    status: HttpStatus.PROCESSING,
+    description: 'Busy loading',
+    type: String,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Either a scenario is already active, or no such trial exists',
+    type: String,
+  })
   @ApiImplicitBody({
     name: 'Session message',
     type: SessionMessage,
   })
   @Post('load')
-  async load(@Body() session: SessionMessage) {
+  async load(@Body() session: SessionMessage, @Res() response: Response) {
     if (this.isLoading) {
-      throw new HttpException(
-        'Already loading a new scenario',
-        HttpStatus.PRECONDITION_FAILED,
-      );
+      return response
+        .status(HttpStatus.PROCESSING)
+        .send('Already loading a new scenario');
     }
-    if (this.runService.activeSession && this.runService.activeSession.sessionState === SessionState.START) {
-      throw new HttpException(
-        'First deactivate current scenario',
-        HttpStatus.PRECONDITION_FAILED,
-      );
+    if (
+      this.runService.activeSession &&
+      this.runService.activeSession.sessionState === SessionState.START
+    ) {
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('First deactivate current scenario');
     }
     try {
       this.isLoading = true;
       this.runService.init(session);
     } catch (err) {
       this.isLoading = false;
-      throw new HttpException(
-        'Could not load trial or scenario',
-        HttpStatus.BAD_REQUEST,
-      );
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send('Could not load trial or scenario');
     }
     this.isLoading = false;
+    return response.sendStatus(HttpStatus.OK);
   }
 
   @ApiOperation({ title: 'Request a state transition which may fail.' })
@@ -106,5 +128,29 @@ export class RunController {
   @Put('transition')
   async stateTransitionRequest(@Body() tr: StateTransitionRequest) {
     this.runService.stateTransitionRequest(tr);
+  }
+
+  @ApiOperation({ title: 'Update an inject in a running scenario.' })
+  @ApiImplicitBody({
+    name: 'Update inject',
+    type: ScenarioInject,
+  })
+  @Put('update')
+  async updateInject(@Body() i: ScenarioInject) {
+    console.dir(`Changed ${i.title} to:`);
+    console.dir(i);
+    this.runService.updateOrCreateInject(i);
+  }
+
+  @ApiOperation({ title: 'Create a new inject and add it to the running scenario.' })
+  @ApiImplicitBody({
+    name: 'Create inject',
+    type: ScenarioInject,
+  })
+  @Post('create')
+  async createInject(@Body() i: ScenarioInject) {
+    console.dir('New inject: ' + i.title + ':');
+    console.dir(i);
+    this.runService.updateOrCreateInject(i);
   }
 }
