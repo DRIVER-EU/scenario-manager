@@ -2,6 +2,7 @@ export * from './asset';
 export * from './connect-message';
 export * from './content';
 export * from './execution-service';
+export * from './executing-inject';
 export * from './inject-sim-state';
 export * from './inject';
 export * from './location';
