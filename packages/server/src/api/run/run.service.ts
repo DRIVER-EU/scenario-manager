@@ -69,7 +69,6 @@ export class RunService {
     this.injects = pruneInjects(this.scenario, this.trial.injects);
 
     this.sendConnectionStatus();
-    console.table(this.session);
     this.kafkaService.sendSessionMessage(this.session);
 
     const startUpdateLoop = () => {
