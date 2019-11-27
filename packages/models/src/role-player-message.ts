@@ -23,7 +23,7 @@ export interface IRolePlayerMsg {
 export const rolePlayerMessageToTestbed = (
   rpm: IRolePlayerMsg,
   rolePlayerName: string = 'UNDEFINED',
-  participantsName?: string[],
+  participantNames?: string[],
   comment = ''
 ) => ({
   id: rpm.id,
@@ -32,6 +32,6 @@ export const rolePlayerMessageToTestbed = (
   headline: rpm.headline || '',
   description: rpm.description || '',
   rolePlayerName,
-  participantsName,
+  participantNames,
   comment,
 } as IRolePlayerMessage);

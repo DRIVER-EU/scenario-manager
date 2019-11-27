@@ -159,13 +159,16 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public get timeMessage() {
-    return {
-      updatedAt: Date.now(),
-      trialTime: this.trialTime.valueOf(),
-      timeElapsed: this.adapter.timeElapsed.valueOf(),
-      trialTimeSpeed: this.adapter.trialTimeSpeed,
-      state: this.adapter.state,
-    } as ITiming;
+    return (
+      this.adapter.trialTime &&
+      ({
+        updatedAt: Date.now(),
+        trialTime: this.trialTime.valueOf(),
+        timeElapsed: this.adapter.timeElapsed.valueOf(),
+        trialTimeSpeed: this.adapter.trialTimeSpeed,
+        state: this.adapter.state,
+      } as ITiming)
+    );
   }
 
   public get trialTime() {
