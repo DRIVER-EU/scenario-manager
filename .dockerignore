@@ -1,4 +1,4 @@
 node_modules
 packages/models/node_modules
-packages/gui/node_modules
+packages/tmt/node_modules
 packages/server/node_modules

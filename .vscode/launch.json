@@ -30,7 +30,7 @@
       "url": "http://localhost:1234",
       "skipFiles": ["jquery.js"],
       "smartStep": true,
-      "webRoot": "${workspaceFolder}/packages/gui/dist"
+      "webRoot": "${workspaceFolder}/packages/tmt/dist"
     }
   ]
 }

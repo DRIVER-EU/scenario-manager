@@ -8,5 +8,5 @@
     "latex",
     "plaintext"
   ],
-  "typescript.tsdk": "./packages/gui/node_modules/typescript/lib"
+  "typescript.tsdk": "./packages/tmt/node_modules/typescript/lib"
 }
