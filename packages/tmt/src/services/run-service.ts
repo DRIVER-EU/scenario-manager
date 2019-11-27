@@ -43,12 +43,12 @@ class RunService {
   }
 
   /** Load a new scenario: can only be done when no other scenario is loaded. */
-  public async load(sm: ISessionMgmt) {
+  public async load(body: ISessionMgmt) {
     return m.request<void>({
       method: 'POST',
       url: this.baseUrl + 'load',
       withCredentials,
-      body: sm,
+      body,
     });
   }
 

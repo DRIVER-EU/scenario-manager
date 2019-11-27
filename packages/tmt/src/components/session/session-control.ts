@@ -34,9 +34,9 @@ const SessionSettings: FactoryComponent<{}> = () => {
   };
 
   const sessionManager = (cmd: 'start' | 'stop', trial?: ITrial, scenario?: IScenario) => {
-    const createSessionMsg = (sessionState: SessionState) => {
+    const createSessionMsg = () => {
       const {
-        session: { sessionName = 'New session created', comment },
+        session: { comment, sessionName = 'New session created' },
       } = AppState;
       if (trial && scenario) {
         const session = {
@@ -46,7 +46,7 @@ const SessionSettings: FactoryComponent<{}> = () => {
           scenarioName: scenario.title,
           sessionId: uniqueId(),
           sessionName,
-          sessionState,
+          sessionState: SessionState.START,
           comment,
         } as ISessionMgmt;
         AppState.session = session;
@@ -56,7 +56,7 @@ const SessionSettings: FactoryComponent<{}> = () => {
     };
     switch (cmd) {
       case 'start': {
-        const s = createSessionMsg(SessionState.START);
+        const s = createSessionMsg();
         if (s) {
           RunSvc.load(s)
             .then(() => setActiveSession(true))
@@ -138,7 +138,6 @@ const SessionSettings: FactoryComponent<{}> = () => {
                   disabled,
                   isMandatory: true,
                   onchange: (v: string) => (AppState.session.sessionName = v),
-                  iconName: 'title',
                 })
               ),
               m(
@@ -219,6 +218,7 @@ export const SessionControl: FactoryComponent = () => {
       session.sessionState === SessionState.START &&
       TrialSvc.getCurrent().id !== session.trialId
     ) {
+      debugger;
       M.toast({
         html: `There is currently another trial running: ${session.trialName}`,
         classes: 'orange',
