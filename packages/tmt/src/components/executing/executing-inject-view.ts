@@ -9,6 +9,7 @@ import { MessageForm } from '../messages/message-form';
 
 export const ExecutingInjectView: FactoryComponent = () => {
   const state = {
+    editing: false,
     inject: undefined as IExecutingInject | undefined,
     subscription: executingChannel.subscribe(TopicNames.ITEM_SELECT, ({ cur }) => {
       state.inject = cur ? deepCopy(cur) : undefined;
@@ -20,7 +21,7 @@ export const ExecutingInjectView: FactoryComponent = () => {
       state.subscription.unsubscribe();
     },
     view: () => {
-      const { inject } = state;
+      const { inject, editing } = state;
       const isGroupInject = inject && inject.type !== InjectType.INJECT;
 
       return m('.injects-form', [
@@ -42,7 +43,7 @@ export const ExecutingInjectView: FactoryComponent = () => {
                     m(MessageForm, { inject, disabled: true, key: inject.id }),
                   ]
                 : [
-                    m(ManualTransition, { inject, key: inject.id }),
+                    m(ManualTransition, { inject, editing: b => (state.editing = b), key: inject.id }),
                     m('h4', { key: -1 }, [
                       m(Icon, {
                         iconName: getMessageIcon(inject.messageType),
@@ -50,7 +51,9 @@ export const ExecutingInjectView: FactoryComponent = () => {
                       }),
                       getMessageTitle(inject.messageType),
                     ]),
-                    m(ExecutingMessageView, { inject, key: inject.id }),
+                    editing
+                      ? m(MessageForm, { inject, key: inject.id })
+                      : m(ExecutingMessageView, { inject, key: inject.id }),
                   ]
               : undefined
           )

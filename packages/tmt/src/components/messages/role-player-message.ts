@@ -111,7 +111,7 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject;
       case RolePlayerMessageType.MESSAGE:
       case RolePlayerMessageType.CALL:
         return m('.call', [
-          m('h6', 'Call the following participants'),
+          m('h6', 'Intended for the following participants'),
           participants
             ? m(Collection, {
                 mode: CollectionMode.BASIC,

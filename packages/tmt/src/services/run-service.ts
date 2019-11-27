@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { AppState } from '../models';
-import { IStateTransitionRequest, ISessionMgmt } from 'trial-manager-models';
+import { IStateTransitionRequest, ISessionMgmt, IInject } from 'trial-manager-models';
 import { messageBus } from '.';
 
 const withCredentials = false;
@@ -47,6 +47,26 @@ class RunService {
     return m.request<void>({
       method: 'POST',
       url: this.baseUrl + 'load',
+      withCredentials,
+      body,
+    });
+  }
+
+  /** Update an inject */
+  public async updateInject(body: IInject) {
+    return m.request<void>({
+      method: 'PUT',
+      url: this.baseUrl + 'update',
+      withCredentials,
+      body,
+    });
+  }
+
+  /** Update an inject */
+  public async createInject(body: IInject) {
+    return m.request<void>({
+      method: 'POST',
+      url: this.baseUrl + 'create',
       withCredentials,
       body,
     });

@@ -13,6 +13,7 @@ import {
   pruneInjects,
   IExecutionService,
   executeInjects,
+  createSimState,
   createInitialState,
   IInjectSimStates,
   IConnectMessage,
@@ -44,7 +45,7 @@ export class RunService {
   ) {}
 
   public get activeSession() {
-    return this.session ? this.session : this.kafkaService.currentSession ;
+    return this.session ? this.session : this.kafkaService.currentSession;
   }
 
   /** Initialize the new trial and scenario */
@@ -104,12 +105,12 @@ export class RunService {
   }
 
   private sendConnectionStatus() {
-    const cm = ({
+    const cm = {
       isConnected: this.kafkaService.isConnected(),
       time: this.kafkaService.timeMessage,
       session: this.kafkaService.currentSession,
       host: this.kafkaService.hostname,
-    } as IConnectMessage);
+    } as IConnectMessage;
     this.server.emit('is-connected', cm);
   }
 
@@ -123,10 +124,10 @@ export class RunService {
   }
 
   /** Update or create a new inject */
-  public updateOrCreateInject(i: IInject) {
-    this.injectsQueue.push(i);
+  public updateOrCreateInject(inject: IInject) {
+    this.injectsQueue.push(inject);
     // console.dir("Inject Found: " + x.title + " with ID: " + x.id);
-    console.dir('run.service received inject: ' + i.title);
+    console.dir('run.service received inject: ' + inject.title);
   }
 
   /** Process all injects and update the states */
@@ -167,7 +168,7 @@ export class RunService {
     }
   }
 
-  /** Process all manual requests to transition a state. */
+  /** Process all new and updated injects. */
   private processInjectsQueue() {
     while (this.injectsQueue.length > 0) {
       const inject = this.injectsQueue.shift();
@@ -176,10 +177,12 @@ export class RunService {
       if (found) {
         console.log(`${new Date()}: Updating inject ${inject.title}.`);
         this.injects[found] = inject;
+        this.states[id].title = inject.title;
         this.server.emit('updatedInject', inject);
       } else {
         console.log(`${new Date()}: Adding inject ${inject.title}.`);
         this.injects.push(inject);
+        this.states[id] = createSimState(this.trialTime, inject);
         this.server.emit('createdInject', inject);
       }
     }
@@ -194,7 +197,8 @@ export class RunService {
     const state = this.states[tr.id];
     if (state && state.state === tr.from) {
       if (tr.expectedExecutionTimeAt) {
-        state.delayInSeconds = (t.valueOf() - tr.expectedExecutionTimeAt) / 1000;
+        state.delayInSeconds =
+          (t.valueOf() - tr.expectedExecutionTimeAt) / 1000;
       }
       state.lastTransitionAt = t;
       state.state = tr.to;

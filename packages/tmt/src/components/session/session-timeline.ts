@@ -20,6 +20,7 @@ import { getIcon } from '../../utils';
 export const SessionTimelineView: FactoryComponent = () => {
   const state = {
     time: undefined as number | undefined,
+    lastTimeUpdate: undefined as number | undefined,
     timeInterval: undefined as number | undefined,
     injects: [] as IInject[],
     executingInjects: [] as Array<IExecutingInject & IInjectSimState>,
@@ -34,13 +35,17 @@ export const SessionTimelineView: FactoryComponent = () => {
     i.state === InjectState.SCHEDULED && i.condition && i.condition.type === InjectConditionType.MANUALLY;
 
   const updateTime = (t: ITimeMessage) => {
+    state.lastTimeUpdate = Date.now();
     state.time = t.trialTime;
   };
 
   const time = (update: (t: number | Date) => void) => {
     state.timeInterval = window.setInterval(() => {
-      if (state.time) {
-        update(new Date(state.time));
+      const { time: trialTime, lastTimeUpdate } = state;
+      if (trialTime && lastTimeUpdate && AppState.time) {
+        const now = Date.now();
+        const newTime = trialTime + (now - lastTimeUpdate) * (AppState.time.trialTimeSpeed || 1);
+        update(new Date(newTime));
       }
     }, 1000);
   };
@@ -127,6 +132,15 @@ export const SessionTimelineView: FactoryComponent = () => {
     }
   };
 
+  const updatedInjectReceived = (inject: IInject) => {
+    const injects = TrialSvc.getInjects() || [];
+    const found = injects.filter(i => i.id === inject.id);
+    if (found.length > 0) {
+      const i = injects.indexOf(found[0]);
+      injects[i] = inject;
+    }
+  };
+
   return {
     oninit: () => {
       const { socket } = state;
@@ -137,15 +151,18 @@ export const SessionTimelineView: FactoryComponent = () => {
           return;
         }
         AppState.injectStates = injectStates;
-        // console.table(injectStates);
         m.redraw();
       });
       socket.on('time', updateTime);
+      socket.on('updatedInject', updatedInjectReceived);
+      socket.on('createdInject', TrialSvc.newInject);
     },
     onremove: () => {
       const { socket } = state;
       socket.off('injectStates');
       socket.off('time', updateTime);
+      socket.off('updatedInject', updatedInjectReceived);
+      socket.off('createdInject', TrialSvc.newInject);
       window.clearInterval(state.timeInterval);
     },
     view: () => {
@@ -174,19 +191,18 @@ export const SessionTimelineView: FactoryComponent = () => {
       AppState.scenarioStartTime = scenarioStartTime;
 
       return m('.row', [
-        activeScenario
-          ? m(
-              '.col.s12.sb.large',
-              m(ScenarioTimeline, {
-                lineHeight: 31,
-                timeline: scenarioToTimelineItems(activeScenario, executingInjects),
-                onClick,
-                time,
-                titleView,
-                scenarioStart: new Date(scenarioStartTime),
-              })
-            )
-          : undefined,
+        activeScenario &&
+          m(
+            '.col.s12.sb.large',
+            m(ScenarioTimeline, {
+              lineHeight: 31,
+              timeline: scenarioToTimelineItems(activeScenario, executingInjects),
+              onClick,
+              time,
+              titleView,
+              scenarioStart: new Date(scenarioStartTime),
+            })
+          ),
       ]);
     },
   };
