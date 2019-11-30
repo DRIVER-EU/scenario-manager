@@ -147,6 +147,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
           });
       };
 
+      // TODO Sometimes after a copy, two identical injects are created. Why?
       const pasteInject = async () => {
         if (inject && AppState.copiedInjects) {
           const injects = AppState.copiedInjects as IInject[];
@@ -247,18 +248,18 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                 '.row',
                 m(
                   '.col.s12',
-                  inject.type === InjectType.INJECT
-                    ? m(Select, {
-                        disabled,
-                        iconName: getMessageIcon(inject.messageType),
-                        placeholder: 'Select the message type',
-                        checkedId: inject.messageType,
-                        options,
-                        onchange: v => {
-                          // console.warn('Getting message form');
-                          state.inject!.messageType = v[0] as MessageType;
-                        },
-                      })
+                inject.type === InjectType.INJECT
+                  ? m(Select, {
+                      disabled,
+                      iconName: getMessageIcon(inject.messageType),
+                      placeholder: 'Select the message type',
+                      checkedId: inject.messageType,
+                      options,
+                      onchange: v => {
+                        // console.warn('Getting message form');
+                        state.inject!.messageType = v[0] as MessageType;
+                      },
+                    })
                     : m('h4', [
                         m(Icon, {
                           iconName: getInjectIcon(inject.type),
@@ -266,7 +267,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                         }),
                         inject.type,
                       ])
-                )
+                    )
               ),
               [
                 m(MessageForm, { disabled, inject, onChange, key: 'message_form_' + inject.id }),

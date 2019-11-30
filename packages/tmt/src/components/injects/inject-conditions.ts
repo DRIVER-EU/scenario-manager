@@ -9,6 +9,7 @@ import {
   getParent,
   getInject,
   isAncestor,
+  UserRole,
 } from 'trial-manager-models';
 import { Select, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
@@ -55,6 +56,8 @@ export const InjectConditions: FactoryComponent<{
   const state = {
     dropdownOptions: { container: document.body, constrainWidth: false },
   } as { dropdownOptions: Partial<M.DropdownOptions>; inject?: IInject };
+  const rolePlayers = TrialSvc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
+  const style = 'margin: 0 auto;';
 
   return {
     // oninit: ({ attrs: { inject }}) => state.inject = inject,
@@ -78,11 +81,11 @@ export const InjectConditions: FactoryComponent<{
       const dependency = getInject(condition.injectId, TrialSvc.getInjects());
       const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =
-        dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'after' }] : [];
+        dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'ended' }] : [];
       injectStateOptions.push({
         id: InjectState.IN_PROGRESS,
         // disabled: dependency && dependency.type === InjectType.SCENARIO,
-        label: 'with',
+        label: 'started',
       });
       if (!condition.injectId && previousInjectOptions.length > 0) {
         condition.injectId = previousInjectOptions[previousInjectOptions.length - 1].id;
@@ -92,19 +95,19 @@ export const InjectConditions: FactoryComponent<{
       }
       return m(
         '.row',
-        m('.col.s12.input-field', [
+        m('.col.s12', [
           // m('h5', 'Start condition'),
           // m(Icon, { iconName: 'playlist_play', class: 'small', style: 'margin: 0 0.5em;' }),
-          m('span.inline', 'Start '),
+          m('span.inline', 'Start'),
           m(Select, {
             disabled,
-            style: 'width: 70px',
+            style,
             className: 'inline medium',
             placeholder: 'Pick one',
             isMandatory: true,
             checkedId: condition.type,
             options: [
-              { id: InjectConditionType.MANUALLY, label: 'manually after' },
+              { id: InjectConditionType.MANUALLY, label: 'manually' },
               { id: InjectConditionType.IMMEDIATELY, label: 'immediately' },
               { id: InjectConditionType.DELAY, label: 'after' },
               {
@@ -126,26 +129,30 @@ export const InjectConditions: FactoryComponent<{
               onChange(state.inject);
             },
           }),
+          condition.type === InjectConditionType.MANUALLY && [
+            m('span.inline', 'by'),
+            m(Select, {
+              disabled,
+              style,
+              placeholder: 'Role player',
+              className: 'inline',
+              options: rolePlayers,
+              checkedId: condition.rolePlayerId,
+              onchange: v => {
+                condition.rolePlayerId = v[0] as string;
+                onChange(state.inject);
+              },
+            }),
+          ],
           condition.type === InjectConditionType.AT_TIME
             ? m(StartAt, { disabled, condition, inject, onChange })
             : [
                 m(Delay, { disabled, inject, onChange }),
-                // m('span.inline', ' after '),
-                m(Select, {
-                  disabled,
-                  placeholder: 'When...',
-                  className: 'inline small',
-                  checkedId: condition.injectState,
-                  options: injectStateOptions,
-                  onchange: v => {
-                    condition!.injectState = v[0] as InjectState;
-                    state.inject!.condition = condition;
-                    onChange(state.inject);
-                  },
-                }),
+                m('span.inline', 'after'),
                 m(Select, {
                   dropdownOptions,
                   disabled,
+                  style,
                   placeholder: 'Pick one',
                   className: 'inline',
                   checkedId: condition.injectId,
@@ -156,19 +163,20 @@ export const InjectConditions: FactoryComponent<{
                     onChange(state.inject);
                   },
                 }),
-                // m('span.inline', ' has '),
-                // m(Select, {
-                //   disabled,
-                //   placeholder: 'Pick one',
-                //   className: 'inline small',
-                //   checkedId: condition.injectState,
-                //   options: injectStateOptions,
-                //   onchange: v => {
-                //     condition!.injectState = v[0] as InjectState;
-                //     state.inject.condition = condition;
-                //     onChange(state.inject);
-                //   },
-                // }),
+                m('span.inline', 'has'),
+                m(Select, {
+                  disabled,
+                  style,
+                  placeholder: 'When...',
+                  className: 'inline small',
+                  checkedId: condition.injectState,
+                  options: injectStateOptions,
+                  onchange: v => {
+                    condition!.injectState = v[0] as InjectState;
+                    state.inject!.condition = condition;
+                    onChange(state.inject);
+                  },
+                }),
               ],
           m('span.inline', '.'),
         ])

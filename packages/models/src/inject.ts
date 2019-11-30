@@ -46,6 +46,8 @@ export interface IInjectCondition {
   injectId?: string;
   /** State of the inject you depend upon */
   injectState?: InjectState;
+  /** Optionally, for manual conditions, identify the one responsible for it. */
+  rolePlayerId?: string;
 }
 
 export type InjectValidationState = 'valid' | 'invalid' | 'childInvalid';
