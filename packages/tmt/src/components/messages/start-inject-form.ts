@@ -40,7 +40,7 @@ export const StartInjectForm: FactoryComponent<{
           initialValue: inject.description,
           onchange: (v: string) => (inject.description = v),
           label: 'Description',
-          iconName: 'description',
+          iconName: 'note',
         }),
       ];
     },

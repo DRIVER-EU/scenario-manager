@@ -14,6 +14,7 @@ import {
   RequestUnitTransportForm,
   SetAffectedAreaForm,
   LargeDataUpdateMessageForm,
+  PostMessageForm,
 } from '.';
 
 export const MessageForm: FactoryComponent<{ inject?: IInject; disabled?: boolean; onChange?: () => void }> = () => {
@@ -25,6 +26,8 @@ export const MessageForm: FactoryComponent<{ inject?: IInject; disabled?: boolea
             return m(RolePlayerMessageForm, { inject, disabled, checkpoint: true, onChange });
           case MessageType.ROLE_PLAYER_MESSAGE:
             return m(RolePlayerMessageForm, { inject, disabled, onChange });
+          case MessageType.POST_MESSAGE:
+            return m(PostMessageForm, { inject, disabled, onChange });
           case MessageType.PHASE_MESSAGE:
             return m(PhaseMessageForm, { inject, disabled, onChange });
           case MessageType.GEOJSON_MESSAGE:

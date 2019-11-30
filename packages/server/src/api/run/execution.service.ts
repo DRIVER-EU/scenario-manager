@@ -21,6 +21,8 @@ import {
   ISumoConfiguration,
   IValueNamePair,
   ILargeDataUpdate,
+  IPostMsg,
+  postMessageToTestbed,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -55,6 +57,9 @@ export class ExecutionService implements IExecutionService {
       case MessageType.ROLE_PLAYER_MESSAGE:
         this.sendRolePlayerMessage(i, comment);
         break;
+      case MessageType.POST_MESSAGE:
+        this.sendPostMessage(i);
+        break;
       case MessageType.PHASE_MESSAGE:
         this.sendPhaseMessage(i, comment);
         break;
@@ -78,9 +83,7 @@ export class ExecutionService implements IExecutionService {
         break;
       default:
         console.warn(
-          `${
-            MessageType[messageType]
-          } is not yet supported by the execution service.`,
+          `${MessageType[messageType]} is not yet supported by the execution service.`,
         );
     }
   }
@@ -142,6 +145,20 @@ export class ExecutionService implements IExecutionService {
       new Date(this.kafkaService.timeMessage.trialTime),
     );
     this.kafkaService.sendMessage(cap, topic);
+  }
+
+  private async sendPostMessage(i: IInject) {
+    const post = getMessage<IPostMsg>(i, MessageType.POST_MESSAGE);
+    const topic = 'simulation_entity_post';
+    const sender = this.trial.users.filter(u => u.id === post.senderId).shift();
+    const recipients = post.recipientIds
+      ? this.trial.users
+          .filter(u => u.email && post.recipientIds.indexOf(u.id) >= 0)
+          .map(u => u.email)
+      : [];
+
+    const postMsg = postMessageToTestbed(post, sender.email, recipients, this.kafkaService.trialTime);
+    this.kafkaService.sendMessage(postMsg, topic);
   }
 
   private async sendRolePlayerMessage(i: IInject, comment?: string) {

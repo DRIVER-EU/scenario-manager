@@ -69,7 +69,7 @@ export const RolePlayerMessageForm: FactoryComponent<{
               label: 'Participant(s)',
               id: 'person',
               disabled,
-              iconName: 'person',
+              iconName: 'people',
               className: 'col s12 m6',
               placeholder: 'Pick one or more',
               multiple: true,
@@ -95,7 +95,7 @@ export const RolePlayerMessageForm: FactoryComponent<{
           initialValue: rpm.description as string,
           onchange: (v: string) => (inject.description = rpm.description = v),
           label: 'Description',
-          iconName: 'description',
+          iconName: 'note',
         }),
       ];
     },

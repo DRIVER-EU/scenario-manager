@@ -14,6 +14,7 @@ import {
   RolePlayerMessageForm,
   LargeDataUpdateMessageForm,
 } from '../messages';
+import { PostMessageForm } from '../messages/post-message';
 
 export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject }> = () => {
   const disabled = true;
@@ -23,6 +24,8 @@ export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject 
         return m(RolePlayerMessageForm, { inject, checkpoint: true, disabled });
       case MessageType.ROLE_PLAYER_MESSAGE:
         return m(RolePlayerMessageView, { inject, disabled: inject.state === InjectState.EXECUTED });
+      case MessageType.POST_MESSAGE:
+        return m(PostMessageForm, { inject, disabled });
       case MessageType.CAP_MESSAGE:
         return m(CapMessageForm, { inject, disabled });
       case MessageType.LCMS_MESSAGE:

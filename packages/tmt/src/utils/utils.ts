@@ -1,25 +1,24 @@
-import m from 'mithril';
+import { FeatureCollection, LineString, Polygon } from 'geojson';
+import { geoJSON, LatLngExpression } from 'leaflet';
 import {
-  IContent,
-  InjectType,
-  IInject,
-  MessageType,
   getParent,
-  IPerson,
-  UserRole,
-  IAsset,
-  InjectState,
-  InjectConditionType,
-  RolePlayerMessageType,
-  IInjectGroup,
-  IScenario,
   IareaPoly,
-  ILocation,
+  IAsset,
+  IContent,
   IExecutingInject,
+  IInject,
+  IInjectGroup,
+  ILocation,
+  InjectConditionType,
+  InjectState,
+  InjectType,
+  IPerson,
+  IScenario,
+  MessageType,
+  RolePlayerMessageType,
+  UserRole,
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
-import { geoJSON, LatLngExpression } from 'leaflet';
-import { Polygon, FeatureCollection, LineString } from 'geojson';
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
@@ -29,7 +28,7 @@ export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
 
 /** Map a string enum to a list of options */
 export const enumToOptions = <E extends { [P in keyof E]: string }>(e: E) =>
-  Object.keys(e).map(id => ({ id, label: id.replace(/_/g, ' ') }));
+  Object.keys(e).map(id => ({ id, label: id.replace(/_/g, ' ').toUpperCase() }));
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.
@@ -120,6 +119,8 @@ export const getMessageIcon = (type?: string) => {
       return 'flag'; // 'chat';
     case MessageType.ROLE_PLAYER_MESSAGE:
       return 'record_voice_over';
+    case MessageType.POST_MESSAGE:
+      return 'mail';
     case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
       return 'speaker_notes';
     case MessageType.LCMS_MESSAGE:
@@ -172,8 +173,8 @@ export const getMessageTitle = (type?: string) => {
       return 'COMMON ALERTING PROTOCOL MESSAGE';
     case MessageType.PHASE_MESSAGE:
       return 'NEW PHASE';
-    // case MessageType.POST_MESSAGE:
-    //   return 'POST A MESSAGE';
+    case MessageType.POST_MESSAGE:
+      return 'POST MESSAGE';
     case MessageType.ROLE_PLAYER_MESSAGE:
       return 'ROLE PLAYER MESSAGE';
     case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
@@ -183,9 +184,9 @@ export const getMessageTitle = (type?: string) => {
     case MessageType.LCMS_MESSAGE:
       return 'LCMS MESSAGE';
     case MessageType.START_INJECT:
-      return 'START INJECT';
+      return 'EVENT / INJECT';
     case MessageType.LARGE_DATA_UPDATE:
-      return 'SEND LINK';
+      return 'LINK';
     case MessageType.REQUEST_UNIT_TRANSPORT:
       return 'REQUEST UNIT TRANSPORT';
     case MessageType.SET_AFFECTED_AREA:
