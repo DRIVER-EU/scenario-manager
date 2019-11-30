@@ -174,8 +174,8 @@ export const SessionTimelineView: FactoryComponent = () => {
         .map(
           i =>
             ({
-              ...injectStates[i.id],
               ...i,
+              ...injectStates[i.id],
             } as IExecutingInject & IInjectSimState)
         );
       // console.table(executingInjects);
@@ -189,17 +189,23 @@ export const SessionTimelineView: FactoryComponent = () => {
           ? new Date(activeScenario.lastTransitionAt)
           : AppState.scenarioStartTime;
       AppState.scenarioStartTime = scenarioStartTime;
+      const timelineStart = new Date(Math.floor(scenarioStartTime.valueOf() / 60000) * 60000);
+
+      console.log(scenarioStartTime);
+      console.table(activeScenario && scenarioToTimelineItems(activeScenario, executingInjects));
 
       return m('.row', [
         activeScenario &&
           m(
             '.col.s12.sb.large',
             m(ScenarioTimeline, {
+              // width: 500,
               lineHeight: 31,
               timeline: scenarioToTimelineItems(activeScenario, executingInjects),
               onClick,
               time,
               titleView,
+              timelineStart,
               scenarioStart: new Date(scenarioStartTime),
             })
           ),

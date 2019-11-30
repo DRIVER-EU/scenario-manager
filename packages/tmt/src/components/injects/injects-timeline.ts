@@ -81,6 +81,9 @@ export const InjectsTimeline: FactoryComponent = () => {
       const scenarios: IScenario[] = injects ? injects.filter(isScenario) : [];
       const { scenarioId } = AppState;
       const scenario = scenarios.filter(s => s.id === scenarioId).shift() || scenarios[0];
+      const scenarioStart = new Date(scenario.startDate || new Date());
+      const timelineStart = new Date(Math.floor(scenarioStart.valueOf() / 60000) * 60000);
+      console.table(scenario);
       return m(
         '.row.timeline.sb.large',
         scenario
@@ -91,7 +94,8 @@ export const InjectsTimeline: FactoryComponent = () => {
                 lineHeight: 32,
                 timeline: scenarioToTimelineItems(scenario, injects),
                 onClick,
-                scenarioStart: new Date(scenario.startDate || new Date()),
+                timelineStart,
+                scenarioStart,
               })
             )
           : undefined

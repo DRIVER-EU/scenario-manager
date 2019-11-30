@@ -2,7 +2,16 @@ import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
 import { SocketSvc, TrialSvc, RunSvc } from '../../services';
 import { AppState, injectsChannel, TopicNames } from '../../models';
-import { Select, ISelectOptions, TextInput, TextArea, Switch, Icon, ModalPanel } from 'mithril-materialized';
+import {
+  FlatButton,
+  Select,
+  ISelectOptions,
+  TextInput,
+  TextArea,
+  InputCheckbox,
+  Icon,
+  ModalPanel,
+} from 'mithril-materialized';
 import {
   ITrial,
   IScenario,
@@ -99,7 +108,7 @@ const SessionSettings: FactoryComponent<{}> = () => {
       const options = state.scenarios.map(s => ({ id: s.id, label: s.title }));
 
       // console.log(activeSession);
-      // console.log(session);
+      console.table(AppState.time);
       // console.log(sessionControl);
 
       if (session && !session.sessionName) {
@@ -131,24 +140,14 @@ const SessionSettings: FactoryComponent<{}> = () => {
           ? undefined
           : m('.row', [
               m(
-                '.col.s7',
+                '.col.s12',
                 m(TextInput, {
                   initialValue: session.sessionName,
                   label: 'Session name',
+                  iconName: 'title',
                   disabled,
                   isMandatory: true,
                   onchange: (v: string) => (AppState.session.sessionName = v),
-                })
-              ),
-              m(
-                '.col.s5',
-                m(Switch, {
-                  disabled: AppState.time && AppState.time.state !== TimeState.Idle,
-                  label: 'Session',
-                  left: activeSession ? 'Stop' : 'Stopped',
-                  right: activeSession ? 'Started' : 'Start',
-                  checked: activeSession,
-                  onchange: v => sessionManager(v ? 'start' : 'stop', trial, scenario),
                 })
               ),
               m(
@@ -161,20 +160,26 @@ const SessionSettings: FactoryComponent<{}> = () => {
                   iconName: 'note',
                 })
               ),
+              m('.col.s12.input-field', [
+                m(FlatButton, {
+                  className: 'col s6',
+                  iconName: 'wifi_tethering',
+                  label: 'Start session',
+                  disabled,
+                  onclick: () => sessionManager('start', trial, scenario),
+                }),
+                m(FlatButton, {
+                  className: 'col s6',
+                  iconName: 'portable_wifi_off',
+                  label: 'Stop session',
+                  disabled:
+                    !disabled ||
+                    (AppState.time &&
+                      (AppState.time.state !== TimeState.Idle && AppState.time.state !== TimeState.Initialized)),
+                  onclick: () => sessionManager('stop', trial, scenario),
+                }),
+              ]),
             ]),
-        // m(
-        //   '.row',
-        //   m(
-        //     '.col.s12',
-        //     m(TextArea, {
-        //       initialValue: session.comment || undefined,
-        //       label: 'Comments',
-        //       disabled,
-        //       onchange: (v: string) => (AppState.session.comment = v),
-        //       iconName: 'note',
-        //     })
-        //   )
-        // ),
       ];
     },
   };
@@ -264,9 +269,8 @@ export const SessionControl: FactoryComponent = () => {
                   { style: 'margin: 10px 0 20px 0;' },
                   m(
                     '.col.s6',
-                    m(Switch, {
-                      left: '',
-                      right: isConnected ? 'Connected' : 'Connect',
+                    m(InputCheckbox, {
+                      label: 'Connected',
                       checked: isConnected,
                       onchange: () => {
                         if (isConnected) {
@@ -283,9 +287,8 @@ export const SessionControl: FactoryComponent = () => {
                   isConnected
                     ? m(
                         '.col.s6',
-                        m(Switch, {
-                          left: '',
-                          right: 'Real time',
+                        m(InputCheckbox, {
+                          label: 'Real time',
                           checked: realtime,
                           onchange: s => (AppState.sessionControl.realtime = s),
                         })

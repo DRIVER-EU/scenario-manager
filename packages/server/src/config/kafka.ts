@@ -45,6 +45,7 @@ export default {
         TrialManagementSessionMgmtTopic,
         // 'flood_prediction_geojson',
         'standard_cap',
+        'simulation_entity_post',
         // 'standard_geojson',
         // 'large_data_update',
         'simulation_request_startinject',

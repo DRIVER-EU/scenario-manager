@@ -27,11 +27,12 @@
     "mithril-leaflet": "^0.1.7",
     "mithril-markdown": "^0.2.2",
     "mithril-materialized": "^0.15.4",
-    "mithril-scenario-timeline": "^0.0.10",
+    "mithril-scenario-timeline": "^0.1.4",
     "mithril-table": "^0.2.2",
     "mithril-tree-component": "^0.6.6",
     "socket.io-client": "^2.3.0",
     "mithril": "^2.0.4",
+    "deep-diff": "^1.0.2",
     "trial-manager-models": "^0.0.1"
   },
   "devDependencies": {
@@ -41,6 +42,7 @@
     "@types/materialize-css": "^1.0.6",
     "@types/mithril": "^2.0.2",
     "@types/socket.io-client": "^1.4.32",
+    "@types/deep-diff": "^1.0.0",
     "autoprefixer": "^9.7.2",
     "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^3.2.0",
