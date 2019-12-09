@@ -108,7 +108,7 @@ const SessionSettings: FactoryComponent<{}> = () => {
       const options = state.scenarios.map(s => ({ id: s.id, label: s.title }));
 
       // console.log(activeSession);
-      console.table(AppState.time);
+      // console.table(AppState.time);
       // console.log(sessionControl);
 
       if (session && !session.sessionName) {
@@ -239,8 +239,8 @@ export const SessionControl: FactoryComponent = () => {
       // Check whether we are connected
       socket.emit('is-connected');
       /** Load the active trial */
-      state.trial = await RunSvc.activeTrial();
-      m.redraw();
+      // state.trial = await RunSvc.activeTrial();
+      // m.redraw();
     },
     onremove: () => {
       socket.off('time', updateTime);

@@ -43,7 +43,7 @@ export const ExecutingInjectView: FactoryComponent = () => {
                     m(MessageForm, { inject, disabled: true, key: inject.id }),
                   ]
                 : [
-                    m(ManualTransition, { inject, editing: b => (state.editing = b), key: inject.id }),
+                    m(ManualTransition, { inject, key: inject.id, editing: b => (state.editing = b) }),
                     m('h4', { key: -1 }, [
                       m(Icon, {
                         iconName: getMessageIcon(inject.messageType),

@@ -145,8 +145,8 @@ export const SessionTimelineView: FactoryComponent = () => {
   return {
     oninit: () => {
       const { socket } = state;
-      const injects = RunSvc.getInjects() || [];
-      state.injects = injects; // .filter(isNoGroupInject);
+      // const injects = RunSvc.getInjects() || [];
+      // state.injects = injects;
       socket.on('injectStates', (injectStates: IInjectSimStates) => {
         if (deepEqual(AppState.injectStates, injectStates)) {
           return;
@@ -167,7 +167,9 @@ export const SessionTimelineView: FactoryComponent = () => {
       window.clearInterval(state.timeInterval);
     },
     view: () => {
-      const { injects } = state;
+      // const { injects } = state;
+      const injects = RunSvc.getInjects() || [];
+      state.injects = injects;
       const { injectStates } = AppState;
 
       const executingInjects = injects
@@ -193,8 +195,8 @@ export const SessionTimelineView: FactoryComponent = () => {
       AppState.scenarioStartTime = scenarioStartTime;
       const timelineStart = new Date(Math.floor(scenarioStartTime.valueOf() / 60000) * 60000);
 
-      console.log(scenarioStartTime);
-      console.table(activeScenario && scenarioToTimelineItems(activeScenario, executingInjects));
+      // console.log(scenarioStartTime);
+      // console.log(activeScenario);
 
       return m('.row', [
         activeScenario &&

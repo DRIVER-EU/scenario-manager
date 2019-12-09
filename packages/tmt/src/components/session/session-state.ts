@@ -7,7 +7,6 @@ export const SessionState: FactoryComponent = () => {
   return {
     oninit: () => {
       RunSvc.activeTrial();
-      m.redraw();
     },
     view: () => m('.row', [
       m('.col.s12.m6.sb.large.sb-hor', m(SessionTimelineView)),
