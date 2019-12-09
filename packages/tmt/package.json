@@ -1,6 +1,6 @@
 {
   "name": "tmt",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Scenario manager interface for performing Concept Development & Experimentations.",
   "main": "app.js",
   "repository": {
@@ -12,7 +12,7 @@
     "clean": "rimraf ./dist ./.cache ./node_modules/.ignored",
     "start": "webpack-dev-server --open --hotOnly",
     "start:dev": "webpack-dev-server --open --hotOnly",
-    "build": "webpack",
+    "build": "webpack --env.production",
     "watch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -13,19 +13,20 @@ import {
   SetAffectedAreaForm,
   RolePlayerMessageForm,
   LargeDataUpdateMessageForm,
+  MessageScope,
 } from '../messages';
 import { PostMessageForm } from '../messages/post-message';
 
-export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject }> = () => {
+export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject; scope: MessageScope }> = () => {
   const disabled = true;
-  const getMessageForm = (inject: IExecutingInject) => {
+  const getMessageForm = (inject: IExecutingInject, scope: MessageScope) => {
     switch (inject.messageType) {
       case MessageType.CHECKPOINT:
-        return m(RolePlayerMessageForm, { inject, checkpoint: true, disabled });
+        return m(RolePlayerMessageForm, { inject, checkpoint: true, disabled, scope });
       case MessageType.ROLE_PLAYER_MESSAGE:
         return m(RolePlayerMessageView, { inject, disabled: inject.state === InjectState.EXECUTED });
       case MessageType.POST_MESSAGE:
-        return m(PostMessageForm, { inject, disabled });
+        return m(PostMessageForm, { inject, disabled, scope });
       case MessageType.CAP_MESSAGE:
         return m(CapMessageForm, { inject, disabled });
       case MessageType.LCMS_MESSAGE:
@@ -52,6 +53,7 @@ export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject 
   };
 
   return {
-    view: ({ attrs: { inject } }) => (inject && inject.type === InjectType.INJECT ? getMessageForm(inject) : undefined),
+    view: ({ attrs: { inject, scope = 'edit' } }) =>
+      inject && inject.type === InjectType.INJECT ? getMessageForm(inject, scope) : undefined,
   };
 };

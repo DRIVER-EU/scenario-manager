@@ -17,17 +17,29 @@ import {
   PostMessageForm,
 } from '.';
 
-export const MessageForm: FactoryComponent<{ inject?: IInject; disabled?: boolean; onChange?: () => void }> = () => {
-  const MessageFormSelector: FactoryComponent<{ inject: IInject; disabled: boolean; onChange?: () => void }> = () => {
+export type MessageScope = 'edit' | 'execute';
+
+export const MessageForm: FactoryComponent<{
+  inject?: IInject;
+  disabled?: boolean;
+  onChange?: () => void;
+  scope?: MessageScope;
+}> = () => {
+  const MessageFormSelector: FactoryComponent<{
+    inject: IInject;
+    disabled: boolean;
+    onChange?: () => void;
+    scope: MessageScope;
+  }> = () => {
     return {
-      view: ({ attrs: { inject, disabled, onChange } }) => {
+      view: ({ attrs: { inject, disabled, onChange, scope = 'edit' } }) => {
         switch (inject.messageType) {
           case MessageType.CHECKPOINT:
-            return m(RolePlayerMessageForm, { inject, disabled, checkpoint: true, onChange });
+            return m(RolePlayerMessageForm, { inject, disabled, checkpoint: true, onChange, scope });
           case MessageType.ROLE_PLAYER_MESSAGE:
-            return m(RolePlayerMessageForm, { inject, disabled, onChange });
+            return m(RolePlayerMessageForm, { inject, disabled, onChange, scope });
           case MessageType.POST_MESSAGE:
-            return m(PostMessageForm, { inject, disabled, onChange });
+            return m(PostMessageForm, { inject, disabled, onChange, scope });
           case MessageType.PHASE_MESSAGE:
             return m(PhaseMessageForm, { inject, disabled, onChange });
           case MessageType.GEOJSON_MESSAGE:
@@ -56,12 +68,12 @@ export const MessageForm: FactoryComponent<{ inject?: IInject; disabled?: boolea
   };
 
   return {
-    view: ({ attrs: { inject, disabled = false, onChange } }) =>
+    view: ({ attrs: { inject, disabled = false, onChange, scope = 'edit' } }) =>
       inject
         ? inject.type === InjectType.INJECT
-          ? m('.message-form', m(MessageFormSelector, { inject, disabled, onChange }))
-          // ? m('.message-form', getMessageForm(inject, disabled, onChange))
-          : inject.type === InjectType.SCENARIO
+          ? m('.message-form', m(MessageFormSelector, { inject, disabled, onChange, scope }))
+          : // ? m('.message-form', getMessageForm(inject, disabled, onChange))
+          inject.type === InjectType.SCENARIO
           ? m(ScenarioForm, { inject, disabled, onChange, key: undefined })
           : m(DefaultMessageForm, { inject, disabled, key: undefined })
         : undefined,

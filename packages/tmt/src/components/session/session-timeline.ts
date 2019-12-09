@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { SocketSvc, TrialSvc } from '../../services';
+import { SocketSvc, RunSvc } from '../../services';
 import {
   InjectState,
   IInject,
@@ -11,6 +11,7 @@ import {
   ITimeMessage,
   IInjectSimState,
   IExecutingInject,
+  IScenario,
 } from 'trial-manager-models';
 import { TopicNames, AppState, executingChannel } from '../../models';
 import { ScenarioTimeline, ITimelineItem, IExecutingTimelineItem } from 'mithril-scenario-timeline';
@@ -132,19 +133,19 @@ export const SessionTimelineView: FactoryComponent = () => {
     }
   };
 
-  const updatedInjectReceived = (inject: IInject) => {
-    const injects = TrialSvc.getInjects() || [];
-    const found = injects.filter(i => i.id === inject.id);
-    if (found.length > 0) {
-      const i = injects.indexOf(found[0]);
-      injects[i] = inject;
-    }
-  };
+  // const updatedInjectReceived = (inject: IInject) => {
+  //   const injects = RunSvc.getInjects() || [];
+  //   const found = injects.filter(i => i.id === inject.id);
+  //   if (found.length > 0) {
+  //     const i = injects.indexOf(found[0]);
+  //     injects[i] = inject;
+  //   }
+  // };
 
   return {
     oninit: () => {
       const { socket } = state;
-      const injects = TrialSvc.getInjects() || [];
+      const injects = RunSvc.getInjects() || [];
       state.injects = injects; // .filter(isNoGroupInject);
       socket.on('injectStates', (injectStates: IInjectSimStates) => {
         if (deepEqual(AppState.injectStates, injectStates)) {
@@ -154,15 +155,15 @@ export const SessionTimelineView: FactoryComponent = () => {
         m.redraw();
       });
       socket.on('time', updateTime);
-      socket.on('updatedInject', updatedInjectReceived);
-      socket.on('createdInject', TrialSvc.newInject);
+      socket.on('updatedInject', RunSvc.updatedInjectReceived);
+      socket.on('createdInject', RunSvc.newInjectReceived);
     },
     onremove: () => {
       const { socket } = state;
       socket.off('injectStates');
       socket.off('time', updateTime);
-      socket.off('updatedInject', updatedInjectReceived);
-      socket.off('createdInject', TrialSvc.newInject);
+      socket.off('updatedInject', RunSvc.updatedInjectReceived);
+      socket.off('createdInject', RunSvc.newInjectReceived);
       window.clearInterval(state.timeInterval);
     },
     view: () => {
@@ -184,9 +185,10 @@ export const SessionTimelineView: FactoryComponent = () => {
         ? executingInjects.filter(i => i.type === InjectType.SCENARIO).shift()
         : undefined;
 
+      const scenario = activeScenario as IScenario;
       const scenarioStartTime =
-        activeScenario && activeScenario.state !== InjectState.EXECUTED
-          ? new Date(activeScenario.lastTransitionAt)
+        activeScenario && scenario.startDate
+          ? new Date(scenario.startDate)
           : AppState.scenarioStartTime;
       AppState.scenarioStartTime = scenarioStartTime;
       const timelineStart = new Date(Math.floor(scenarioStartTime.valueOf() / 60000) * 60000);

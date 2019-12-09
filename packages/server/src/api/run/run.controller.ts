@@ -21,6 +21,7 @@ import { RunService } from './run.service';
 import { SessionMessage } from '../../adapters/models';
 import { StateTransitionRequest, Inject as ScenarioInject } from '../../adapters/models';
 import { SessionState } from 'trial-manager-models';
+import { Trial } from '../../adapters/models/trial';
 
 @ApiUseTags('run')
 @Controller('run')
@@ -29,7 +30,7 @@ export class RunController {
 
   constructor(@Inject('RunService') private readonly runService: RunService) {}
 
-  @ApiOperation({ title: 'Get active trial scenario' })
+  @ApiOperation({ title: 'Get active session' })
   @ApiResponse({
     status: 200,
     description: 'Session message',
@@ -53,6 +54,32 @@ export class RunController {
       return response.status(HttpStatus.NO_CONTENT).send('No active session');
     }
     return response.send(session);
+  }
+
+  @ApiOperation({ title: 'Get active scenario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Trial based on the current session and the executing injects',
+    type: Trial,
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Reason message',
+    type: String,
+  })
+  @Get('trial')
+  @Header('Cache-Control', 'max-age=1')
+  activeScenario(@Res() response: Response) {
+    if (this.isLoading) {
+      return response
+        .status(HttpStatus.NO_CONTENT)
+        .send('Currently loading a new scenario');
+    }
+    const trial = this.runService.activeTrial;
+    if (!trial) {
+      return response.status(HttpStatus.NO_CONTENT).send('No active scenario');
+    }
+    return response.send(trial);
   }
 
   @ApiOperation({ title: 'Deactivate trial scenario' })
@@ -111,12 +138,12 @@ export class RunController {
       this.isLoading = true;
       this.runService.init(session);
     } catch (err) {
-      this.isLoading = false;
       return response
         .status(HttpStatus.BAD_REQUEST)
         .send('Could not load trial or scenario');
+    } finally {
+      this.isLoading = false;
     }
-    this.isLoading = false;
     return response.sendStatus(HttpStatus.OK);
   }
 

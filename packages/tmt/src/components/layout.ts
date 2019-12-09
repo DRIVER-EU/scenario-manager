@@ -31,8 +31,8 @@ export const Layout: FactoryComponent<{}> = () => {
       const trialTitle = trial && trial.title ? trial.title.toUpperCase() : '';
       const isRunning = AppState.session && AppState.session.sessionState === SessionState.START;
       const title =
-        isRunning && AppState.session.sessionName
-          ? `${trialTitle} - ${AppState.session.sessionName.toLowerCase()}`
+        executeMode && isRunning && AppState.session.sessionName
+          ? `${AppState.session.trialName} - ${AppState.session.sessionName.toLowerCase()}`
           : trialTitle;
 
       return m('container', [

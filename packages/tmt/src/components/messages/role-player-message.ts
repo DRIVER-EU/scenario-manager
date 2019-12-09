@@ -10,21 +10,24 @@ import {
   IPerson,
   IExecutingInject,
 } from 'trial-manager-models';
-import { TrialSvc } from '../../services';
+import { TrialSvc, RunSvc } from '../../services';
 import { createEmailLink, createPhoneLink, getRolePlayerMessageIcon } from '../../utils';
+import { MessageScope } from '.';
 
 export const RolePlayerMessageForm: FactoryComponent<{
   inject: IInject;
   onChange?: (i: IInject) => void;
   disabled?: boolean;
   checkpoint?: boolean;
+  scope: MessageScope;
 }> = () => {
   return {
-    view: ({ attrs: { inject, disabled, checkpoint = false, onChange } }) => {
+    view: ({ attrs: { inject, disabled, checkpoint = false, onChange, scope } }) => {
       const update = () => onChange && onChange(inject);
+      const svc = scope === 'edit' ? TrialSvc : RunSvc;
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
-      const rolePlayers = TrialSvc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
-      const participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name }));
+      const rolePlayers = svc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
+      const participants = svc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name }));
       const types = Object.keys(RolePlayerMessageType).map(t => ({ id: t, label: t }));
       if (checkpoint) {
         rpm.type = RolePlayerMessageType.ACTION;
@@ -103,7 +106,10 @@ export const RolePlayerMessageForm: FactoryComponent<{
 };
 
 /** A static view on a role player message, i.e. without the possibility to change it */
-export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject; disabled?: boolean }> = () => {
+export const RolePlayerMessageView: FactoryComponent<{
+  inject: IExecutingInject;
+  disabled?: boolean;
+}> = () => {
   const msgDetails = (rpm: IRolePlayerMsg, rolePlayer: IPerson, participants?: IPerson[]) => {
     switch (rpm.type) {
       case RolePlayerMessageType.ACTION:
@@ -158,10 +164,11 @@ export const RolePlayerMessageView: FactoryComponent<{ inject: IExecutingInject;
     view: ({ attrs: { inject } }) => {
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayer =
-        TrialSvc.getUsers()
+        RunSvc
+          .getUsers()
           .filter(u => u.id === rpm.rolePlayerId)
           .shift() || ({} as IPerson);
-      const participants = TrialSvc.getUsers().filter(u =>
+      const participants = RunSvc.getUsers().filter(u =>
         rpm.participantIds && rpm.participantIds.indexOf(u.id) >= 0 ? true : false
       );
       return [

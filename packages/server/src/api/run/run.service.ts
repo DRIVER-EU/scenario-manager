@@ -17,10 +17,12 @@ import {
   createInitialState,
   IInjectSimStates,
   IConnectMessage,
+  IExecutingInject,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
 import { StateTransitionRequest } from '../../adapters/models';
+import { Trial } from '../../adapters/models/trial';
 
 @Injectable()
 @WebSocketGateway()
@@ -32,7 +34,7 @@ export class RunService {
   private readonly transitionQueue: StateTransitionRequest[] = [];
   private trial: ITrial;
   private scenario: IScenario;
-  private injects: Array<IInject | IInjectGroup> = [];
+  private injects: Array<IExecutingInject | IInjectGroup> = [];
   private states = {} as IInjectSimStates;
   private isRunning = false;
   private trialTime: Date;
@@ -46,6 +48,16 @@ export class RunService {
 
   public get activeSession() {
     return this.session ? this.session : this.kafkaService.currentSession;
+  }
+
+  public get activeTrial() {
+    return this.session && this.trial ? new Trial(
+      this.session.sessionId,
+      this.session.sessionName,
+      this.injects,
+      this.trial.users,
+      this.trial.selectedMessageTypes,
+    ) : undefined;
   }
 
   /** Initialize the new trial and scenario */
@@ -74,6 +86,7 @@ export class RunService {
 
     const startUpdateLoop = () => {
       this.trialTime = this.kafkaService.trialTime;
+      this.scenario.startDate = this.trialTime.toUTCString();
       this.states = createInitialState(this.trialTime, this.injects);
       this.isRunning = true;
       this.updateLoop();

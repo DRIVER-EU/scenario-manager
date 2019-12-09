@@ -2,20 +2,26 @@ import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, IPostMsg, MediumTypes, UserRole } from 'trial-manager-models';
 import { enumToOptions } from '../../utils';
-import { TrialSvc } from '../../services';
+import { TrialSvc, RunSvc } from '../../services';
+import { MessageScope } from '.';
 
 /** Inform others about a large data message: note that it only sends a link, not the actual data! */
 export const PostMessageForm: FactoryComponent<{
   inject: IInject;
   onChange?: (inject: IInject) => void;
   disabled?: boolean;
+  scope: MessageScope;
 }> = () => {
   const state = {
     options: enumToOptions(MediumTypes),
-    recipients: TrialSvc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name })),
+    recipients: [] as Array<{ id: string; label: string; }>,
   };
 
   return {
+    oninit: ({ attrs: { scope } }) => {
+      const svc = scope === 'edit' ? TrialSvc : RunSvc;
+      state.recipients = svc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name }));
+    },
     view: ({ attrs: { inject, disabled, onChange } }) => {
       const update = () => onChange && onChange(inject);
 

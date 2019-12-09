@@ -14,9 +14,8 @@ const apiDevService = 'http://localhost:3210';
 
 /** Application state */
 export const AppState = {
-  usingDevServer: false,
   owner: 'TB_TrialMgmt',
-  apiService: () => AppState.usingDevServer ? apiDevService : getRootUrl(),
+  apiService: () => SERVICE_URL ? SERVICE_URL : getRootUrl(),
   time: {} as ITimeMessage,
   sessionControl: {
     isConnected: false,
@@ -36,7 +35,6 @@ export const AppState = {
   injectStates: {} as IInjectSimStates,
   useDevServer: () => {
     // console.warn('Switching to dev server');
-    AppState.usingDevServer = true;
     messageBus.publish({ channel: 'apiServer', topic: 'update', data: AppState.apiService() });
   },
   copiedInjectIsCut: false,

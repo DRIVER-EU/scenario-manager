@@ -53,7 +53,7 @@ export const ExecutingInjectView: FactoryComponent = () => {
                     ]),
                     editing
                       ? m(MessageForm, { inject, key: inject.id })
-                      : m(ExecutingMessageView, { inject, key: inject.id }),
+                      : m(ExecutingMessageView, { inject, key: inject.id, scope: 'execute' }),
                   ]
               : undefined
           )

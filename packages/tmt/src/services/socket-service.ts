@@ -10,7 +10,6 @@ const setupSocket = (autoConnect = true) => {
   if (socket && socket.connected) {
     return socket;
   }
-
   socket = autoConnect ? io() : io(AppState.apiService());
 
   socket.on('connect', () => {
@@ -22,7 +21,6 @@ const setupSocket = (autoConnect = true) => {
   socket.on('connect_error', (data: unknown) => {
     socket.close();
     if (autoConnect) {
-      AppState.usingDevServer = true;
       SocketSvc.socket = setupSocket(false);
     } else {
       console.error('event', data);

@@ -232,13 +232,15 @@ export const SessionControl: FactoryComponent = () => {
   };
 
   return {
-    oninit: () => {
-      state.trial = TrialSvc.getCurrent();
+    oninit: async () => {
       // state.scenarios = state.trial.injects.filter(i => i.type === InjectType.SCENARIO);
       socket.on('time', updateTime);
       socket.on('is-connected', isTestbedConnected);
       // Check whether we are connected
       socket.emit('is-connected');
+      /** Load the active trial */
+      state.trial = await RunSvc.activeTrial();
+      m.redraw();
     },
     onremove: () => {
       socket.off('time', updateTime);
