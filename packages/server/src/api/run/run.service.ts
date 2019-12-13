@@ -1,28 +1,11 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { Injectable, Inject } from '@nestjs/common';
-import {
-  ITrial,
-  IScenario,
-  ISessionMgmt,
-  getParent,
-  IInjectGroup,
-  IInject,
-  SessionState,
-  transitionInjects,
-  pruneInjects,
-  IExecutionService,
-  executeInjects,
-  createSimState,
-  createInitialState,
-  IInjectSimStates,
-  IConnectMessage,
-  IExecutingInject,
-} from 'trial-manager-models';
+import { createInitialState, createSimState, executeInjects, getParent, IConnectMessage, IExecutingInject, IExecutionService, IInject, IInjectGroup, IInjectSimStates, IScenario, ISessionMgmt, ITrial, pruneInjects, SessionState, transitionInjects } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
-import { TrialService } from '../trials/trial.service';
 import { StateTransitionRequest } from '../../adapters/models';
 import { Trial } from '../../adapters/models/trial';
+import { TrialService } from '../trials/trial.service';
 
 @Injectable()
 @WebSocketGateway()
@@ -187,7 +170,7 @@ export class RunService {
       const inject = this.injectsQueue.shift();
       const { id } = inject;
       const found = this.injects.findIndex(u => u.id === id);
-      if (found) {
+      if (found !== -1) {
         console.log(`${new Date()}: Updating inject ${inject.title}.`);
         this.injects[found] = inject;
         this.states[id].title = inject.title;
