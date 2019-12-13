@@ -3,7 +3,7 @@ import { IScenario, ITodo } from 'trial-manager-models';
 import { FlatButton, Kanban, IModelField, IKanban } from 'mithril-materialized';
 
 export const Checklist: FactoryComponent<{ scenario: IScenario; disabled?: boolean; onChange?: () => void }> = () => {
-  const state = { key: 0 } as { key: number; onChange?: () => void };
+  const state = { key: 0 } as { key: number; onChange?: (i: IScenario) => void };
 
   const model = [
     {
@@ -42,7 +42,7 @@ export const Checklist: FactoryComponent<{ scenario: IScenario; disabled?: boole
       scenario.todoAfter = items;
     }
     if (state.onChange) {
-      state.onChange();
+      state.onChange(scenario);
     }
   };
 

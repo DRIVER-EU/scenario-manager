@@ -5,16 +5,24 @@ import {
   ITimingControlMessage,
   TimingControlCommand,
   IExecutingInject,
+  InjectType,
+  IInject,
+  MessageType,
+  uniqueId,
 } from 'trial-manager-models';
 import { timeControlChannel, TopicNames } from '../../models';
-import { FlatButton } from 'mithril-materialized';
+import { FlatButton, ModalPanel, Select } from 'mithril-materialized';
 import { RunSvc, SocketSvc } from '../../services';
-import { formatTime } from '../../utils';
+import { formatTime, messageOptions, getMessageIcon, findPreviousInjects } from '../../utils';
+import { MessageForm } from '../messages/message-form';
+import { InjectConditions } from '../injects/inject-conditions';
 
 export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; editing?: (v: boolean) => void }> = () => {
   const state = {
     show: true,
     isEditing: false,
+    options: [] as Array<{ id: string; label: string }>,
+    newInject: {} as IInject,
   };
 
   const waitingForManualConfirmation = (inject: IExecutingInject) =>
@@ -37,10 +45,16 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; edit
   };
 
   return {
+    oninit: async () => {
+      const trial = await RunSvc.activeTrial();
+      const selectedMessageTypes = trial.selectedMessageTypes;
+      state.options = messageOptions(selectedMessageTypes);
+    },
     view: ({ attrs: { inject, editing } }) => {
       const { show, isEditing } = state;
       const { id, state: from, expectedExecutionTimeAt } = inject;
       const isWaiting = waitingForManualConfirmation(inject);
+      const previousInjects = findPreviousInjects(inject, RunSvc.getInjects());
 
       const onclick = () => {
         state.show = false;
@@ -52,9 +66,17 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; edit
         });
       };
 
+      const onChange = (inj?: IInject) => {
+        if (inj) {
+          state.newInject = inj;
+        }
+        // m.redraw();
+      };
+
       return m('.row', [
         show &&
           !isEditing &&
+          inject.type === InjectType.INJECT &&
           (isWaiting
             ? m(FlatButton, {
                 className: 'right red-text',
@@ -70,20 +92,21 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; edit
                 label: inject.state === InjectState.EXECUTED ? 'Resend' : 'Send now',
                 onclick,
               })),
-        editing && m(FlatButton, {
-          className: 'right',
-          iconName: 'edit',
-          iconClass: 'right',
-          label: isEditing ? 'Stop editing' : 'Edit',
-          onclick: () => {
-            state.isEditing = !isEditing;
-            editing(state.isEditing);
-            if (!state.isEditing) {
-              state.show = true;
-              RunSvc.updateInject(inject);
-            }
-          },
-        }),
+        editing &&
+          m(FlatButton, {
+            className: 'right',
+            iconName: 'edit',
+            iconClass: 'right',
+            label: isEditing ? 'Stop editing' : 'Edit',
+            onclick: () => {
+              state.isEditing = !isEditing;
+              editing(state.isEditing);
+              if (!state.isEditing) {
+                state.show = true;
+                RunSvc.updateInject(inject);
+              }
+            },
+          }),
         show &&
           expectedExecutionTimeAt &&
           m(FlatButton, {
@@ -95,6 +118,58 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; edit
               jumpToTime(expectedExecutionTimeAt.valueOf());
             },
           }),
+        show &&
+          inject.type === InjectType.ACT && [
+            m(FlatButton, {
+              modalId: 'add-modal',
+              className: 'right',
+              iconName: 'add',
+              iconClass: 'right',
+            }),
+            m(ModalPanel, {
+              onCreate: modal => {
+                modal.options.endingTop = '5%';
+                state.newInject = { id: uniqueId(), type: InjectType.INJECT, parentId: inject.id } as IInject;
+              },
+              id: 'add-modal',
+              title: 'Add a new message',
+              description: m('div', [
+                m(Select, {
+                  key: 'select',
+                  iconName: getMessageIcon(state.newInject.messageType),
+                  placeholder: 'Select the message type',
+                  checkedId: state.newInject.messageType,
+                  options: state.options,
+                  fixedFooter: true,
+                  onchange: v => {
+                    state.newInject.messageType = v[0] as MessageType;
+                  },
+                }),
+                m(MessageForm, {
+                  inject: state.newInject,
+                  key: state.newInject.messageType || 'mt',
+                }),
+                state.newInject.messageType
+                  ? m(InjectConditions, {
+                      injects: RunSvc.getInjects() || [],
+                      inject: state.newInject,
+                      previousInjects,
+                      onChange,
+                      key: 'inject_cond_' + inject.id,
+                    })
+                  : m('div', { key: 'dummy' }),
+              ]),
+              buttons: [
+                { label: 'Cancel' },
+                {
+                  label: 'Create',
+                  onclick: () => {
+                    RunSvc.createInject(state.newInject);
+                  },
+                },
+              ],
+            }),
+          ],
       ]);
     },
   };

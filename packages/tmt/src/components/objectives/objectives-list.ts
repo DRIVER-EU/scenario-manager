@@ -42,7 +42,7 @@ export const ObjectivesList = () => {
         TrialSvc.updateObjective(ti as IObjective);
       } else {
         TrialSvc.setObjectives(state.objectives);
-        TrialSvc.saveTrial();
+        TrialSvc.patch();
       }
     },
     create: (parent?: IObjective) => {

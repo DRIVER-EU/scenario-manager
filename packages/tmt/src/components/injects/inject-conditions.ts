@@ -140,6 +140,7 @@ export const InjectConditions: FactoryComponent<{
               checkedId: condition.rolePlayerId,
               onchange: v => {
                 condition.rolePlayerId = v[0] as string;
+                state.inject!.condition! = condition;
                 onChange(state.inject);
               },
             }),

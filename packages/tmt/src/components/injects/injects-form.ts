@@ -10,6 +10,7 @@ import {
   isStoryline,
   isAct,
   isInject,
+  messageOptions,
 } from '../../utils';
 import { TrialSvc } from '../../services';
 import {
@@ -86,9 +87,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       }
       const previousInjects = findPreviousInjects(inject, TrialSvc.getInjects());
       const selectedMessageTypes = TrialSvc.getCurrent().selectedMessageTypes;
-      const options = enumToOptions(MessageType)
-        .filter(({ id }) => !selectedMessageTypes || selectedMessageTypes.indexOf(id) >= 0)
-        .map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
+      const options = messageOptions(selectedMessageTypes);
 
       const canDelete = inject && TrialSvc.canDeleteInject(inject);
 
@@ -248,18 +247,18 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                 '.row',
                 m(
                   '.col.s12',
-                inject.type === InjectType.INJECT
-                  ? m(Select, {
-                      disabled,
-                      iconName: getMessageIcon(inject.messageType),
-                      placeholder: 'Select the message type',
-                      checkedId: inject.messageType,
-                      options,
-                      onchange: v => {
-                        // console.warn('Getting message form');
-                        state.inject!.messageType = v[0] as MessageType;
-                      },
-                    })
+                  inject.type === InjectType.INJECT
+                    ? m(Select, {
+                        disabled,
+                        iconName: getMessageIcon(inject.messageType),
+                        placeholder: 'Select the message type',
+                        checkedId: inject.messageType,
+                        options,
+                        onchange: v => {
+                          // console.warn('Getting message form');
+                          state.inject!.messageType = v[0] as MessageType;
+                        },
+                      })
                     : m('h4', [
                         m(Icon, {
                           iconName: getInjectIcon(inject.type),
@@ -267,18 +266,20 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                         }),
                         inject.type,
                       ])
-                    )
+                )
               ),
               [
                 m(MessageForm, { disabled, inject, onChange, key: 'message_form_' + inject.id }),
-                m(InjectConditions, {
-                  injects: TrialSvc.getInjects() || [],
-                  disabled,
-                  inject,
-                  previousInjects,
-                  onChange,
-                  key: 'inject_cond_' + inject.id,
-                }),
+                inject.messageType
+                  ? m(InjectConditions, {
+                      injects: TrialSvc.getInjects() || [],
+                      disabled,
+                      inject,
+                      previousInjects,
+                      onChange,
+                      key: 'inject_cond_' + inject.id,
+                    })
+                  : m('div', { key: 'dummy' }),
                 m(SetObjectives, { disabled, inject, key: 'set_obj_' + inject.id }),
               ],
             ])

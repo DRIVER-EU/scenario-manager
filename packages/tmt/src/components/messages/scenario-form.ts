@@ -1,8 +1,10 @@
+
 import m, { FactoryComponent } from 'mithril';
 import { IInject, IScenario } from 'trial-manager-models';
 import { DateTimeControl } from '../ui/date-time-control';
 import { DefaultMessageForm } from '.';
 import { Checklist } from '../ui/checklist';
+import { isScenario } from '../../utils';
 
 const DEFAULT_TRIAL_DURATION = 2;
 
@@ -14,10 +16,15 @@ export const ScenarioForm: FactoryComponent<{
   disabled?: boolean;
   onChange?: (inj?: IInject) => void;
 }> = () => {
+  const state = {} as {
+    scenario: IScenario;
+  };
+
   return {
     view: ({ attrs }) => {
       const { onChange, disabled = false } = attrs;
       const scenario = attrs.inject as IScenario;
+      state.scenario = scenario;
       const startDate = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const endDate = scenario.endDate
         ? new Date(scenario.endDate)
@@ -36,9 +43,9 @@ export const ScenarioForm: FactoryComponent<{
                 prefix: 'Start',
                 dt: startDate,
                 onchange: (d: Date) => {
-                  scenario.startDate = d.toISOString();
+                  state.scenario.startDate = d.toISOString();
                   if (onChange) {
-                    onChange(scenario);
+                    onChange(state.scenario);
                   }
                 },
               }),
@@ -48,9 +55,9 @@ export const ScenarioForm: FactoryComponent<{
                 icon: 'timer_off',
                 dt: endDate,
                 onchange: (d: Date) => {
-                  scenario.endDate = d.toISOString();
+                  state.scenario.endDate = d.toISOString();
                   if (onChange) {
-                    onChange(scenario);
+                    onChange(state.scenario);
                   }
                 },
               }),

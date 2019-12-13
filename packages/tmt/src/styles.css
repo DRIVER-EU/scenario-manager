@@ -18,6 +18,7 @@ body {
 
 .main {
   padding: 2px 0 0 0;
+  height: 85vh;
 }
 
 /* Set theme color */
@@ -276,4 +277,26 @@ i.material-icons {
 }
 .timeline-message {
   margin-top: 13px;
+}
+tr.done {
+  color: grey;
+}
+tr.active {
+  border-color: red;
+  border-width: 5px;  
+}
+/* #add-modal {
+  bottom: 5%;
+  width: 80%;  
+} */
+/* .modal .modal-footer {
+  bottom: 0;
+  position: absolute;
+} */
+.flip {
+  -moz-transform:    scaleX(-1); /* Gecko */
+  -o-transform:      scaleX(-1); /* Opera */
+  -webkit-transform: scaleX(-1); /* Webkit */
+  transform:         scaleX(-1); /* Standard */
+  filter: FlipH;                 /* IE 6/7/8 */
 }

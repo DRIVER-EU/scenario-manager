@@ -20,7 +20,7 @@ export const TrialList = () => {
     view: () => {
       const trials = TrialSvc.getList();
       const query = titleAndDescriptionFilter(state.filterValue);
-      const filteredScenarios = trials.filter(query);
+      const filteredTrials = trials.filter(query);
       return m('.scenario-list', [
         m('.row', [
           m(RoundIconButton, {
@@ -46,7 +46,7 @@ export const TrialList = () => {
         ]),
         m(
           '.row.sb.large',
-          filteredScenarios.map(scenario =>
+          filteredTrials.map(trial =>
             m('.col.s6.m4.l3', [
               m(
                 '.card',
@@ -55,26 +55,26 @@ export const TrialList = () => {
                     'a[href=#].card-title',
                     {
                       onclick: () => {
-                        console.log('Set scenario to ' + scenario.title);
-                        TrialSvc.load(scenario.id);
+                        console.log('Set scenario to ' + trial.title);
+                        TrialSvc.load(trial.id);
                       },
                     },
-                    `${scenario.title || 'Untitled'}${
-                      scenario.lastEdit ? ` (${formatDate(scenario.lastEdit)})` : ''
+                    `${trial.title || 'Untitled'}${
+                      trial.lastEdit ? ` (${formatDate(trial.lastEdit)})` : ''
                     }`
                   ),
                   m(
                     'p',
-                    scenario.description && scenario.description.length > 120
-                      ? `${scenario.description.substr(0, 119)}...`
-                      : scenario.description
+                    trial.description && trial.description.length > 120
+                      ? `${trial.description.substr(0, 119)}...`
+                      : trial.description
                   ),
                 ]),
                 m('.card-action', [
                   m(
                     'a',
                     {
-                      href: `${AppState.apiService()}/repo/${scenario.id}`,
+                      href: `${AppState.apiService()}/repo/${trial.id}`,
                     },
                     m(Icon, {
                       iconName: 'cloud_download',
@@ -87,7 +87,7 @@ export const TrialList = () => {
                       onclick: () => {
                         m.request<ITrialOverview>({
                           method: 'POST',
-                          url: `${AppState.apiService()}/repo/clone/${scenario.id}`,
+                          url: `${AppState.apiService()}/repo/clone/${trial.id}`,
                         }).then(to => {
                           if (to && to.id) {
                             TrialSvc.load(to.id);

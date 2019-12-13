@@ -175,7 +175,7 @@ const MediaStateControl: FactoryComponent<{
         case TimeState.Paused:
           return m('.row', [
             m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time, realtime }),
-            m('.row.left', [
+            m('.col.s12.left', [
               m(TimePicker, {
                 label: 'Updated time:',
                 container: '#main',
@@ -204,7 +204,7 @@ const MediaStateControl: FactoryComponent<{
             ]),
           ]);
         case TimeState.Started:
-          return m('.row', [
+          return m('.col.s12', [
             m(MediaControls, { socket, isPaused: false, canChangeSpeed: true, time: state.time, realtime }),
             m('em', `Speed: ${state.time.trialTimeSpeed}x`),
             state.time.trialTimeSpeed !== 1
