@@ -5,6 +5,7 @@ export interface IDashboard {
   default?: boolean;
   title: string;
   iconName?: string;
+  iconClass?: string;
   route: string;
   visible: boolean;
   component: ComponentTypes;

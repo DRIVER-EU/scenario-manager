@@ -1,3 +1,4 @@
+import { ITimelineItem } from 'mithril-scenario-timeline';
 import { FeatureCollection, LineString, Polygon } from 'geojson';
 import { geoJSON, LatLngExpression } from 'leaflet';
 import {
@@ -17,6 +18,8 @@ import {
   MessageType,
   RolePlayerMessageType,
   UserRole,
+  toMsec,
+  IInjectSimStates,
 } from 'trial-manager-models';
 import { TrialSvc } from '../services';
 
@@ -545,3 +548,33 @@ export const arrayMove = <T>(arr: Array<T | undefined>, oldIndex: number, newInd
   arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
   // return arr; // for testing
 };
+
+const waitingForManualConfirmation = (i: IExecutingInject) =>
+  i.state === InjectState.SCHEDULED && i.condition && i.condition.type === InjectConditionType.MANUALLY;
+
+export const injectToTimelineItemFactory = (injectStates: IInjectSimStates) => (i: IExecutingInject) => {
+  const { condition, id } = i;
+  const isCompleted = i.state === InjectState.EXECUTED;
+  const delay = injectStates && injectStates.hasOwnProperty(id) ? injectStates[id].delayInSeconds || 0 : 0;
+  const condDelay = condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0;
+  return {
+    ...i,
+    completed: isCompleted ? 1 : 0,
+    highlight: waitingForManualConfirmation(i),
+    delay: delay + condDelay,
+    dependsOn:
+      condition && condition.injectId
+        ? [
+            {
+              id: condition.injectId,
+              condition: condition.injectState === InjectState.EXECUTED ? 'finished' : 'started',
+            },
+          ]
+        : undefined,
+  } as ITimelineItem & IExecutingInject;
+};
+
+export const messageOptions = (selectedMessageTypes: string[]) =>
+  enumToOptions(MessageType)
+    .filter(({ id }) => !selectedMessageTypes || selectedMessageTypes.indexOf(id) >= 0)
+    .map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));

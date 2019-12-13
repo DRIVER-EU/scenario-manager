@@ -17,6 +17,7 @@ import { TrialSettings } from '../components/configuration/trial-settings';
 import { SessionView } from '../components/session/session-view';
 import { OverviewMap } from '../components/map/overview-map';
 import { SelectMessageTypesForm } from '../components/select-message-types';
+import { SessionTable } from '../components/session/session-table';
 
 class DashboardService {
   private subscription!: ISubscriptionDefinition<any>;
@@ -89,6 +90,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     id: Dashboards.HOME,
     default: true,
     title: 'Home',
+    iconName: 'home',
     route: '/home',
     visible: true,
     component: TrialList,
@@ -96,6 +98,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.TRIAL,
     title: 'Edit',
+    iconName: 'edit',
     route: '/edit/scenarios',
     visible: false,
     component: InjectsView,
@@ -103,6 +106,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.EXECUTE,
     title: 'Run',
+    iconName: 'directions_run',
     route: '/execute/session',
     visible: false,
     component: SessionView,
@@ -197,18 +201,29 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   // },
   {
     id: Dashboards.SESSIONS,
-    title: 'Sessions',
+    title: 'Session',
     route: '/execute/session',
     visible: false,
     level: Dashboards.EXECUTE,
     component: SessionView,
   },
   {
-    id: Dashboards.SESSION_STATE,
-    title: 'Status',
-    route: '/execute/state',
+    id: Dashboards.SESSION_TIMELINE,
+    title: 'Timeline',
+    iconName: 'timelapse',
+    route: '/execute/timeline',
     visible: false,
     level: Dashboards.EXECUTE,
     component: SessionState,
+  },
+  {
+    id: Dashboards.SESSION_TABLE,
+    title: 'Table',
+    iconName: 'toc',
+    iconClass: 'flip',
+    route: '/execute/table',
+    visible: false,
+    level: Dashboards.EXECUTE,
+    component: SessionTable,
   },
 ]);

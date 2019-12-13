@@ -5,10 +5,21 @@ import { Dashboards } from '../models/dashboards';
 import { StatusBar } from './status/status-bar';
 import { Icon } from 'mithril-materialized';
 import { MediaControls } from './session/time-control';
-import { AppState } from '../models';
+import { AppState, IDashboard } from '../models';
 import { TimeState, SessionState } from 'trial-manager-models';
 
 export const Layout: FactoryComponent<{}> = () => {
+  const MenuItem: FactoryComponent<IDashboard> = () => {
+    return {
+      view: ({ attrs: d }) =>
+        m(
+          m.route.Link,
+          { href: d.route },
+          d.iconName ? m(Icon, { iconName: d.iconName, class: d.iconClass }) : d.title
+        ),
+    };
+  };
+
   return {
     view: vnode => {
       const curRoute = m.route.get();
@@ -28,7 +39,7 @@ export const Layout: FactoryComponent<{}> = () => {
         : false;
       const time = AppState.time;
       const trial = TrialSvc.getCurrent();
-      const trialTitle = trial && trial.title ? trial.title.toUpperCase() : '';
+      const trialTitle = trial && trial.title ? trial.title.toUpperCase() : 'BOOBOOK';
       const isRunning = AppState.session && AppState.session.sessionState === SessionState.START;
       const title =
         executeMode && isRunning && AppState.session.sessionName
@@ -47,21 +58,14 @@ export const Layout: FactoryComponent<{}> = () => {
               dashboardSvc
                 .getList()
                 .filter(d => d.visible)
-                .map(d =>
-                  m(
-                    `li${isActive(mainPath(d.route))}`,
-                    m(m.route.Link, { href: d.route }, d.iconName ? m(Icon, { iconName: d.iconName }) : d.title)
-                  )
-                )
+                .map(d => m(`li${isActive(mainPath(d.route))}`, m(MenuItem, d)))
             ),
           ]),
           hasSubDashboards
             ? m(
                 '.nav-content',
                 m('ul.tabs.tabs-transparent', [
-                  ...subDashboards.map(d =>
-                    m(`li.tab${isActive(d.route)}`, m(m.route.Link, { href: d.route }, d.title))
-                  ),
+                  ...subDashboards.map(d => m(`li.tab${isActive(d.route)}`, m(MenuItem, d))),
                   executeMode && time.state !== TimeState.Idle
                     ? m(MediaControls, {
                         id: 'layout-controls',
