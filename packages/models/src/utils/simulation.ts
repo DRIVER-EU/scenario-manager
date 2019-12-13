@@ -40,7 +40,7 @@ export const createSimState = (trialTime: Date, i: IInject) =>
   ({
     state: i.condition ? InjectState.ON_HOLD : InjectState.IN_PROGRESS,
     lastTransitionAt: trialTime,
-    title: `${i.type}: ${i.title}`,
+    title: `${i.type === InjectType.INJECT ? '' : `${i.type}: `}${i.title}`,
     delayInSeconds: 0,
   } as IInjectSimState);
 
