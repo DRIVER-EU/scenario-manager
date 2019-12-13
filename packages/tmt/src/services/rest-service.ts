@@ -2,6 +2,8 @@ import m from 'mithril';
 import { IChannelDefinition, messageBus } from './message-bus-service';
 import { TopicNames } from '../models/channels';
 import { AppState } from '../models';
+import { createPatch } from 'rfc6902';
+import { deepCopy } from 'trial-manager-models';
 
 const log = console.log;
 const error = console.error;
@@ -10,6 +12,7 @@ const withCredentials = false;
 // export class RestService<T extends IBaseModel> {
 export class RestService<T extends { id?: string | number }> {
   protected current: T = {} as T;
+  protected previous: T = {} as T;
   protected list: T[] = [];
   protected baseUrl: string;
   protected channel: IChannelDefinition<{ list: T[] } | { cur: T; old: T }>;
@@ -57,9 +60,28 @@ export class RestService<T extends { id?: string | number }> {
         withCredentials,
       }).catch(e => console.error(e));
       // this.setCurrent(data);
-      this.current = item;
+      this.setCurrent(item);
       this.updateItemInList(item);
       return this.current;
+    } catch (err) {
+      return error(err.message);
+    }
+  }
+
+  public async patch() {
+    try {
+      const patch = createPatch(this.previous, this.current);
+      const item = await m.request<T>({
+        method: 'PATCH',
+        url: this.baseUrl + this.current.id,
+        body: patch,
+        withCredentials,
+      }).catch(e => console.error(e));
+      if (item) {
+        this.setCurrent(item);
+        this.updateItemInList(item);
+        return this.current;
+      }
     } catch (err) {
       return error(err.message);
     }
@@ -173,10 +195,11 @@ export class RestService<T extends { id?: string | number }> {
   //     .catch(err => error(err));
   // }
 
-  private setCurrent(value: T) {
-    const old = this.current;
-    this.current = value;
-    this.channel.publish(TopicNames.ITEM_UPDATE, { old, cur: this.current });
+  protected setCurrent(item: T) {
+    // const old = this.current;
+    this.previous = deepCopy(item);
+    this.current = item;
+    // this.channel.publish(TopicNames.ITEM_UPDATE, { old, cur: this.current });
   }
 
   private setList(value: T[]) {

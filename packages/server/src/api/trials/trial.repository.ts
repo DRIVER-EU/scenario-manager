@@ -4,6 +4,7 @@ import { Database } from 'sqlite3';
 import { TrialOverview, IUploadedFile } from '../../models';
 import { ITrial, uniqueId, ITrialOverview } from 'trial-manager-models';
 import { logError, dbCallbackWrapper } from '../../utils';
+import { Operation, applyPatch } from 'rfc6902';
 
 const TRIAL = 'trial';
 const EXT = '.sqlite3';
@@ -139,10 +140,46 @@ export class TrialRepository {
           console.error(err);
           return reject(err);
         }
-        this.overview = this.overview.filter(s => s.id !== id);
-        this.overview.push(new TrialOverview(trial));
-        this.overview.sort(sortTrialsByLastEdit);
+        this.overview = this.overview
+          .map(t => (t.id === id ? new TrialOverview(trial) : t))
+          .sort(sortTrialsByLastEdit);
         resolve();
+      });
+    });
+  }
+
+  async patchTrial(id: string, patch: Operation[]) {
+    return new Promise<ITrial>(async (resolve, reject) => {
+      const db = this.databases.hasOwnProperty(id)
+        ? this.databases[id].db
+        : null;
+      if (!db) {
+        return reject(`Database with id ${id} does not exist!`);
+      }
+
+      const now = new Date();
+      const trial = await this.getTrial(db);
+      if (!trial) {
+        return reject(`Could not open trial with id ${id}!`);
+      }
+      trial.lastEdit = now;
+      if (!patch || patch.length === 0) {
+        return resolve(trial);
+      }
+      const errors = applyPatch(trial, patch);
+
+      if (errors && errors.length > 0 && errors[0] !== null) {
+        return reject(errors);
+      }
+      db.get(`UPDATE ${TRIAL} SET data = ?`, JSON.stringify(trial), err => {
+        if (err) {
+          console.error(err);
+          return reject(err);
+        }
+        this.overview = this.overview
+          .map(t => (t.id === id ? new TrialOverview(trial) : t))
+          .sort(sortTrialsByLastEdit);
+        resolve(trial);
       });
     });
   }
@@ -367,9 +404,10 @@ export class TrialRepository {
     const dbs = files
       .filter(f => path.extname(f) === EXT)
       .map(f => path.resolve(this.folder, f))
-      .reduce((acc, f) => [...acc, this.openDatabase(f)], [] as Array<
-        Promise<{ db: Database; filename: string }>
-      >);
+      .reduce(
+        (acc, f) => [...acc, this.openDatabase(f)],
+        [] as Array<Promise<{ db: Database; filename: string }>>,
+      );
     return await Promise.all(dbs);
     // .reduce(
     //   async (acc, f) => {
@@ -402,14 +440,19 @@ export class TrialRepository {
         return acc;
       }, []),
     );
-    const indexedTrials = trials.map((trial, index ) => ({ trial, index }));
+    const indexedTrials = trials.map((trial, index) => ({ trial, index }));
     indexedTrials.sort((a, b) => sortTrialsByLastEdit(a.trial, b.trial));
     this.overview = [];
     this.databases = indexedTrials.reduce((acc, { trial, index }) => {
       const db = dbs[index];
       if (acc.hasOwnProperty(trial.id)) {
-        console.info(`Closing ${trial.title} (${trial.id}). A more recent version is already loaded.`);
-        db.db.close(error => error && console.error(`Error closing ${trial.id}: ${error}!`));
+        console.info(
+          `Closing ${trial.title} (${trial.id}). A more recent version is already loaded.`,
+        );
+        db.db.close(
+          error =>
+            error && console.error(`Error closing ${trial.id}: ${error}!`),
+        );
       } else {
         acc[trial.id] = db;
         this.overview.push(new TrialOverview(trial));

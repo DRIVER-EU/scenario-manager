@@ -11,6 +11,7 @@ import {
   Controller,
   Get,
   Put,
+  Patch,
   Post,
   Delete,
   Query,
@@ -20,6 +21,7 @@ import {
   UseInterceptors,
   Inject,
 } from '@nestjs/common';
+import { Operation } from 'rfc6902';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { TrialOverview, IUploadedFile } from '../../models';
@@ -70,6 +72,14 @@ export class TrialController {
   async update(@Param('id') id: string, @Body() scenario: TrialOverview) {
     // console.log(JSON.stringify(scenario, null, 2));
     return this.trialService.update(id, scenario);
+  }
+
+  @ApiOperation({ title: 'Patch a trial by id, where the patch represents a deep-diff between the current and new scenario.' })
+  @ApiResponse({ status: 200, type: TrialOverview })
+  @Patch(':id')
+  async patch(@Param('id') id: string, @Body() patch: Operation[]) {
+    // console.log(JSON.stringify(patch, null, 2));
+    return this.trialService.patch(id, patch);
   }
 
   @ApiOperation({ title: 'Delete a trial by id' })

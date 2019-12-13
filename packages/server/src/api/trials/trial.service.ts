@@ -3,6 +3,7 @@ import * as path from 'path';
 import { Injectable } from '@nestjs/common';
 import { TrialOverview, IUploadedFile } from '../../models';
 import { TrialRepository } from './trial.repository';
+import { Operation } from 'rfc6902';
 
 @Injectable()
 export class TrialService {
@@ -55,6 +56,10 @@ export class TrialService {
       return `Error: Trial id (${trial.id}) does not match id (${id})!`;
     }
     return this.repo.updateTrial(id, trial);
+  }
+
+  async patch(id: string, patch: Operation[]) {
+    return this.repo.patchTrial(id, patch);
   }
 
   async remove(id: string) {

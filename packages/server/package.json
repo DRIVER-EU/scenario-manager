@@ -33,6 +33,7 @@
     "rxjs": "^6.5.3",
     "sqlite3": "^4.1.0",
     "marked": "^0.7.0",
+    "rfc6902": "^3.0.4",
     "trial-manager-models": "^0.0.1"
   },
   "devDependencies": {

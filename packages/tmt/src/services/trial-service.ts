@@ -40,11 +40,10 @@ class TrialService extends RestService<ITrial> {
 
   public async load(id: string): Promise<ITrial> {
     const s = await super.load(id);
-    // s.startDate = s.startDate ? new Date(s.startDate) : new Date();
-    // s.endDate = s.endDate ? new Date(s.endDate) : new Date();
-    this.current = s;
+    this.setCurrent(s);
     this.assetSvc = new AssetService(id);
     await this.assetSvc.loadList();
+    this.channel.publish(TopicNames.ITEM_UPDATE, { old: {} as ITrial, cur: this.current });
     return s;
   }
 
@@ -70,28 +69,28 @@ class TrialService extends RestService<ITrial> {
       objective.id = uniqueId();
       objectives.push(objective);
     }
-    await this.saveTrial();
+    await this.patch();
   }
 
   public async updateObjective(objective: IObjective) {
     if (this.current) {
       this.current.objectives = this.current.objectives.map(o => (o.id === objective.id ? objective : o));
     }
-    await this.saveTrial();
+    await this.patch();
   }
 
   public async deleteObjective(objective: IObjective) {
     if (this.current) {
       this.current.objectives = this.current.objectives.filter(o => o.id !== objective.id);
     }
-    await this.saveTrial();
+    await this.patch();
   }
 
   public async setObjectives(objectives?: IObjective[]) {
     if (this.current && objectives) {
       this.current.objectives = objectives;
     }
-    await this.saveTrial();
+    await this.patch();
   }
   /** USERS */
 
@@ -124,7 +123,7 @@ class TrialService extends RestService<ITrial> {
       user.id = user.id || uniqueId();
       users.push(user);
     }
-    // await this.saveTrial();
+    await this.patch();
     usersChannel.publish(TopicNames.ITEM_CREATE, { cur: user });
   }
 
@@ -132,7 +131,7 @@ class TrialService extends RestService<ITrial> {
     if (this.current) {
       this.current.users = this.current.users.map(u => (u.id === user.id ? user : u));
     }
-    await this.saveTrial();
+    await this.patch();
     usersChannel.publish(TopicNames.ITEM_UPDATE, { cur: user });
   }
 
@@ -145,7 +144,7 @@ class TrialService extends RestService<ITrial> {
         }
       });
     }
-    await this.saveTrial();
+    await this.patch();
     usersChannel.publish(TopicNames.ITEM_DELETE, { cur: user });
   }
 
@@ -170,7 +169,7 @@ class TrialService extends RestService<ITrial> {
       sh.id = sh.id || uniqueId();
       stakeholders.push(sh);
     }
-    await this.saveTrial();
+    await this.patch();
     stakeholdersChannel.publish(TopicNames.ITEM_CREATE, { cur: sh });
   }
 
@@ -178,7 +177,7 @@ class TrialService extends RestService<ITrial> {
     if (this.current) {
       this.current.stakeholders = this.current.stakeholders.map(s => (s.id === sh.id ? sh : s));
     }
-    await this.saveTrial();
+    await this.patch();
     stakeholdersChannel.publish(TopicNames.ITEM_UPDATE, { cur: sh });
   }
 
@@ -191,7 +190,7 @@ class TrialService extends RestService<ITrial> {
         }
       });
     }
-    await this.saveTrial();
+    await this.patch();
     stakeholdersChannel.publish(TopicNames.ITEM_DELETE, { cur: sh });
   }
 
@@ -215,14 +214,14 @@ class TrialService extends RestService<ITrial> {
       const sourceIndex = this.current.injects.indexOf(source);
       const afterIndex = this.current.injects.indexOf(after);
       arrayMove(this.current.injects, sourceIndex, sourceIndex < afterIndex ? afterIndex : afterIndex + 1);
-      await this.saveTrial();
+      await this.patch();
     }
   }
 
   /** Create a new inject and save it */
   public async createInject(i: IInject) {
     this.newInject(i);
-    await this.saveTrial();
+    await this.patch();
     injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: i });
     return i;
   }
@@ -244,7 +243,7 @@ class TrialService extends RestService<ITrial> {
     if (this.current) {
       this.current.injects = this.current.injects.map(s => (s.id === i.id ? i : s));
     }
-    await this.saveTrial();
+    await this.patch();
     injectsChannel.publish(TopicNames.ITEM_UPDATE, { cur: i });
   }
 
@@ -317,7 +316,7 @@ class TrialService extends RestService<ITrial> {
     deleteOne(i);
     this.current.injects = injects;
 
-    await this.saveTrial();
+    await this.patch();
     injectsChannel.publish(TopicNames.ITEM_DELETE, { cur: i });
   }
 
