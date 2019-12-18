@@ -148,7 +148,7 @@ export const InjectsList = () => {
             m('.row', [
               m('.col.s10', [
                 m(Select, {
-                  key: scenarioId + scenario.title,
+                  key: scenario ? scenarioId + scenario.title : 'scenario',
                   options: scenarioOptions,
                   checkedId: scenarioId,
                   iconName: getInjectIcon(InjectType.SCENARIO),

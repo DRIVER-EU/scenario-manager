@@ -12,7 +12,7 @@ import {
   InjectConditionType,
   InjectType,
 } from 'trial-manager-models';
-import { userRolesFilter, arrayMove, debounce } from '../utils';
+import { userRolesFilter, arrayMove } from '../utils';
 import { OverlaySvc } from './overlay-service';
 
 /**
@@ -22,20 +22,9 @@ import { OverlaySvc } from './overlay-service';
  */
 class TrialService extends RestService<ITrial> {
   private assetSvc?: AssetService;
-  private debouncedSave: (trial: ITrial) => void;
 
   constructor() {
     super('trials', ChannelNames.SCENARIO);
-    const save = async (t: ITrial) => {
-      this.validateInjects();
-      t.lastEdit = new Date();
-      const trial = await super.save(t);
-      if (trial && (!this.assetSvc || this.assetSvc.trialId !== trial.id)) {
-        this.assetSvc = new AssetService(trial.id);
-        return this.assetSvc.loadList();
-      }
-    };
-    this.debouncedSave = debounce(save, 1000);
   }
 
   public async load(id: string): Promise<ITrial> {
@@ -48,7 +37,13 @@ class TrialService extends RestService<ITrial> {
   }
 
   public async saveTrial(s: ITrial = this.current) {
-    this.debouncedSave(s);
+    this.validateInjects();
+    s.lastEdit = new Date();
+    const trial = await super.save(s);
+    if (trial && (!this.assetSvc || this.assetSvc.trialId !== trial.id)) {
+      this.assetSvc = new AssetService(trial.id);
+      return this.assetSvc.loadList();
+    }
   }
 
   /** OBJECTIVES */

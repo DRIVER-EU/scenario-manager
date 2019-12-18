@@ -81,6 +81,9 @@ export const InjectsTimeline: FactoryComponent = () => {
       const scenarios: IScenario[] = injects ? injects.filter(isScenario) : [];
       const { scenarioId } = AppState;
       const scenario = scenarios.filter(s => s.id === scenarioId).shift() || scenarios[0];
+      if (injects.length === 0 || !scenario) {
+        return;
+      }
       const scenarioStart = new Date(scenario.startDate || new Date());
       const timelineStart = new Date(Math.floor(scenarioStart.valueOf() / 60000) * 60000);
       console.table(scenario);
