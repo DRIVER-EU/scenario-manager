@@ -13,7 +13,7 @@ RUN apk add --no-cache --virtual .gyp python make g++ git && \
 # ENV PATH=$PATH:/home/node/.npm-global/bin
 RUN mkdir /packages && \
   mkdir /packages/models && \
-  mkdir /packages/gui && \
+  mkdir /packages/tmt && \
   mkdir /packages/server
 COPY ./packages/models /packages/models
 WORKDIR /packages/models
@@ -25,8 +25,8 @@ WORKDIR /packages/server
 RUN yalc add trial-manager-models && \
   npm install && \
   npm run build
-COPY ./packages/gui /packages/gui
-WORKDIR /packages/gui
+COPY ./packages/tmt /packages/tmt
+WORKDIR /packages/tmt
 RUN yalc add trial-manager-models && \
   npm install && \
   npm run build
@@ -39,7 +39,7 @@ COPY --from=builder /packages/server/certs /app/certs
 COPY --from=builder /packages/server/dist /app/dist
 COPY --from=builder /packages/server/.yalc /app/.yalc
 COPY --from=builder /packages/server/node_modules /app/node_modules
-COPY --from=builder /packages/gui/dist /app/public
+COPY --from=builder /packages/tmt/dist /app/public
 WORKDIR /app
 EXPOSE 3210
 CMD ["node", "./dist/main.js"]
