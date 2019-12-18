@@ -19,6 +19,12 @@ module.exports = (env = {}) => {
         SERVICE_URL: JSON.stringify('http://localhost:3210'),
       })
     );
+  } else {
+    plugins.push(
+      new webpack.DefinePlugin({
+        SERVICE_URL: JSON.stringify(''),
+      })
+    );
   }
 
   return {
