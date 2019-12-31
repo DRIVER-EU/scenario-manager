@@ -1,4 +1,4 @@
-import { ApiUseTags, ApiOperation, ApiConsumes, ApiImplicitFile } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import {
   Res,
   Controller,
@@ -12,16 +12,17 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TrialService } from '../trials/trial.service';
 import { Response } from 'express';
+import { ApiFile } from '../../adapters/models/api-file';
 
 /** Users should be able to download the sqlite3 database */
-@ApiUseTags('repo')
+@ApiTags('repo')
 @Controller('repo')
 export class RepoController {
   constructor(
     @Inject('TrialService') private readonly trialService: TrialService,
   ) {}
 
-  @ApiOperation({ title: 'Download a trial as SQLite3 database by id' })
+  @ApiOperation({ description: 'Download a trial as SQLite3 database by id' })
   @Get(':id')
   async findOne(@Res() res: Response, @Param('id') id: string) {
     const filename = this.trialService.getTrialFile(id);
@@ -30,20 +31,27 @@ export class RepoController {
     }
   }
 
-  @ApiOperation({ title: 'Create a copy of the Trial by id' })
+  @ApiOperation({ description: 'Create a copy of the Trial by id' })
   @Post('clone/:id')
   async clone(@Param('id') id: string) {
     const to = await this.trialService.clone(id);
     return to;
   }
 
-  @ApiOperation({ title: 'Upload a trial as SQLite3 database' })
+  @ApiOperation({ description: 'Upload a trial as SQLite3 database' })
   @ApiConsumes('multipart/form-data')
-  @ApiImplicitFile({
-    name: 'file',
-    required: true,
-    description: 'Upload SQLITE3 trial',
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
   })
+  @ApiFile()
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async upload(@UploadedFile() file) {

@@ -1,20 +1,20 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { ISessionMgmt, SessionState } from 'trial-manager-models';
 
 export class SessionMessage implements ISessionMgmt {
-  @ApiModelProperty()
+  @ApiProperty()
   public trialId: string;
-  @ApiModelProperty()
+  @ApiProperty()
   public trialName: string;
-  @ApiModelProperty()
+  @ApiProperty()
   public scenarioId: string;
-  @ApiModelProperty()
+  @ApiProperty()
   public scenarioName: string;
-  @ApiModelProperty()
+  @ApiProperty()
   public sessionId: string;
-  @ApiModelProperty()
+  @ApiProperty()
   public sessionName: string;
-  @ApiModelProperty()
+  @ApiProperty()
   public sessionState: SessionState;
 
   constructor(session: ISessionMgmt) {

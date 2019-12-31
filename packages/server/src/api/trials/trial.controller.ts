@@ -1,10 +1,9 @@
 import {
-  ApiUseTags,
+  ApiTags,
   ApiResponse,
-  ApiImplicitQuery,
+  ApiQuery,
   ApiOperation,
   ApiConsumes,
-  ApiImplicitFile,
 } from '@nestjs/swagger';
 import {
   Res,
@@ -26,22 +25,23 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { TrialOverview, IUploadedFile } from '../../models';
 import { TrialService } from './trial.service';
+import { ApiFile } from '../../adapters/models/api-file';
 
-@ApiUseTags('trials')
+@ApiTags('trials')
 @Controller('trials')
 export class TrialController {
   constructor(
     @Inject('TrialService') private readonly trialService: TrialService,
   ) {}
 
-  @ApiOperation({ title: 'Get trials' })
-  @ApiImplicitQuery({
+  @ApiOperation({ description: 'Get trials' })
+  @ApiQuery({
     name: 'take',
     required: false,
     description: 'How many items to take (default 25)',
     type: Number,
   })
-  @ApiImplicitQuery({
+  @ApiQuery({
     name: 'skip',
     required: false,
     description: 'How many items to skip (default 0)',
@@ -53,20 +53,20 @@ export class TrialController {
     return this.trialService.findSome(skip, take);
   }
 
-  @ApiOperation({ title: 'Create a trial' })
+  @ApiOperation({ description: 'Create a trial' })
   @Post()
   async create(@Body() newTrial: TrialOverview) {
     return this.trialService.create(newTrial);
   }
 
-  @ApiOperation({ title: 'Find a trial by id' })
+  @ApiOperation({ description: 'Find a trial by id' })
   @ApiResponse({ status: 200, type: TrialOverview })
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.trialService.findOne(id);
   }
 
-  @ApiOperation({ title: 'Update a trial by id' })
+  @ApiOperation({ description: 'Update a trial by id' })
   @ApiResponse({ status: 200, type: TrialOverview })
   @Put(':id')
   async update(@Param('id') id: string, @Body() scenario: TrialOverview) {
@@ -74,7 +74,7 @@ export class TrialController {
     return this.trialService.update(id, scenario);
   }
 
-  @ApiOperation({ title: 'Patch a trial by id, where the patch represents a deep-diff between the current and new scenario.' })
+  @ApiOperation({ description: 'Patch a trial by id, where the patch represents a deep-diff between the current and new scenario.' })
   @ApiResponse({ status: 200, type: TrialOverview })
   @Patch(':id')
   async patch(@Param('id') id: string, @Body() patch: Operation[]) {
@@ -82,7 +82,7 @@ export class TrialController {
     return this.trialService.patch(id, patch);
   }
 
-  @ApiOperation({ title: 'Delete a trial by id' })
+  @ApiOperation({ description: 'Delete a trial by id' })
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
@@ -90,14 +90,10 @@ export class TrialController {
     } catch {}
   }
 
-  @ApiOperation({ title: 'Add an asset to a trial' })
+  @ApiOperation({ description: 'Add an asset to a trial' })
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
-  @ApiImplicitFile({
-    name: 'file',
-    required: true,
-    description: 'Upload image asset',
-  })
+  @ApiFile()
   @Post(':id/assets')
   async createAsset(
     @Param('id') id: string,
@@ -107,14 +103,10 @@ export class TrialController {
     return this.trialService.createAsset(id, file, alias);
   }
 
-  @ApiOperation({ title: 'Update an asset to a trial' })
+  @ApiOperation({ description: 'Update an asset to a trial' })
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
-  @ApiImplicitFile({
-    name: 'file',
-    required: true,
-    description: 'Upload image asset',
-  })
+  @ApiFile()
   @Put(':id/assets/:asset')
   async updateAsset(
     @Param('id') id: string,
@@ -125,13 +117,13 @@ export class TrialController {
     return this.trialService.updateAsset(id, assetId, file, alias);
   }
 
-  @ApiOperation({ title: 'Get all trial assets' })
+  @ApiOperation({ description: 'Get all trial assets' })
   @Get(':id/assets')
   async getAssets(@Param('id') id: string) {
     return await this.trialService.getAssets(id);
   }
 
-  @ApiOperation({ title: 'Get a trial asset by ID' })
+  @ApiOperation({ description: 'Get a trial asset by ID' })
   @Get(':id/assets/:asset')
   async getAsset(
     @Res() res: Response,
@@ -150,7 +142,7 @@ export class TrialController {
     res.end(data);
   }
 
-  @ApiOperation({ title: 'Delete a trial asset by ID' })
+  @ApiOperation({ description: 'Delete a trial asset by ID' })
   @Delete(':id/assets/:asset')
   async removeAsset(@Param('id') id: string, @Param('asset') assetId: string) {
     this.trialService.removeAsset(id, assetId);

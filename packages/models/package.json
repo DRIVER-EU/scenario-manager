@@ -21,7 +21,7 @@
     "@types/geojson": "^7946.0.7"
   },
   "devDependencies": {
-    "typescript": "^3.7.2",
+    "typescript": "^3.7.4",
     "rimraf": "^3.0.0"
   }
 }

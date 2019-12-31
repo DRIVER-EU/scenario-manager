@@ -1,17 +1,17 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { ITrial, IExecutingInject, IPerson, IInjectGroup } from 'trial-manager-models';
 
 /** Describes a manual state transition request, e.g. when a role player wants to set the state to EXECUTED. */
 export class Trial implements Partial<ITrial> {
-  @ApiModelProperty({ description: 'Trial ID' })
+  @ApiProperty({ description: 'Trial ID' })
   public readonly id: string;
-  @ApiModelProperty({ description: 'Trial title' })
+  @ApiProperty({ description: 'Trial title' })
   public readonly title: string;
-  @ApiModelProperty({ description: 'Executing injects' })
+  @ApiProperty({ description: 'Executing injects' })
   public readonly injects: Array<IExecutingInject | IInjectGroup>;
-  @ApiModelProperty({ description: 'Users' })
+  @ApiProperty({ description: 'Users' })
   public readonly users: IPerson[];
-  @ApiModelProperty({ description: 'Selected message types' })
+  @ApiProperty({ description: 'Selected message types' })
   public readonly selectedMessageTypes: string[];
 
   constructor(

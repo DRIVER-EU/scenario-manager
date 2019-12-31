@@ -1,17 +1,17 @@
-import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IStateTransitionRequest, InjectState } from 'trial-manager-models';
 
 /** Describes a manual state transition request, e.g. when a role player wants to set the state to EXECUTED. */
 export class StateTransitionRequest implements IStateTransitionRequest {
-  @ApiModelProperty({ description: 'Inject ID' })
+  @ApiProperty({ description: 'Inject ID' })
   public readonly id: string;
-  @ApiModelProperty({ description: 'Current state' })
+  @ApiProperty({ description: 'Current state' })
   public readonly from: InjectState;
-  @ApiModelProperty({ description: 'Requested new state' })
+  @ApiProperty({ description: 'Requested new state' })
   public readonly to: InjectState;
-  @ApiModelPropertyOptional({ description: 'Expected time of execution (Date.valueOf())' })
+  @ApiPropertyOptional({ description: 'Expected time of execution (Date.valueOf())' })
   public readonly expectedExecutionTimeAt?: number;
-  @ApiModelPropertyOptional({ description: 'Optional comment when making a transition' })
+  @ApiPropertyOptional({ description: 'Optional comment when making a transition' })
   public readonly comment?: string;
 
   constructor(id: string, from: InjectState, to: InjectState, expectedExecutionTimeAt?: number, comment?: string) {

@@ -2,7 +2,7 @@ dependencies:
   '@types/geojson': 7946.0.7
 devDependencies:
   rimraf: 3.0.0
-  typescript: 3.7.2
+  typescript: 3.7.4
 lockfileVersion: 5.1
 packages:
   /@types/geojson/7946.0.7:
@@ -75,13 +75,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-NDGVxTsjqfunkds7CqsOiEnxln4Bo7Nddl3XhS4pXg5OzwkLqJ971ZVAAnB+DDLnF76N+VnDEiBHaVV8I06SUg==
-  /typescript/3.7.2:
+  /typescript/3.7.4:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-ml7V7JfiN2Xwvcer+XAf2csGO1bPBdRbFCkYBczNZggrBZ9c7G3riSUeJmqEU5uOtXNPMhE3n+R4FA/3YOAWOQ==
+      integrity: sha512-A25xv5XCtarLwXpcDNZzCGvW2D1S3/bACratYBx2sax8PefsFhlYmkQicKHvpYflFS8if4zne5zT5kpJ7pzuvw==
   /wrappy/1.0.2:
     dev: true
     resolution:
@@ -89,4 +89,4 @@ packages:
 specifiers:
   '@types/geojson': ^7946.0.7
   rimraf: ^3.0.0
-  typescript: ^3.7.2
+  typescript: ^3.7.4

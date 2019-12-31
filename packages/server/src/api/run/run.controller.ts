@@ -1,9 +1,4 @@
-import {
-  ApiUseTags,
-  ApiOperation,
-  ApiImplicitBody,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -19,18 +14,21 @@ import {
 import { Response } from 'express';
 import { RunService } from './run.service';
 import { SessionMessage } from '../../adapters/models';
-import { StateTransitionRequest, Inject as ScenarioInject } from '../../adapters/models';
+import {
+  StateTransitionRequest,
+  Inject as ScenarioInject,
+} from '../../adapters/models';
 import { SessionState } from 'trial-manager-models';
 import { Trial } from '../../adapters/models/trial';
 
-@ApiUseTags('run')
+@ApiTags('run')
 @Controller('run')
 export class RunController {
   private isLoading = false;
 
   constructor(@Inject('RunService') private readonly runService: RunService) {}
 
-  @ApiOperation({ title: 'Get active session' })
+  @ApiOperation({ description: 'Get active session' })
   @ApiResponse({
     status: 200,
     description: 'Session message',
@@ -56,7 +54,7 @@ export class RunController {
     return response.send(session);
   }
 
-  @ApiOperation({ title: 'Get active scenario' })
+  @ApiOperation({ description: 'Get active scenario' })
   @ApiResponse({
     status: 200,
     description: 'Trial based on the current session and the executing injects',
@@ -82,7 +80,7 @@ export class RunController {
     return response.send(trial);
   }
 
-  @ApiOperation({ title: 'Deactivate trial scenario' })
+  @ApiOperation({ description: 'Deactivate trial scenario' })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'No scenario active',
@@ -104,7 +102,9 @@ export class RunController {
     }
   }
 
-  @ApiOperation({ title: 'Load a trial scenario and start a new session' })
+  @ApiOperation({
+    description: 'Load a trial scenario and start a new session',
+  })
   @ApiResponse({
     status: HttpStatus.PROCESSING,
     description: 'Busy loading',
@@ -115,10 +115,7 @@ export class RunController {
     description: 'Either a scenario is already active, or no such trial exists',
     type: String,
   })
-  @ApiImplicitBody({
-    name: 'Session message',
-    type: SessionMessage,
-  })
+  @ApiBody({ type: SessionMessage })
   @Post('load')
   async load(@Body() session: SessionMessage, @Res() response: Response) {
     if (this.isLoading) {
@@ -147,21 +144,15 @@ export class RunController {
     return response.sendStatus(HttpStatus.OK);
   }
 
-  @ApiOperation({ title: 'Request a state transition which may fail.' })
-  @ApiImplicitBody({
-    name: 'State transition request',
-    type: StateTransitionRequest,
-  })
+  @ApiOperation({ description: 'Request a state transition which may fail.' })
+  @ApiBody({ type: StateTransitionRequest })
   @Put('transition')
   async stateTransitionRequest(@Body() tr: StateTransitionRequest) {
     this.runService.stateTransitionRequest(tr);
   }
 
-  @ApiOperation({ title: 'Update an inject in a running scenario.' })
-  @ApiImplicitBody({
-    name: 'Update inject',
-    type: ScenarioInject,
-  })
+  @ApiOperation({ description: 'Update an inject in a running scenario.' })
+  @ApiBody({ type: ScenarioInject })
   @Put('update')
   async updateInject(@Body() i: ScenarioInject) {
     console.dir(`Changed ${i.title} to:`);
@@ -169,11 +160,10 @@ export class RunController {
     this.runService.updateOrCreateInject(i);
   }
 
-  @ApiOperation({ title: 'Create a new inject and add it to the running scenario.' })
-  @ApiImplicitBody({
-    name: 'Create inject',
-    type: ScenarioInject,
+  @ApiOperation({
+    description: 'Create a new inject and add it to the running scenario.',
   })
+  @ApiBody({ type: ScenarioInject })
   @Post('create')
   async createInject(@Body() i: ScenarioInject) {
     console.dir('New inject: ' + i.title + ':');

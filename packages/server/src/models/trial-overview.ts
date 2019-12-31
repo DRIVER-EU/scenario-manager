@@ -1,4 +1,4 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { ITrialOverview } from 'trial-manager-models';
 
 /** Brief summary of a scenario, the information you see before downloading */
@@ -12,19 +12,19 @@ export class TrialOverview implements ITrialOverview {
   }
 
   /** Trial ID */
-  @ApiModelProperty({ description: 'Trial ID' })
+  @ApiProperty({ description: 'Trial ID' })
   id: string;
   /** Title of the trial */
-  @ApiModelProperty({ description: 'Trial title' })
+  @ApiProperty({ description: 'Trial title' })
   title: string;
   /** Trial description */
-  @ApiModelProperty({ description: 'Trial description' })
+  @ApiProperty({ description: 'Trial description' })
   description?: string;
   /** When the trial was created */
-  @ApiModelProperty({ description: 'Trial creation date' })
+  @ApiProperty({ description: 'Trial creation date' })
   creationDate?: Date;
   /** When the trial was edited */
-  @ApiModelProperty({ description: 'Trial last edit date' })
+  @ApiProperty({ description: 'Trial last edit date' })
   lastEdit?: Date;
   // boundingBox: number[];
 }
