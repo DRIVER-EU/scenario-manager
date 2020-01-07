@@ -1,9 +1,13 @@
 import m, { FactoryComponent } from 'mithril';
-import { IScenario, ITodo } from 'trial-manager-models';
+import { IScenario, ITodo, InjectKeys, IInject } from 'trial-manager-models';
 import { FlatButton, Kanban, IModelField, IKanban } from 'mithril-materialized';
 
-export const Checklist: FactoryComponent<{ scenario: IScenario; disabled?: boolean; onChange?: () => void }> = () => {
-  const state = { key: 0 } as { key: number; onChange?: (i: IScenario) => void };
+export const Checklist: FactoryComponent<{
+  scenario: IScenario;
+  disabled?: boolean;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
+}> = () => {
+  const state = { key: 0 } as { key: number; onChange?: (i: IInject, prop: InjectKeys) => void };
 
   const model = [
     {
@@ -36,13 +40,13 @@ export const Checklist: FactoryComponent<{ scenario: IScenario; disabled?: boole
   ] as IModelField[];
 
   const onchange = (scenario: IScenario, type: 'before' | 'after') => (items: ITodo[]) => {
+    const { onChange = () => undefined } = state;
     if (type === 'before') {
       scenario.todoBefore = items as ITodo[];
+      onChange(scenario, 'todoBefore');
     } else {
       scenario.todoAfter = items;
-    }
-    if (state.onChange) {
-      state.onChange(scenario);
+      onChange(scenario, 'todoAfter');
     }
   };
 

@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { IInject } from 'trial-manager-models';
+import { IInject, InjectKeys } from 'trial-manager-models';
 
 /**
  * Default message form with a title and description.
@@ -8,7 +8,7 @@ import { IInject } from 'trial-manager-models';
 export const DefaultMessageForm: FactoryComponent<{
   inject: IInject;
   disabled?: boolean;
-  onChange?: (inject: IInject) => void;
+  onChange?: (inject: IInject, prop: InjectKeys) => void;
 }> = () => ({
   view: ({ attrs: { inject, disabled, onChange } }) => [
     m(TextInput, {
@@ -18,7 +18,7 @@ export const DefaultMessageForm: FactoryComponent<{
       onchange: (v: string) => {
         inject.title = v;
         if (onChange) {
-          onChange(inject);
+          onChange(inject, 'title');
         }
       },
       label: 'Title',
@@ -31,7 +31,7 @@ export const DefaultMessageForm: FactoryComponent<{
       onchange: (v: string) => {
         inject.description = v;
         if (onChange) {
-          onChange(inject);
+          onChange(inject, 'description');
         }
       },
       label: 'Description',

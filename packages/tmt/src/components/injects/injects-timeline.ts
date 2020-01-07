@@ -86,7 +86,6 @@ export const InjectsTimeline: FactoryComponent = () => {
       }
       const scenarioStart = new Date(scenario.startDate || new Date());
       const timelineStart = new Date(Math.floor(scenarioStart.valueOf() / 60000) * 60000);
-      console.table(scenario);
       return m(
         '.row.timeline.sb.large',
         scenario

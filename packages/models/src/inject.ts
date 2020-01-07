@@ -52,6 +52,8 @@ export interface IInjectCondition {
 
 export type InjectValidationState = 'valid' | 'invalid' | 'childInvalid';
 
+export type InjectKeys = keyof IScenario | Array<keyof IScenario>;
+
 export interface IInject extends IContent {
   /** Who performs the action */
   actorId?: string;

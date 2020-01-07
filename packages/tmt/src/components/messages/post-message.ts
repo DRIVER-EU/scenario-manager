@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IPostMsg, MediumTypes, UserRole } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IPostMsg, MediumTypes, UserRole, InjectKeys } from 'trial-manager-models';
 import { enumToOptions } from '../../utils';
 import { TrialSvc, RunSvc } from '../../services';
 import { MessageScope } from '.';
@@ -8,7 +8,7 @@ import { MessageScope } from '.';
 /** Inform others about a large data message: note that it only sends a link, not the actual data! */
 export const PostMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: (inject: IInject) => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
   disabled?: boolean;
   scope: MessageScope;
 }> = () => {
@@ -23,7 +23,7 @@ export const PostMessageForm: FactoryComponent<{
       state.recipients = svc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name }));
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
-      const update = () => onChange && onChange(inject);
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
 
       const { options, recipients } = state;
       const pm = getMessage(inject, MessageType.POST_MESSAGE) as IPostMsg;
@@ -74,7 +74,10 @@ export const PostMessageForm: FactoryComponent<{
           disabled,
           id: 'title',
           initialValue: pm.title || inject.title,
-          onchange: (v: string) => (pm.title = inject.title = v),
+          onchange: (v: string) => {
+            pm.title = inject.title = v;
+            update(['title', 'message']);
+          },
           label: 'Subject',
           iconName: 'title',
           className: 'col s12',
@@ -83,7 +86,10 @@ export const PostMessageForm: FactoryComponent<{
           disabled,
           id: 'desc',
           initialValue: pm.description || inject.description,
-          onchange: (v: string) => (pm.description = inject.description = v),
+          onchange: (v: string) => {
+            pm.description = inject.description = v;
+            update(['title', 'message']);
+          },
           label: 'Content',
           iconName: 'note',
           className: 'col s12',

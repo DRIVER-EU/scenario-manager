@@ -1,16 +1,17 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IOstStageChangeMessage } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IOstStageChangeMessage, InjectKeys } from 'trial-manager-models';
 
 /** Request the Observer Support Tool to change the list of questions for the observers */
 export const OstChangeStageMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: () => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
   disabled?: boolean;
 }> = () => {
   return {
-    view: ({ attrs: { inject, disabled } }) => {
+    view: ({ attrs: { inject, disabled, onChange } }) => {
       const pm = getMessage(inject, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES) as IOstStageChangeMessage;
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
 
       return m('.row', [
         m(
@@ -19,7 +20,10 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             disabled,
             id: 'title',
             initialValue: inject.title,
-            onchange: (v: string) => (inject.title = v),
+            onchange: (v: string) => {
+              inject.title = v;
+              update('title');
+            },
             label: 'Title',
             iconName: 'title',
           })
@@ -30,7 +34,10 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             disabled,
             id: 'desc',
             initialValue: inject.description,
-            onchange: (v: string) => (inject.description = v),
+            onchange: (v: string) => {
+              inject.description = v;
+              update('description');
+            },
             label: 'Description',
             iconName: 'note',
           })
@@ -41,7 +48,10 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             disabled,
             id: 'ts1',
             initialValue: pm.ostTrialSessionId,
-            onchange: (v: number) => (pm.ostTrialSessionId = v),
+            onchange: (v: number) => {
+              pm.ostTrialSessionId = v;
+              update();
+            },
             label: 'OST trial session ID',
             iconName: 'filter_1',
           })
@@ -52,7 +62,10 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             disabled,
             id: 'ts2',
             initialValue: pm.ostTrialStageId,
-            onchange: (v: number) => (pm.ostTrialStageId = v),
+            onchange: (v: number) => {
+              pm.ostTrialStageId = v;
+              update();
+            },
             label: 'OST trial stage ID',
             iconName: 'filter_2',
           })

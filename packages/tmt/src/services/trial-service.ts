@@ -1,3 +1,4 @@
+import m from 'mithril';
 import { RestService, AssetService } from '.';
 import { assetsChannel, ChannelNames, usersChannel, TopicNames, stakeholdersChannel, injectsChannel } from '../models';
 import {
@@ -14,6 +15,8 @@ import {
 } from 'trial-manager-models';
 import { userRolesFilter, arrayMove } from '../utils';
 import { OverlaySvc } from './overlay-service';
+import { SocketSvc } from './socket-service';
+import { Operation, applyPatch } from 'rfc6902';
 
 /**
  * The TrialService wraps common functionality needed
@@ -28,15 +31,36 @@ class TrialService extends RestService<ITrial> {
   }
 
   public async load(id: string): Promise<ITrial> {
+    const socket = SocketSvc.socket;
+    if (this.current && socket.connected) {
+      socket.off(this.current.id);
+    }
     const s = await super.load(id);
     this.setCurrent(s);
     this.assetSvc = new AssetService(id);
     await this.assetSvc.loadList();
     this.channel.publish(TopicNames.ITEM_UPDATE, { old: {} as ITrial, cur: this.current });
+    console.log(`Subscribing to ${s.id}:`);
+    socket.on(s.id, async (patchObj: { id: string, patch: Operation[] }) => {
+      const { id: senderId, patch } = patchObj;
+      if (senderId === socket.id) {
+        return;
+      }
+      console.log(`Received message on channel ${s.id} from ${senderId}:`);
+      // console.log(JSON.stringify(patch, null, 2));
+      const errors = applyPatch(this.current, patch);
+      if (errors && errors.length > 0 && errors[0] !== null) {
+        console.error(`Error ${errors}:`);
+        console.error(JSON.stringify(patch, null, 2));
+        await super.load(id);
+      }
+      m.redraw();
+    });
     return s;
   }
 
   public async saveTrial(s: ITrial = this.current) {
+    console.log('Saving trial at ' + Date.now());
     this.validateInjects();
     s.lastEdit = new Date();
     const trial = await super.save(s);
@@ -204,6 +228,11 @@ class TrialService extends RestService<ITrial> {
       : this.current.injects;
   }
 
+  /** Get all injects (or filter by name) */
+  public getInject(id?: string) {
+    return id ? (this.current.injects || []).filter(s => s.id === id).shift() : undefined;
+  }
+
   public async moveInject(source: IInject, after: IInject) {
     if (this.current && this.current.injects) {
       const sourceIndex = this.current.injects.indexOf(source);
@@ -231,7 +260,10 @@ class TrialService extends RestService<ITrial> {
   }
 
   /** Update an existing inject and save it */
-  public async updateInject(i: IInject) {
+  public async updateInject(i?: IInject) {
+    if (!i) {
+      return;
+    }
     if (!i.id) {
       return this.createInject(i);
     }

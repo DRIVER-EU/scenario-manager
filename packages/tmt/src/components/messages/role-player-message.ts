@@ -9,6 +9,7 @@ import {
   RolePlayerMessageType,
   IPerson,
   IExecutingInject,
+  InjectKeys,
 } from 'trial-manager-models';
 import { TrialSvc, RunSvc } from '../../services';
 import { createEmailLink, createPhoneLink, getRolePlayerMessageIcon } from '../../utils';
@@ -16,14 +17,14 @@ import { MessageScope } from '.';
 
 export const RolePlayerMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: (i: IInject) => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
   disabled?: boolean;
   checkpoint?: boolean;
   scope: MessageScope;
 }> = () => {
   return {
     view: ({ attrs: { inject, disabled, checkpoint = false, onChange, scope } }) => {
-      const update = () => onChange && onChange(inject);
+      const update = (prop: keyof IInject | Array<keyof IInject>) => onChange && onChange(inject, prop);
       const svc = scope === 'edit' ? TrialSvc : RunSvc;
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayers = svc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
@@ -48,7 +49,7 @@ export const RolePlayerMessageForm: FactoryComponent<{
           checkedId: rpm.rolePlayerId,
           onchange: v => {
             rpm.rolePlayerId = v[0] as string;
-            update();
+            update('message');
           },
         }),
         checkpoint
@@ -63,7 +64,7 @@ export const RolePlayerMessageForm: FactoryComponent<{
               checkedId: rpm.type,
               onchange: v => {
                 rpm.type = v[0] as RolePlayerMessageType;
-                update();
+                update('message');
               },
             }),
         isAction
@@ -80,14 +81,17 @@ export const RolePlayerMessageForm: FactoryComponent<{
               initialValue: rpm.participantIds,
               onchange: v => {
                 rpm.participantIds = v as string[];
-                update();
+                update('message');
               },
             }),
         m(TextInput, {
           disabled,
           id: 'headline',
           initialValue: rpm.headline || rpm.title,
-          onchange: (v: string) => (inject.title = rpm.headline = v),
+          onchange: (v: string) => {
+            inject.title = rpm.headline = v;
+            update(['title', 'message']);
+          },
           label: checkpoint ? 'Check' : isAction ? 'Headline' : 'Subject',
           iconName: checkpoint ? getRolePlayerMessageIcon(rpm.type) : 'title',
           className: 'col s12',
@@ -96,7 +100,10 @@ export const RolePlayerMessageForm: FactoryComponent<{
           disabled,
           id: 'desc',
           initialValue: rpm.description as string,
-          onchange: (v: string) => (inject.description = rpm.description = v),
+          onchange: (v: string) => {
+            inject.description = rpm.description = v;
+            update(['description', 'message']);
+          },
           label: 'Description',
           iconName: 'note',
         }),
@@ -164,8 +171,7 @@ export const RolePlayerMessageView: FactoryComponent<{
     view: ({ attrs: { inject } }) => {
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayer =
-        RunSvc
-          .getUsers()
+        RunSvc.getUsers()
           .filter(u => u.id === rpm.rolePlayerId)
           .shift() || ({} as IPerson);
       const participants = RunSvc.getUsers().filter(u =>

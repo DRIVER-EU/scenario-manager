@@ -19,13 +19,14 @@ import {
   IValueNamePair,
   IActionList,
   ActionListParameter,
+  InjectKeys,
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { enumToOptions } from '../../utils';
 
 export const CapMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: (i: IInject) => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
   disabled?: boolean;
 }> = () => {
   const state = {} as {
@@ -96,7 +97,7 @@ export const CapMessageForm: FactoryComponent<{
         certaintyOptions,
       } = state;
       // console.table(statusOptions);
-      const update = () => onChange && onChange(inject);
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
 
       return [
         m(TextInput, {
@@ -104,7 +105,10 @@ export const CapMessageForm: FactoryComponent<{
           id: 'headline',
           className: 'col s12 m6',
           initialValue: inject.title,
-          onchange: (v: string) => (inject.title = alertInfo.headline = v),
+          onchange: (v: string) => {
+            inject.title = alertInfo.headline = v;
+            update(['title', 'message']);
+          },
           label: 'Headline',
           iconName: 'title',
         }),
@@ -129,7 +133,10 @@ export const CapMessageForm: FactoryComponent<{
           disabled,
           id: 'desc',
           initialValue: inject.description,
-          onchange: (v: string) => (inject.description = alertInfo.description = v),
+          onchange: (v: string) => {
+            inject.description = alertInfo.description = v;
+            update(['description', 'message']);
+          },
           label: 'Description',
           iconName: 'note',
         }),

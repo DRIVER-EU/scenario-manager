@@ -22,6 +22,7 @@ import {
   ActionListParameter,
   ResponseType,
   Priority,
+  InjectKeys,
 } from 'trial-manager-models';
 import { TrialSvc } from '../../services';
 import { debounce } from '../../utils';
@@ -29,7 +30,7 @@ import { debounce } from '../../utils';
 /** LCMS message, currently a wrapped CAP message */
 export const LcmsMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: (i: IInject) => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
   disabled?: boolean;
 }> = () => {
   const state = {} as {
@@ -98,7 +99,7 @@ export const LcmsMessageForm: FactoryComponent<{
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
       const { alert, alertInfo, actionList, parameters, participants } = state;
-      const update = () => onChange && onChange(inject);
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
       // console.table(statusOptions);
 
       return [
@@ -107,7 +108,10 @@ export const LcmsMessageForm: FactoryComponent<{
           id: 'headline',
           className: 'col s12 m6',
           initialValue: inject.title,
-          onchange: (v: string) => (inject.title = alertInfo.headline = v),
+          onchange: (v: string) => {
+            inject.title = alertInfo.headline = v;
+            update(['title', 'message']);
+          },
           label: 'Headline',
           iconName: 'title',
         }),
@@ -132,7 +136,10 @@ export const LcmsMessageForm: FactoryComponent<{
           disabled,
           id: 'desc',
           initialValue: inject.description,
-          onchange: (v: string) => (inject.description = alertInfo.description = v),
+          onchange: (v: string) => {
+            inject.description = alertInfo.description = v;
+            update(['description', 'message']);
+          },
           label: 'Description',
           iconName: 'note',
         }),
@@ -158,7 +165,10 @@ export const LcmsMessageForm: FactoryComponent<{
                     disabled,
                     label: `Section ${i + 1}. Title`,
                     initialValue: p.valueName,
-                    onchange: t => (p.valueName = t),
+                    onchange: t => {
+                      p.valueName = t;
+                      update();
+                    },
                   }),
                   m('.col.s12', [
                     m('div', [
@@ -168,13 +178,17 @@ export const LcmsMessageForm: FactoryComponent<{
                         iconName: 'delete',
                         onclick: () => {
                           state.parameters = parameters.filter(c => c.valueName === p.valueName);
+                          update();
                         },
                       }),
                     ]),
                     m(MarkdownEditor, {
                       disabled,
                       markdown: p.value,
-                      onchange: md => (p.value = md),
+                      onchange: md => {
+                        p.value = md;
+                        update();
+                      },
                     } as IMarkdownEditor),
                   ]),
                 ];
@@ -188,7 +202,10 @@ export const LcmsMessageForm: FactoryComponent<{
             m(FlatButton, {
               iconName: 'add',
               disabled: actionList.length > 0,
-              onclick: () => actionList.push({ title: 'New title', description: '', priority: Priority.AVERAGE }),
+              onclick: () => {
+                actionList.push({ title: 'New title', description: '', priority: Priority.AVERAGE });
+                update();
+              },
             }),
           ]),
           actionList.length > 0
@@ -214,6 +231,7 @@ export const LcmsMessageForm: FactoryComponent<{
                       value: JSON.stringify(data),
                     });
                     alertInfo.parameter = state.parameters = updatedActionList;
+                    update();
                   },
                 } as IEditableTable<IActionList>)
               )

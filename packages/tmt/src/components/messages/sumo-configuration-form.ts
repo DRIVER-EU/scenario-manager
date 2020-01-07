@@ -1,11 +1,11 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, ISumoConfiguration } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, ISumoConfiguration, InjectKeys } from 'trial-manager-models';
 
 export const SumoConfigurationForm: FactoryComponent<{
   inject: IInject;
   disabled?: boolean;
-  onChange?: () => void;
+  onChange?: (inject: IInject, prop: InjectKeys) => void;
 }> = () => {
   const setTitle = (inject: IInject, sc: ISumoConfiguration) => {
     inject.title = `Run ${sc.configFile}`;
@@ -14,7 +14,8 @@ export const SumoConfigurationForm: FactoryComponent<{
   const convertToMSec = (n: number) => n === -1 ? -1 : n * 1000;
 
   return {
-    view: ({ attrs: { inject, disabled } }) => {
+    view: ({ attrs: { inject, disabled, onChange } }) => {
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
       const sc = getMessage(inject, MessageType.SUMO_CONFIGURATION) as ISumoConfiguration;
       sc.begin = sc.begin || -1;
       sc.end = sc.end || -1;
@@ -33,6 +34,7 @@ export const SumoConfigurationForm: FactoryComponent<{
           onchange: v => {
             sc.configFile = v;
             setTitle(inject, sc);
+            update(['title', 'message']);
           },
         }),
         m(NumberInput, {
@@ -43,7 +45,10 @@ export const SumoConfigurationForm: FactoryComponent<{
           isMandatory: true,
           helperText: 'Begin time of the simulation in seconds or -1 for indefinite',
           initialValue: convertToSec(sc.begin),
-          onchange: v => (sc.begin = convertToMSec(v)),
+          onchange: v => {
+            sc.begin = convertToMSec(v);
+            update();
+          },
         }),
         m(NumberInput, {
           disabled,
@@ -53,7 +58,10 @@ export const SumoConfigurationForm: FactoryComponent<{
           isMandatory: true,
           helperText: 'End time of the simulation in seconds or -1 for indefinite',
           initialValue: convertToSec(sc.end),
-          onchange: v => (sc.end = convertToMSec(v)),
+          onchange: v => {
+            sc.end = convertToMSec(v);
+            update();
+          },
         }),
         m(NumberInput, {
           disabled,
@@ -63,7 +71,10 @@ export const SumoConfigurationForm: FactoryComponent<{
           isMandatory: true,
           helperText: 'Aggregation period for the statistics about affected traffic in seconds',
           initialValue: convertToSec(sc.affectedTraffic),
-          onchange: v => (sc.affectedTraffic = convertToMSec(v)),
+          onchange: v => {
+            sc.affectedTraffic = convertToMSec(v);
+            update();
+          },
         }),
         m(NumberInput, {
           disabled,
@@ -73,7 +84,10 @@ export const SumoConfigurationForm: FactoryComponent<{
           isMandatory: true,
           helperText: 'Aggregation period for simulation outputs in seconds',
           initialValue: convertToSec(sc.aggregation),
-          onchange: v => (sc.aggregation = convertToMSec(v)),
+          onchange: v => {
+            sc.aggregation = convertToMSec(v);
+            update();
+          },
         }),
         m(NumberInput, {
           disabled,
@@ -83,13 +97,19 @@ export const SumoConfigurationForm: FactoryComponent<{
           isMandatory: true,
           helperText: 'Aggregation period for the outputs of each vehicle in seconds (or -1 to disable)',
           initialValue: convertToSec(sc.singleVehicle),
-          onchange: v => (sc.singleVehicle = convertToMSec(v)),
+          onchange: v => {
+            sc.singleVehicle = convertToMSec(v);
+            update();
+          },
         }),
         m(TextArea, {
           disabled,
           id: 'desc',
           initialValue: inject.description,
-          onchange: (v: string) => (inject.description = v),
+          onchange: (v: string) => {
+            inject.description = v;
+            update('description');
+          },
           label: 'Description',
           iconName: 'description',
         }),

@@ -4,6 +4,7 @@ import { TopicNames } from '../models/channels';
 import { AppState } from '../models';
 import { createPatch } from 'rfc6902';
 import { deepCopy } from 'trial-manager-models';
+import { SocketSvc } from './socket-service';
 
 const log = console.log;
 const error = console.error;
@@ -52,7 +53,7 @@ export class RestService<T extends { id?: string | number }> {
 
   public async update(item: T, fd?: FormData) {
     try {
-      console.debug('put');
+      console.log('Update at ' + new Date());
       await m.request({
         method: 'PUT',
         url: this.baseUrl + item.id,
@@ -69,12 +70,16 @@ export class RestService<T extends { id?: string | number }> {
   }
 
   public async patch() {
+    const id = SocketSvc.socket.id;
     try {
+      // console.log('Patch at ' + new Date());
       const patch = createPatch(this.previous, this.current);
+      console.log('Patch:');
+      console.log(JSON.stringify(patch, null, 2));
       const item = await m.request<T>({
         method: 'PATCH',
         url: this.baseUrl + this.current.id,
-        body: patch,
+        body: { id, patch },
         withCredentials,
       }).catch(e => console.error(e));
       if (item) {

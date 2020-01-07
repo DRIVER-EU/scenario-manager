@@ -1,12 +1,12 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, UrlInput, Select } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, ILargeDataUpdate, DataType, InjectType } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, ILargeDataUpdate, DataType, InjectKeys } from 'trial-manager-models';
 import { enumToOptions } from '../../utils';
 
 /** Inform others about a large data message: note that it only sends a link, not the actual data! */
 export const LargeDataUpdateMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: (inject: IInject) => void;
+  onChange?: (inject: IInject, prop: InjectKeys) => void;
   disabled?: boolean;
 }> = () => {
   const state = {
@@ -15,7 +15,7 @@ export const LargeDataUpdateMessageForm: FactoryComponent<{
 
   return {
     view: ({ attrs: { inject, disabled, onChange } }) => {
-      const update = () => onChange && onChange(inject);
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
 
       const { options } = state;
       const pm = getMessage(inject, MessageType.LARGE_DATA_UPDATE) as ILargeDataUpdate;
@@ -27,7 +27,10 @@ export const LargeDataUpdateMessageForm: FactoryComponent<{
             disabled,
             id: 'title',
             initialValue: pm.title || inject.title,
-            onchange: (v: string) => (pm.title = inject.title = v),
+            onchange: (v: string) => {
+              pm.title = inject.title = v;
+              update(['title', 'message']);
+            },
             label: 'Title',
             iconName: 'title',
           })
@@ -38,7 +41,10 @@ export const LargeDataUpdateMessageForm: FactoryComponent<{
             disabled,
             id: 'desc',
             initialValue: pm.description || inject.description,
-            onchange: (v: string) => (pm.description = inject.description = v),
+            onchange: (v: string) => {
+              pm.description = inject.description = v;
+              update(['description', 'message']);
+            },
             label: 'Description',
             iconName: 'note',
           })
@@ -49,7 +55,10 @@ export const LargeDataUpdateMessageForm: FactoryComponent<{
             disabled,
             id: 'url',
             initialValue: pm.url,
-            onchange: (v: string) => (pm.url = v),
+            onchange: (v: string) => {
+              pm.url = v;
+              update();
+            },
             label: 'URL of the data source',
             placeholder: 'http(s)://...',
             iconName: 'link',

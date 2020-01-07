@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestUnitTransport } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IRequestUnitTransport, InjectKeys } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection } from 'geojson';
 import { FeatureGroup, GeoJSON } from 'leaflet';
@@ -11,7 +11,7 @@ import { TrialSvc } from '../../services';
 export const RequestUnitTransportForm: FactoryComponent<{
   inject: IInject;
   disabled?: boolean;
-  onChange?: () => void;
+  onChange?: (inject: IInject, prop: InjectKeys) => void;
 }> = () => {
   const state = {} as {
     overlays?: { [key: string]: GeoJSON },
@@ -35,6 +35,7 @@ export const RequestUnitTransportForm: FactoryComponent<{
     view: ({ attrs: { inject, disabled, onChange } }) => {
       const { overlays } = state;
       const ut = getMessage(inject, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestUnitTransport;
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
 
       const route = routeToGeoJSON(ut.route);
       const { view, zoom } = centerArea(route);
@@ -51,6 +52,7 @@ export const RequestUnitTransportForm: FactoryComponent<{
           onchange: v => {
             ut.guid = v;
             setTitle(inject, ut);
+            update(['title', 'message']);
           },
         }),
         m(TextInput, {
@@ -66,6 +68,7 @@ export const RequestUnitTransportForm: FactoryComponent<{
           onchange: v => {
             ut.unit = v;
             setTitle(inject, ut);
+            update(['title', 'message']);
           },
         }),
         m(TextInput, {
@@ -79,6 +82,7 @@ export const RequestUnitTransportForm: FactoryComponent<{
           onchange: v => {
             ut.destination = v;
             setTitle(inject, ut);
+            update(['title', 'message']);
           },
         }),
         m(LeafletMap, {
@@ -96,9 +100,7 @@ export const RequestUnitTransportForm: FactoryComponent<{
             const r = geoJSONtoRoute(geojson);
             if (r) {
               ut.route = r;
-              if (onChange) {
-                onChange();
-              }
+              update();
             }
           },
         }),

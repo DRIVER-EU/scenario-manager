@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IAffectedArea } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IAffectedArea, InjectKeys } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { Polygon, FeatureCollection } from 'geojson';
 import { FeatureGroup, GeoJSON } from 'leaflet';
@@ -10,7 +10,7 @@ import { TrialSvc } from '../../services';
 export const SetAffectedAreaForm: FactoryComponent<{
   inject: IInject;
   disabled?: boolean;
-  onChange?: () => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
 }> = () => {
   const state = {} as {
     overlays?: { [key: string]: GeoJSON },
@@ -27,6 +27,7 @@ export const SetAffectedAreaForm: FactoryComponent<{
     view: ({ attrs: { inject, disabled, onChange } }) => {
       const { overlays } = state;
       const aa = getMessage<IAffectedArea>(inject, MessageType.SET_AFFECTED_AREA);
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
       aa.id = inject.id;
       aa.begin = aa.begin || -1;
       aa.end = aa.end || -1;
@@ -47,6 +48,7 @@ export const SetAffectedAreaForm: FactoryComponent<{
             TrialSvc.overlayRename(inject.title, v);
             state.overlays = await TrialSvc.overlays();
             inject.title = v;
+            update(['title', 'message']);
           },
         }),
         m(TextInput, {
@@ -57,13 +59,19 @@ export const SetAffectedAreaForm: FactoryComponent<{
           helperText: 'Types of the vehicles, which are not allowed in this area (SUMO vehicle types), default "all"',
           isMandatory: true,
           initialValue: aa.restriction,
-          onchange: v => (aa.restriction = v),
+          onchange: v => {
+            aa.restriction = v;
+            update();
+          },
         }),
         m(TextArea, {
           disabled,
           id: 'desc',
           initialValue: inject.description,
-          onchange: (v: string) => (inject.description = v),
+          onchange: (v: string) => {
+            inject.description = v;
+            update('description');
+          },
           label: 'Description',
           iconName: 'description',
         }),
@@ -75,7 +83,10 @@ export const SetAffectedAreaForm: FactoryComponent<{
           isMandatory: true,
           helperText: 'Begin time of the duration in seconds or -1 for indefinite',
           initialValue: convertToSec(aa.begin),
-          onchange: v => (aa.begin = convertToMSec(v)),
+          onchange: v => {
+            aa.begin = convertToMSec(v);
+            update();
+          },
         }),
         m(NumberInput, {
           disabled,
@@ -85,7 +96,10 @@ export const SetAffectedAreaForm: FactoryComponent<{
           isMandatory: true,
           helperText: 'End time of the duration in seconds or -1 for indefinite',
           initialValue: convertToSec(aa.begin),
-          onchange: v => (aa.begin = convertToMSec(v)),
+          onchange: v => {
+            aa.begin = convertToMSec(v);
+            update();
+          },
         }),
         m(LeafletMap, {
           style: 'width: 100%; height: 400px; margin-top: 10px;',
@@ -100,9 +114,7 @@ export const SetAffectedAreaForm: FactoryComponent<{
             const a = geoJSONtoAffectedArea(geojson);
             if (a) {
               aa.area = a;
-              if (onChange) {
-                onChange();
-              }
+              update();
             }
           },
         }),

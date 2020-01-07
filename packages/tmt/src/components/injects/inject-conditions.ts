@@ -51,19 +51,20 @@ export const InjectConditions: FactoryComponent<{
   inject: IInject;
   previousInjects: IInject[];
   disabled?: boolean;
-  onChange: (inject?: IInject) => void;
+  onChange: (i: IInject, prop: keyof IInject | Array<keyof IInject>) => void;
 }> = () => {
   const state = {
     dropdownOptions: { container: document.body, constrainWidth: false },
-  } as { dropdownOptions: Partial<M.DropdownOptions>; inject?: IInject };
+  } as {
+    dropdownOptions: Partial<M.DropdownOptions>;
+  };
   const rolePlayers = TrialSvc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
   const style = 'margin: 0 auto;';
 
   return {
-    // oninit: ({ attrs: { inject }}) => state.inject = inject,
-    view: ({ attrs: { injects, inject, previousInjects, disabled = false, onChange } }) => {
+    view: ({ attrs: { injects, inject, previousInjects, disabled = false, onChange: oc } }) => {
+      const onChange = (i: IInject) => oc(i, 'condition');
       const { dropdownOptions } = state;
-      state.inject = inject;
       // console.table(inject);
       if (!inject || inject.type === InjectType.SCENARIO) {
         return undefined;
@@ -76,9 +77,11 @@ export const InjectConditions: FactoryComponent<{
           injectState: InjectState.EXECUTED,
         } as IInjectCondition;
       }
-      const { condition } = inject;
+      const {
+        condition: { injectId, injectState, type, rolePlayerId },
+      } = inject;
       // console.table(condition);
-      const dependency = getInject(condition.injectId, TrialSvc.getInjects());
+      const dependency = getInject(injectId, TrialSvc.getInjects());
       const previousInjectOptions = previousInjects.map(i => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =
         dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'ended' }] : [];
@@ -87,11 +90,11 @@ export const InjectConditions: FactoryComponent<{
         // disabled: dependency && dependency.type === InjectType.SCENARIO,
         label: 'started',
       });
-      if (!condition.injectId && previousInjectOptions.length > 0) {
-        condition.injectId = previousInjectOptions[previousInjectOptions.length - 1].id;
+      if (!injectId && previousInjectOptions.length > 0) {
+        inject.condition.injectId = previousInjectOptions[previousInjectOptions.length - 1].id;
       }
-      if (injectStateOptions.filter(iso => iso.id === condition.injectState).length === 0) {
-        condition.injectState = injectStateOptions[0].id as InjectState;
+      if (injectStateOptions.filter(iso => iso.id === injectState).length === 0) {
+        inject.condition.injectState = injectStateOptions[0].id as InjectState;
       }
       return m(
         '.row',
@@ -105,7 +108,7 @@ export const InjectConditions: FactoryComponent<{
             className: 'inline medium',
             placeholder: 'Pick one',
             isMandatory: true,
-            checkedId: condition.type,
+            checkedId: type,
             options: [
               { id: InjectConditionType.MANUALLY, label: 'manually' },
               { id: InjectConditionType.IMMEDIATELY, label: 'immediately' },
@@ -122,14 +125,14 @@ export const InjectConditions: FactoryComponent<{
                 inject.condition.type === InjectConditionType.AT_TIME &&
                 (v[0] as InjectConditionType) !== InjectConditionType.AT_TIME
               ) {
-                condition.delay = 0;
+                inject.condition.delay = 0;
               }
-              condition.type = v[0] as InjectConditionType;
-              state.inject!.condition = condition;
-              onChange(state.inject);
+              inject.condition!.type = v[0] as InjectConditionType;
+              // state.inject!.condition = condition;
+              onChange(inject);
             },
           }),
-          condition.type === InjectConditionType.MANUALLY && [
+          type === InjectConditionType.MANUALLY && [
             m('span.inline', 'by'),
             m(Select, {
               disabled,
@@ -137,16 +140,16 @@ export const InjectConditions: FactoryComponent<{
               placeholder: 'Role player',
               className: 'inline',
               options: rolePlayers,
-              checkedId: condition.rolePlayerId,
+              checkedId: rolePlayerId,
               onchange: v => {
-                condition.rolePlayerId = v[0] as string;
-                state.inject!.condition! = condition;
-                onChange(state.inject);
+                inject.condition!.rolePlayerId = v[0] as string;
+                // state.inject!.condition! = condition;
+                onChange(inject);
               },
             }),
           ],
-          condition.type === InjectConditionType.AT_TIME
-            ? m(StartAt, { disabled, condition, inject, onChange })
+          type === InjectConditionType.AT_TIME
+            ? m(StartAt, { disabled, condition: inject.condition, inject, onChange })
             : [
                 m(Delay, { disabled, inject, onChange }),
                 m('span.inline', 'after'),
@@ -156,12 +159,12 @@ export const InjectConditions: FactoryComponent<{
                   style,
                   placeholder: 'Pick one',
                   className: 'inline',
-                  checkedId: condition.injectId,
+                  checkedId: injectId,
                   options: previousInjectOptions,
                   onchange: v => {
-                    condition.injectId = v[0] as InjectConditionType;
-                    state.inject!.condition = condition;
-                    onChange(state.inject);
+                    inject.condition!.injectId = v[0] as InjectConditionType;
+                    // state.inject!.condition = condition;
+                    onChange(inject);
                   },
                 }),
                 m('span.inline', 'has'),
@@ -170,12 +173,12 @@ export const InjectConditions: FactoryComponent<{
                   style,
                   placeholder: 'When...',
                   className: 'inline small',
-                  checkedId: condition.injectState,
+                  checkedId: injectState,
                   options: injectStateOptions,
                   onchange: v => {
-                    condition!.injectState = v[0] as InjectState;
-                    state.inject!.condition = condition;
-                    onChange(state.inject);
+                    inject.condition!.injectState = v[0] as InjectState;
+                    // state.inject!.condition = condition;
+                    onChange(inject);
                   },
                 }),
               ],
@@ -186,14 +189,10 @@ export const InjectConditions: FactoryComponent<{
   };
 };
 
-const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (inject?: IInject) => void }> = () => {
-  const state = {} as { inject: IInject };
-
+const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (inject: IInject) => void }> = () => {
   return {
     view: ({ attrs: { inject, disabled = false, onChange } }) => {
-      state.inject = inject;
       const { condition } = inject;
-      // console.table(condition);
       return condition &&
         (condition.type === InjectConditionType.DELAY || condition.type === InjectConditionType.MANUALLY)
         ? [
@@ -203,9 +202,8 @@ const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (
               min: 0,
               initialValue: condition.delay,
               onchange: (v: number) => {
-                condition.delay = v;
-                state.inject.condition = condition;
-                onChange(state.inject);
+                inject.condition!.delay = v;
+                onChange(inject);
               },
             }),
             m(Select, {
@@ -219,9 +217,8 @@ const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (
                 { id: 'hours', label: condition.delay === 1 ? 'hour' : 'hours' },
               ],
               onchange: v => {
-                condition.delayUnitType = v[0] as 'seconds' | 'minutes' | 'hours' | undefined;
-                state.inject.condition = condition;
-                onChange(state.inject);
+                inject.condition!.delayUnitType = v[0] as 'seconds' | 'minutes' | 'hours' | undefined;
+                onChange(inject);
               },
             }),
           ]
@@ -234,7 +231,7 @@ const StartAt: FactoryComponent<{
   condition: IInjectCondition;
   inject: IInject;
   disabled?: boolean;
-  onChange: (inject?: IInject) => void;
+  onChange: (inject: IInject) => void;
 }> = () => {
   return {
     view: ({ attrs: { condition, inject, disabled = false, onChange } }) => {
@@ -273,11 +270,9 @@ const StartAt: FactoryComponent<{
             console.warn('Cannot start before the scenario starts!');
             return;
           }
-          condition.delay = dtInSec;
-          condition.delayUnitType = 'seconds';
-          inject.condition = condition;
+          inject.condition!.delay = dtInSec;
+          inject.condition!.delayUnitType = 'seconds';
           onChange(inject);
-          m.redraw();
         },
       });
     },

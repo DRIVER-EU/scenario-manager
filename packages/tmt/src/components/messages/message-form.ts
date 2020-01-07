@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { IInject, MessageType, InjectType } from 'trial-manager-models';
+import { IInject, MessageType, InjectType, InjectKeys } from 'trial-manager-models';
 import {
   RolePlayerMessageForm,
   PhaseMessageForm,
@@ -22,13 +22,13 @@ export type MessageScope = 'edit' | 'execute';
 export const MessageForm: FactoryComponent<{
   inject?: IInject;
   disabled?: boolean;
-  onChange?: () => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
   scope?: MessageScope;
 }> = () => {
   const MessageFormSelector: FactoryComponent<{
     inject: IInject;
     disabled: boolean;
-    onChange?: () => void;
+    onChange?: (i: IInject, prop: InjectKeys) => void;
     scope: MessageScope;
   }> = () => {
     return {

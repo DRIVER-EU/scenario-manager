@@ -1,11 +1,11 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, Switch } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IPhaseMessage, Phase } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IPhaseMessage, Phase, InjectKeys } from 'trial-manager-models';
 
 export const PhaseMessageForm: FactoryComponent<{
   inject: IInject;
   disabled?: boolean;
-  onChange?: (i: IInject) => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
 }> = () => {
   const setTitle = (inject: IInject, pm: IPhaseMessage) => {
     const name = pm.phase === Phase.PROPER_NAME ? pm.alternativeName : Phase[pm.phase];
@@ -13,7 +13,7 @@ export const PhaseMessageForm: FactoryComponent<{
   };
   return {
     view: ({ attrs: { inject, disabled, onChange } }) => {
-      const update = () => onChange && onChange(inject);
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
       const pm = getMessage(inject, MessageType.PHASE_MESSAGE) as IPhaseMessage;
       const options = Object.keys(Phase).map(p => ({ id: p, label: p }));
       // console.table(pm);
@@ -31,7 +31,7 @@ export const PhaseMessageForm: FactoryComponent<{
               pm.isStarting = true;
             }
             setTitle(inject, pm);
-            update();
+            update(['title', 'message']);
           },
         }),
         pm.phase === Phase.PROPER_NAME
@@ -42,6 +42,7 @@ export const PhaseMessageForm: FactoryComponent<{
               onchange: (v: string) => {
                 pm.alternativeName = v;
                 setTitle(inject, pm);
+                update(['title', 'message']);
               },
               label: 'Title',
               iconName: 'title',
@@ -56,13 +57,17 @@ export const PhaseMessageForm: FactoryComponent<{
           onchange: (v: boolean) => {
             pm.isStarting = !v;
             setTitle(inject, pm);
+            update(['title', 'message']);
           },
         }),
         m(TextArea, {
           disabled,
           id: 'desc',
           initialValue: inject.description,
-          onchange: (v: string) => (inject.description = v),
+          onchange: (v: string) => {
+            inject.description = v;
+            update('description');
+          },
           label: 'Description',
           iconName: 'description',
         }),

@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
-import { getMessage, IAsset, IInject, MessageType, IGeoJsonMessage } from 'trial-manager-models';
+import { getMessage, IAsset, IInject, MessageType, IGeoJsonMessage, InjectKeys } from 'trial-manager-models';
 import { getMessageSubjects, centerArea } from '../../utils';
 import { TrialSvc } from '../../services';
 import { UploadAsset } from '../ui';
@@ -9,7 +9,7 @@ import { geoJSON, GeoJSON } from 'leaflet';
 
 export const GeoJsonMessageForm: FactoryComponent<{
   inject: IInject;
-  onChange?: (inject: IInject) => void;
+  onChange?: (i: IInject, prop: InjectKeys) => void;
   disabled?: boolean;
 }> = () => {
   const state = {
@@ -24,7 +24,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
       state.assets = await TrialSvc.mapOverlays();
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
-      const update = () => onChange && onChange(inject);
+      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
       const { overlay, assets = [] } = state;
       const pm = getMessage<IGeoJsonMessage>(inject, MessageType.GEOJSON_MESSAGE);
       const subjects = getMessageSubjects(MessageType.GEOJSON_MESSAGE);
@@ -56,6 +56,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
               initialValue: inject.title,
               onchange: (v: string) => {
                 inject.title = v;
+                update('title');
               },
               label: 'Title',
               iconName: 'title',
@@ -103,7 +104,10 @@ export const GeoJsonMessageForm: FactoryComponent<{
             id: 'desc',
             className: 'col s10 m11',
             initialValue: inject.description,
-            onchange: (v: string) => (inject.description = v),
+            onchange: (v: string) => {
+              inject.description = v;
+              update('description');
+            },
             label: 'Description',
             iconName: 'short_text',
           }),
@@ -117,6 +121,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
               } else {
                 pm.properties = {};
               }
+              update();
             },
           }),
         ]),
