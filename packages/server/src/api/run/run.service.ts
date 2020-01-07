@@ -1,7 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { createInitialState, createSimState, executeInjects, getParent, IConnectMessage, IExecutingInject, IExecutionService, IInject, IInjectGroup, IInjectSimStates, IScenario, ISessionMgmt, ITrial, pruneInjects, SessionState, transitionInjects } from 'trial-manager-models';
+import {
+  createInitialState,
+  createSimState,
+  executeInjects,
+  getParent,
+  IConnectMessage,
+  IExecutingInject,
+  IExecutionService,
+  IInject,
+  IInjectGroup,
+  IInjectSimStates,
+  IScenario,
+  ISessionMgmt,
+  ITrial,
+  pruneInjects,
+  SessionState,
+  transitionInjects,
+} from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { StateTransitionRequest } from '../../adapters/models';
 import { Trial } from '../../adapters/models/trial';
@@ -34,13 +51,15 @@ export class RunService {
   }
 
   public get activeTrial() {
-    return this.session && this.trial ? new Trial(
-      this.session.sessionId,
-      this.session.sessionName,
-      this.injects,
-      this.trial.users,
-      this.trial.selectedMessageTypes,
-    ) : undefined;
+    return this.session && this.trial
+      ? new Trial(
+          this.session.sessionId,
+          this.session.sessionName,
+          this.injects,
+          this.trial.users,
+          this.trial.selectedMessageTypes,
+        )
+      : undefined;
   }
 
   /** Initialize the new trial and scenario */

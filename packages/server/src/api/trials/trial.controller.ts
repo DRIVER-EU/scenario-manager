@@ -77,9 +77,9 @@ export class TrialController {
   @ApiOperation({ description: 'Patch a trial by id, where the patch represents a deep-diff between the current and new scenario.' })
   @ApiResponse({ status: 200, type: TrialOverview })
   @Patch(':id')
-  async patch(@Param('id') id: string, @Body() patch: Operation[]) {
+  async patch(@Param('id') id: string, @Body() patchObj: { id: string, patch: Operation[] }) {
     // console.log(JSON.stringify(patch, null, 2));
-    return this.trialService.patch(id, patch);
+    return this.trialService.patch(id, patchObj);
   }
 
   @ApiOperation({ description: 'Delete a trial by id' })

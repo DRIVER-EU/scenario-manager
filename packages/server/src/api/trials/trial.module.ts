@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TrialController } from './trial.controller';
-import { trialServiceFactory } from './trial.service.provider';
+import { TrialService } from './trial.service';
 
 @Module({
   controllers: [TrialController],
-  providers: [trialServiceFactory],
+  exports: [TrialService],
+  providers: [TrialService],
 })
 export class TrialModule {}

@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { RepoController } from './repo.controller';
-import { trialServiceFactory } from '../trials/trial.service.provider';
+import { TrialModule } from '../trials/trial.module';
 
 @Module({
-  // imports: [TrialService],
   controllers: [RepoController],
-  providers: [trialServiceFactory],
+  imports: [TrialModule]
 })
 export class RepoModule {}

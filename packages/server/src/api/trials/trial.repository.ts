@@ -5,6 +5,7 @@ import { TrialOverview, IUploadedFile } from '../../models';
 import { ITrial, uniqueId, ITrialOverview } from 'trial-manager-models';
 import { logError, dbCallbackWrapper } from '../../utils';
 import { Operation, applyPatch } from 'rfc6902';
+import { Server } from 'socket.io';
 
 const TRIAL = 'trial';
 const EXT = '.sqlite3';
@@ -51,7 +52,7 @@ export class TrialRepository {
         console.error(msg);
         return reject(msg);
       }
-      console.log(`Cloning ${id} - ${filename}...`);
+      // console.log(`Cloning ${id} - ${filename}...`);
       fs.exists(filename, exists => {
         if (!exists) {
           const msg = `${filename} no longer exists, cannot clone.`;
@@ -148,8 +149,9 @@ export class TrialRepository {
     });
   }
 
-  async patchTrial(id: string, patch: Operation[]) {
+  async patchTrial(id: string, patchObj: { id: string, patch: Operation[] }, server: Server) {
     return new Promise<ITrial>(async (resolve, reject) => {
+      const { patch } = patchObj;
       const db = this.databases.hasOwnProperty(id)
         ? this.databases[id].db
         : null;
@@ -179,6 +181,7 @@ export class TrialRepository {
         this.overview = this.overview
           .map(t => (t.id === id ? new TrialOverview(trial) : t))
           .sort(sortTrialsByLastEdit);
+        server.emit(trial.id, patchObj);
         resolve(trial);
       });
     });

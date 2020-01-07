@@ -1,12 +1,16 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { TrialOverview, IUploadedFile } from '../../models';
 import { TrialRepository } from './trial.repository';
 import { Operation } from 'rfc6902';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
+@WebSocketGateway()
 export class TrialService {
+  @WebSocketServer() private server: Server;
   private repo: TrialRepository;
 
   constructor() {
@@ -58,8 +62,8 @@ export class TrialService {
     return this.repo.updateTrial(id, trial);
   }
 
-  async patch(id: string, patch: Operation[]) {
-    return this.repo.patchTrial(id, patch);
+  async patch(id: string, patchObj: { id: string, patch: Operation[] }) {
+    return this.repo.patchTrial(id, patchObj, this.server);
   }
 
   async remove(id: string) {
