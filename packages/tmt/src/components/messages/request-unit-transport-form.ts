@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestUnitTransport, InjectKeys } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IRequestTransport, InjectKeys } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection } from 'geojson';
 import { FeatureGroup, GeoJSON } from 'leaflet';
@@ -17,8 +17,8 @@ export const RequestUnitTransportForm: FactoryComponent<{
     overlays?: { [key: string]: GeoJSON },
   };
 
-  const setTitle = async (inject: IInject, si: IRequestUnitTransport) => {
-    const newTitle = `Send ${si.guid} (${si.unit}) to ${si.destination}`;
+  const setTitle = async (inject: IInject, si: IRequestTransport) => {
+    const newTitle = `Send ${si.id} (${si.entity}) to ${si.destination}`;
     TrialSvc.overlayRename(inject.title, newTitle);
     state.overlays = await TrialSvc.overlays();
     inject.title = newTitle;
@@ -27,14 +27,14 @@ export const RequestUnitTransportForm: FactoryComponent<{
 
   return {
     oninit: async ({ attrs: { inject } }) => {
-      const ut = getMessage(inject, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestUnitTransport;
-      ut.owner = AppState.owner;
+      const ut = getMessage(inject, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestTransport;
+      ut.applicant = AppState.owner;
       state.overlays = await TrialSvc.overlays();
       m.redraw();
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
       const { overlays } = state;
-      const ut = getMessage(inject, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestUnitTransport;
+      const ut = getMessage(inject, MessageType.REQUEST_UNIT_TRANSPORT) as IRequestTransport;
       const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
 
       const route = routeToGeoJSON(ut.route);
@@ -48,9 +48,9 @@ export const RequestUnitTransportForm: FactoryComponent<{
           iconName: 'title',
           isMandatory: true,
           helperText: 'Name of the unit that must be transported.',
-          initialValue: ut.guid,
+          initialValue: ut.entity,
           onchange: v => {
-            ut.guid = v;
+            ut.entity = v;
             setTitle(inject, ut);
             update(['title', 'message']);
           },
@@ -60,13 +60,16 @@ export const RequestUnitTransportForm: FactoryComponent<{
           className: 'col s6 m4',
           label: 'Unit Type',
           iconName: 'directions_car',
-          isMandatory: true,
+          isMandatory: false,
           // ('DEFAULT_BIKETYPE', 'DEFAULT_PEDTYPE', 'DEFAULT_VEHTYPE', 'bike_bicycle', 'bus_bus', 'emergency',
           // 'ped_pedestrian', 'rail_rail', 'tram_tram', 'truck_truck', 'veh_passenger')
           helperText: 'Unit type, e.g. emergency, bus_bus, truck_truck, tram_tram, veh_passenger or bike_bicycle.',
-          initialValue: ut.unit,
+          initialValue: ut.tags && ut.tags.hasOwnProperty('unit') ? ut.tags.unit : undefined,
           onchange: v => {
-            ut.unit = v;
+            if (!ut.tags) {
+              ut.tags = {};
+            }
+            ut.tags.unit = v;
             setTitle(inject, ut);
             update(['title', 'message']);
           },

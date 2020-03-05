@@ -16,7 +16,7 @@ import {
   IAlert,
   convertCAPtoAVRO,
   IRequestStartInject,
-  IRequestUnitTransport,
+  IRequestTransport,
   IAffectedArea,
   ISumoConfiguration,
   IValueNamePair,
@@ -208,7 +208,7 @@ export class ExecutionService implements IExecutionService {
   }
 
   private async sendRequestUnitTransport(i: IInject, comment?: string) {
-    const msg = getMessage<IRequestUnitTransport>(
+    const msg = getMessage<IRequestTransport>(
       i,
       MessageType.REQUEST_UNIT_TRANSPORT,
     );

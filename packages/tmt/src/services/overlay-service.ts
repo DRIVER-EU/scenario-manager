@@ -12,7 +12,7 @@ import {
   IGeoJsonMessage,
   MessageType,
   IAffectedArea,
-  IRequestUnitTransport,
+  IRequestTransport,
 } from 'trial-manager-models';
 import { TrialSvc } from './trial-service';
 import { AppState } from '../models';
@@ -88,7 +88,7 @@ class OverlayService {
         layers[i.title] = geojson;
       });
       scenarioInjects.filter(isTransportRequest).map(i => {
-        const ut = getMessage<IRequestUnitTransport>(i, MessageType.REQUEST_UNIT_TRANSPORT);
+        const ut = getMessage<IRequestTransport>(i, MessageType.REQUEST_UNIT_TRANSPORT);
         const geojson = routeToGeoJSON(ut.route);
         layers[i.title] = geojson;
       });
