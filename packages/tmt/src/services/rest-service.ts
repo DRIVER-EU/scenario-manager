@@ -2,7 +2,7 @@ import m from 'mithril';
 import { IChannelDefinition, messageBus } from './message-bus-service';
 import { TopicNames } from '../models/channels';
 import { AppState } from '../models';
-import { createPatch } from 'rfc6902';
+import { createPatch, Operation } from 'rfc6902';
 import { deepCopy } from 'trial-manager-models';
 import { SocketSvc } from './socket-service';
 
@@ -69,13 +69,15 @@ export class RestService<T extends { id?: string | number }> {
     }
   }
 
-  public async patch() {
+  public async patch(filter: (op: Operation) => boolean = () => true) {
     const id = SocketSvc.socket.id;
     try {
       // console.log('Patch at ' + new Date());
-      const patch = createPatch(this.previous, this.current);
-      console.log('Patch:');
-      console.log(JSON.stringify(patch, null, 2));
+      const patch = createPatch(this.previous, this.current).filter(filter);
+      if (patch.length === 0) {
+        return this.current;
+      }
+      // console.log(JSON.stringify(patch, null, 2));
       const item = await m.request<T>({
         method: 'PATCH',
         url: this.baseUrl + this.current.id,

@@ -25,38 +25,52 @@ import { Operation, applyPatch } from 'rfc6902';
  */
 class TrialService extends RestService<ITrial> {
   private assetSvc?: AssetService;
+  private selectedInject?: IInject;
 
   constructor() {
     super('trials', ChannelNames.SCENARIO);
+    injectsChannel.subscribe(TopicNames.ITEM_SELECT, ({ cur }) => (this.selectedInject = cur));
   }
 
   public async load(id: string): Promise<ITrial> {
     const socket = SocketSvc.socket;
-    if (this.current && socket.connected) {
+    if (socket.connected) {
       socket.off(this.current.id);
     }
-    const s = await super.load(id);
-    this.setCurrent(s);
+    const trial = await super.load(id);
+    this.setCurrent(trial);
     this.assetSvc = new AssetService(id);
     await this.assetSvc.loadList();
     this.channel.publish(TopicNames.ITEM_UPDATE, { old: {} as ITrial, cur: this.current });
-    console.log(`Subscribing to ${s.id}:`);
-    socket.on(s.id, async (patchObj: { id: string, patch: Operation[] }) => {
+    // console.log(`Subscribing to ${s.id}:`);
+    socket.on(trial.id, async (patchObj: { id: string; patch: Operation[] }) => {
       const { id: senderId, patch } = patchObj;
-      if (senderId === socket.id) {
+      if (senderId === SocketSvc.socket.id) {
         return;
       }
-      console.log(`Received message on channel ${s.id} from ${senderId}:`);
-      // console.log(JSON.stringify(patch, null, 2));
+      console.log(`${socket.id} received message on channel ${trial.id} from ${senderId}:`);
+      console.log(JSON.stringify(patch, null, 2));
       const errors = applyPatch(this.current, patch);
+      this.setCurrent(this.current);
       if (errors && errors.length > 0 && errors[0] !== null) {
         console.error(`Error ${errors}:`);
         console.error(JSON.stringify(patch, null, 2));
         await super.load(id);
       }
-      m.redraw();
+      if (this.selectedInject) {
+        const siId = this.selectedInject.id;
+        const cur = this.getInjects()
+          .filter(i => i.id === siId)
+          .shift();
+        // console.log(`${siId} ${cur ? '' : 'not'} found.`);
+        if (cur) {
+          injectsChannel.publish(TopicNames.ITEM, { cur });
+        } else {
+          injectsChannel.publish(TopicNames.ITEM);
+        }
+      }
     });
-    return s;
+    return trial;
   }
 
   public async saveTrial(s: ITrial = this.current) {
@@ -218,7 +232,7 @@ class TrialService extends RestService<ITrial> {
   /** Get all injects (or filter by name) */
   public getInjects(filter?: string) {
     if (!this.current) {
-      return undefined;
+      return [];
     }
     if (!this.current.injects) {
       this.current.injects = [];
@@ -270,7 +284,7 @@ class TrialService extends RestService<ITrial> {
     if (this.current) {
       this.current.injects = this.current.injects.map(s => (s.id === i.id ? i : s));
     }
-    await this.patch();
+    await this.patch((op: Operation) => !/\/injects\/\d+\/isOpen/.test(op.path));
     injectsChannel.publish(TopicNames.ITEM_UPDATE, { cur: i });
   }
 

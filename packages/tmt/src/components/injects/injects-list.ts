@@ -20,7 +20,7 @@ export const InjectsList = () => {
     filterValue: '' as string | undefined,
     trialId: '' as string | undefined,
     injects: undefined as IInject[] | undefined,
-    subscription: injectsChannel.subscribe(TopicNames.LIST, m.redraw),
+    subscription: injectsChannel.subscribe(TopicNames.ITEM, m.redraw),
   };
 
   const options = {

@@ -40,23 +40,24 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     inject: undefined as IInject | undefined,
     original: undefined as IInject | undefined,
     saving: undefined as boolean | undefined,
+    version: 0,
     subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
       if (Object.keys(cur).length === 0) {
         return;
       }
-      if (!state.saving && state.inject && cur.id !== state.inject.id && !deepEqual(state.original, state.inject)) {
+      state.version++;
+      const { inject, original } = state;
+      if (!state.saving && inject && cur.id !== inject.id && !deepEqual(original, inject)) {
         state.oldInject = state.inject;
         TrialSvc.updateInject(state.oldInject);
       }
       state.saving = false;
-      if (envelope.topic === TopicNames.ITEM_UPDATE && state.inject && state.inject.id !== cur.id) {
+      if (envelope.topic === TopicNames.ITEM_UPDATE && inject && inject.id !== cur.id) {
         return;
       }
       state.inject = cur ? deepCopy(cur) : undefined;
       state.original = cur ? deepCopy(cur) : undefined;
       state.parent = cur.parentId ? getInject(cur.parentId, TrialSvc.getInjects()) : undefined;
-      // console.log(cur);
-      // m.redraw();
     }),
   };
 
@@ -99,6 +100,9 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         case 'condition':
           state.inject = { ...inject, condition: inj.condition };
           break;
+        case 'isOpen':
+          state.inject = { ...inject, isOpen: inj.isOpen };
+          break;
       }
     };
     if (props instanceof Array) {
@@ -109,12 +113,143 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     // console.table(inj);
   };
 
+  /**
+   * Create a deep copy of all injects, give them a new ID, and map their parent IDs
+   * to keep the hierarchy intact.
+   */
+  const createFreshInjects = (injects: IInject[], oldParentId: string, newParentId: string) => {
+    const idMap = {} as { [key: string]: string };
+    idMap[oldParentId] = newParentId;
+    return injects
+      .map(deepCopy)
+      .map(c => {
+        const id = uniqueId();
+        idMap[c.id] = id;
+        c.id = id;
+        return c;
+      })
+      .map(c => {
+        if (c.parentId && idMap.hasOwnProperty(c.parentId)) {
+          c.parentId = idMap[c.parentId];
+        }
+        return c;
+      });
+  };
+
+  const canPasteInject = () => {
+    const { inject } = state;
+    const copy = AppState.copiedInjects instanceof Array ? AppState.copiedInjects[0] : AppState.copiedInjects;
+    if (!inject || !copy) {
+      return false;
+    }
+    if (isScenario(inject)) {
+      return isScenario(copy) || isStoryline(copy);
+    }
+    if (isStoryline(inject)) {
+      return isAct(copy) || isStoryline(copy);
+    }
+    if (isAct(inject)) {
+      return isAct(copy) || isInject(copy);
+    }
+    if (isInject(inject)) {
+      return isInject(copy);
+    }
+  };
+
+  const deleteInject = async () => {
+    const { inject } = state;
+    if (inject) {
+      const { parentId } = inject;
+      state.inject = undefined;
+      const injects = TrialSvc.getInjects() || [];
+      const parent = injects.filter(i => i.id === parentId).shift() || injects[0];
+      await TrialSvc.deleteInject(inject);
+      injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: parent });
+    }
+  };
+
+  // TODO Sometimes after a copy, two identical injects are created. Why?
+  const pasteInject = async () => {
+    const { inject } = state;
+    if (!inject || !AppState.copiedInjects) {
+      return;
+    }
+    const { copiedInjects, copiedInjectIsCut } = AppState;
+    const copy = copiedInjects instanceof Array ? copiedInjects[0] : copiedInjects;
+    const newParentId = inject.id;
+    if (copiedInjectIsCut) {
+      if (isInject(copy)) {
+        // Paste copied inject: only injects can be cut, not acts etc.
+        if (isAct(inject)) {
+          copy.parentId = newParentId;
+        } else if (isInject(inject)) {
+          copy.parentId = inject.parentId;
+        }
+        TrialSvc.newInject(copy);
+        await TrialSvc.updateInject(copy);
+      }
+    } else if (copiedInjects instanceof Array) {
+      const isParentChildRelation =
+        (isScenario(inject) && isStoryline(copy)) ||
+        (isStoryline(inject) && isAct(copy)) ||
+        (isAct(inject) && isInject(copy));
+      const isSiblingRelation =
+        (isScenario(inject) && isScenario(copy)) ||
+        (isStoryline(inject) && isStoryline(copy)) ||
+        (isAct(inject) && isAct(copy));
+      if (isParentChildRelation) {
+        createFreshInjects(copiedInjects, copy.parentId!, newParentId).map(i => TrialSvc.newInject(i));
+        await TrialSvc.updateInject(inject);
+      } else if (isSiblingRelation) {
+        createFreshInjects(copiedInjects.slice(1), copy.id, newParentId).map(i => TrialSvc.newInject(i));
+        await TrialSvc.updateInject(inject);
+      } else if (isInject(inject) && isInject(copy)) {
+        const clone = deepCopy(copy);
+        console.log(TrialSvc.getInjects.length);
+        clone.id = '';
+        clone.parentId = inject.parentId;
+        await TrialSvc.createInject(clone);
+        console.log(TrialSvc.getInjects.length);
+      }
+    }
+  };
+
+  const cutInject = async () => {
+    const { inject } = state;
+    if (inject) {
+      AppState.copiedInjectIsCut = true;
+      AppState.copiedInjects = inject;
+      deleteInject();
+    }
+  };
+
+  const copyInject = async () => {
+    const { inject } = state;
+    if (inject) {
+      AppState.copiedInjectIsCut = false;
+      AppState.copiedInjects = [inject, ...getAllChildren(TrialSvc.getInjects() || [], inject.id)];
+    }
+  };
+
+  const cloneInject = async () => {
+    const { inject } = state;
+    if (inject) {
+      await copyInject();
+      await pasteInject();
+    }
+  };
+
   return {
     onremove: () => {
       state.subscription.unsubscribe();
     },
     view: ({ attrs: { className, disabled = false } }) => {
-      const { inject, original } = state;
+      const { inject, original, version } = state;
+      if (!inject) {
+        return;
+      }
+      const key = `${inject.id}_${version}`;
+      console.log('Key: ' + key);
 
       const hasChanged = !deepEqual(inject, original);
       if (hasChanged) {
@@ -126,195 +261,77 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
 
       const canDelete = inject && TrialSvc.canDeleteInject(inject);
 
-      const canPasteInject = () => {
-        const copy = AppState.copiedInjects instanceof Array ? AppState.copiedInjects[0] : AppState.copiedInjects;
-        if (!inject || !copy) {
-          return false;
-        }
-        if (isScenario(inject)) {
-          return isScenario(copy) || isStoryline(copy);
-        }
-        if (isStoryline(inject)) {
-          return isAct(copy) || isStoryline(copy);
-        }
-        if (isAct(inject)) {
-          return isAct(copy) || isInject(copy);
-        }
-        if (isInject(inject)) {
-          return isInject(copy);
-        }
-      };
-
       const canPaste = canPasteInject();
-
-      const deleteInject = async () => {
-        if (inject) {
-          const { parentId } = inject;
-          state.inject = undefined;
-          const injects = TrialSvc.getInjects() || [];
-          const parent = injects.filter(i => i.id === parentId).shift() || injects[0];
-          await TrialSvc.deleteInject(inject);
-          injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: parent });
-        }
-      };
-
-      /**
-       * Create a deep copy of all injects, give them a new ID, and map their parent IDs
-       * to keep the hierarchy intact.
-       */
-      const createFreshInjects = (injects: IInject[], oldParentId: string, newParentId: string) => {
-        const idMap = {} as { [key: string]: string };
-        idMap[oldParentId] = newParentId;
-        return injects
-          .map(deepCopy)
-          .map(c => {
-            const id = uniqueId();
-            idMap[c.id] = id;
-            c.id = id;
-            return c;
-          })
-          .map(c => {
-            if (c.parentId && idMap.hasOwnProperty(c.parentId)) {
-              c.parentId = idMap[c.parentId];
-            }
-            return c;
-          });
-      };
-
-      // TODO Sometimes after a copy, two identical injects are created. Why?
-      const pasteInject = async () => {
-        if (!inject || !AppState.copiedInjects) {
-          return;
-        }
-        const { copiedInjects, copiedInjectIsCut } = AppState;
-        const copy = copiedInjects instanceof Array ? copiedInjects[0] : copiedInjects;
-        const newParentId = inject.id;
-        if (copiedInjectIsCut && isInject(copy)) {
-          // Paste copied inject: only injects can be cut, not acts etc.
-          if (isAct(inject)) {
-            copy.parentId = newParentId;
-          } else if (isInject(inject)) {
-            copy.parentId = inject.parentId;
-          }
-          TrialSvc.newInject(copy);
-          await TrialSvc.updateInject(copy.parentId === newParentId ? inject : TrialSvc.getInject(copy.parentId));
-        } else if (copiedInjects instanceof Array) {
-          const isParentChildRelation =
-            (isScenario(inject) && isStoryline(copy)) ||
-            (isStoryline(inject) && isAct(copy)) ||
-            (isAct(inject) && isInject(copy));
-          const isSiblingRelation =
-            (isScenario(inject) && isScenario(copy)) ||
-            (isStoryline(inject) && isStoryline(copy)) ||
-            (isAct(inject) && isAct(copy));
-          if (isParentChildRelation) {
-            createFreshInjects(copiedInjects, copy.parentId!, newParentId).map(i => TrialSvc.newInject(i));
-            await TrialSvc.updateInject(inject);
-          } else if (isSiblingRelation) {
-            createFreshInjects(copiedInjects.slice(1), copy.id, newParentId).map(i => TrialSvc.newInject(i));
-            await TrialSvc.updateInject(inject);
-          } else if (isInject(inject) && isInject(copy)) {
-            copy.id = '';
-            copy.parentId = inject.parentId;
-            TrialSvc.newInject(copy);
-            await TrialSvc.updateInject(copy);
-          }
-        }
-      };
-
-      const cutInject = async () => {
-        if (inject) {
-          AppState.copiedInjectIsCut = true;
-          AppState.copiedInjects = inject;
-          deleteInject();
-        }
-      };
-
-      const copyInject = async () => {
-        if (inject) {
-          AppState.copiedInjectIsCut = false;
-          AppState.copiedInjects = [inject, ...getAllChildren(TrialSvc.getInjects() || [], inject.id)];
-        }
-      };
-
-      const cloneInject = async () => {
-        if (inject) {
-          await copyInject();
-          await pasteInject();
-        }
-      };
 
       return m(
         '.row.injects-form.sb.large',
         { className },
-        inject
-          ? m('.col.s12', { key: inject.id, style: 'color: #b4790c' }, [
-              m(FloatingActionButton, {
-                className: 'red',
-                iconName: 'add',
-                direction: 'left',
-                position: 'right',
-                buttons: [
-                  {
-                    iconName: 'delete',
-                    className: `red ${canDelete ? '' : ' disabled'}`,
-                    onClick: deleteInject,
-                  },
-                  {
-                    iconName: 'content_cut',
-                    className: `red ${canDelete ? '' : ' disabled'}`,
-                    onClick: cutInject,
-                  },
-                  {
-                    iconName: 'content_paste',
-                    className: `red ${canPaste ? '' : ' disabled'}`,
-                    onClick: async () => await pasteInject(),
-                  },
-                  { iconName: 'content_copy', className: 'green', onClick: copyInject },
-                  { iconName: 'add', className: 'blue', onClick: cloneInject },
-                ],
-              }),
-              m(
-                '.row',
-                m(
-                  '.col.s12',
-                  inject.type === InjectType.INJECT
-                    ? m(Select, {
-                        disabled,
-                        iconName: getMessageIcon(inject.messageType),
-                        placeholder: 'Select the message type',
-                        checkedId: inject.messageType,
-                        options,
-                        onchange: v => {
-                          // console.warn('Getting message form');
-                          state.inject!.messageType = v[0] as MessageType;
-                        },
-                      })
-                    : m('h4', [
-                        m(Icon, {
-                          iconName: getInjectIcon(inject.type),
-                          style: 'margin-right: 12px;',
-                        }),
-                        inject.type,
-                      ])
-                )
-              ),
-              [
-                m(MessageForm, { disabled, inject, onChange, key: 'message_form_' + inject.id }),
-                inject.messageType || isInjectGroup(inject)
-                  ? m(InjectConditions, {
-                      injects: TrialSvc.getInjects() || [],
-                      disabled,
-                      inject,
-                      previousInjects,
-                      onChange,
-                      key: 'inject_cond_' + inject.id,
-                    })
-                  : m('div', { key: 'dummy' }),
-                m(SetObjectives, { disabled, inject, key: 'set_obj_' + inject.id }),
-              ],
-            ])
-          : undefined
+        m('.col.s12', { key: inject.id, style: 'color: #b4790c' }, [
+          m(FloatingActionButton, {
+            className: 'red',
+            iconName: 'add',
+            direction: 'left',
+            position: 'right',
+            buttons: [
+              {
+                iconName: 'delete',
+                className: `red ${canDelete ? '' : ' disabled'}`,
+                onClick: deleteInject,
+              },
+              {
+                iconName: 'content_cut',
+                className: `red ${canDelete ? '' : ' disabled'}`,
+                onClick: cutInject,
+              },
+              {
+                iconName: 'content_paste',
+                className: `red ${canPaste ? '' : ' disabled'}`,
+                onClick: async () => await pasteInject(),
+              },
+              { iconName: 'content_copy', className: 'green', onClick: copyInject },
+              { iconName: 'add', className: 'blue', onClick: cloneInject },
+            ],
+          }),
+          m(
+            '.row',
+            m(
+              '.col.s12',
+              inject.type === InjectType.INJECT
+                ? m(Select, {
+                    disabled,
+                    iconName: getMessageIcon(inject.messageType),
+                    placeholder: 'Select the message type',
+                    checkedId: inject.messageType,
+                    options,
+                    onchange: v => {
+                      // console.warn('Getting message form');
+                      state.inject!.messageType = v[0] as MessageType;
+                    },
+                  })
+                : m('h4', [
+                    m(Icon, {
+                      iconName: getInjectIcon(inject.type),
+                      style: 'margin-right: 12px;',
+                    }),
+                    inject.type,
+                  ])
+            )
+          ),
+          [
+            m(MessageForm, { disabled, inject, onChange, key: `message_form_${key}` }),
+            inject.messageType || isInjectGroup(inject)
+              ? m(InjectConditions, {
+                  injects: TrialSvc.getInjects() || [],
+                  disabled,
+                  inject,
+                  previousInjects,
+                  onChange,
+                  key: `inject_cond_${key}`,
+                })
+              : m('div', { key: 'dummy' }),
+            m(SetObjectives, { disabled, inject, key: `set_obj_${key}` }),
+          ],
+        ])
       );
     },
   };
