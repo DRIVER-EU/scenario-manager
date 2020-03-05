@@ -9,8 +9,8 @@ export { Type as RolePlayerMessageType, IRolePlayerMessage } from './system_tm_r
 export * from './system_tm_phase_message-value';
 export * from './system_tm_session_mgmt-value';
 export * from './simulation_request_startinject-value';
-export * from './simulation_request_unittransport-value';
+export * from './simulation_request_transport-value';
 export { IPost, MediumTypes } from './simulation_entity_post-value';
-export * from './sumo_AffectedArea-value';
-export * from './sumo_SumoConfiguration-value';
+export * from './simulation_affected_area-value';
+export * from './simulation_sumo_configuration-value';
 export * from './system_large_data_update-value';

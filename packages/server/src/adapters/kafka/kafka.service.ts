@@ -19,7 +19,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import {
   IRequestStartInject,
-  IRequestUnitTransport,
+  IRequestTransport,
   IAffectedArea,
   ISumoConfiguration,
   ILargeDataUpdate,
@@ -146,16 +146,16 @@ export class KafkaService extends EventEmitter implements TimeService {
     return this.sendMessage(m, 'large_data_update');
   }
 
-  public sendRequestUnitTransport(m: IRequestUnitTransport) {
-    return this.sendMessage(m, 'simulation_request_unittransport');
+  public sendRequestUnitTransport(m: IRequestTransport) {
+    return this.sendMessage(m, 'simulation_request_transport');
   }
 
   public sendSetAffectedArea(m: IAffectedArea) {
-    return this.sendMessage(m, 'sumo_AffectedArea');
+    return this.sendMessage(m, 'simulation_affected_area');
   }
 
   public sendSumoConfiguration(m: ISumoConfiguration) {
-    return this.sendMessage(m, 'sumo_SumoConfiguration');
+    return this.sendMessage(m, 'simulation_sumo_configuration');
   }
 
   public get timeMessage() {
