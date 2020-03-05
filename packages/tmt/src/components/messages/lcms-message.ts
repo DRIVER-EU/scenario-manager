@@ -2,6 +2,7 @@ import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, Label, FlatButton } from 'mithril-materialized';
 import { EditableTable, IEditableTable } from 'mithril-table';
 import { MarkdownEditor, IMarkdownEditor } from 'mithril-markdown';
+import { render } from 'slimdown-js';
 import {
   IInject,
   getMessage,
@@ -183,6 +184,7 @@ export const LcmsMessageForm: FactoryComponent<{
                       }),
                     ]),
                     m(MarkdownEditor, {
+                      parse: render,
                       disabled,
                       markdown: p.value,
                       onchange: md => {
