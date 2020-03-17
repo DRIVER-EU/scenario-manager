@@ -1,5 +1,5 @@
 devDependencies:
-  handlebars: 4.5.3
+  handlebars: 4.7.3
   lerna: 3.20.2
 lockfileVersion: 5.1
 packages:
@@ -2288,6 +2288,19 @@ packages:
       uglify-js: 3.7.0
     resolution:
       integrity: sha512-3yPecJoJHK/4c6aZhSvxOyG4vJKDshV36VHp0iVCDVh7o9w2vwi3NSnL2MMPj3YdduqaBcu7cGbggJQM0br9xA==
+  /handlebars/4.7.3:
+    dependencies:
+      neo-async: 2.6.1
+      optimist: 0.6.1
+      source-map: 0.6.1
+    dev: true
+    engines:
+      node: '>=0.4.7'
+    hasBin: true
+    optionalDependencies:
+      uglify-js: 3.7.0
+    resolution:
+      integrity: sha512-SRGwSYuNfx8DwHD/6InAPzD6RgeruWLT+B8e8a7gGs8FWgHzlExpTFMEq2IA6QpAfOClpKHy6+8IqTjeBCu6Kg==
   /har-schema/2.0.0:
     dev: true
     engines:
@@ -5002,5 +5015,5 @@ packages:
     resolution:
       integrity: sha512-/4ld+4VV5RnrynMhPZJ/ZpOCGSCeghMykZ3BhdFBDa9Wy/RH6uEGNWDJog+aUlq+9OM1CFTgtYRW5Is1Po9NOA==
 specifiers:
-  handlebars: '>=4.3.0'
+  handlebars: '>=4.7.3'
   lerna: ^3.20.2

@@ -18,6 +18,7 @@
     "url": "git+https://github.com/DRIVER-EU/scenario-manager.git"
   },
   "dependencies": {
+    "test-bed-schemas": "^0.3.2",
     "@types/geojson": "^7946.0.7"
   },
   "devDependencies": {

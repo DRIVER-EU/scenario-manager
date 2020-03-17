@@ -1,16 +1,16 @@
 dependencies:
-  '@nestjs/common': 6.11.11_298291d10a7782a251b15c97b8dafd38
-  '@nestjs/core': 6.11.11_9d630117a841d0f2e8434298d33701bd
-  '@nestjs/platform-express': 6.11.11_3c340a88abee850c1bd7f489081ff978
-  '@nestjs/platform-socket.io': 6.11.11_2b6341730b3c5b28b52bf2615be4e6be
-  '@nestjs/swagger': 4.3.2_ad776ad7a2e21b650e5092bec534c61d
-  '@nestjs/websockets': 6.11.11_10ebb297d83a03716f5eb52ab1f718a5
+  '@nestjs/common': 7.0.3_298291d10a7782a251b15c97b8dafd38
+  '@nestjs/core': 7.0.3_2692437e840a12ef8329c778a4b2ab06
+  '@nestjs/platform-express': 7.0.3_a10139f42e42bfe8c8762146eded95e9
+  '@nestjs/platform-socket.io': 7.0.3_48d1ce6286bc74163e0f3350b222be34
+  '@nestjs/swagger': 4.4.0_9706bd6c7243ffa6bed6b5e01c9f3b2c
+  '@nestjs/websockets': 7.0.3_7a85b3fc71602c5a61a2273ce82850bc
   body-parser: 1.19.0
   express: 4.17.1
   link: 0.1.5
   marked: 0.8.0
-  nestjs-config: 1.4.5_@nestjs+common@6.11.11
-  node-test-bed-adapter: 0.8.10
+  nestjs-config: 1.4.5_@nestjs+common@7.0.3
+  node-test-bed-adapter: 0.9.7
   recursive: 0.0.2
   reflect-metadata: 0.1.13
   rfc6902: 3.0.4
@@ -22,7 +22,7 @@ devDependencies:
   '@types/express': 4.17.3
   '@types/express-serve-static-core': 4.17.2
   '@types/marked': 0.7.3
-  '@types/node': 13.7.7
+  '@types/node': 13.9.1
   '@types/socket.io': 2.1.4
   '@types/sqlite3': 3.1.6
   rimraf: 3.0.2
@@ -31,23 +31,23 @@ devDependencies:
   typescript: 3.8.3
 lockfileVersion: 5.1
 packages:
-  /@nestjs/common/6.11.11_298291d10a7782a251b15c97b8dafd38:
+  /@nestjs/common/7.0.3_298291d10a7782a251b15c97b8dafd38:
     dependencies:
       axios: 0.19.2
       cli-color: 2.0.0
       reflect-metadata: 0.1.13
       rxjs: 6.5.4
       tslib: 1.11.1
-      uuid: 7.0.1
+      uuid: 7.0.2
     dev: false
     peerDependencies:
       reflect-metadata: ^0.1.12
       rxjs: ^6.0.0
     resolution:
-      integrity: sha512-K4wuK/V2M82AsoudtY0UYV+M1nYDSSb10t8AkMwFiP+AWMuxCJNtE8qLc9jUe2aTKMbhBiQUfsbZFmg/MRinPg==
-  /@nestjs/core/6.11.11_9d630117a841d0f2e8434298d33701bd:
+      integrity: sha512-ENfgocjBC8aWAvvjjCq/JFN94CIVX4FrXr12r66UEcw/GtCW/qAc/BVWGX//7MRtk95me82hBEQQx2kovL91bA==
+  /@nestjs/core/7.0.3_2692437e840a12ef8329c778a4b2ab06:
     dependencies:
-      '@nestjs/common': 6.11.11_298291d10a7782a251b15c97b8dafd38
+      '@nestjs/common': 7.0.3_298291d10a7782a251b15c97b8dafd38
       '@nuxtjs/opencollective': 0.2.2
       fast-safe-stringify: 2.0.7
       iterare: 1.2.0
@@ -56,19 +56,19 @@ packages:
       reflect-metadata: 0.1.13
       rxjs: 6.5.4
       tslib: 1.11.1
-      uuid: 7.0.1
+      uuid: 7.0.2
     dev: false
     peerDependencies:
-      '@nestjs/common': ^6.0.0
+      '@nestjs/common': ^7.0.0
       reflect-metadata: ^0.1.12
       rxjs: ^6.0.0
     requiresBuild: true
     resolution:
-      integrity: sha512-ewUy2rjiRWi6SziI5gXZnlat7PfnVklL3tusnU1qqtUm74cPY1Zre+zDCJ27P/+B7sFJHbkFfpi0qQP2pQv9jQ==
-  /@nestjs/platform-express/6.11.11_3c340a88abee850c1bd7f489081ff978:
+      integrity: sha512-uIIcM+a2IoV2aqHHMtnDGOy81CMNNNm3xpJIFLjS74OqCGpE4skqiFIZRsB1cIeip1EtVh7IzU0xXo0JrIZEQA==
+  /@nestjs/platform-express/7.0.3_a10139f42e42bfe8c8762146eded95e9:
     dependencies:
-      '@nestjs/common': 6.11.11_298291d10a7782a251b15c97b8dafd38
-      '@nestjs/core': 6.11.11_9d630117a841d0f2e8434298d33701bd
+      '@nestjs/common': 7.0.3_298291d10a7782a251b15c97b8dafd38
+      '@nestjs/core': 7.0.3_2692437e840a12ef8329c778a4b2ab06
       body-parser: 1.19.0
       cors: 2.8.5
       express: 4.17.1
@@ -76,52 +76,52 @@ packages:
       tslib: 1.11.1
     dev: false
     peerDependencies:
-      '@nestjs/common': ^6.0.0
-      '@nestjs/core': ^6.0.0
+      '@nestjs/common': ^7.0.0
+      '@nestjs/core': ^7.0.0
     resolution:
-      integrity: sha512-4h3F3hDhNlO5+Ruy6eS+lSL2yIz5r4hF/BB3QkZVOuRdfji9n0gZAIR7tuSLTizqYxaHYRZ7dBv+PscQS/7ztQ==
-  /@nestjs/platform-socket.io/6.11.11_2b6341730b3c5b28b52bf2615be4e6be:
+      integrity: sha512-epWK3NcywQclcWF/JrCdq4H1PH7v2h/HVOH2GtYEoKLr5Y4KrTcgaeyZfIzh6t+Vm8w8/N4Jqk2mIUltGtu2ug==
+  /@nestjs/platform-socket.io/7.0.3_48d1ce6286bc74163e0f3350b222be34:
     dependencies:
-      '@nestjs/common': 6.11.11_298291d10a7782a251b15c97b8dafd38
-      '@nestjs/websockets': 6.11.11_10ebb297d83a03716f5eb52ab1f718a5
+      '@nestjs/common': 7.0.3_298291d10a7782a251b15c97b8dafd38
+      '@nestjs/websockets': 7.0.3_7a85b3fc71602c5a61a2273ce82850bc
       rxjs: 6.5.4
       socket.io: 2.3.0
       tslib: 1.11.1
     dev: false
     peerDependencies:
-      '@nestjs/common': ^6.0.0
-      '@nestjs/websockets': ^6.0.0
+      '@nestjs/common': ^7.0.0
+      '@nestjs/websockets': ^7.0.0
       rxjs: ^6.0.0
     resolution:
-      integrity: sha512-/WWMwLEoPv3aszWdVGv7ttmsK0gtQ01tvlwtFavC1SbqpNiNI0x0uJYzFD7RRwuyjo+Ab/H+//swknLEGuQbeg==
-  /@nestjs/swagger/4.3.2_ad776ad7a2e21b650e5092bec534c61d:
+      integrity: sha512-fQoZ6BSXsVEmu/3E05ib71TO40oOgW4ZLV01lgB6vbFTRFd3faHqJ7tr7VEII4DhqwwHhp/m5QqUvGOfQLfxiA==
+  /@nestjs/swagger/4.4.0_9706bd6c7243ffa6bed6b5e01c9f3b2c:
     dependencies:
-      '@nestjs/common': 6.11.11_298291d10a7782a251b15c97b8dafd38
-      '@nestjs/core': 6.11.11_9d630117a841d0f2e8434298d33701bd
+      '@nestjs/common': 7.0.3_298291d10a7782a251b15c97b8dafd38
+      '@nestjs/core': 7.0.3_2692437e840a12ef8329c778a4b2ab06
       lodash: 4.17.15
       path-to-regexp: 3.2.0
       reflect-metadata: 0.1.13
     dev: false
     peerDependencies:
-      '@nestjs/common': ^6.8.0
-      '@nestjs/core': ^6.8.0
+      '@nestjs/common': ^6.8.0 || ^7.0.0
+      '@nestjs/core': ^6.8.0 || ^7.0.0
       reflect-metadata: ^0.1.12
     resolution:
-      integrity: sha512-KV0LCm9fUjDin/DMcTPaHCRz9SrI4W729YN6FUqd+lVOH7XSoK+0sVblKHUum5YsUv/5E4lI3Q6nhpdtkiZPPA==
-  /@nestjs/websockets/6.11.11_10ebb297d83a03716f5eb52ab1f718a5:
+      integrity: sha512-QatyTW8VANCEltPErW1t3yBam17e/5fsaZI7DfnLEMtya5LypDlicKdQN1BrWDbhBEhSbwQ5TZifdUs7lo3dlw==
+  /@nestjs/websockets/7.0.3_7a85b3fc71602c5a61a2273ce82850bc:
     dependencies:
-      '@nestjs/common': 6.11.11_298291d10a7782a251b15c97b8dafd38
-      '@nestjs/core': 6.11.11_9d630117a841d0f2e8434298d33701bd
+      '@nestjs/common': 7.0.3_298291d10a7782a251b15c97b8dafd38
+      '@nestjs/core': 7.0.3_2692437e840a12ef8329c778a4b2ab06
       iterare: 1.2.0
       rxjs: 6.5.4
       tslib: 1.11.1
     dev: false
     peerDependencies:
-      '@nestjs/common': ^6.0.0
-      '@nestjs/core': ^6.0.0
+      '@nestjs/common': ^7.0.0
+      '@nestjs/core': ^7.0.0
       rxjs: ^6.0.0
     resolution:
-      integrity: sha512-maOV9KkQUiBWx7mWuLhbudM9svA3h8adRGN3z/LZ3vOZazYI97ZzrirsLw/9MeqZvaOaRnGbJpIo4p0lvtUztA==
+      integrity: sha512-i3JGbLI6th4WI98GP66/wpaaYRa+EScGUq7zUh0z08TgflUnM5bfspVCHQNQcQbk/bz9WqiMhMRfpI4FlZMxNg==
   /@nuxtjs/opencollective/0.2.2:
     dependencies:
       chalk: 2.4.2
@@ -134,10 +134,10 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-69gFVDs7mJfNjv9Zs5DFVD+pvBW+k1TaHSOqUWqAyTTfLcKI/EMYQgvEvziRd+zAFtUOoye6MfWh0qvinGISPw==
-  /@types/bluebird/3.5.29:
+  /@types/bluebird/3.5.30:
     dev: false
     resolution:
-      integrity: sha512-kmVtnxTuUuhCET669irqQmPAez4KFnFVKvpleVRyfC3g+SHD1hIkFZcWLim9BVcwUBLO59o8VZE4yGCmTif8Yw==
+      integrity: sha512-8LhzvcjIoqoi1TghEkRMkbbmM+jhHnBokPGkJWjclMK+Ks0MxEBow3/p2/iFTZ+OIbJHQDSfpgdZEb+af3gfVw==
   /@types/body-parser/1.17.1:
     dependencies:
       '@types/connect': 3.4.32
@@ -197,6 +197,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Uo4chgKbnPNlxQwoFmYIwctkQVkMMmsAoGGU4JKwLuvBefF0pCq4FybNSnfkfRCpC7ZW7kttcC/TrRtAJsvGtg==
+  /@types/node/13.9.1:
+    dev: true
+    resolution:
+      integrity: sha512-E6M6N0blf/jiZx8Q3nb0vNaswQeEyn0XlupO+xN6DtJ6r6IT4nXrTry7zhIfYvFCl3/8Cu6WIysmUBKiqV0bqQ==
   /@types/range-parser/1.2.3:
     dev: true
     resolution:
@@ -315,12 +319,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=
-  /avsc/5.4.18:
+  /avsc/5.4.19:
     dev: false
     engines:
       node: '>=0.11'
     resolution:
-      integrity: sha512-rQwa/WrpfNm1jEzmRe78EuKvvI9uikZeZL68HqTbbPFTFgZPxExhJESHyqgwlVvWCKlYTwBezR38G1Tjkn+2Zg==
+      integrity: sha512-6trk8URrKU0nT2+uhHqO+8k47DYE9oehGmONJsS2RYR8aW1ldVGr4iZfVherkxC/jq0rJp1oJx+DDlQoCpfEHw==
   /aws-sign2/0.7.0:
     dev: false
     resolution:
@@ -329,13 +333,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-Uvq6hVe90D0B2WEnUqtdgY1bATGz3mw33nH9Y+dmA+w5DHvUmBgkr5rM/KCHpCsiFNRUfokW/szpPPgMK2hm4A==
-  /axios/0.19.0:
-    dependencies:
-      follow-redirects: 1.5.10
-      is-buffer: 2.0.4
-    dev: false
-    resolution:
-      integrity: sha512-1uvKqKQta3KBxIz14F2v06AEHZ/dIoeKfbTRkK1E5oqjDnuEerLmYTgJB5AiQZHJcljpg1TuRzdjDR06qNk0DQ==
   /axios/0.19.2:
     dependencies:
       follow-redirects: 1.5.10
@@ -1147,12 +1144,6 @@ packages:
       node: '>= 0.10'
     resolution:
       integrity: sha512-M4Sjn6N/+O6/IXSJseKqHoFc+5FdGJ22sXqnjTpdZweHK64MzEPAyQZyEU3R/KRv2GLoa7nNtg/C2Ev6m7z+eA==
-  /is-buffer/2.0.4:
-    dev: false
-    engines:
-      node: '>=4'
-    resolution:
-      integrity: sha512-Kq1rokWXOPXWuaMAqZiJW4XxsmD9zGx9q4aePabbn3qCRGedtH7Cm+zV8WETitMfu1wdh+Rvd6w5egwSngUX2A==
   /is-fullwidth-code-point/1.0.0:
     dependencies:
       number-is-nan: 1.0.1
@@ -1385,6 +1376,7 @@ packages:
   /mkdirp/0.5.1:
     dependencies:
       minimist: 0.0.8
+    deprecated: Legacy versions of mkdirp are no longer supported. Please update to mkdirp 1.x. (Note that the API surface has changed to use Promises in 1.x.)
     dev: false
     hasBin: true
     resolution:
@@ -1446,9 +1438,9 @@ packages:
     dev: false
     resolution:
       integrity: sha512-AO81vsIO1k1sM4Zrd6Hu7regmJN1NSiAja10gc4bX3F0wd+9rQmcuHQaHVQCYIEC8iFXnE+mavh23GOt7wBgug==
-  /nestjs-config/1.4.5_@nestjs+common@6.11.11:
+  /nestjs-config/1.4.5_@nestjs+common@7.0.3:
     dependencies:
-      '@nestjs/common': 6.11.11_298291d10a7782a251b15c97b8dafd38
+      '@nestjs/common': 7.0.3_298291d10a7782a251b15c97b8dafd38
       dotenv: 8.2.0
       glob: 7.1.6
       lodash.get: 4.4.2
@@ -1498,18 +1490,19 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-TwWAOZb0j7e9eGaf9esRx3ZcLaE5tQ2lvYy1pb5IAaG1a2e2Kv5Lms1Y4hpj+ciXJRofIxxlt5haeQ/2ANeE0Q==
-  /node-test-bed-adapter/0.8.10:
+  /node-test-bed-adapter/0.9.7:
     dependencies:
-      '@types/bluebird': 3.5.29
-      avsc: 5.4.18
-      axios: 0.19.0
+      '@types/bluebird': 3.5.30
+      avsc: 5.4.19
+      axios: 0.19.2
       bluebird: 3.7.2
       form-data: 3.0.0
       kafka-node: 5.0.0
+      test-bed-schemas: 0.3.2
       url: 0.11.0
     dev: false
     resolution:
-      integrity: sha512-MoN46cxP1K7XFa15Gn3xHrhTKANtGmo4IUyaGXMUMOj14j0SZG0dPx/VnJ1WwLp01PUwsUZW8M06e1a11AJVdg==
+      integrity: sha512-g4GdPaYuSY9v0/9+Dg82O6IsFqL2Tfuslx1XT6KtejGpSxrs1pzpeEwoevZ45wZUmeavWEnodVX6vV+jo4TLqg==
   /noop-logger/0.1.1:
     dev: false
     optional: true
@@ -2191,6 +2184,10 @@ packages:
       node: '>=4.5'
     resolution:
       integrity: sha512-w2VwSrBoHa5BsSyH+KxEqeQBAllHhccyMFVHtGtdMpF4W7IRWfZjFiQceJPChOeTsSDVUpER2T8FA93pr0L+QA==
+  /test-bed-schemas/0.3.2:
+    dev: false
+    resolution:
+      integrity: sha512-D86C6uuSocnvxIN1X5R13HUxAHxkfkLEUHlBv1QBslmIUw6QXZxHxKZxlTYy5WeCCk9p35Bkw2MJ8Argjmha4A==
   /through/2.3.8:
     dev: true
     resolution:
@@ -2330,11 +2327,11 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-pW0No1RGHgzlpHJO1nsVrHKpOEIxkGg1xB+v0ZmdNH5OAeAwzAVrCnI2/6Mtx+Uys6iaylxa+D3g4j63IKKjSQ==
-  /uuid/7.0.1:
+  /uuid/7.0.2:
     dev: false
     hasBin: true
     resolution:
-      integrity: sha512-yqjRXZzSJm9Dbl84H2VDHpM3zMjzSJQ+hn6C4zqd5ilW+7P4ZmLEEqwho9LjP+tGuZlF4xrHQXT0h9QZUS/pWA==
+      integrity: sha512-vy9V/+pKG+5ZTYKf+VcphF5Oc6EFiu3W8Nv3P3zIh0EqVI80ZxOzuPfe9EHjkFNvf8+xuTHVeei4Drydlx4zjw==
   /vary/1.1.2:
     dev: false
     engines:
@@ -2409,16 +2406,16 @@ packages:
     resolution:
       integrity: sha1-AI4G2AlDIMNy28L47XagymyKxBk=
 specifiers:
-  '@nestjs/common': ^6.11.11
-  '@nestjs/core': ^6.11.11
-  '@nestjs/platform-express': ^6.11.11
-  '@nestjs/platform-socket.io': ^6.11.11
-  '@nestjs/swagger': ^4.3.2
-  '@nestjs/websockets': ^6.11.11
+  '@nestjs/common': ^7.0.3
+  '@nestjs/core': ^7.0.3
+  '@nestjs/platform-express': ^7.0.3
+  '@nestjs/platform-socket.io': ^7.0.3
+  '@nestjs/swagger': ^4.4.0
+  '@nestjs/websockets': ^7.0.3
   '@types/express': ^4.17.3
   '@types/express-serve-static-core': ^4.17.2
   '@types/marked': ^0.7.3
-  '@types/node': ^13.7.7
+  '@types/node': ^13.9.1
   '@types/socket.io': ^2.1.4
   '@types/sqlite3': ^3.1.6
   body-parser: ^1.19.0
@@ -2426,7 +2423,7 @@ specifiers:
   link: ^0.1.5
   marked: ^0.8.0
   nestjs-config: ^1.4.5
-  node-test-bed-adapter: ^0.8.10
+  node-test-bed-adapter: ^0.9.7
   recursive: ^0.0.2
   reflect-metadata: ^0.1.13
   rfc6902: ^3.0.4
