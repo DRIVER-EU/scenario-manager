@@ -37,6 +37,8 @@ RUN mkdir -p /app/trials
 COPY --from=builder /packages/server/package.json /app/package.json
 COPY --from=builder /packages/server/certs /app/certs
 COPY --from=builder /packages/server/dist /app/dist
+COPY --from=builder /packages/models/dist /models
+COPY --from=builder /packages/models/node_modules /models/node_modules
 COPY --from=builder /packages/server/.yalc /app/.yalc
 COPY --from=builder /packages/server/node_modules /app/node_modules
 COPY --from=builder /packages/tmt/dist /app/public

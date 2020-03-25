@@ -1,6 +1,5 @@
-
 import m, { FactoryComponent } from 'mithril';
-import { IInject, IScenario, InjectKeys } from 'trial-manager-models';
+import { IInject, IScenario, InjectKeys } from '../../../../models';
 import { DateTimeControl } from '../ui/date-time-control';
 import { DefaultMessageForm } from '.';
 import { Checklist } from '../ui/checklist';

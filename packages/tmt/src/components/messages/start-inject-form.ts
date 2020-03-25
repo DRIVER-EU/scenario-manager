@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestStartInject, InjectKeys } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IRequestStartInject, InjectKeys } from '../../../../models';
 import { AppState } from '../../models';
 
 export const StartInjectForm: FactoryComponent<{
@@ -13,10 +13,10 @@ export const StartInjectForm: FactoryComponent<{
   };
 
   return {
-    oninit: ({ attrs: { inject }}) => {
+    oninit: ({ attrs: { inject } }) => {
       const si = getMessage(inject, MessageType.START_INJECT) as IRequestStartInject;
-      si.guid = inject.id;
-      si.owner = AppState.owner;
+      si.id = inject.id;
+      si.applicant = AppState.owner;
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
       const si = getMessage(inject, MessageType.START_INJECT) as IRequestStartInject;

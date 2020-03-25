@@ -11,7 +11,7 @@ import {
   IScenario,
   InjectConditionType,
   IInjectCondition,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { TopicNames, injectsChannel, AppState } from '../../models';
 
 export const InjectsList = () => {

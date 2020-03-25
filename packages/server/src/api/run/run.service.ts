@@ -13,12 +13,13 @@ import {
   IInjectGroup,
   IInjectSimStates,
   IScenario,
-  ISessionMgmt,
+  ISessionManagement,
   ITrial,
   pruneInjects,
   SessionState,
   transitionInjects,
-} from 'trial-manager-models';
+  TimeState,
+} from '../../../../models';
 import { KafkaService } from '../../adapters/kafka';
 import { StateTransitionRequest } from '../../adapters/models';
 import { Trial } from '../../adapters/models/trial';
@@ -28,7 +29,7 @@ import { TrialService } from '../trials/trial.service';
 @WebSocketGateway()
 export class RunService {
   @WebSocketServer() private server: Server;
-  private session: ISessionMgmt;
+  private session: ISessionManagement;
   /** Queue fr new and updated injects */
   private readonly injectsQueue: IInject[] = [];
   private readonly transitionQueue: StateTransitionRequest[] = [];
@@ -53,8 +54,8 @@ export class RunService {
   public get activeTrial() {
     return this.session && this.trial
       ? new Trial(
-          this.session.sessionId,
-          this.session.sessionName,
+          this.session.id,
+          this.session.name,
           this.injects,
           this.trial.users,
           this.trial.selectedMessageTypes,
@@ -63,8 +64,9 @@ export class RunService {
   }
 
   /** Initialize the new trial and scenario */
-  public async init(session: ISessionMgmt) {
-    const { trialId, scenarioId, sessionId, sessionName } = session;
+  public async init(session: ISessionManagement) {
+    const { tags = {}, id: sessionId, name: sessionName } = session;
+    const { trialId, scenarioId } = tags;
 
     console.log(`Starting trial, session ${sessionId}: ${sessionName}.`);
 
@@ -96,7 +98,10 @@ export class RunService {
 
     if (
       this.kafkaService.once('time', time => {
-        if (time.state === 'Initialized' || time.state === 'Started') {
+        if (
+          time.state === TimeState.Initialization ||
+          time.state === TimeState.Started
+        ) {
           startUpdateLoop();
         }
       })
@@ -107,7 +112,7 @@ export class RunService {
   /** Close the active scenario */
   public async close() {
     this.isRunning = false;
-    this.activeSession.sessionState = SessionState.STOP;
+    this.activeSession.state = SessionState.Stopped;
     this.kafkaService.sendSessionMessage(this.activeSession);
     // setTimeout(() => {
     this.session = undefined;

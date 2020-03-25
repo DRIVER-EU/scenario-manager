@@ -19,12 +19,9 @@ import {
   Severity,
   Certainty,
   IValueNamePair,
-  IActionList,
-  ActionListParameter,
   ResponseType,
-  Priority,
   InjectKeys,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { TrialSvc } from '../../services';
 import { debounce } from '../../utils';
 
@@ -39,26 +36,26 @@ export const LcmsMessageForm: FactoryComponent<{
     alertInfo: IInfo;
     parameters: IValueNamePair[];
     participants: IPerson[];
-    actionList: IActionList[];
+    // actionList: IActionList[];
   };
 
-  const validateActionList = debounce((al: IActionList[]) => {
-    const errors: string[] = [];
-    const priorities = Object.keys(Priority);
-    const checkPriority = (prio: string) => priorities.indexOf(prio) >= 0;
-    al.forEach(a => {
-      a.priority = a.priority ? (a.priority.toUpperCase() as Priority) : Priority.AVERAGE;
-      if (!checkPriority(a.priority)) {
-        errors.push(`Priority ${a.priority} is not valid. Valid options are: ${priorities.join(', ')}.`);
-      }
-    });
-    if (errors.length > 0) {
-      const html = errors.join('<br/>');
-      M.toast({ html, classes: 'red' });
-      return false;
-    }
-    return true;
-  }, 500);
+  // const validateActionList = debounce((al: IActionList[]) => {
+  //   const errors: string[] = [];
+  //   const priorities = Object.keys(Priority);
+  //   const checkPriority = (prio: string) => priorities.indexOf(prio) >= 0;
+  //   al.forEach(a => {
+  //     a.priority = a.priority ? (a.priority.toUpperCase() as Priority) : Priority.AVERAGE;
+  //     if (!checkPriority(a.priority)) {
+  //       errors.push(`Priority ${a.priority} is not valid. Valid options are: ${priorities.join(', ')}.`);
+  //     }
+  //   });
+  //   if (errors.length > 0) {
+  //     const html = errors.join('<br/>');
+  //     M.toast({ html, classes: 'red' });
+  //     return false;
+  //   }
+  //   return true;
+  // }, 500);
 
   return {
     oninit: ({ attrs: { inject } }) => {
@@ -95,11 +92,12 @@ export const LcmsMessageForm: FactoryComponent<{
       state.alertInfo.headline = inject.title = inject.title || 'New LCMS message';
       state.alert = alert;
 
-      const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
-      state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
+      // const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
+      // state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
-      const { alert, alertInfo, actionList, parameters, participants } = state;
+      const { alert, alertInfo, parameters, participants } = state;
+      // const { alert, alertInfo, actionList, parameters, participants } = state;
       const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
       // console.table(statusOptions);
 
@@ -197,48 +195,48 @@ export const LcmsMessageForm: FactoryComponent<{
               })
           )
         ),
-        m(
-          '.col.s12',
-          m('div', [
-            m(Label, { label: 'Actions' }),
-            m(FlatButton, {
-              iconName: 'add',
-              disabled: actionList.length > 0,
-              onclick: () => {
-                actionList.push({ title: 'New title', description: '', priority: Priority.AVERAGE });
-                update();
-              },
-            }),
-          ]),
-          actionList.length > 0
-            ? m(
-                '.input-field',
-                m(EditableTable, {
-                  headers: [
-                    { column: 'title', title: 'Title' },
-                    { column: 'description', title: 'Description' },
-                    { column: 'priority', title: 'Priority' },
-                  ],
-                  data: actionList,
-                  disabled,
-                  addRows: true,
-                  deleteRows: true,
-                  moveRows: true,
-                  onchange: data => {
-                    validateActionList(data);
-                    state.actionList = data;
-                    const updatedActionList = parameters.filter(p => p.valueName !== ActionListParameter);
-                    updatedActionList.push({
-                      valueName: ActionListParameter,
-                      value: JSON.stringify(data),
-                    });
-                    alertInfo.parameter = state.parameters = updatedActionList;
-                    update();
-                  },
-                } as IEditableTable<IActionList>)
-              )
-            : undefined
-        ),
+        // m(
+        //   '.col.s12',
+        //   m('div', [
+        //     m(Label, { label: 'Actions' }),
+        //     m(FlatButton, {
+        //       iconName: 'add',
+        //       disabled: actionList.length > 0,
+        //       onclick: () => {
+        //         actionList.push({ title: 'New title', description: '', priority: Priority.AVERAGE });
+        //         update();
+        //       },
+        //     }),
+        //   ]),
+        //   actionList.length > 0
+        //     ? m(
+        //         '.input-field',
+        //         m(EditableTable, {
+        //           headers: [
+        //             { column: 'title', title: 'Title' },
+        //             { column: 'description', title: 'Description' },
+        //             { column: 'priority', title: 'Priority' },
+        //           ],
+        //           data: actionList,
+        //           disabled,
+        //           addRows: true,
+        //           deleteRows: true,
+        //           moveRows: true,
+        //           onchange: data => {
+        //             validateActionList(data);
+        //             state.actionList = data;
+        //             const updatedActionList = parameters.filter(p => p.valueName !== ActionListParameter);
+        //             updatedActionList.push({
+        //               valueName: ActionListParameter,
+        //               value: JSON.stringify(data),
+        //             });
+        //             alertInfo.parameter = state.parameters = updatedActionList;
+        //             update();
+        //           },
+        //         } as IEditableTable<IActionList>)
+        //       )
+        //     : undefined
+        // ),
       ];
     },
   };

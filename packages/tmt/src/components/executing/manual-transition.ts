@@ -2,14 +2,14 @@ import m, { FactoryComponent } from 'mithril';
 import {
   InjectState,
   InjectConditionType,
-  ITimingControlMessage,
-  TimingControlCommand,
+  ITimeControl,
+  TimeCommand,
   IExecutingInject,
   InjectType,
   IInject,
   MessageType,
   uniqueId,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { timeControlChannel, TopicNames } from '../../models';
 import { FlatButton, ModalPanel, Select } from 'mithril-materialized';
 import { RunSvc, SocketSvc } from '../../services';
@@ -30,17 +30,17 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; edit
     inject.condition &&
     inject.condition.type === InjectConditionType.MANUALLY;
 
-  const sendCmd = (socket: SocketIOClient.Socket, msg: ITimingControlMessage) => {
+  const sendCmd = (socket: SocketIOClient.Socket, msg: ITimeControl) => {
     socket.emit('time-control', msg);
     timeControlChannel.publish(TopicNames.CMD, { cmd: msg });
     setTimeout(() => m.redraw(), 1000);
   };
 
-  const jumpToTime = (trialTime: number) => {
+  const jumpToTime = (simulationTime: number) => {
     sendCmd(SocketSvc.socket, {
-      trialTime,
-      trialTimeSpeed: 1,
-      command: TimingControlCommand.Update,
+      simulationTime,
+      simulationSpeed: 1,
+      command: TimeCommand.Update,
     });
   };
 

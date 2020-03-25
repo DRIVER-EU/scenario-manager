@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IAffectedArea, InjectKeys } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IAffectedArea, InjectKeys } from '../../../../models';
 import { LeafletMap } from 'mithril-leaflet';
 import { Polygon, FeatureCollection } from 'geojson';
 import { FeatureGroup, GeoJSON } from 'leaflet';
@@ -13,7 +13,7 @@ export const SetAffectedAreaForm: FactoryComponent<{
   onChange?: (i: IInject, prop: InjectKeys) => void;
 }> = () => {
   const state = {} as {
-    overlays?: { [key: string]: GeoJSON },
+    overlays?: { [key: string]: GeoJSON };
   };
 
   const convertToSec = (n: number) => (n === -1 ? -1 : n / 1000);
@@ -103,8 +103,9 @@ export const SetAffectedAreaForm: FactoryComponent<{
         }),
         m(LeafletMap, {
           style: 'width: 100%; height: 400px; margin-top: 10px;',
-          view,
-          zoom,
+          // view,
+          // zoom,
+          autoFit: true,
           overlays,
           visible: [inject.title],
           editable: [inject.title],

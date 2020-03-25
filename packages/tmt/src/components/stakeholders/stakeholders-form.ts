@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextInput, TextArea, Button, Icon, Select, ModalPanel, Collapsible } from 'mithril-materialized';
-import { ITrial, IStakeholder, deepCopy, deepEqual } from 'trial-manager-models';
+import { ITrial, IStakeholder, deepCopy, deepEqual } from '../../../../models';
 import { TopicNames, stakeholdersChannel } from '../../models';
 import { TrialSvc } from '../../services';
 
@@ -56,7 +56,8 @@ export const StakeholdersForm = () => {
         { style: 'color: black' },
         m('form.col.s12', [
           m(
-            '.contact-form', { key: stakeholder ? stakeholder.id : undefined },
+            '.contact-form',
+            { key: stakeholder ? stakeholder.id : undefined },
             stakeholder
               ? [
                   m('h4', [

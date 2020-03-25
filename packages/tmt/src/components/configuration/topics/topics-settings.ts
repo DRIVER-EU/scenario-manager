@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { Collection, CollectionMode, TextInput, FlatButton } from 'mithril-materialized';
-import { IMessageTopic, ITopicSubject, MessageType, ITrial, uniqueId } from 'trial-manager-models';
+import { IMessageTopic, ITopicSubject, MessageType, ITrial, uniqueId } from '../../../../../models';
 import { iterEnum, enumToOptions, getMessageTitle } from '../../../utils';
 
 /**

@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IOstStageChangeMessage, InjectKeys } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IOstStageChangeMessage, InjectKeys } from '../../../../models';
 
 /** Request the Observer Support Tool to change the list of questions for the observers */
 export const OstChangeStageMessageForm: FactoryComponent<{

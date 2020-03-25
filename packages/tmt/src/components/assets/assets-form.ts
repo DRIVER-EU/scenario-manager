@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
 import { TextInput, FileInput, Button, Icon, ModalPanel, MaterialBox } from 'mithril-materialized';
-import { ITrial, IAsset, deepCopy, deepEqual } from 'trial-manager-models';
+import { ITrial, IAsset, deepCopy, deepEqual } from '../../../../models';
 import { assetsChannel, TopicNames } from '../../models';
 import { TrialSvc } from '../../services';
 import { geoJSON } from 'leaflet';

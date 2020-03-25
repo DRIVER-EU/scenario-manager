@@ -16,16 +16,16 @@ import {
   ITrial,
   IScenario,
   InjectType,
-  ITimeMessage,
   IConnectMessage,
-  ISessionMgmt,
+  ISessionManagement,
   SessionState,
   uniqueId,
   TimeState,
-} from 'trial-manager-models';
+  ITimeManagement,
+} from '../../../../models';
 import { getInjectIcon } from '../../utils';
 
-const isComplete = ({ sessionId, sessionName }: Partial<ISessionMgmt>) =>
+const isComplete = ({ id: sessionId, name: sessionName }: Partial<ISessionManagement>) =>
   sessionId && sessionId.length && sessionName && sessionName.length > 1 ? true : false;
 
 const setActiveSession = (isActive: boolean) => {
@@ -45,19 +45,21 @@ const SessionSettings: FactoryComponent<{}> = () => {
   const sessionManager = (cmd: 'start' | 'stop', trial?: ITrial, scenario?: IScenario) => {
     const createSessionMsg = () => {
       const {
-        session: { comment, sessionName = 'New session created' },
+        session: { tags: comment = '', name = 'New session created' },
       } = AppState;
       if (trial && scenario) {
         const session = {
-          trialId: trial.id,
-          trialName: trial.title,
-          scenarioId: scenario.id,
-          scenarioName: scenario.title,
-          sessionId: uniqueId(),
-          sessionName,
-          sessionState: SessionState.START,
-          comment,
-        } as ISessionMgmt;
+          id: uniqueId(),
+          state: SessionState.Started,
+          name,
+          tags: {
+            trailId: trial.id,
+            trailName: trial.title,
+            scenarioId: scenario.id,
+            scenarioName: scenario.title,
+            comment,
+          },
+        } as ISessionManagement;
         AppState.session = session;
         return session;
       }
@@ -81,11 +83,13 @@ const SessionSettings: FactoryComponent<{}> = () => {
     }
   };
 
-  const setScenario = (session?: Partial<ISessionMgmt>) => {
+  const setScenario = (session?: Partial<ISessionManagement>) => {
     const { trial } = state;
     const scenarios = (state.scenarios = trial ? trial.injects.filter(i => i.type === InjectType.SCENARIO) : []);
     if (session && scenarios && scenarios.length >= 1) {
-      state.scenario = session.scenarioId ? scenarios.filter(s => s.id === session.scenarioId).shift() : scenarios[0];
+      state.scenario = session.tags?.scenarioId
+        ? scenarios.filter(s => s.id === session.tags?.scenarioId).shift()
+        : scenarios[0];
     }
   };
 
@@ -111,9 +115,9 @@ const SessionSettings: FactoryComponent<{}> = () => {
       // console.table(AppState.time);
       // console.log(sessionControl);
 
-      if (session && !session.sessionName) {
-        session.sessionId = uniqueId();
-        session.sessionName = 'New session';
+      if (session && !session.name) {
+        session.id = uniqueId();
+        session.name = 'New session';
       }
       return [
         m('.row', [
@@ -142,21 +146,27 @@ const SessionSettings: FactoryComponent<{}> = () => {
               m(
                 '.col.s12',
                 m(TextInput, {
-                  initialValue: session.sessionName,
+                  initialValue: session.name || '',
                   label: 'Session name',
                   iconName: 'title',
                   disabled,
                   isMandatory: true,
-                  onchange: (v: string) => (AppState.session.sessionName = v),
+                  onchange: (v: string) => (AppState.session.name = v),
                 })
               ),
               m(
                 '.col.s12',
                 m(TextArea, {
-                  initialValue: session.comment || undefined,
+                  initialValue: session.tags ? session.tags.comment : undefined,
                   label: 'Comments',
                   disabled,
-                  onchange: (v: string) => (AppState.session.comment = v),
+                  onchange: (v: string) => {
+                    if (AppState.session.tags) {
+                      AppState.session.tags.comment = v;
+                    } else {
+                      AppState.session.tags = { comment: v };
+                    }
+                  },
                   iconName: 'note',
                 })
               ),
@@ -175,7 +185,8 @@ const SessionSettings: FactoryComponent<{}> = () => {
                   disabled:
                     !disabled ||
                     (AppState.time &&
-                      (AppState.time.state !== TimeState.Idle && AppState.time.state !== TimeState.Initialized)),
+                      AppState.time.state !== TimeState.Reset &&
+                      AppState.time.state !== TimeState.Initialization),
                   onclick: () => sessionManager('stop', trial, scenario),
                 }),
               ]),
@@ -193,38 +204,40 @@ export const SessionControl: FactoryComponent = () => {
     scenario: undefined as IScenario | undefined,
     isConnected: false,
     isConnecting: false,
-    time: {} as ITimeMessage,
+    time: {} as ITimeManagement,
     disconnectModal: undefined as undefined | M.Modal,
   };
 
-  const updateTime = (tm: ITimeMessage) => {
+  const updateTime = (tm: ITimeManagement) => {
     const {
-      time: { state: timeState, trialTimeSpeed },
+      time: { state: timeState, simulationSpeed },
     } = state;
     // console.log('Time msg received: ' + JSON.stringify(tm));
-    if (timeState !== tm.state || trialTimeSpeed !== tm.trialTimeSpeed) {
+    if (timeState !== tm.state || simulationSpeed !== tm.simulationSpeed) {
       state.time = tm;
       m.redraw();
     }
   };
 
   const isTestbedConnected = (data: IConnectMessage) => {
-    const { session = {} as Partial<ISessionMgmt>, isConnected, time, host } = data;
+    const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
     state.isConnecting = false;
     state.isConnected = isConnected;
     AppState.time = state.time = time;
     AppState.session = session;
-    setActiveSession(data.session && data.session.sessionState === SessionState.START ? true : false);
+    setActiveSession(data.session && data.session.state === SessionState.Started ? true : false);
     AppState.sessionControl.isConnected = isConnected;
     AppState.sessionControl.host = host;
-    AppState.sessionControl.realtime = Math.abs(data.time.trialTime - Date.now()) < 10000;
+    AppState.sessionControl.realtime = data.time.simulationTime
+      ? Math.abs(data.time.simulationTime - Date.now()) < 10000
+      : true;
     if (
-      session.trialId &&
-      session.sessionState === SessionState.START &&
-      TrialSvc.getCurrent().id !== session.trialId
+      session.tags?.trialId &&
+      session.state === SessionState.Started &&
+      TrialSvc.getCurrent().id !== session.tags?.trialId
     ) {
       M.toast({
-        html: `There is currently another trial running: ${session.trialName}`,
+        html: `There is currently another trial running: ${session.tags?.trialName}`,
         classes: 'orange',
       });
     }
@@ -254,7 +267,7 @@ export const SessionControl: FactoryComponent = () => {
       const key = scenario ? scenario.id : undefined;
       const canStart = activeSession && isComplete(AppState.session);
       const iconName = time
-        ? time.state === TimeState.Idle
+        ? time.state === TimeState.Reset
           ? 'timer'
           : time.state === TimeState.Stopped
           ? 'timer_off'

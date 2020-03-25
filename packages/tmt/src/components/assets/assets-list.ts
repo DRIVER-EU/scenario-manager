@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { AssetsForm } from './assets-form';
 import { TrialSvc } from '../../services';
-import { IStakeholder, ITrial, IAsset } from 'trial-manager-models';
+import { IStakeholder, ITrial, IAsset } from '../../../../models';
 import { assetsChannel, TopicNames } from '../../models';
 import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
 import { assetIcon } from '../../utils';

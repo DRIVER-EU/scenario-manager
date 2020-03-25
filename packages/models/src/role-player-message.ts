@@ -1,4 +1,4 @@
-import { RolePlayerMessageType, IRolePlayerMessage } from './messages';
+import { Type as RolePlayerMessageType, IRolePlayerMessage } from 'test-bed-schemas';
 
 export interface IRolePlayerMsg {
   /** Should be the same ID as the inject.id */
@@ -25,13 +25,14 @@ export const rolePlayerMessageToTestbed = (
   rolePlayerName: string = 'UNDEFINED',
   participantNames?: string[],
   comment = ''
-) => ({
-  id: rpm.id,
-  type: rpm.type || RolePlayerMessageType.ACTION,
-  title: rpm.title || '',
-  headline: rpm.headline || '',
-  description: rpm.description || '',
-  rolePlayerName,
-  participantNames,
-  comment,
-} as IRolePlayerMessage);
+) =>
+  ({
+    id: rpm.id,
+    type: rpm.type || RolePlayerMessageType.ACTION,
+    title: rpm.title || '',
+    headline: rpm.headline || '',
+    description: rpm.description || '',
+    rolePlayerName,
+    participantNames,
+    comment,
+  } as IRolePlayerMessage);

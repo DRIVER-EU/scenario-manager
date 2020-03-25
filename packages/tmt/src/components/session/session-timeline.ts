@@ -6,11 +6,11 @@ import {
   deepEqual,
   IInjectSimStates,
   InjectConditionType,
-  ITimeMessage,
+  ITimeManagement,
   IInjectSimState,
   IExecutingInject,
   IScenario,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { TopicNames, AppState, executingChannel } from '../../models';
 import { ScenarioTimeline, ITimelineItem, IExecutingTimelineItem } from 'mithril-scenario-timeline';
 import { Icon } from 'mithril-materialized';
@@ -30,9 +30,9 @@ export const SessionTimelineView: FactoryComponent = () => {
   // TODO What do we do when the user opened the wrong trial, i.e. not the one that is running?
   // Automatically load it for him?
 
-  const updateTime = (t: ITimeMessage) => {
+  const updateTime = (t: ITimeManagement) => {
     state.lastTimeUpdate = Date.now();
-    state.time = t.trialTime;
+    state.time = t.simulationTime || 0;
   };
 
   const time = (update: (t: number | Date) => void) => {
@@ -40,7 +40,7 @@ export const SessionTimelineView: FactoryComponent = () => {
       const { time: trialTime, lastTimeUpdate } = state;
       if (trialTime && lastTimeUpdate && AppState.time) {
         const now = Date.now();
-        const newTime = trialTime + (now - lastTimeUpdate) * (AppState.time.trialTimeSpeed || 1);
+        const newTime = trialTime + (now - lastTimeUpdate) * (AppState.time.simulationSpeed || 1);
         update(new Date(newTime));
       }
     }, 1000);

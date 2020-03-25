@@ -1,6 +1,6 @@
 import { RestService } from './rest-service';
 import { ChannelNames } from '../models/channels';
-import { IInject } from 'trial-manager-models';
+import { IInject } from '../../../models';
 import { AppState } from '../models';
 import { messageBus } from './message-bus-service';
 

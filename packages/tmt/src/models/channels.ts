@@ -6,9 +6,9 @@ import {
   IPerson,
   IStakeholder,
   IAsset,
-  ITimingControlMessage,
+  ITimeControl,
   IExecutingInject,
-} from 'trial-manager-models';
+} from '../../../models';
 
 export const ChannelNames = {
   DEFAULT_CHANNEL: 'DEFAULT_CHANNEL',
@@ -57,4 +57,4 @@ export const stakeholdersChannel = messageBus.channel<{ cur: IStakeholder; old?:
 
 export const assetsChannel = messageBus.channel<{ cur: IAsset; old?: IAsset }>(ChannelNames.ASSETS);
 
-export const timeControlChannel = messageBus.channel<{ cmd: ITimingControlMessage }>(ChannelNames.TIME_CONTROL);
+export const timeControlChannel = messageBus.channel<{ cmd: ITimeControl }>(ChannelNames.TIME_CONTROL);

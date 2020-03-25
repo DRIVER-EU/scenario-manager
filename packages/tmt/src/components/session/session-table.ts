@@ -8,10 +8,10 @@ import {
   InjectType,
   IScenario,
   IInject,
-  ITimeMessage,
+  ITimeManagement,
   InjectState,
   UserRole,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { ITimelineItem } from 'mithril-scenario-timeline';
 import { AppState } from '../../models';
 import { injectToTimelineItemFactory, padLeft, getMessageIcon } from '../../utils';
@@ -26,9 +26,9 @@ export const SessionTable: FactoryComponent = () => {
     socket: SocketSvc.socket,
   };
 
-  const updateTime = (t: ITimeMessage) => {
+  const updateTime = (t: ITimeManagement) => {
     state.lastTimeUpdate = Date.now();
-    state.time = t.trialTime;
+    state.time = t.simulationTime || 0;
     m.redraw();
   };
 
@@ -48,7 +48,7 @@ export const SessionTable: FactoryComponent = () => {
   };
 
   const toTableRow = (ei: ITimelineItem & IExecutingInject, i: number, arr: ITimelineItem[]) => {
-    const trialTime = AppState.time && AppState.time.trialTime ? AppState.time.trialTime : state.time || 0;
+    const trialTime = AppState.time && AppState.time.simulationTime ? AppState.time.simulationTime : state.time || 0;
     const time = toTime(ei.delay);
     const next = i < arr.length - 1 ? toTime(arr[i + 1].delay) : new Date(time.valueOf() + 365 * 24 * 3600000);
     const isDone = ei.state === InjectState.EXECUTED;

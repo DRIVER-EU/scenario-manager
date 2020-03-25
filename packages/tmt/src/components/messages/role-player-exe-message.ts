@@ -7,8 +7,8 @@ import {
   RolePlayerMessageType,
   IPerson,
   IRolePlayerMsg,
-  rolePlayerMessageToTestbed
-} from 'trial-manager-models';
+  rolePlayerMessageToTestbed,
+} from '../../../../models';
 import { userIcon } from '../../utils';
 import { TrialSvc } from '../../services';
 import { injectsChannel, TopicNames } from './../../models';

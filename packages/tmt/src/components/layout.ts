@@ -6,7 +6,7 @@ import { StatusBar } from './status/status-bar';
 import { Icon } from 'mithril-materialized';
 import { MediaControls } from './session/time-control';
 import { AppState, IDashboard } from '../models';
-import { TimeState, SessionState } from 'trial-manager-models';
+import { TimeState, SessionState } from '../../../models';
 
 export const Layout: FactoryComponent<{}> = () => {
   const MenuItem: FactoryComponent<IDashboard> = () => {
@@ -40,10 +40,10 @@ export const Layout: FactoryComponent<{}> = () => {
       const time = AppState.time;
       const trial = TrialSvc.getCurrent();
       const trialTitle = trial && trial.title ? trial.title.toUpperCase() : 'BOOBOOK';
-      const isRunning = AppState.session && AppState.session.sessionState === SessionState.START;
+      const isRunning = AppState.session && AppState.session.state === SessionState.Started;
       const title =
-        executeMode && isRunning && AppState.session.sessionName
-          ? `${AppState.session.trialName} - ${AppState.session.sessionName.toLowerCase()}`
+        executeMode && isRunning && AppState.session.name && AppState.session.tags && AppState.session.tags.sessionName
+          ? `${AppState.session.tags.trialName} - ${AppState.session.tags.sessionName.toLowerCase()}`
           : trialTitle;
 
       return m('container', [
@@ -66,7 +66,7 @@ export const Layout: FactoryComponent<{}> = () => {
                 '.nav-content',
                 m('ul.tabs.tabs-transparent', [
                   ...subDashboards.map(d => m(`li.tab${isActive(d.route)}`, m(MenuItem, d))),
-                  executeMode && time.state !== TimeState.Idle
+                  executeMode && time.state !== TimeState.Reset
                     ? m(MediaControls, {
                         id: 'layout-controls',
                         className: 'right',

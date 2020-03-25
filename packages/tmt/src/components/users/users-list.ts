@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { UsersForm } from './users-form';
-import { IPerson, UserRole, uniqueId } from 'trial-manager-models';
+import { IPerson, UserRole, uniqueId } from '../../../../models';
 import { TrialSvc } from '../../services';
 import { usersChannel, TopicNames } from '../../models/channels';
 import { RoundIconButton, TextInput, Collection, CollectionMode, ICollectionItem } from 'mithril-materialized';

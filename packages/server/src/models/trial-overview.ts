@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ITrialOverview } from 'trial-manager-models';
+import { ITrialOverview } from '../../../models';
 
 /** Brief summary of a scenario, the information you see before downloading */
 export class TrialOverview implements ITrialOverview {

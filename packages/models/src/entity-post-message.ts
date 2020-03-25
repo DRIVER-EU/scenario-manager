@@ -1,10 +1,10 @@
-import { IPost, MediumTypes } from './messages';
+import { IPost } from 'test-bed-schemas';
 
 export interface IPostMsg {
   /** Should be the same ID as the inject.id */
   id: string;
   /** Type of role player action */
-  type: MediumTypes;
+  type: string;
   /** Same as the inject title */
   title: string;
   /** Message body */
@@ -20,15 +20,16 @@ export interface IPostMsg {
 /** Convert a IRolePlayerMessage, as used in the Trial Manager, to a Test-bed ITestbedRolePlayerMessage */
 export const postMessageToTestbed = (pm: IPostMsg, senderName: string, recipients: string[], date: Date) =>
   ({
-    guid: pm.id,
-    name: pm.title,
-    senderName,
-    owner: '',
-    mediumType: pm.type || MediumTypes.MAIL,
-    mediumName: '',
-    header: pm.title,
+    id: pm.id,
     body: pm.description,
-    recipients,
-    date: date.valueOf(),
-    visibleForParticipant: true,
+    header: {
+      from: senderName,
+      to: recipients,
+      date: date.valueOf(),
+      subject: pm.title,
+    },
+    name: pm.title,
+    type: pm.type || 'mail',
+    owner: 'TB-TrialMgmt',
+    timestamp: Date.now(),
   } as IPost);

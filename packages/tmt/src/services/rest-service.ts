@@ -3,7 +3,7 @@ import { IChannelDefinition, messageBus } from './message-bus-service';
 import { TopicNames } from '../models/channels';
 import { AppState } from '../models';
 import { createPatch, Operation } from 'rfc6902';
-import { deepCopy } from 'trial-manager-models';
+import { deepCopy } from '../../../models';
 import { SocketSvc } from './socket-service';
 
 const log = console.log;
@@ -54,12 +54,14 @@ export class RestService<T extends { id?: string | number }> {
   public async update(item: T, fd?: FormData) {
     try {
       console.log('Update at ' + new Date());
-      await m.request({
-        method: 'PUT',
-        url: this.baseUrl + item.id,
-        body: fd || item,
-        withCredentials,
-      }).catch(e => console.error(e));
+      await m
+        .request({
+          method: 'PUT',
+          url: this.baseUrl + item.id,
+          body: fd || item,
+          withCredentials,
+        })
+        .catch(e => console.error(e));
       // this.setCurrent(data);
       this.setCurrent(item);
       this.updateItemInList(item);
@@ -78,12 +80,14 @@ export class RestService<T extends { id?: string | number }> {
         return this.current;
       }
       // console.log(JSON.stringify(patch, null, 2));
-      const item = await m.request<T>({
-        method: 'PATCH',
-        url: this.baseUrl + this.current.id,
-        body: { id, patch },
-        withCredentials,
-      }).catch(e => console.error(e));
+      const item = await m
+        .request<T>({
+          method: 'PATCH',
+          url: this.baseUrl + this.current.id,
+          body: { id, patch },
+          withCredentials,
+        })
+        .catch(e => console.error(e));
       if (item) {
         this.setCurrent(item);
         this.updateItemInList(item);
@@ -142,12 +146,11 @@ export class RestService<T extends { id?: string | number }> {
   }
 
   public async load(id?: string) {
-    const result = await m
-      .request<T>({
-        method: 'GET',
-        url: this.baseUrl + id,
-        withCredentials,
-      });
+    const result = await m.request<T>({
+      method: 'GET',
+      url: this.baseUrl + id,
+      withCredentials,
+    });
     // log(result);
     this.setCurrent(result);
     this.updateItemInList(this.current);
@@ -156,8 +159,7 @@ export class RestService<T extends { id?: string | number }> {
 
   public async loadList(): Promise<T[] | undefined> {
     try {
-      const result = await m
-      .request<T[]>({
+      const result = await m.request<T[]>({
         method: 'GET',
         url: this.baseUrl,
         withCredentials,
@@ -171,12 +173,11 @@ export class RestService<T extends { id?: string | number }> {
   }
 
   public async loadListInScenario(id: string) {
-    const result = await m
-      .request<T[]>({
-        method: 'GET',
-        url: this.baseUrl + `scenario/${id}`,
-        withCredentials,
-      });
+    const result = await m.request<T[]>({
+      method: 'GET',
+      url: this.baseUrl + `scenario/${id}`,
+      withCredentials,
+    });
     // log(JSON.stringify(result, null, 2));
     log('loadListInScenario...');
     this.setList(result);

@@ -1,7 +1,7 @@
 import m, { FactoryComponent, Attributes } from 'mithril';
 import { LeafletMap } from 'mithril-leaflet';
 import { isInjectGroup } from '../../utils';
-import { IScenario } from 'trial-manager-models';
+import { IScenario } from '../../../../models';
 import { injectsChannel, TopicNames } from '../../models';
 import L, { GeoJSON } from 'leaflet';
 import { TrialSvc } from '../../services';
@@ -49,7 +49,7 @@ export const OverviewMap: FactoryComponent<IOverviewMap> = () => {
         m(LeafletMap, {
           style: 'width: 100%; height: 90vh; margin: 0;',
           overlays,
-          onLoaded: map => state.map = map,
+          onLoaded: map => (state.map = map),
           visible: overlays ? Object.keys(overlays) : undefined,
           // editable: ['overlay'],
           // onMapClicked: console.log,

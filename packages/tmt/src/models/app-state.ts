@@ -1,4 +1,4 @@
-import { ITimeMessage, ISessionMgmt, IInjectSimStates, IInject } from 'trial-manager-models';
+import { ITimeManagement, ISessionManagement, IInjectSimStates, IInject } from '../../../models';
 import { messageBus } from '../services';
 
 const getRootUrl = () => {
@@ -6,7 +6,7 @@ const getRootUrl = () => {
   const regex = /https?:\/\/.*(?=\/#)/i;
   const route = document.location.href;
   const m = route.match(regex);
-  return (m && m.length === 1) ? m[0].toString() : '';
+  return m && m.length === 1 ? m[0].toString() : '';
 };
 
 /** During development, use this URL to access the server. */
@@ -15,8 +15,8 @@ const apiDevService = 'http://localhost:3210';
 /** Application state */
 export const AppState = {
   owner: 'TB_TrialMgmt',
-  apiService: () => SERVICE_URL ? SERVICE_URL : getRootUrl(),
-  time: {} as ITimeMessage,
+  apiService: () => (SERVICE_URL ? SERVICE_URL : getRootUrl()),
+  time: {} as ITimeManagement,
   sessionControl: {
     isConnected: false,
     activeSession: false,
@@ -25,12 +25,12 @@ export const AppState = {
   },
   scenarioStartTime: new Date(),
   session: {
-    id: 1,
+    id: '1',
     name: '',
     trialId: '',
     scenarioId: '',
     comments: '',
-  } as Partial<ISessionMgmt>,
+  } as Partial<ISessionManagement>,
   scenarioId: '',
   injectStates: {} as IInjectSimStates,
   useDevServer: () => {

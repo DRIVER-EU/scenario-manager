@@ -8,6 +8,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "start": "tsc -w",
+    "dev": "tsc -w &",
     "build": "tsc"
   },
   "keywords": [],
@@ -18,11 +19,11 @@
     "url": "git+https://github.com/DRIVER-EU/scenario-manager.git"
   },
   "dependencies": {
-    "test-bed-schemas": "^0.3.2",
-    "@types/geojson": "^7946.0.7"
+    "@types/geojson": "^7946.0.7",
+    "test-bed-schemas": "^0.3.8"
   },
   "devDependencies": {
-    "typescript": "^3.8.3",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3"
   }
 }

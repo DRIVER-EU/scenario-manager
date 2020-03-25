@@ -24,7 +24,7 @@ import {
   uniqueId,
   IScenario,
   InjectKeys,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { TopicNames, injectsChannel, AppState } from '../../models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages/message-form';
@@ -69,7 +69,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     }
   };
 
-  const onChange = (inj: IInject, props: InjectKeys) => {
+  const onChange = (inj: IInject, props: InjectKeys, save = false) => {
     const { inject } = state;
     if (!inject) {
       return;
@@ -109,6 +109,9 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       props.forEach(prop => applyChange(prop));
     } else {
       applyChange(props);
+    }
+    if (save) {
+      onsubmit();
     }
     // console.table(inj);
   };

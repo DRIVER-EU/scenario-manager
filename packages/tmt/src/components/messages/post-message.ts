@@ -1,9 +1,20 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IPostMsg, MediumTypes, UserRole, InjectKeys } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IPostMsg, UserRole, InjectKeys } from '../../../../models';
 import { enumToOptions } from '../../utils';
 import { TrialSvc, RunSvc } from '../../services';
 import { MessageScope } from '.';
+
+export enum MediumTypes {
+  CHAT = 'CHAT',
+  INCIDENT_REPORT = 'INCIDENT_REPORT',
+  MAIL = 'MAIL',
+  MICROBLOG = 'MICROBLOG',
+  NEWS = 'NEWS',
+  SITUATION_REPORT = 'SITUATION_REPORT',
+  SOCIAL_NETWORK = 'SOCIAL_NETWORK',
+  VIDEO = 'VIDEO',
+}
 
 /** Inform others about a large data message: note that it only sends a link, not the actual data! */
 export const PostMessageForm: FactoryComponent<{
@@ -14,7 +25,7 @@ export const PostMessageForm: FactoryComponent<{
 }> = () => {
   const state = {
     options: enumToOptions(MediumTypes),
-    recipients: [] as Array<{ id: string; label: string; }>,
+    recipients: [] as Array<{ id: string; label: string }>,
   };
 
   return {

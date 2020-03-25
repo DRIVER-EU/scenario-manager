@@ -1,0 +1,809 @@
+{
+  "program": {
+    "fileInfos": {
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es5.d.ts": {
+        "version": "b42eddba1a53c9d27279cfe7fc0416c10a81489826ad47e39013b9d340fc0cc7",
+        "signature": "b42eddba1a53c9d27279cfe7fc0416c10a81489826ad47e39013b9d340fc0cc7"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.d.ts": {
+        "version": "7994d44005046d1413ea31d046577cdda33b8b2470f30281fd9c8b3c99fe2d96",
+        "signature": "7994d44005046d1413ea31d046577cdda33b8b2470f30281fd9c8b3c99fe2d96"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2016.d.ts": {
+        "version": "5f217838d25704474d9ef93774f04164889169ca31475fe423a9de6758f058d1",
+        "signature": "5f217838d25704474d9ef93774f04164889169ca31475fe423a9de6758f058d1"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.d.ts": {
+        "version": "459097c7bdd88fc5731367e56591e4f465f2c9de81a35427a7bd473165c34743",
+        "signature": "459097c7bdd88fc5731367e56591e4f465f2c9de81a35427a7bd473165c34743"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.dom.d.ts": {
+        "version": "f2039e0dbc31f69183f6377b368c033802dfdcf77e5fd214def06c1fd7b225ed",
+        "signature": "f2039e0dbc31f69183f6377b368c033802dfdcf77e5fd214def06c1fd7b225ed"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.core.d.ts": {
+        "version": "734ddc145e147fbcd55f07d034f50ccff1086f5a880107665ec326fb368876f6",
+        "signature": "734ddc145e147fbcd55f07d034f50ccff1086f5a880107665ec326fb368876f6"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.collection.d.ts": {
+        "version": "4a0862a21f4700de873db3b916f70e41570e2f558da77d2087c9490f5a0615d8",
+        "signature": "4a0862a21f4700de873db3b916f70e41570e2f558da77d2087c9490f5a0615d8"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.generator.d.ts": {
+        "version": "765e0e9c9d74cf4d031ca8b0bdb269a853e7d81eda6354c8510218d03db12122",
+        "signature": "765e0e9c9d74cf4d031ca8b0bdb269a853e7d81eda6354c8510218d03db12122"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.iterable.d.ts": {
+        "version": "285958e7699f1babd76d595830207f18d719662a0c30fac7baca7df7162a9210",
+        "signature": "285958e7699f1babd76d595830207f18d719662a0c30fac7baca7df7162a9210"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.promise.d.ts": {
+        "version": "d4deaafbb18680e3143e8b471acd650ed6f72a408a33137f0a0dd104fbe7f8ca",
+        "signature": "d4deaafbb18680e3143e8b471acd650ed6f72a408a33137f0a0dd104fbe7f8ca"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.proxy.d.ts": {
+        "version": "5e72f949a89717db444e3bd9433468890068bb21a5638d8ab15a1359e05e54fe",
+        "signature": "5e72f949a89717db444e3bd9433468890068bb21a5638d8ab15a1359e05e54fe"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.reflect.d.ts": {
+        "version": "f5b242136ae9bfb1cc99a5971cccc44e99947ae6b5ef6fd8aa54b5ade553b976",
+        "signature": "f5b242136ae9bfb1cc99a5971cccc44e99947ae6b5ef6fd8aa54b5ade553b976"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.symbol.d.ts": {
+        "version": "9ae2860252d6b5f16e2026d8a2c2069db7b2a3295e98b6031d01337b96437230",
+        "signature": "9ae2860252d6b5f16e2026d8a2c2069db7b2a3295e98b6031d01337b96437230"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts": {
+        "version": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303",
+        "signature": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2016.array.include.d.ts": {
+        "version": "3f96f1e570aedbd97bf818c246727151e873125d0512e4ae904330286c721bc0",
+        "signature": "3f96f1e570aedbd97bf818c246727151e873125d0512e4ae904330286c721bc0"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.object.d.ts": {
+        "version": "c2d60b2e558d44384e4704b00e6b3d154334721a911f094d3133c35f0917b408",
+        "signature": "c2d60b2e558d44384e4704b00e6b3d154334721a911f094d3133c35f0917b408"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts": {
+        "version": "b8667586a618c5cf64523d4e500ae39e781428abfb28f3de441fc66b56144b6f",
+        "signature": "b8667586a618c5cf64523d4e500ae39e781428abfb28f3de441fc66b56144b6f"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.string.d.ts": {
+        "version": "21df2e0059f14dcb4c3a0e125859f6b6ff01332ee24b0065a741d121250bc71c",
+        "signature": "21df2e0059f14dcb4c3a0e125859f6b6ff01332ee24b0065a741d121250bc71c"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.intl.d.ts": {
+        "version": "c1759cb171c7619af0d2234f2f8fb2a871ee88e956e2ed91bb61778e41f272c6",
+        "signature": "c1759cb171c7619af0d2234f2f8fb2a871ee88e956e2ed91bb61778e41f272c6"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts": {
+        "version": "28569d59e07d4378cb3d54979c4c60f9f06305c9bb6999ffe6cab758957adc46",
+        "signature": "28569d59e07d4378cb3d54979c4c60f9f06305c9bb6999ffe6cab758957adc46"
+      },
+      "./src/actor-type.ts": {
+        "version": "ad81860dbfc2bc73945374d6a4341d4897744127cde7de5fa3a0d875aa069ef7",
+        "signature": "aaf54ccf31d3be84ddf09f423ef3a194d36a1a665a40970f7e6fc38272fea35d"
+      },
+      "./src/app-state.ts": {
+        "version": "30c0af14b2a5da31c36eb9c18cc7b998dcbf90c17e5fe6733b8789ddd6ea5ef8",
+        "signature": "65344e6a380f13da63a8ceb69a5fa55d10e11be70d515712581484fecc710c05"
+      },
+      "./src/asset.ts": {
+        "version": "779366b9bb9971cac5e1cbfbe558445078cc61975868f201202e827366bee1b9",
+        "signature": "97d807be4537df5787dbc1c98d16e84885197f83aa9f352217783f183011680a"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/edxl-de/edxl-de-key.d.ts": {
+        "version": "3f39ce3bb8eb190edb637b6340cac9677b8eb367b2fac7130e37eda8c1255ed1",
+        "signature": "3f39ce3bb8eb190edb637b6340cac9677b8eb367b2fac7130e37eda8c1255ed1"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/heartbeat/system_admin_heartbeat-value.d.ts": {
+        "version": "7ad3ee22cca110e9819b0ad74ab35e9e9fdf8740a2538d16eacc36e1820ca89c",
+        "signature": "7ad3ee22cca110e9819b0ad74ab35e9e9fdf8740a2538d16eacc36e1820ca89c"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/heartbeat/system_heartbeat-value.d.ts": {
+        "version": "62e5ff00b3491ba7e1298e96783af85905f2a286c5b576ac98a62b37d773b3a1",
+        "signature": "62e5ff00b3491ba7e1298e96783af85905f2a286c5b576ac98a62b37d773b3a1"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/large-data/system_large_data_update-value.d.ts": {
+        "version": "8af938a88b6145232a84c4dad15fce59b579e161a3512a85c3504d716c2f5738",
+        "signature": "8af938a88b6145232a84c4dad15fce59b579e161a3512a85c3504d716c2f5738"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/large-data/system_map_layer_update-value.d.ts": {
+        "version": "d8b5f7341ec776cf037bfc260e0f96fec1e51e9ad186bd64249487a6f2c7c510",
+        "signature": "d8b5f7341ec776cf037bfc260e0f96fec1e51e9ad186bd64249487a6f2c7c510"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/log/system_logging-value.d.ts": {
+        "version": "7c2a6c0b6770894d9a8f0b72e5a8e1ed517f4f3cdaa0f6b3dca1c8da887395e7",
+        "signature": "7c2a6c0b6770894d9a8f0b72e5a8e1ed517f4f3cdaa0f6b3dca1c8da887395e7"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/ost/system_observer_tool_answer-value.d.ts": {
+        "version": "f0be19f1ae672faa540f062f360cd72a3495c3044b09084771619ad0cce82269",
+        "signature": "f0be19f1ae672faa540f062f360cd72a3495c3044b09084771619ad0cce82269"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/ost/system_request_change_of_trial_stage-value.d.ts": {
+        "version": "907c3e4207f92ef65a2c29ec110a3861009e9aaea5b12727cf129c11cde98ba5",
+        "signature": "907c3e4207f92ef65a2c29ec110a3861009e9aaea5b12727cf129c11cde98ba5"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_access_invite-value.d.ts": {
+        "version": "e5c42e84fab48bb0b09dd516471870f789447d4bf81e9836b7593683849c7a3d",
+        "signature": "e5c42e84fab48bb0b09dd516471870f789447d4bf81e9836b7593683849c7a3d"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_create_request-value.d.ts": {
+        "version": "6ee4ff08f716576eaf2e11ba994f4fc2c6387e713e98913229e617159cf90778",
+        "signature": "6ee4ff08f716576eaf2e11ba994f4fc2c6387e713e98913229e617159cf90778"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_remove-value.d.ts": {
+        "version": "b1b9883b52c9c0d74feb0faba32c78cc2fb15ac5e39229f4f3c01454807d0f37",
+        "signature": "b1b9883b52c9c0d74feb0faba32c78cc2fb15ac5e39229f4f3c01454807d0f37"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_remove_request-value.d.ts": {
+        "version": "8331738294980260d6a14aa3d9e5fa2b9127bbe9df78ccb7a961164052e1ba5f",
+        "signature": "8331738294980260d6a14aa3d9e5fa2b9127bbe9df78ccb7a961164052e1ba5f"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/trial-mgmt/system_tm_phase_message-value.d.ts": {
+        "version": "24d3d8f7e9fb170c585c54663a778bd8e5d1e3db769ebd801eaa9b6f5e084a13",
+        "signature": "24d3d8f7e9fb170c585c54663a778bd8e5d1e3db769ebd801eaa9b6f5e084a13"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/trial-mgmt/system_tm_role_player-value.d.ts": {
+        "version": "3d2609c26a8c59e0922fd08b2ce2c6857605eb76fd88a42cbb0bcf15144293a8",
+        "signature": "3d2609c26a8c59e0922fd08b2ce2c6857605eb76fd88a42cbb0bcf15144293a8"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/geojson/standard_geojson-value.d.ts": {
+        "version": "f48e66117f16e473f9ab5d8d92fed0abc30d328eb5904e5506885b11e34914b5",
+        "signature": "f48e66117f16e473f9ab5d8d92fed0abc30d328eb5904e5506885b11e34914b5"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_time_mgmt-value.d.ts": {
+        "version": "b94dfd9d59a0be319992ddb2897afc3cd171dc188febea660f64f04c5810d1c2",
+        "signature": "b94dfd9d59a0be319992ddb2897afc3cd171dc188febea660f64f04c5810d1c2"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_time_control-value.d.ts": {
+        "version": "3c8db7d9ea37c374616a3ad95f2043822555ad2640ba0867dbe3948fc38c93ae",
+        "signature": "3c8db7d9ea37c374616a3ad95f2043822555ad2640ba0867dbe3948fc38c93ae"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_session_mgmt-value.d.ts": {
+        "version": "1e18e2ae40a1239eb940b8ca39a3670a2e92059a61da1b4e239af3f07880e41a",
+        "signature": "1e18e2ae40a1239eb940b8ca39a3670a2e92059a61da1b4e239af3f07880e41a"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_featurecollection-value.d.ts": {
+        "version": "c379118d419851095003fa220863baa899353ab51473f229fc0e7e4680daaf51",
+        "signature": "c379118d419851095003fa220863baa899353ab51473f229fc0e7e4680daaf51"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_item-value.d.ts": {
+        "version": "cc86f3bf49a210927b2ebbc4272ecce2dd6d94a0d5d2560b149a912fdf45fdcc",
+        "signature": "cc86f3bf49a210927b2ebbc4272ecce2dd6d94a0d5d2560b149a912fdf45fdcc"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_post-value.d.ts": {
+        "version": "bbe11c1da4093341bee6d19c0d35c3110791d6bfe18b9d953b9695a5ace9a004",
+        "signature": "bbe11c1da4093341bee6d19c0d35c3110791d6bfe18b9d953b9695a5ace9a004"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/geofencing/geofencing_event-value.d.ts": {
+        "version": "dbb2181f7804918ecb5cba718b0b222558e41f38f88038533c11e4d3629cab07",
+        "signature": "dbb2181f7804918ecb5cba718b0b222558e41f38f88038533c11e4d3629cab07"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_move-value.d.ts": {
+        "version": "f9a3e98f580cd90e7be56c79bf9532569c5e9d6c22f4da3f073a064f1f86d35f",
+        "signature": "f9a3e98f580cd90e7be56c79bf9532569c5e9d6c22f4da3f073a064f1f86d35f"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_ownership-value.d.ts": {
+        "version": "deec09aa3e497e116cde3d32314c22bf009bfbb8ab4a17fd95eabc1bcd936988",
+        "signature": "deec09aa3e497e116cde3d32314c22bf009bfbb8ab4a17fd95eabc1bcd936988"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_route-value.d.ts": {
+        "version": "183817ba3ba06833eaefc09ad7fdc2d56179d95d68559f36813651c9fa3cb1f7",
+        "signature": "183817ba3ba06833eaefc09ad7fdc2d56179d95d68559f36813651c9fa3cb1f7"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_startinject-value.d.ts": {
+        "version": "a361d717fa9f339dabaad1ce005fdcae9ee067f25b69c7b8ed417ad4dcf5a914",
+        "signature": "a361d717fa9f339dabaad1ce005fdcae9ee067f25b69c7b8ed417ad4dcf5a914"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/specific/sumo/simulation_affected_area-value.d.ts": {
+        "version": "93ca0932d603ca8009157d5fb481684c0e0dfbef9571cab8f0f5e1a618e2a26b",
+        "signature": "93ca0932d603ca8009157d5fb481684c0e0dfbef9571cab8f0f5e1a618e2a26b"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/specific/sumo/simulation_sumo_configuration-value.d.ts": {
+        "version": "de5cd2e158a04b3cc7eb14025a578853600f2b2afdf4f9cf8d36782d42e244f1",
+        "signature": "de5cd2e158a04b3cc7eb14025a578853600f2b2afdf4f9cf8d36782d42e244f1"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/cap/standard_cap-value.d.ts": {
+        "version": "497fd437f0d7062a12b860274ffd951305eb6177f55b838f2288e89afb1c9218",
+        "signature": "497fd437f0d7062a12b860274ffd951305eb6177f55b838f2288e89afb1c9218"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/emsi/standard_emsi-value.d.ts": {
+        "version": "26ada855089a1a33a05e0f09c38e83aaddfcd180720e4c474c3fd914d4c451d8",
+        "signature": "26ada855089a1a33a05e0f09c38e83aaddfcd180720e4c474c3fd914d4c451d8"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/geojson-sim/standard_geojson_sim-value.d.ts": {
+        "version": "34e483c2dd4a0cd89cd74e4cd07bbcd0492102c17828840207a609a63b47ca24",
+        "signature": "34e483c2dd4a0cd89cd74e4cd07bbcd0492102c17828840207a609a63b47ca24"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/mlp/standard_mlp-value.d.ts": {
+        "version": "610dc450bfda9c4608b1917d6bab8f8f9d4ee929f63d3fc405c3088c58b460d2",
+        "signature": "610dc450bfda9c4608b1917d6bab8f8f9d4ee929f63d3fc405c3088c58b460d2"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/named-geojson/standard_named_geojson-value.d.ts": {
+        "version": "26d054d9665e4ce92873ca1cdc9b194c305261dbd7536e740582495d08418604",
+        "signature": "26d054d9665e4ce92873ca1cdc9b194c305261dbd7536e740582495d08418604"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/photo-geojson/photo_geojson-value.d.ts": {
+        "version": "96db4f63250534c8a98fd9e64e8360e050c04dcf532e5eaa58fd85de0864caa0",
+        "signature": "96db4f63250534c8a98fd9e64e8360e050c04dcf532e5eaa58fd85de0864caa0"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/utils/index.d.ts": {
+        "version": "5f91a7902867a15ce94418cc8c4b79a4108a0807cff4d5933f7fc5852688c581",
+        "signature": "5f91a7902867a15ce94418cc8c4b79a4108a0807cff4d5933f7fc5852688c581"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts": {
+        "version": "4df3b42955de60f1b286e7910db4d7042ffeb8955d3b35afc1982f56ed1456ae",
+        "signature": "4df3b42955de60f1b286e7910db4d7042ffeb8955d3b35afc1982f56ed1456ae"
+      },
+      "./src/connect-message.ts": {
+        "version": "6378285b5770c0a5376ff5ce818ded6caba9a7181ae4e35e7e0ef9a631359a4e",
+        "signature": "e20cc1299faa7575c5c1c812176d54673c19b38c2687a1665b8434faa1a4fca5"
+      },
+      "./src/content.ts": {
+        "version": "a77a8210fb5aabd45a76ffb1f1024b65799698ee7d88f6283ed6d76b836b6d36",
+        "signature": "5d329112977666e48ae0fc3d9a8564e5c5a243d692becfe7fe22c3057c8ef80d"
+      },
+      "./src/execution-service.ts": {
+        "version": "65295cc040ae13b0ee4d5000815c33223ea74887f8d339fa99bbfad8cb54b564",
+        "signature": "57faee0f6767b63507af9ee9295d2edf1129c9c17de9c1368158e1d44e7d275f"
+      },
+      "./src/executing-inject.ts": {
+        "version": "bf21328e36be9a062638051a4ab10310d09b602de3db879049e26d00a8214d80",
+        "signature": "ad1be9c2e80a5e26792dfa9cdb4e2dab8e6fcdca3c796b8842c4d55f7b4b96f9"
+      },
+      "./src/entity-post-message.ts": {
+        "version": "c505e4b438a7950c254a3ff974773081db2d51c0df7c258ffa61299925bc8aec",
+        "signature": "e14fe756459675c8310076daa9966337139cfd5c6cd797b9c9263d279f4b96d5"
+      },
+      "./src/inject-sim-state.ts": {
+        "version": "c611c8a00c366677bb2065eae7ec85190ee566b230d81a9ebd777e1046f976bd",
+        "signature": "06a5de9c90267897db9412cb8de9103302aa4033806f65c7ee8e74f71bf64250"
+      },
+      "./src/geojson-message.ts": {
+        "version": "b6e0c6cc5e5f92c971ff37f341f7a67ee5ca82be8d8c988c0f00c47912254576",
+        "signature": "5fa5ea14b98fc929949510cb19cce8f0cefbbcff87a976dcdb9a39637cc68207"
+      },
+      "./src/location.ts": {
+        "version": "e5f170ee40476ed5fb07005bb747b58560056c7b23de35722813bf9e4da9fcbe",
+        "signature": "e78a655ac12febca87c508abd603a0e8a813ba0bad3512360e108e2eeb19e5be"
+      },
+      "./src/message-topic.ts": {
+        "version": "aef00bde7ced91307c3932ea2056fa678663b7e800e5d1e4fc7ee203e8384c90",
+        "signature": "31038623c34b657791265aa2bcb59e54936475d046f3b3e461bf0da0ece8e1ec"
+      },
+      "./src/message-type.ts": {
+        "version": "94e31e9e53c1807daf05c90cdfde454c49853bc480de7fd61bb48a9c4ff897fc",
+        "signature": "f43d497929649824e2bdcbb0d08f27ad7491cdab0a743b0b011978100dc8b959"
+      },
+      "./src/object-of-interest.ts": {
+        "version": "66bdd0698967dfadf556aaacda1fc9a9ab3b6edfe5c956cc8d5e3f51ac5139ea",
+        "signature": "eee183670efa42b04ca818a9ba0e07e5c41ff38e5c5ee27c70cc09da63e34bdd"
+      },
+      "./src/objective.ts": {
+        "version": "a0f741ab5f8f2918b778e8d89d5a6832ae68da929c820fc43ea9616618d90e42",
+        "signature": "206899a91095c942c69ed783060ab82ea99b7d649e252ba1cae66b880d60e492"
+      },
+      "./src/ost-stage-change-message.ts": {
+        "version": "9ff815b2ee54d38ca4964b47d1172c887f08a89e4377899ed9e3ae38ee07fa92",
+        "signature": "2aa0a4fa37fe95df1550ce714cb21ce5e0f6aac676bc56a5b83bd83e39c894af"
+      },
+      "./src/person-of-interest.ts": {
+        "version": "762724fc9b49b94c97813f9c03380ce080d84624a5f2a3ec1941181176f41147",
+        "signature": "58af50558a8f4d6b2e1330808670f48d4de7c93e010de84683e7a4b9d2b475f8"
+      },
+      "./src/user-role.ts": {
+        "version": "135b0f626cb6d9a89991cf32470370e4e7266fb4a91bfaa882d5d2b2232f5908",
+        "signature": "72a2c0ecac57f3b31d80387e72fd37592bf20a9b1f3e75a08bf8ec9cd177226f"
+      },
+      "./src/person.ts": {
+        "version": "692c45426c0cf3a74ed9b1330107170e66342f2d2e9a31e000a7c247736bfbe2",
+        "signature": "edbc1b1319a822511a1c8fece58395de1289ab4111b84e40a6c71e965b7f42df"
+      },
+      "./src/role-player-message.ts": {
+        "version": "5555c77b69713334d153a904a0dcf82aa9e544677090650816b4630ee45d6e7d",
+        "signature": "e042b3f51afa91a8a02d994614811dc699834ea714b4478bb56f5733510bdc91"
+      },
+      "./src/session-message.ts": {
+        "version": "698a2f13fca309f51263754fa9a6b1cb855e672a07b3fe3195025de58011a4f6",
+        "signature": "0960887d6deaf6e50ad8b08b563f62ee3377411a2721008734c5475bcbf932d8"
+      },
+      "./src/stakeholder.ts": {
+        "version": "53f32b9f15ea5f9e5d04a566a7c9f2c94730953d99fb7411df13e5eab26aa0a2",
+        "signature": "07945b91dd0bd5011644f4383908b55676f1bbde5d79cd0d9484bfd23dc2a340"
+      },
+      "./src/state-transition-request.ts": {
+        "version": "712b9eb1521c11bc0c4942cf5a0dcd8e148940d4156c4e8ff1fa58a51a0c2d99",
+        "signature": "c2e1a2fa71124244ea4dc2f45f5218203a64bcd36f2f83a5101819a532cfaa89"
+      },
+      "./src/sim-state.ts": {
+        "version": "fabf5d12dec63702464b0fb4020dd145903b753533e13fe3e941171677a31617",
+        "signature": "79edc482c518f1da6e385cfbb088a077cf1ace7e01c8b505faa7a966b9a96554"
+      },
+      "./src/todo.ts": {
+        "version": "0e9f41221a4c516f8c032931326c4971d8a4f88878b8d99634925d204387c2b4",
+        "signature": "e77de8319259bb4f81c8338c867fbc2c4c408323ccd30f225c80efa53635f5b7"
+      },
+      "./src/trial.ts": {
+        "version": "f0da36fd6fb32b2e7723b42dd7da97a4675f6920bda49268f5e978a333949652",
+        "signature": "c39b9adffb2c87081c5bcd7a65ed162f1e9e272431bdd5eb9a7593ca5ed35b4c"
+      },
+      "./node_modules/.pnpm/registry.npmjs.org/@types/geojson/7946.0.7/node_modules/@types/geojson/index.d.ts": {
+        "version": "3a68b9e1129584f9e42f615b56926b0d2c1d22746e9c4689faf48d0e9749536a",
+        "signature": "3a68b9e1129584f9e42f615b56926b0d2c1d22746e9c4689faf48d0e9749536a"
+      },
+      "./src/utils/utils.ts": {
+        "version": "4a32ea99ac426482812482170e4f6f48af9881792388cbe7a62d9ba3e4beaaa5",
+        "signature": "d41120cc37956cb49e0f1674c327bc13cf897ba4112f1593edb86e294f39b994"
+      },
+      "./src/utils/simulation.ts": {
+        "version": "2eb53372d807161b2d8b58387f2127add9db202eac6ee66ac2d8442d6c0275be",
+        "signature": "a4ff689f292081402438ad0a31432a5cb491583929e814e83e5f519db79eea0e"
+      },
+      "./src/utils/index.ts": {
+        "version": "c9e6e82776a32f5a36c1ee36aaab1ef8693820e1472092597f3b152acd03d914",
+        "signature": "f143bcfe2e450453af897d1565ba179700da4e44965a3c0b6292405f77e3c516"
+      },
+      "./src/index.ts": {
+        "version": "155ad4377a2ceacdd1f8e5728844bd76ed75c1157835c535c4fbd079be8e6347",
+        "signature": "d63caf7b7ad7a261104f94d1f88168d5900ee9c194f1cab5666e03ab045b4cd8"
+      },
+      "./src/inject.ts": {
+        "version": "8f901ee3966bc3722bc7961947bf58c512918b433a5032d76e35e53a20a282e6",
+        "signature": "ab96fe7bd2ebdaabf0e61f764afbdfdba0c190db445bfe01287232bbe0887711"
+      },
+      "./src/constraint.ts": {
+        "version": "b9cae6bed830dad32beb3ab8f7c088cb10ea78575094887eed86dfbffa62ff54",
+        "signature": "01b01a004c37f7705414ccd2586c56f74e313358ce205104915932487e7d3663"
+      },
+      "./src/group.ts": {
+        "version": "a54a54232b5002ea66697a9f7ff8ec99fff239d959cd5f71a1ec9ee0fa487428",
+        "signature": "b8833051a3e1c4fc699db0d34ecc8ad301ddf9d5a4ba68c7f378d88df2e13190"
+      },
+      "./src/time-message.ts": {
+        "version": "2344defc6b46180f309586f8382fd61ca07bcb1d16acdbb78a9b866c4226af55",
+        "signature": "e7509f3539f7a903bb55f9d43102f965f03d51c10b58f8fb0f6f55344a7923f0"
+      },
+      "./src/timing-control-message.ts": {
+        "version": "f395310b54551eb1e0bfe38ec539c4d23eddc54f63ac8bb44331e2177e4af7e6",
+        "signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "./src/tree.ts": {
+        "version": "f768ed3e385ae53f17a394bb6c7d4c9a32a29d144111b3b4b71ee633aa8086e6",
+        "signature": "a5f9491fd5b06cb8714cfd8f461e13448fea2c47b4bb6b474da23770e2d11ea4"
+      }
+    },
+    "options": {
+      "target": 1,
+      "module": 1,
+      "lib": [
+        "lib.dom.d.ts",
+        "lib.es5.d.ts",
+        "lib.es2015.promise.d.ts",
+        "lib.es2017.d.ts"
+      ],
+      "composite": true,
+      "declaration": true,
+      "sourceMap": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "strict": true,
+      "esModuleInterop": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "watch": true,
+      "configFilePath": "./tsconfig.json"
+    },
+    "referencedMap": {
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_post-value.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_item-value.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_route-value.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/named-geojson/standard_named_geojson-value.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/photo-geojson/photo_geojson-value.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/utils/index.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/edxl-de/edxl-de-key.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/heartbeat/system_admin_heartbeat-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/heartbeat/system_heartbeat-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/large-data/system_large_data_update-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/large-data/system_map_layer_update-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/log/system_logging-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/ost/system_observer_tool_answer-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/ost/system_request_change_of_trial_stage-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_access_invite-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_create_request-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_remove-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_remove_request-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/trial-mgmt/system_tm_phase_message-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/trial-mgmt/system_tm_role_player-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/geojson/standard_geojson-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_time_mgmt-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_time_control-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_session_mgmt-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_featurecollection-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_item-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_post-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/geofencing/geofencing_event-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_move-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_ownership-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_route-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_startinject-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/specific/sumo/simulation_affected_area-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/specific/sumo/simulation_sumo_configuration-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/cap/standard_cap-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/emsi/standard_emsi-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/geojson-sim/standard_geojson_sim-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/mlp/standard_mlp-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/named-geojson/standard_named_geojson-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/photo-geojson/photo_geojson-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/utils/index.d.ts"
+      ],
+      "./src/connect-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/execution-service.ts": [
+        "./src/index.ts"
+      ],
+      "./src/executing-inject.ts": [
+        "./src/inject.ts"
+      ],
+      "./src/entity-post-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/inject-sim-state.ts": [
+        "./src/index.ts"
+      ],
+      "./src/message-topic.ts": [
+        "./src/index.ts"
+      ],
+      "./src/object-of-interest.ts": [
+        "./src/index.ts"
+      ],
+      "./src/objective.ts": [
+        "./src/index.ts"
+      ],
+      "./src/ost-stage-change-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/person-of-interest.ts": [
+        "./src/index.ts"
+      ],
+      "./src/person.ts": [
+        "./src/user-role.ts"
+      ],
+      "./src/role-player-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/session-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/stakeholder.ts": [
+        "./src/index.ts"
+      ],
+      "./src/state-transition-request.ts": [
+        "./src/inject.ts"
+      ],
+      "./src/sim-state.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/trial.ts": [
+        "./src/index.ts"
+      ],
+      "./src/utils/utils.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/@types/geojson/7946.0.7/node_modules/@types/geojson/index.d.ts",
+        "./src/index.ts"
+      ],
+      "./src/utils/simulation.ts": [
+        "./src/index.ts"
+      ],
+      "./src/utils/index.ts": [
+        "./src/utils/utils.ts",
+        "./src/utils/simulation.ts"
+      ],
+      "./src/index.ts": [
+        "./src/asset.ts",
+        "./src/connect-message.ts",
+        "./src/content.ts",
+        "./src/execution-service.ts",
+        "./src/executing-inject.ts",
+        "./src/entity-post-message.ts",
+        "./src/inject-sim-state.ts",
+        "./src/inject.ts",
+        "./src/geojson-message.ts",
+        "./src/location.ts",
+        "./src/message-topic.ts",
+        "./src/message-type.ts",
+        "./src/object-of-interest.ts",
+        "./src/objective.ts",
+        "./src/ost-stage-change-message.ts",
+        "./src/person-of-interest.ts",
+        "./src/person.ts",
+        "./src/role-player-message.ts",
+        "./src/session-message.ts",
+        "./src/stakeholder.ts",
+        "./src/state-transition-request.ts",
+        "./src/sim-state.ts",
+        "./src/todo.ts",
+        "./src/trial.ts",
+        "./src/user-role.ts",
+        "./src/utils/index.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/inject.ts": [
+        "./src/index.ts"
+      ],
+      "./src/constraint.ts": [
+        "./src/inject.ts"
+      ],
+      "./src/group.ts": [
+        "./src/person-of-interest.ts"
+      ],
+      "./src/time-message.ts": [
+        "./src/index.ts"
+      ]
+    },
+    "exportedModulesMap": {
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_post-value.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_item-value.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_route-value.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/named-geojson/standard_named_geojson-value.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/photo-geojson/photo_geojson-value.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/utils/index.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/edxl-de/edxl-de-key.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/heartbeat/system_admin_heartbeat-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/heartbeat/system_heartbeat-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/large-data/system_large_data_update-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/large-data/system_map_layer_update-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/log/system_logging-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/ost/system_observer_tool_answer-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/ost/system_request_change_of_trial_stage-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_access_invite-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_create_request-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_remove-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_remove_request-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/trial-mgmt/system_tm_phase_message-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/trial-mgmt/system_tm_role_player-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/geojson/standard_geojson-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_time_mgmt-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_time_control-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_session_mgmt-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_featurecollection-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_item-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_post-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/geofencing/geofencing_event-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_move-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_ownership-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_route-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_startinject-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/specific/sumo/simulation_affected_area-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/specific/sumo/simulation_sumo_configuration-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/cap/standard_cap-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/emsi/standard_emsi-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/geojson-sim/standard_geojson_sim-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/mlp/standard_mlp-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/named-geojson/standard_named_geojson-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/photo-geojson/photo_geojson-value.d.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/utils/index.d.ts"
+      ],
+      "./src/connect-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/execution-service.ts": [
+        "./src/index.ts"
+      ],
+      "./src/executing-inject.ts": [
+        "./src/inject.ts"
+      ],
+      "./src/entity-post-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/inject-sim-state.ts": [
+        "./src/index.ts"
+      ],
+      "./src/message-topic.ts": [
+        "./src/index.ts"
+      ],
+      "./src/object-of-interest.ts": [
+        "./src/index.ts"
+      ],
+      "./src/objective.ts": [
+        "./src/index.ts"
+      ],
+      "./src/ost-stage-change-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/person-of-interest.ts": [
+        "./src/index.ts"
+      ],
+      "./src/person.ts": [
+        "./src/user-role.ts"
+      ],
+      "./src/role-player-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/session-message.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/stakeholder.ts": [
+        "./src/index.ts"
+      ],
+      "./src/state-transition-request.ts": [
+        "./src/inject.ts"
+      ],
+      "./src/sim-state.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/trial.ts": [
+        "./src/index.ts"
+      ],
+      "./src/utils/utils.ts": [
+        "./node_modules/.pnpm/registry.npmjs.org/@types/geojson/7946.0.7/node_modules/@types/geojson/index.d.ts",
+        "./src/index.ts"
+      ],
+      "./src/utils/simulation.ts": [
+        "./src/index.ts"
+      ],
+      "./src/utils/index.ts": [
+        "./src/utils/utils.ts",
+        "./src/utils/simulation.ts"
+      ],
+      "./src/index.ts": [
+        "./src/asset.ts",
+        "./src/connect-message.ts",
+        "./src/content.ts",
+        "./src/execution-service.ts",
+        "./src/executing-inject.ts",
+        "./src/entity-post-message.ts",
+        "./src/inject-sim-state.ts",
+        "./src/inject.ts",
+        "./src/geojson-message.ts",
+        "./src/location.ts",
+        "./src/message-topic.ts",
+        "./src/message-type.ts",
+        "./src/object-of-interest.ts",
+        "./src/objective.ts",
+        "./src/ost-stage-change-message.ts",
+        "./src/person-of-interest.ts",
+        "./src/person.ts",
+        "./src/role-player-message.ts",
+        "./src/session-message.ts",
+        "./src/stakeholder.ts",
+        "./src/state-transition-request.ts",
+        "./src/sim-state.ts",
+        "./src/todo.ts",
+        "./src/trial.ts",
+        "./src/user-role.ts",
+        "./src/utils/index.ts",
+        "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
+      ],
+      "./src/inject.ts": [
+        "./src/index.ts"
+      ],
+      "./src/constraint.ts": [
+        "./src/inject.ts"
+      ],
+      "./src/group.ts": [
+        "./src/person-of-interest.ts"
+      ],
+      "./src/time-message.ts": [
+        "./src/index.ts"
+      ]
+    },
+    "semanticDiagnosticsPerFile": [
+      "./src/actor-type.ts",
+      "./src/app-state.ts",
+      "./src/asset.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/edxl-de/edxl-de-key.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/heartbeat/system_admin_heartbeat-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/heartbeat/system_heartbeat-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/large-data/system_large_data_update-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/large-data/system_map_layer_update-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/log/system_logging-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/ost/system_observer_tool_answer-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/ost/system_request_change_of_trial_stage-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_access_invite-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_create_request-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_remove-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/topic/system_topic_remove_request-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/trial-mgmt/system_tm_phase_message-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/core/trial-mgmt/system_tm_role_player-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/geojson/standard_geojson-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_time_mgmt-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_time_control-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/configuration/simulation_session_mgmt-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_featurecollection-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_item-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/entity/simulation_entity_post-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/geofencing/geofencing_event-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_move-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_ownership-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_route-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/request/simulation_request_startinject-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/specific/sumo/simulation_affected_area-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/sim/specific/sumo/simulation_sumo_configuration-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/cap/standard_cap-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/emsi/standard_emsi-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/geojson-sim/standard_geojson_sim-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/mlp/standard_mlp-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/named-geojson/standard_named_geojson-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/standard/photo-geojson/photo_geojson-value.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/utils/index.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/test-bed-schemas/0.3.8/node_modules/test-bed-schemas/dist/index.d.ts",
+      "./src/connect-message.ts",
+      "./src/content.ts",
+      "./src/execution-service.ts",
+      "./src/executing-inject.ts",
+      "./src/entity-post-message.ts",
+      "./src/inject-sim-state.ts",
+      "./src/geojson-message.ts",
+      "./src/location.ts",
+      "./src/message-topic.ts",
+      "./src/message-type.ts",
+      "./src/object-of-interest.ts",
+      "./src/objective.ts",
+      "./src/ost-stage-change-message.ts",
+      "./src/person-of-interest.ts",
+      "./src/user-role.ts",
+      "./src/person.ts",
+      "./src/role-player-message.ts",
+      "./src/session-message.ts",
+      "./src/stakeholder.ts",
+      "./src/state-transition-request.ts",
+      "./src/sim-state.ts",
+      "./src/todo.ts",
+      "./src/trial.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/@types/geojson/7946.0.7/node_modules/@types/geojson/index.d.ts",
+      "./src/utils/utils.ts",
+      "./src/utils/simulation.ts",
+      "./src/utils/index.ts",
+      "./src/index.ts",
+      "./src/inject.ts",
+      "./src/constraint.ts",
+      "./src/group.ts",
+      "./src/time-message.ts",
+      "./src/timing-control-message.ts",
+      "./src/tree.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2016.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es5.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.dom.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.core.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.collection.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.generator.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.iterable.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.promise.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.proxy.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.reflect.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.symbol.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2016.array.include.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.object.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.string.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.intl.d.ts",
+      "./node_modules/.pnpm/registry.npmjs.org/typescript/3.8.3/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts"
+    ]
+  },
+  "version": "3.8.3"
+}

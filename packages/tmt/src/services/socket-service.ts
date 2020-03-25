@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { TimeState, SimulationState, ITimeMessage } from 'trial-manager-models';
+import { TimeState, SimulationState, ITimeManagement } from '../../../models';
 import { AppState } from '../models';
 
 // tslint:disable-next-line:no-console
@@ -31,17 +31,22 @@ const setupSocket = (autoConnect = true) => {
     SimulationState.state = state;
   });
   let handler = -1;
-  socket.on('time', (time: ITimeMessage) => {
+  socket.on('time', (time: ITimeManagement) => {
     // log(`Time message received: ${time.trialTime}`);
-    SimulationState.trialTime = time.trialTime || new Date().setHours(12, 0, 0).valueOf();
-    SimulationState.trialTimeSpeed = time.trialTimeSpeed;
-    SimulationState.timeElapsed = time.timeElapsed;
+    SimulationState.simulationTime = time.simulationTime || new Date().setHours(12, 0, 0).valueOf();
+    SimulationState.simulationSpeed = time.simulationSpeed;
+    if (time.tags?.timeElapsed) {
+      SimulationState.tags = { timeElapsed: time.tags.timeElapsed };
+    }
     window.clearInterval(handler);
-    if (time.trialTimeSpeed > 0) {
+    if (time.simulationSpeed && time.simulationSpeed > 0) {
       const secDuration = 1000;
       handler = window.setInterval(() => {
-        SimulationState.trialTime += secDuration;
-      }, secDuration / time.trialTimeSpeed);
+        if (!SimulationState.simulationTime) {
+          SimulationState.simulationTime = 0;
+        }
+        SimulationState.simulationTime += secDuration;
+      }, secDuration / time.simulationSpeed);
     }
   });
   return socket;

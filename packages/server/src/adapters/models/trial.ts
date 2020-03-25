@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ITrial, IExecutingInject, IPerson, IInjectGroup } from 'trial-manager-models';
+import {
+  ITrial,
+  IExecutingInject,
+  IPerson,
+  IInjectGroup,
+} from '../../../../models';
 
 /** Describes a manual state transition request, e.g. when a role player wants to set the state to EXECUTED. */
 export class Trial implements Partial<ITrial> {

@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { Options } from 'mithril-materialized';
-import { ITrial, MessageType } from 'trial-manager-models';
+import { ITrial, MessageType } from '../../../../models';
 import { TrialSvc } from '../../services';
 import { enumToOptions, getMessageTitle } from '../../utils';
 
@@ -36,7 +36,7 @@ export const SelectMessageTypesForm = () => {
             initialValue: selectedMessageTypes,
             label: 'Message types to send',
             onchange: ids => {
-              trial.selectedMessageTypes = (ids as string[]);
+              trial.selectedMessageTypes = ids as string[];
               TrialSvc.saveTrial();
             },
           })

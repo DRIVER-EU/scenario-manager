@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { Button } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
-import { ITrial, deepCopy, deepEqual } from 'trial-manager-models';
+import { ITrial, deepCopy, deepEqual } from '../../../../models';
 import { TopicsSettings } from './topics/topics-settings';
 
 const log = console.log;

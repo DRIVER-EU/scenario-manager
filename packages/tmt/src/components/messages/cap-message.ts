@@ -17,10 +17,8 @@ import {
   Severity,
   Certainty,
   IValueNamePair,
-  IActionList,
-  ActionListParameter,
   InjectKeys,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { TrialSvc } from '../../services';
 import { enumToOptions } from '../../utils';
 
@@ -41,7 +39,7 @@ export const CapMessageForm: FactoryComponent<{
     urgencyOptions: IInputOption[];
     severityOptions: IInputOption[];
     certaintyOptions: IInputOption[];
-    actionList: IActionList[];
+    // actionList: IActionList[];
   };
 
   return {
@@ -79,8 +77,8 @@ export const CapMessageForm: FactoryComponent<{
       state.severityOptions = enumToOptions(Severity);
       state.certaintyOptions = enumToOptions(Certainty);
 
-      const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
-      state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
+      // const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
+      // state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
     },
     view: ({ attrs: { inject, disabled, onChange } }) => {
       const {
@@ -232,28 +230,28 @@ export const CapMessageForm: FactoryComponent<{
             update();
           },
         }),
-        m(EditableTable, {
-          headers: [
-            { column: 'title', title: 'Title' },
-            { column: 'description', title: 'Description' },
-            { column: 'priority', title: 'Priority' },
-          ],
-          data: state.actionList,
-          disabled,
-          addRows: true,
-          deleteRows: true,
-          moveRows: true,
-          onchange: data => {
-            state.actionList = data;
-            const updatedActionList = parameters.filter(p => p.valueName !== ActionListParameter);
-            updatedActionList.push({
-              valueName: ActionListParameter,
-              value: JSON.stringify(data),
-            });
-            alertInfo.parameter = state.parameters = updatedActionList;
-            update();
-          },
-        } as IEditableTable<IActionList>),
+        // m(EditableTable, {
+        //   headers: [
+        //     { column: 'title', title: 'Title' },
+        //     { column: 'description', title: 'Description' },
+        //     { column: 'priority', title: 'Priority' },
+        //   ],
+        //   // data: state.actionList,
+        //   disabled,
+        //   addRows: true,
+        //   deleteRows: true,
+        //   moveRows: true,
+        //   onchange: data => {
+        //     // state.actionList = data;
+        //     const updatedActionList = parameters.filter(p => p.valueName !== ActionListParameter);
+        //     updatedActionList.push({
+        //       valueName: ActionListParameter,
+        //       value: JSON.stringify(data),
+        //     });
+        //     alertInfo.parameter = state.parameters = updatedActionList;
+        //     update();
+        //   },
+        // } as IEditableTable<IActionList>),
         m(MapEditor, {
           disabled,
           label: 'Parameters',

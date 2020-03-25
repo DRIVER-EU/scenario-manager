@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Database } from 'sqlite3';
 import { TrialOverview, IUploadedFile } from '../../models';
-import { ITrial, uniqueId, ITrialOverview } from 'trial-manager-models';
+import { ITrial, uniqueId, ITrialOverview } from '../../../../models';
 import { logError, dbCallbackWrapper } from '../../utils';
 import { Operation, applyPatch } from 'rfc6902';
 import { Server } from 'socket.io';
@@ -149,7 +149,11 @@ export class TrialRepository {
     });
   }
 
-  async patchTrial(id: string, patchObj: { id: string, patch: Operation[] }, server: Server) {
+  async patchTrial(
+    id: string,
+    patchObj: { id: string; patch: Operation[] },
+    server: Server,
+  ) {
     return new Promise<ITrial>(async (resolve, reject) => {
       const { patch } = patchObj;
       const db = this.databases.hasOwnProperty(id)

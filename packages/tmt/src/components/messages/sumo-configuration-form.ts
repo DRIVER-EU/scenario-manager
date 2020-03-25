@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, ISumoConfiguration, InjectKeys } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, ISumoConfiguration, InjectKeys } from '../../../../models';
 
 export const SumoConfigurationForm: FactoryComponent<{
   inject: IInject;
@@ -10,8 +10,8 @@ export const SumoConfigurationForm: FactoryComponent<{
   const setTitle = (inject: IInject, sc: ISumoConfiguration) => {
     inject.title = `Run ${sc.configFile}`;
   };
-  const convertToSec = (n: number) => n === -1 ? -1 : n / 1000;
-  const convertToMSec = (n: number) => n === -1 ? -1 : n * 1000;
+  const convertToSec = (n: number) => (n === -1 ? -1 : n / 1000);
+  const convertToMSec = (n: number) => (n === -1 ? -1 : n * 1000);
 
   return {
     view: ({ attrs: { inject, disabled, onChange } }) => {

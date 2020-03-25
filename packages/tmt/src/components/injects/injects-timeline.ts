@@ -9,7 +9,7 @@ import {
   IScenario,
   InjectState,
   InjectConditionType,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { Icon } from 'mithril-materialized';
 import { getIcon, isScenario } from '../../utils';
 import { AppState } from '../../models';

@@ -6,14 +6,7 @@ import {
   isTransportRequest,
   routeToGeoJSON,
 } from '../utils';
-import {
-  pruneInjects,
-  getMessage,
-  IGeoJsonMessage,
-  MessageType,
-  IAffectedArea,
-  IRequestTransport,
-} from 'trial-manager-models';
+import { pruneInjects, getMessage, IGeoJsonMessage, MessageType, IAffectedArea, IRequestMove } from '../../../models';
 import { TrialSvc } from './trial-service';
 import { AppState } from '../models';
 import { geoJSON, GeoJSON, FeatureGroup } from 'leaflet';
@@ -72,24 +65,21 @@ class OverlayService {
         })
         .filter(a => a.assetId);
       const data = await Promise.all(geojsonAssets.map(a => TrialSvc.loadMapOverlay(a.assetId!)));
-      const layers = data.reduce(
-        (acc, d, i) => {
-          const { assetId = 0 } = geojsonAssets[i];
-          const asset = TrialSvc.assets && TrialSvc.assets.filter(a => assetId === a.id);
-          const alias = (asset && asset[0].alias || '').replace('_', ' ');
-          acc[alias || assetId.toString()] = geoJSON(d);
-          return acc;
-        },
-        {} as { [key: string]: GeoJSON }
-      );
+      const layers = data.reduce((acc, d, i) => {
+        const { assetId = 0 } = geojsonAssets[i];
+        const asset = TrialSvc.assets && TrialSvc.assets.filter(a => assetId === a.id);
+        const alias = ((asset && asset[0].alias) || '').replace('_', ' ');
+        acc[alias || assetId.toString()] = geoJSON(d);
+        return acc;
+      }, {} as { [key: string]: GeoJSON });
       scenarioInjects.filter(isAffectedArea).map(i => {
         const aa = getMessage<IAffectedArea>(i, MessageType.SET_AFFECTED_AREA);
         const geojson = affectedAreaToGeoJSON(aa.area);
         layers[i.title] = geojson;
       });
       scenarioInjects.filter(isTransportRequest).map(i => {
-        const ut = getMessage<IRequestTransport>(i, MessageType.REQUEST_UNIT_TRANSPORT);
-        const geojson = routeToGeoJSON(ut.route);
+        const ut = getMessage<IRequestMove>(i, MessageType.REQUEST_UNIT_MOVE);
+        const geojson = routeToGeoJSON(ut.waypoints);
         layers[i.title] = geojson;
       });
       this.state.overlays[scenarioId] = layers;

@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { AppState } from '../../models';
 import { SocketSvc } from '../../services';
-import { ITimeMessage, TimeState, deepCopy } from 'trial-manager-models';
+import { ITimeManagement, TimeState, deepCopy } from '../../../../models';
 import { formatTime, formatMsec } from '../../utils';
 
 export const StatusBar: FactoryComponent<null> = () => {
@@ -10,7 +10,7 @@ export const StatusBar: FactoryComponent<null> = () => {
     receivedTime: Date.now(),
     progressTimeHandler: -1,
   };
-  const updateTime = (time: ITimeMessage) => {
+  const updateTime = (time: ITimeManagement) => {
     // console.log(`Status-bar updateTime: ` + JSON.stringify(time));
     sbState.receivedTime = Date.now();
     AppState.time = deepCopy(time);
@@ -21,28 +21,32 @@ export const StatusBar: FactoryComponent<null> = () => {
     if (!AppState.time) {
       return;
     }
-    AppState.time.timeElapsed += delta;
-    if (AppState.time.trialTimeSpeed) {
-      AppState.time.trialTime += delta * AppState.time.trialTimeSpeed;
+    if (!AppState.time.tags) {
+      AppState.time.tags = { timeElapsed: '0' };
+    }
+    AppState.time.tags.timeElapsed += delta;
+    if (AppState.time.simulationTime && AppState.time.simulationSpeed) {
+      AppState.time.simulationTime += delta * AppState.time.simulationSpeed;
     }
     sbState.receivedTime = now;
     m.render(dom, render());
   };
 
   const render = () => {
-    const { trialTime, trialTimeSpeed, timeElapsed, state } = AppState.time;
+    const { simulationTime = 0, simulationSpeed = 0, tags, state } = AppState.time;
+    const timeElapsed = tags && tags.timeElapsed ? +tags.timeElapsed : 0;
     const { host, isConnected } = AppState.sessionControl;
     if (typeof state === 'undefined') {
       return undefined;
     }
     const hasTimeInfo = state === TimeState.Paused || state === TimeState.Started || state === TimeState.Stopped;
 
-    const dt = new Date(trialTime);
+    const dt = new Date(simulationTime || 0);
     return m('.statusbar.center-align', [
       host && isConnected ? [m('span', `Connected to ${AppState.sessionControl.host}`), m('span', '|')] : undefined,
       m('span', state),
       m('span', '|'),
-      m('span', hasTimeInfo ? `${trialTimeSpeed}x` : ''),
+      m('span', hasTimeInfo ? `${simulationSpeed}x` : ''),
       m('span', '|'),
       m('span', hasTimeInfo ? `${formatTime(dt)}, ${dt.toDateString()}` : ''),
       m('span', '|'),

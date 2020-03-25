@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, Select, Switch } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IPhaseMessage, Phase, InjectKeys } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, IPhaseMessage, Phase, InjectKeys } from '../../../../models';
 
 export const PhaseMessageForm: FactoryComponent<{
   inject: IInject;

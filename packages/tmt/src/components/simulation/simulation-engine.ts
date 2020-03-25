@@ -8,7 +8,7 @@ import {
   executeInjects,
   IInjectSimStates,
   InjectState,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { TrialSvc } from '../../services';
 
 export const simulationEngine = (

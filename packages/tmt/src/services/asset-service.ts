@@ -1,6 +1,6 @@
 import { RestService } from './rest-service';
 import { ChannelNames } from '../models/channels';
-import { IAsset } from 'trial-manager-models';
+import { IAsset } from '../../../models';
 import { isJSON } from '../utils';
 import { AppState } from '../models';
 import { messageBus } from './message-bus-service';
@@ -15,10 +15,12 @@ export class AssetService extends RestService<IAsset> {
     });
   }
 
-  public get trialId() { return this.pTrialId; }
+  public get trialId() {
+    return this.pTrialId;
+  }
 
   public async loadMapOverlay(id: number | string) {
-    return super.load(id.toString()) as unknown as GeoJSON.FeatureCollection;
+    return (super.load(id.toString()) as unknown) as GeoJSON.FeatureCollection;
   }
 
   public async loadList() {

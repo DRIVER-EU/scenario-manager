@@ -1,14 +1,6 @@
 import m from 'mithril';
 import { AppState } from '../models';
-import {
-  IStateTransitionRequest,
-  ISessionMgmt,
-  IInject,
-  IExecutingInject,
-  ITrial,
-  uniqueId,
-  UserRole,
-} from 'trial-manager-models';
+import { IStateTransitionRequest, ISessionManagement, IInject, ITrial, uniqueId, UserRole } from '../../../models';
 import { messageBus } from '.';
 import { userRolesFilter } from '../utils';
 
@@ -40,7 +32,7 @@ class RunService {
   /** Get the active session */
   public async activeSession() {
     return m
-      .request<ISessionMgmt>({
+      .request<ISessionManagement>({
         method: 'GET',
         url: this.baseUrl + 'active',
         withCredentials,
@@ -109,7 +101,7 @@ class RunService {
   }
 
   /** Load a new scenario: can only be done when no other scenario is loaded. */
-  public async load(body: ISessionMgmt) {
+  public async load(body: ISessionManagement) {
     return m.request<void>({
       method: 'POST',
       url: this.baseUrl + 'load',

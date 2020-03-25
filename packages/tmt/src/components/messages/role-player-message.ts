@@ -10,7 +10,7 @@ import {
   IPerson,
   IExecutingInject,
   InjectKeys,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { TrialSvc, RunSvc } from '../../services';
 import { createEmailLink, createPhoneLink, getRolePlayerMessageIcon } from '../../utils';
 import { MessageScope } from '.';

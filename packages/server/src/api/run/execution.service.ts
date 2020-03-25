@@ -16,14 +16,14 @@ import {
   IAlert,
   convertCAPtoAVRO,
   IRequestStartInject,
-  IRequestTransport,
+  IRequestMove,
   IAffectedArea,
   ISumoConfiguration,
   IValueNamePair,
   ILargeDataUpdate,
   IPostMsg,
   postMessageToTestbed,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
 import { parse } from '../../utils';
@@ -72,7 +72,7 @@ export class ExecutionService implements IExecutionService {
       case MessageType.LARGE_DATA_UPDATE:
         this.sendLargeDataUpdateMessage(i, comment);
         break;
-      case MessageType.REQUEST_UNIT_TRANSPORT:
+      case MessageType.REQUEST_UNIT_MOVE:
         this.sendRequestUnitTransport(i, comment);
         break;
       case MessageType.SET_AFFECTED_AREA:
@@ -132,7 +132,7 @@ export class ExecutionService implements IExecutionService {
     }
     const cap = convertCAPtoAVRO(
       message,
-      new Date(this.kafkaService.timeMessage.trialTime),
+      new Date(this.kafkaService.timeMessage.simulationTime),
     );
     this.kafkaService.sendMessage(cap, topic);
   }
@@ -142,7 +142,7 @@ export class ExecutionService implements IExecutionService {
     const topic = 'standard_cap';
     const cap = convertCAPtoAVRO(
       message,
-      new Date(this.kafkaService.timeMessage.trialTime),
+      new Date(this.kafkaService.timeMessage.simulationTime),
     );
     this.kafkaService.sendMessage(cap, topic);
   }
@@ -157,7 +157,12 @@ export class ExecutionService implements IExecutionService {
           .map(u => u.email)
       : [];
 
-    const postMsg = postMessageToTestbed(post, sender.email, recipients, this.kafkaService.trialTime);
+    const postMsg = postMessageToTestbed(
+      post,
+      sender.email,
+      recipients,
+      this.kafkaService.trialTime,
+    );
     this.kafkaService.sendMessage(postMsg, topic);
   }
 
@@ -208,10 +213,7 @@ export class ExecutionService implements IExecutionService {
   }
 
   private async sendRequestUnitTransport(i: IInject, comment?: string) {
-    const msg = getMessage<IRequestTransport>(
-      i,
-      MessageType.REQUEST_UNIT_TRANSPORT,
-    );
+    const msg = getMessage<IRequestMove>(i, MessageType.REQUEST_UNIT_MOVE);
     this.kafkaService.sendRequestUnitTransport(msg);
   }
 

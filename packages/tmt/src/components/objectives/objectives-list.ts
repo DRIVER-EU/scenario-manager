@@ -3,7 +3,7 @@ import { TextInput, Collection, ICollectionItem } from 'mithril-materialized';
 import { titleAndDescriptionFilter } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
 import { TrialSvc } from '../../services';
-import { IObjective } from 'trial-manager-models';
+import { IObjective } from '../../../../models';
 import { TopicNames, objectiveChannel } from '../../models';
 
 export const ObjectivesList = () => {

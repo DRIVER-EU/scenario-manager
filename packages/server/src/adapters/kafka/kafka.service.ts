@@ -5,39 +5,42 @@ import {
   IAdapterMessage,
   ProduceRequest,
   ITestBedOptions,
-  ITiming,
-  TimeControlTopic,
-  ITimingControl,
+  ITimeManagement,
+  ITimeControl,
   IPhaseMessage,
+  ISessionManagement,
   IRequestChangeOfTrialStage,
-  ISessionMgmt,
+  TimeControlTopic,
+  LargeDataUpdateTopic,
+  RequestChangeOfTrialStage,
   TrialManagementPhaseMessageTopic,
   TrialManagementRolePlayerTopic,
   TrialManagementSessionMgmtTopic,
-} from 'node-test-bed-adapter';
-import { Injectable } from '@nestjs/common';
-import { EventEmitter } from 'events';
-import {
   IRequestStartInject,
-  IRequestTransport,
+  IRequestMove,
   IAffectedArea,
   ISumoConfiguration,
   ILargeDataUpdate,
-  debounce,
-} from 'trial-manager-models';
-export { ITimingControl } from 'node-test-bed-adapter';
+} from 'node-test-bed-adapter';
+import { Injectable } from '@nestjs/common';
+import { EventEmitter } from 'events';
+import { debounce } from '../../../../models';
+export { ITimeControl } from 'node-test-bed-adapter';
 
 export interface TimeService {
-  on(event: 'time', listener: (time: ITiming) => void): this;
+  on(event: 'time', listener: (time: ITimeManagement) => void): this;
 }
 
 export interface KafkaService {
   // on(event: 'ready' | 'reconnect', listener: () => void): this;
   // on(event: 'error' | 'offsetOutOfRange', listener: (error: string) => void): this;
   // on(event: 'message', listener: (message: IAdapterMessage) => void): this;
-  once(event: 'time', listener: (message: ITiming) => void): this;
-  on(event: 'time', listener: (message: ITiming) => void): this;
-  on(event: 'session-update', listener: (message: ISessionMgmt) => void): this;
+  once(event: 'time', listener: (message: ITimeManagement) => void): this;
+  on(event: 'time', listener: (message: ITimeManagement) => void): this;
+  on(
+    event: 'session-update',
+    listener: (message: ISessionManagement) => void,
+  ): this;
 }
 
 @Injectable()
@@ -45,7 +48,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   private adapter?: TestBedAdapter;
   private options: ITestBedOptions;
   private kafkaHost: string;
-  private session?: ISessionMgmt;
+  private session?: ISessionManagement;
   private debouncedEmit: (event: string | symbol, ...args: any[]) => void;
   private log = Logger.instance;
 
@@ -116,11 +119,11 @@ export class KafkaService extends EventEmitter implements TimeService {
     // );
   }
 
-  public sendTimeControlMessage(timeCtrlMsg: ITimingControl) {
+  public sendTimeControlMessage(timeCtrlMsg: ITimeControl) {
     return this.sendMessage(timeCtrlMsg, TimeControlTopic);
   }
 
-  public sendSessionMessage(sm: ISessionMgmt) {
+  public sendSessionMessage(sm: ISessionManagement) {
     return this.sendMessage(sm, TrialManagementSessionMgmtTopic);
   }
 
@@ -129,7 +132,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public sendOstStageChangeRequestMessage(om: IRequestChangeOfTrialStage) {
-    return this.sendMessage(om, 'system_request_change_of_trial_stage');
+    return this.sendMessage(om, RequestChangeOfTrialStage);
   }
 
   public sendRolePlayerMessage<ITestbedRolePlayerMessage>(
@@ -143,11 +146,11 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public sendLargeDataUpdateMessage(m: ILargeDataUpdate) {
-    return this.sendMessage(m, 'large_data_update');
+    return this.sendMessage(m, LargeDataUpdateTopic);
   }
 
-  public sendRequestUnitTransport(m: IRequestTransport) {
-    return this.sendMessage(m, 'simulation_request_transport');
+  public sendRequestUnitTransport(m: IRequestMove) {
+    return this.sendMessage(m, 'simulation_request_move');
   }
 
   public sendSetAffectedArea(m: IAffectedArea) {
@@ -160,19 +163,19 @@ export class KafkaService extends EventEmitter implements TimeService {
 
   public get timeMessage() {
     return (
-      this.adapter.trialTime &&
+      this.adapter.simulationTime &&
       ({
         updatedAt: Date.now(),
         trialTime: this.trialTime.valueOf(),
         timeElapsed: this.adapter.timeElapsed.valueOf(),
-        trialTimeSpeed: this.adapter.trialTimeSpeed,
-        state: this.adapter.state,
-      } as ITiming)
+        trialTimeSpeed: this.adapter.simulationSpeed,
+        state: this.adapter.timeState,
+      } as ITimeManagement)
     );
   }
 
   public get trialTime() {
-    return this.adapter.trialTime;
+    return this.adapter.simulationTime;
   }
 
   public sendMessage<T>(m: T, topic: string) {
@@ -199,7 +202,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   private handleMessage(message: IAdapterMessage) {
     switch (message.topic) {
       case TrialManagementSessionMgmtTopic:
-        this.session = message.value as ISessionMgmt;
+        this.session = message.value as ISessionManagement;
         this.debouncedEmit('session-update', this.session);
         break;
       default:

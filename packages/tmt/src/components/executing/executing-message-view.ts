@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { MessageType, InjectType, InjectState, IExecutingInject } from 'trial-manager-models';
+import { MessageType, InjectType, InjectState, IExecutingInject } from '../../../../models';
 import {
   RolePlayerMessageView,
   PhaseMessageForm,
@@ -9,7 +9,7 @@ import {
   CapMessageForm,
   StartInjectForm,
   SumoConfigurationForm,
-  RequestUnitTransportForm,
+  RequestUnitMoveForm,
   SetAffectedAreaForm,
   RolePlayerMessageForm,
   LargeDataUpdateMessageForm,
@@ -43,8 +43,8 @@ export const ExecutingMessageView: FactoryComponent<{ inject?: IExecutingInject;
         return m(LargeDataUpdateMessageForm, { inject, disabled });
       case MessageType.SUMO_CONFIGURATION:
         return m(SumoConfigurationForm, { inject, disabled });
-      case MessageType.REQUEST_UNIT_TRANSPORT:
-        return m(RequestUnitTransportForm, { inject, disabled });
+      case MessageType.REQUEST_UNIT_MOVE:
+        return m(RequestUnitMoveForm, { inject, disabled });
       case MessageType.SET_AFFECTED_AREA:
         return m(SetAffectedAreaForm, { inject, disabled });
       default:

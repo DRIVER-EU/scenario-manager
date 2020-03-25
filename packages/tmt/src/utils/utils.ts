@@ -1,5 +1,4 @@
 import { ITimelineItem } from 'mithril-scenario-timeline';
-import { FeatureCollection, LineString, Polygon } from 'geojson';
 import { geoJSON, LatLngExpression } from 'leaflet';
 import {
   getParent,
@@ -20,8 +19,9 @@ import {
   UserRole,
   toMsec,
   IInjectSimStates,
-} from 'trial-manager-models';
+} from '../../../models';
 import { TrialSvc } from '../services';
+import { LineString, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
@@ -132,7 +132,7 @@ export const getMessageIcon = (type?: string) => {
       return 'colorize';
     case MessageType.LARGE_DATA_UPDATE:
       return 'link';
-    case MessageType.REQUEST_UNIT_TRANSPORT:
+    case MessageType.REQUEST_UNIT_MOVE:
       return 'directions';
     case MessageType.SET_AFFECTED_AREA:
       return 'wallpaper';
@@ -171,33 +171,31 @@ export const getRolePlayerMessageIcon = (type?: RolePlayerMessageType) => {
 export const getMessageTitle = (type?: string) => {
   switch (type) {
     case MessageType.GEOJSON_MESSAGE:
-      return 'MAP OVERLAY';
+      return 'SEND MAP OVERLAY';
     case MessageType.CAP_MESSAGE:
-      return 'COMMON ALERTING PROTOCOL MESSAGE';
+      return 'SEND COMMON ALERTING PROTOCOL MESSAGE';
     case MessageType.PHASE_MESSAGE:
-      return 'NEW PHASE';
+      return 'SET PHASE';
     case MessageType.POST_MESSAGE:
       return 'POST MESSAGE';
     case MessageType.ROLE_PLAYER_MESSAGE:
-      return 'ROLE PLAYER MESSAGE';
+      return 'INSTRUCT ROLE PLAYER';
     case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
       return 'CHANGE OBSERVER QUESTIONNAIRES';
-    // case MessageType.AUTOMATED_ACTION:
-    //   return 'AUTOMATED ACTION';
     case MessageType.LCMS_MESSAGE:
       return 'LCMS MESSAGE';
     case MessageType.START_INJECT:
-      return 'EVENT / INJECT';
+      return 'SEND EVENT / INJECT';
     case MessageType.LARGE_DATA_UPDATE:
-      return 'LINK';
-    case MessageType.REQUEST_UNIT_TRANSPORT:
-      return 'REQUEST UNIT TRANSPORT';
+      return 'SEND (DATA) LINK';
+    case MessageType.REQUEST_UNIT_MOVE:
+      return 'MOVE UNIT';
     case MessageType.SET_AFFECTED_AREA:
       return 'SET AFFECTED AREA';
     case MessageType.SUMO_CONFIGURATION:
-      return 'SUMO CONFIGURATION';
+      return 'CONFIGURE SUMO';
     case MessageType.CHECKPOINT:
-      return 'CHECKPOINT';
+      return 'SET CHECKPOINT';
     default:
       return 'message';
   }
@@ -429,13 +427,13 @@ export const isGeoJSONMessage = (i: IInject) => i.messageType === MessageType.GE
 export const isAffectedArea = (i: IInject) => i.messageType === MessageType.SET_AFFECTED_AREA;
 
 /** Filter for selecting all injects that represent a transport request */
-export const isTransportRequest = (i: IInject) => i.messageType === MessageType.REQUEST_UNIT_TRANSPORT;
+export const isTransportRequest = (i: IInject) => i.messageType === MessageType.REQUEST_UNIT_MOVE;
 
 /** Filter for selecting all injects that have a map */
 export const containsMapOverlay = (i: IInject) =>
   i.messageType === MessageType.GEOJSON_MESSAGE ||
   i.messageType === MessageType.SET_AFFECTED_AREA ||
-  i.messageType === MessageType.REQUEST_UNIT_TRANSPORT ||
+  i.messageType === MessageType.REQUEST_UNIT_MOVE ||
   i.messageType === MessageType.CAP_MESSAGE;
 
 // export const getAsset = async (assetId?: number) => {
@@ -491,8 +489,10 @@ export const affectedAreaToGeoJSON = (area?: IareaPoly) => {
   return geoJSON(geojson) as L.GeoJSON<Polygon>;
 };
 
-export const geoJSONtoAffectedArea = (geojson: FeatureCollection<Polygon>) =>
-  geojson.features.length === 0
+type GeoJSON2Area = (geojson: FeatureCollection<Polygon>) => MultiPolygon | undefined;
+
+export const geoJSONtoAffectedArea: GeoJSON2Area = (geojson: FeatureCollection<Polygon>) =>
+  !geojson.features || geojson.features.length === 0
     ? undefined
     : {
         type: 'MultiPolygon',
@@ -523,7 +523,9 @@ export const routeToGeoJSON = (route?: ILocation[] | null) => {
   return geoJSON(geojson) as L.GeoJSON<LineString>;
 };
 
-export const geoJSONtoRoute = (geojson: FeatureCollection<LineString>) =>
+type GeoJSON2Route = (geojson: FeatureCollection<LineString>) => ILocation[] | undefined;
+
+export const geoJSONtoRoute: GeoJSON2Route = (geojson: FeatureCollection<LineString>): ILocation[] | undefined =>
   geojson.features.length === 0
     ? undefined
     : geojson.features[0].geometry.coordinates.map(

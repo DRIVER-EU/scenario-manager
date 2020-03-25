@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { deepCopy, InjectType, IExecutingInject } from 'trial-manager-models';
+import { deepCopy, InjectType, IExecutingInject } from '../../../../models';
 import { executingChannel, TopicNames } from '../../models';
 import { Icon } from 'mithril-materialized';
 import { getMessageIcon, getMessageTitle, getInjectIcon } from '../../utils';

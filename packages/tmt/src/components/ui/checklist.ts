@@ -1,5 +1,5 @@
 import m, { FactoryComponent } from 'mithril';
-import { IScenario, ITodo, InjectKeys, IInject } from 'trial-manager-models';
+import { IScenario, ITodo, InjectKeys, IInject } from '../../../../models';
 import { FlatButton, Kanban, IModelField, IKanban } from 'mithril-materialized';
 
 export const Checklist: FactoryComponent<{

@@ -10,7 +10,7 @@ import {
   getInject,
   isAncestor,
   UserRole,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { Select, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
 import { TrialSvc } from '../../services';
 import { padLeft } from '../../utils';

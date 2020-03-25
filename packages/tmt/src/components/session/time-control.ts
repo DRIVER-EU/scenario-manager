@@ -1,27 +1,27 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimePicker, DatePicker, FlatButton, ModalPanel } from 'mithril-materialized';
-import { TimeState, IScenario, ITimeMessage, ITimingControlMessage, TimingControlCommand } from 'trial-manager-models';
+import { TimeState, IScenario, ITimeManagement, ITimeControl, TimeCommand } from '../../../../models';
 import { SocketSvc, RunSvc } from '../../services';
 import { formatTime, padLeft } from '../../utils';
 import { timeControlChannel, TopicNames } from '../../models';
 
-const sendCmd = (socket: SocketIOClient.Socket, msg: ITimingControlMessage) => {
+const sendCmd = (socket: SocketIOClient.Socket, msg: ITimeControl) => {
   socket.emit('time-control', msg);
   timeControlChannel.publish(TopicNames.CMD, { cmd: msg });
   setTimeout(() => m.redraw(), 1000);
 };
 
-const updateSpeed = (socket: SocketIOClient.Socket, trialTimeSpeed: number) => {
+const updateSpeed = (socket: SocketIOClient.Socket, simulationSpeed: number) => {
   sendCmd(socket, {
-    trialTimeSpeed,
-    command: TimingControlCommand.Update,
-  } as ITimingControlMessage);
+    simulationSpeed,
+    command: TimeCommand.Update,
+  } as ITimeControl);
 };
 
 export const MediaControls: FactoryComponent<{
   id?: string;
   socket: SocketIOClient.Socket;
-  time: ITimeMessage;
+  time: ITimeManagement;
   canChangeSpeed: boolean;
   canStop?: boolean;
   isPaused: boolean;
@@ -36,13 +36,13 @@ export const MediaControls: FactoryComponent<{
           : m(FlatButton, {
               iconName: 'fast_rewind',
               disabled: !canChangeSpeed,
-              onclick: () => updateSpeed(socket, time.trialTimeSpeed / 2),
+              onclick: () => updateSpeed(socket, (time.simulationSpeed || 0) / 2),
             }),
         canStop
           ? m(FlatButton, {
               modalId: 'stopPanel',
               iconName: 'stop',
-              disabled: time.state === TimeState.Initialized,
+              disabled: time.state === TimeState.Initialization,
             })
           : undefined,
         realtime
@@ -50,18 +50,18 @@ export const MediaControls: FactoryComponent<{
           : isPaused
           ? m(FlatButton, {
               iconName: 'play_arrow',
-              onclick: () => sendCmd(socket, { command: TimingControlCommand.Start }),
+              onclick: () => sendCmd(socket, { command: TimeCommand.Start }),
             })
           : m(FlatButton, {
               iconName: 'pause',
-              onclick: () => sendCmd(socket, { command: TimingControlCommand.Pause }),
+              onclick: () => sendCmd(socket, { command: TimeCommand.Pause }),
             }),
         realtime
           ? undefined
           : m(FlatButton, {
               iconName: 'fast_forward',
               disabled: !canChangeSpeed,
-              onclick: () => updateSpeed(socket, time.trialTimeSpeed * 2),
+              onclick: () => updateSpeed(socket, (time.simulationSpeed || 0) * 2),
             }),
       ]);
     },
@@ -72,14 +72,14 @@ const MediaStateControl: FactoryComponent<{
   socket: SocketIOClient.Socket;
   startTime: string;
   startDate: Date;
-  time: ITimeMessage;
+  time: ITimeManagement;
   canStart: boolean;
   realtime: boolean;
 }> = () => {
   const state = {} as {
     startTime: string;
     startDate: Date;
-    time: ITimeMessage;
+    time: ITimeManagement;
   };
 
   const newTime = () => {
@@ -88,7 +88,7 @@ const MediaStateControl: FactoryComponent<{
   };
 
   const timeHasNotChanged = () => {
-    const d = new Date(state.time.trialTime);
+    const d = state.time.simulationTime ? new Date(state.time.simulationTime) : new Date();
     return state.startTime === formatTime(d, false) && state.startDate.valueOf() === d.valueOf();
   };
 
@@ -104,7 +104,7 @@ const MediaStateControl: FactoryComponent<{
 
       switch (time.state) {
         default:
-        case TimeState.Idle:
+        case TimeState.Reset:
           return [
             realtime
               ? undefined
@@ -143,16 +143,16 @@ const MediaStateControl: FactoryComponent<{
                   onclick: () => {
                     if (realtime) {
                       sendCmd(socket, {
-                        trialTime: Date.now(),
-                        trialTimeSpeed: 1,
-                        command: TimingControlCommand.Init,
+                        simulationTime: Date.now(),
+                        simulationSpeed: 1,
+                        command: TimeCommand.Init,
                       });
-                      sendCmd(socket, { command: TimingControlCommand.Start });
+                      sendCmd(socket, { command: TimeCommand.Start });
                     } else {
                       sendCmd(socket, {
-                        trialTime: newTime(),
-                        trialTimeSpeed: 1,
-                        command: TimingControlCommand.Init,
+                        simulationTime: newTime(),
+                        simulationSpeed: 1,
+                        command: TimeCommand.Init,
                       });
                     }
                   },
@@ -160,7 +160,7 @@ const MediaStateControl: FactoryComponent<{
               )
             ),
           ];
-        case TimeState.Initialized:
+        case TimeState.Initialization:
           return m('.row', [
             m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time: state.time, realtime }),
             m(FlatButton, {
@@ -168,7 +168,7 @@ const MediaStateControl: FactoryComponent<{
               // iconName: 'timer_off',
               onclick: async () => {
                 await RunSvc.unload();
-                sendCmd(socket, { command: TimingControlCommand.Reset });
+                sendCmd(socket, { command: TimeCommand.Reset });
               },
             }),
           ]);
@@ -195,9 +195,9 @@ const MediaStateControl: FactoryComponent<{
                 disabled: timeHasNotChanged(),
                 onclick: () => {
                   sendCmd(socket, {
-                    trialTime: newTime(),
-                    trialTimeSpeed: 0,
-                    command: TimingControlCommand.Update,
+                    simulationTime: newTime(),
+                    simulationSpeed: 0,
+                    command: TimeCommand.Update,
                   });
                 },
               }),
@@ -206,8 +206,8 @@ const MediaStateControl: FactoryComponent<{
         case TimeState.Started:
           return m('.col.s12', [
             m(MediaControls, { socket, isPaused: false, canChangeSpeed: true, time: state.time, realtime }),
-            m('em', `Speed: ${state.time.trialTimeSpeed}x`),
-            state.time.trialTimeSpeed !== 1
+            m('em', `Speed: ${state.time.simulationSpeed}x`),
+            state.time.simulationSpeed !== 1
               ? m(FlatButton, { iconName: 'restore', onclick: () => updateSpeed(socket, 1) })
               : undefined,
           ]);
@@ -218,7 +218,7 @@ const MediaStateControl: FactoryComponent<{
               label: 'Reset session',
               // iconName: 'timer_off',
               onclick: () => {
-                sendCmd(socket, { command: TimingControlCommand.Reset });
+                sendCmd(socket, { command: TimeCommand.Reset });
                 RunSvc.unload();
               },
             })
@@ -231,7 +231,7 @@ const MediaStateControl: FactoryComponent<{
 export interface ITimeControlOptions {
   scenario?: IScenario;
   isConnected: boolean;
-  time: ITimeMessage;
+  time: ITimeManagement;
   canStart: boolean;
   realtime: boolean;
   style?: string;
@@ -240,14 +240,14 @@ export interface ITimeControlOptions {
 export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
   const state = {
     socket: SocketSvc.socket,
-    time: {} as ITimeMessage,
+    time: {} as ITimeManagement,
     canStart: false,
     realtime: false,
   } as {
     socket: SocketIOClient.Socket;
     startTime: string;
     startDate: Date;
-    time: ITimeMessage;
+    time: ITimeManagement;
     canStart: boolean;
     realtime: boolean;
   };
@@ -275,7 +275,7 @@ export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
             { label: 'No, bring me back to safety' },
             {
               label: 'Yes, I am sure!',
-              onclick: () => sendCmd(state.socket, { command: TimingControlCommand.Stop }),
+              onclick: () => sendCmd(state.socket, { command: TimeCommand.Stop }),
             },
           ],
         }),

@@ -12,7 +12,7 @@ import {
   UserRole,
   InjectConditionType,
   InjectType,
-} from 'trial-manager-models';
+} from '../../../models';
 import { userRolesFilter, arrayMove } from '../utils';
 import { OverlaySvc } from './overlay-service';
 import { SocketSvc } from './socket-service';
@@ -430,8 +430,8 @@ class TrialService extends RestService<ITrial> {
     return OverlaySvc.rename(oldName, newName);
   }
 
-  public overlays() {
-    return OverlaySvc.overlays();
+  public async overlays() {
+    return await OverlaySvc.overlays();
   }
 
   public get bounds() {

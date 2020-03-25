@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { Button, TextArea, TextInput, FileInput, ModalPanel } from 'mithril-materialized';
 import { TrialSvc, dashboardSvc } from '../../services';
-import { ITrial, deepCopy, deepEqual } from 'trial-manager-models';
+import { ITrial, deepCopy, deepEqual } from '../../../../models';
 import { AppState } from '../../models';
 
 const log = console.log;

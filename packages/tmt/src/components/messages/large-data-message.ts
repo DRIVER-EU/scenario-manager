@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TextArea, TextInput, UrlInput, Select } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, ILargeDataUpdate, DataType, InjectKeys } from 'trial-manager-models';
+import { getMessage, IInject, MessageType, ILargeDataUpdate, DataType, InjectKeys } from '../../../../models';
 import { enumToOptions } from '../../utils';
 
 /** Inform others about a large data message: note that it only sends a link, not the actual data! */

@@ -1,5 +1,5 @@
 import { FeatureCollection } from 'geojson';
-import { IInject, InjectType, MessageType, UnitType, IInjectGroup } from '..';
+import { IInject, InjectType, MessageType, UnitType, IInjectGroup, IAlert } from '..';
 
 /**
  * Create a unique ID
@@ -253,3 +253,37 @@ export const debounce = <F extends Procedure>(
 //   };
 //   return callable;
 // };
+
+export const convertCAPtoAVRO = (cap: IAlert, sent: Date) => {
+  cap.sent = convertDateToCAPDate(sent);
+  return cap;
+};
+
+/**
+ * Takes a date object, outputs a CAP date string
+ */
+export const convertDateToCAPDate = (date: Date) => {
+  if (!date) {
+    return 'unknown date';
+  }
+  const tdiff = -date.getTimezoneOffset();
+  const tdiffh = Math.floor(Math.abs(tdiff / 60));
+  const tdiffm = tdiff % 60;
+  const tdiffpm = tdiff <= 0 ? '-' : '+';
+  const isoTmp =
+    date
+      .toISOString()
+      .split('.')
+      .shift() || '';
+  const iso = ''.concat(
+    isoTmp,
+    tdiffpm,
+    tdiffh < 10 ? '0' : '',
+    tdiffh.toFixed(0),
+    ':',
+    tdiffm < 10 ? '0' : '',
+    tdiffm.toFixed(0)
+  );
+  // console.log(`Converted date to ${iso}`);
+  return iso;
+};

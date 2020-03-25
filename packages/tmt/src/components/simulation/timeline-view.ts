@@ -8,7 +8,7 @@ import {
   getAncestors,
   IInjectSimStates,
   IExecutingInject,
-} from 'trial-manager-models';
+} from '../../../../models';
 import { TrialSvc } from '../../services';
 import { simulationEngine } from './simulation-engine';
 import { Select, ISelectOptions, ITimelineItem } from 'mithril-materialized';

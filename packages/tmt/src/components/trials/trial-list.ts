@@ -2,7 +2,7 @@ import m from 'mithril';
 import { TextInput, RoundIconButton, Icon } from 'mithril-materialized';
 import { TrialSvc, dashboardSvc } from '../../services';
 import { titleAndDescriptionFilter, padLeft } from '../../utils';
-import { ITrial, ITrialOverview } from 'trial-manager-models';
+import { ITrial, ITrialOverview } from '../../../../models';
 import { Dashboards, AppState } from '../../models';
 
 export const TrialList = () => {
@@ -59,9 +59,7 @@ export const TrialList = () => {
                         TrialSvc.load(trial.id);
                       },
                     },
-                    `${trial.title || 'Untitled'}${
-                      trial.lastEdit ? ` (${formatDate(trial.lastEdit)})` : ''
-                    }`
+                    `${trial.title || 'Untitled'}${trial.lastEdit ? ` (${formatDate(trial.lastEdit)})` : ''}`
                   ),
                   m(
                     'p',

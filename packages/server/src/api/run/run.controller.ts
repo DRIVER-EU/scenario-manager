@@ -18,7 +18,7 @@ import {
   StateTransitionRequest,
   Inject as ScenarioInject,
 } from '../../adapters/models';
-import { SessionState } from 'trial-manager-models';
+import { SessionState } from '../../../../models';
 import { Trial } from '../../adapters/models/trial';
 
 @ApiTags('run')
@@ -90,13 +90,13 @@ export class RunController {
   async unload(@Res() response: Response) {
     if (
       !this.runService.activeSession ||
-      this.runService.activeSession.sessionState !== SessionState.START
+      this.runService.activeSession.state !== SessionState.Started
     ) {
       return response
         .status(HttpStatus.NOT_FOUND)
         .send('No scenario active, please activate one first');
     }
-    if (this.runService.activeSession.sessionState === SessionState.START) {
+    if (this.runService.activeSession.state === SessionState.Started) {
       await this.runService.close();
       return response.sendStatus(HttpStatus.OK);
     }
@@ -125,7 +125,7 @@ export class RunController {
     }
     if (
       this.runService.activeSession &&
-      this.runService.activeSession.sessionState === SessionState.START
+      this.runService.activeSession.state === SessionState.Started
     ) {
       return response
         .status(HttpStatus.BAD_REQUEST)

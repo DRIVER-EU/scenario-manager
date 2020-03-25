@@ -1,7 +1,7 @@
 import m, { FactoryComponent, Attributes } from 'mithril';
 import { TextInput, FileInput } from 'mithril-materialized';
 import { eatSpaces } from '../../utils';
-import { IAsset } from 'trial-manager-models';
+import { IAsset } from '../../../../models';
 import { TrialSvc } from '../../services';
 
 export interface IUploadAsset extends Attributes {
@@ -31,7 +31,7 @@ export const UploadAsset: FactoryComponent<IUploadAsset> = () => {
   };
 
   return {
-    view: ({ attrs: { assetUploaded, accept, placeholder }}) => {
+    view: ({ attrs: { assetUploaded, accept, placeholder } }) => {
       const { alias } = state;
 
       return [
