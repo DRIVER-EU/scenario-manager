@@ -162,19 +162,19 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public get timeMessage() {
-    return (
-      this.adapter.simulationTime &&
-      ({
-        updatedAt: Date.now(),
-        trialTime: this.trialTime.valueOf(),
-        timeElapsed: this.adapter.timeElapsed.valueOf(),
-        trialTimeSpeed: this.adapter.simulationSpeed,
-        state: this.adapter.timeState,
-      } as ITimeManagement)
-    );
+    this.adapter && console.log(this.adapter.timeElapsed);
+    return this.adapter && this.adapter.simulationTime
+      ? ({
+          timestamp: Date.now(),
+          simulationTime: this.adapter.simulationTime.valueOf(),
+          simulationSpeed: this.adapter.simulationSpeed,
+          state: this.adapter.timeState,
+          tags: { timeElapsed: this.adapter.timeElapsed.valueOf().toString() },
+        } as ITimeManagement)
+      : undefined;
   }
 
-  public get trialTime() {
+  public get simulationTime() {
     return this.adapter.simulationTime;
   }
 
@@ -203,6 +203,7 @@ export class KafkaService extends EventEmitter implements TimeService {
     switch (message.topic) {
       case TrialManagementSessionMgmtTopic:
         this.session = message.value as ISessionManagement;
+        console.table(this.session);
         this.debouncedEmit('session-update', this.session);
         break;
       default:

@@ -24,7 +24,7 @@ export const StatusBar: FactoryComponent<null> = () => {
     if (!AppState.time.tags) {
       AppState.time.tags = { timeElapsed: '0' };
     }
-    AppState.time.tags.timeElapsed += delta;
+    AppState.time.tags.timeElapsed = (+AppState.time.tags.timeElapsed + delta).toString();
     if (AppState.time.simulationTime && AppState.time.simulationSpeed) {
       AppState.time.simulationTime += delta * AppState.time.simulationSpeed;
     }

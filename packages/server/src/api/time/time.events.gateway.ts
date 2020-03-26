@@ -15,7 +15,10 @@ export class TimeEventsGateway {
   constructor(
     @Inject('KafkaService') private readonly kafkaService: KafkaService,
   ) {
-    kafkaService.on('time', time => this.server.emit('time', time));
+    kafkaService.on('time', time => {
+      console.log(time);
+      this.server.emit('time', time);
+    });
     kafkaService.on('session-update', _ => this.sendConnectionStatus());
   }
 

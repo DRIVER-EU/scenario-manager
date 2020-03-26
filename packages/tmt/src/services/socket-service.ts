@@ -36,6 +36,7 @@ const setupSocket = (autoConnect = true) => {
     SimulationState.simulationTime = time.simulationTime || new Date().setHours(12, 0, 0).valueOf();
     SimulationState.simulationSpeed = time.simulationSpeed;
     if (time.tags?.timeElapsed) {
+      console.log(time);
       SimulationState.tags = { timeElapsed: time.tags.timeElapsed };
     }
     window.clearInterval(handler);

@@ -161,7 +161,7 @@ export class ExecutionService implements IExecutionService {
       post,
       sender.email,
       recipients,
-      this.kafkaService.trialTime,
+      this.kafkaService.simulationTime,
     );
     this.kafkaService.sendMessage(postMsg, topic);
   }

@@ -141,13 +141,13 @@ const MediaStateControl: FactoryComponent<{
                   // iconName: 'timer',
                   disabled: !canStart,
                   onclick: () => {
+                    console.log('click');
                     if (realtime) {
                       sendCmd(socket, {
                         simulationTime: Date.now(),
                         simulationSpeed: 1,
                         command: TimeCommand.Init,
                       });
-                      sendCmd(socket, { command: TimeCommand.Start });
                     } else {
                       sendCmd(socket, {
                         simulationTime: newTime(),
@@ -155,6 +155,7 @@ const MediaStateControl: FactoryComponent<{
                         command: TimeCommand.Init,
                       });
                     }
+                    sendCmd(socket, { command: TimeCommand.Start });
                   },
                 })
               )
@@ -254,6 +255,8 @@ export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
 
   const updateStart: (vnode: m.Vnode<ITimeControlOptions, {}>) => void = ({ attrs: { scenario } }) => {
     const start = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
+    console.log('start');
+    console.table(scenario);
     state.startTime = formatTime(start);
     state.startDate = start;
   };

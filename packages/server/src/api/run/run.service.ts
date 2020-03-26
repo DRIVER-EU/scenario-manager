@@ -89,7 +89,7 @@ export class RunService {
     this.kafkaService.sendSessionMessage(this.session);
 
     const startUpdateLoop = () => {
-      this.trialTime = this.kafkaService.trialTime;
+      this.trialTime = this.kafkaService.simulationTime;
       this.scenario.startDate = this.trialTime.toUTCString();
       this.states = createInitialState(this.trialTime, this.injects);
       this.isRunning = true;
@@ -163,7 +163,7 @@ export class RunService {
       return;
     }
     const now = Date.now();
-    const time = this.kafkaService.trialTime;
+    const time = this.kafkaService.simulationTime;
     if (time === this.trialTime) {
       scheduleRestart();
     }

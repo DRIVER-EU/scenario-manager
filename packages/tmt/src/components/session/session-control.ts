@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimeControl } from './time-control';
-import { SocketSvc, TrialSvc, RunSvc } from '../../services';
+import { SocketSvc, TrialSvc, RunSvc, ISubscriptionDefinition } from '../../services';
 import { AppState, injectsChannel, TopicNames } from '../../models';
 import {
   FlatButton,
@@ -22,6 +22,7 @@ import {
   uniqueId,
   TimeState,
   ITimeManagement,
+  IInject,
 } from '../../../../models';
 import { getInjectIcon } from '../../utils';
 
@@ -35,7 +36,7 @@ const setActiveSession = (isActive: boolean) => {
 };
 
 /** Helper component to specify the session id, name, comments */
-const SessionSettings: FactoryComponent<{}> = () => {
+const SessionSettings: FactoryComponent = () => {
   const state = {} as {
     trial: ITrial;
     scenario?: IScenario;
@@ -45,19 +46,19 @@ const SessionSettings: FactoryComponent<{}> = () => {
   const sessionManager = (cmd: 'start' | 'stop', trial?: ITrial, scenario?: IScenario) => {
     const createSessionMsg = () => {
       const {
-        session: { tags: comment = '', name = 'New session created' },
+        session: { name = 'New session' },
       } = AppState;
+      console.log(trial);
       if (trial && scenario) {
         const session = {
           id: uniqueId(),
           state: SessionState.Started,
           name,
           tags: {
-            trailId: trial.id,
-            trailName: trial.title,
+            trialId: trial.id,
+            trialName: trial.title,
             scenarioId: scenario.id,
             scenarioName: scenario.title,
-            comment,
           },
         } as ISessionManagement;
         AppState.session = session;
@@ -68,6 +69,7 @@ const SessionSettings: FactoryComponent<{}> = () => {
     switch (cmd) {
       case 'start': {
         const s = createSessionMsg();
+        console.log(s);
         if (s) {
           RunSvc.load(s)
             .then(() => setActiveSession(true))
@@ -110,10 +112,6 @@ const SessionSettings: FactoryComponent<{}> = () => {
       const isConnected = sessionControl && sessionControl.isConnected;
       const disabled = activeSession;
       const options = state.scenarios.map(s => ({ id: s.id, label: s.title }));
-
-      // console.log(activeSession);
-      // console.table(AppState.time);
-      // console.log(sessionControl);
 
       if (session && !session.name) {
         session.id = uniqueId();
@@ -206,6 +204,15 @@ export const SessionControl: FactoryComponent = () => {
     isConnecting: false,
     time: {} as ITimeManagement,
     disconnectModal: undefined as undefined | M.Modal,
+    subscribed: injectsChannel.subscribe(TopicNames.ITEM_SELECT, ({ cur }) => (state.scenario = cur as IScenario)),
+  } as {
+    scenario?: IScenario;
+    trial?: ITrial;
+    isConnected: boolean;
+    isConnecting: boolean;
+    time: ITimeManagement;
+    disconnectModal?: M.Modal;
+    subscribed: ISubscriptionDefinition<{ cur: IInject; old: IInject }>;
   };
 
   const updateTime = (tm: ITimeManagement) => {
@@ -224,12 +231,13 @@ export const SessionControl: FactoryComponent = () => {
     state.isConnecting = false;
     state.isConnected = isConnected;
     AppState.time = state.time = time;
+    console.log(AppState.time);
     AppState.session = session;
     setActiveSession(data.session && data.session.state === SessionState.Started ? true : false);
     AppState.sessionControl.isConnected = isConnected;
     AppState.sessionControl.host = host;
-    AppState.sessionControl.realtime = data.time.simulationTime
-      ? Math.abs(data.time.simulationTime - Date.now()) < 10000
+    AppState.sessionControl.realtime = time?.simulationTime
+      ? Math.abs(time?.simulationTime - Date.now()) < 10000
       : true;
     if (
       session.tags?.trialId &&
@@ -256,6 +264,7 @@ export const SessionControl: FactoryComponent = () => {
       // m.redraw();
     },
     onremove: () => {
+      state.subscribed.unsubscribe();
       socket.off('time', updateTime);
       socket.off('is-connected', isTestbedConnected);
     },
@@ -313,38 +322,45 @@ export const SessionControl: FactoryComponent = () => {
           ])
         ),
         m(SessionSettings),
-        activeSession
-          ? realtime
-            ? // ? canStart
-              m(
-                '.row',
-                m(
-                  '.col.s12.m6',
-                  m('.input-field.col.s12', [
-                    m(Icon, { iconName, className: 'prefix' }),
-                    m(TimeControl, {
-                      style: 'margin-left: 3em',
-                      scenario: state.scenario,
-                      isConnected,
-                      time,
-                      canStart,
-                      realtime,
-                      key,
-                    }),
-                  ])
-                )
-              )
-            : // : undefined
-              m(TimeControl, {
-                // style: 'margin-left: 3em',
-                scenario: state.scenario,
-                isConnected,
-                time,
-                canStart,
-                realtime,
-                key,
-              })
-          : undefined,
+        [
+          m(
+            'div',
+            { key },
+            activeSession
+              ? realtime
+                ? // ? canStart
+                  m(
+                    '.row',
+                    m(
+                      '.col.s12.m6',
+                      m('.input-field.col.s12', [
+                        m(Icon, { iconName, className: 'prefix' }),
+                        m(TimeControl, {
+                          style: 'margin-left: 3em',
+                          scenario,
+                          isConnected,
+                          time,
+                          canStart,
+                          realtime,
+                          // key,
+                        }),
+                      ])
+                    )
+                  )
+                : // : undefined
+                  m(TimeControl, {
+                    // style: 'margin-left: 3em',
+                    scenario,
+                    isConnected,
+                    time,
+                    canStart,
+                    realtime,
+                    // key,
+                  })
+              : undefined
+          ),
+        ],
+        // : undefined,
         m(ModalPanel, {
           onCreate: modal => {
             state.disconnectModal = modal;
