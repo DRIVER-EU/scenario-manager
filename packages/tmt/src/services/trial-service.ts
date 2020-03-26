@@ -367,7 +367,7 @@ class TrialService extends RestService<ITrial> {
     return this.assetSvc ? this.assetSvc.mapOverlays() || [] : ([] as IAsset[]);
   }
 
-  public async loadMapOverlay(id: number | string) {
+  public async loadMapOverlay(id: number | string): Promise<GeoJSON.FeatureCollection | undefined> {
     return this.assetSvc && this.assetSvc.loadMapOverlay(id);
   }
 

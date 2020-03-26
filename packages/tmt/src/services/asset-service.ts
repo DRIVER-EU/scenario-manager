@@ -19,7 +19,7 @@ export class AssetService extends RestService<IAsset> {
     return this.pTrialId;
   }
 
-  public async loadMapOverlay(id: number | string) {
+  public async loadMapOverlay(id: number | string): Promise<GeoJSON.FeatureCollection> {
     return (super.load(id.toString()) as unknown) as GeoJSON.FeatureCollection;
   }
 
