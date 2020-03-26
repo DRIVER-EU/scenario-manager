@@ -66,7 +66,7 @@ export const Layout: FactoryComponent<{}> = () => {
                 '.nav-content',
                 m('ul.tabs.tabs-transparent', [
                   ...subDashboards.map(d => m(`li.tab${isActive(d.route)}`, m(MenuItem, d))),
-                  executeMode && time.state !== TimeState.Reset
+                  executeMode && time && time.state !== TimeState.Reset
                     ? m(MediaControls, {
                         id: 'layout-controls',
                         className: 'right',
