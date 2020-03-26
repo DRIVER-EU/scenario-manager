@@ -19,7 +19,7 @@ import { getIcon, injectToTimelineItemFactory } from '../../utils';
 export const SessionTimelineView: FactoryComponent = () => {
   const state = {
     time: undefined as number | undefined,
-    lastTimeUpdate: undefined as number | undefined,
+    lastTimeUpdate: Date.now(),
     timeInterval: undefined as number | undefined,
     injects: [] as IInject[],
     executingInjects: [] as Array<IExecutingInject & IInjectSimState>,
@@ -37,10 +37,10 @@ export const SessionTimelineView: FactoryComponent = () => {
 
   const time = (update: (t: number | Date) => void) => {
     state.timeInterval = window.setInterval(() => {
-      const { time: trialTime, lastTimeUpdate } = state;
-      if (trialTime && lastTimeUpdate && AppState.time) {
+      const { time: simulationTime = AppState.time.simulationTime, lastTimeUpdate } = state;
+      if (simulationTime && lastTimeUpdate && AppState.time) {
         const now = Date.now();
-        const newTime = trialTime + (now - lastTimeUpdate) * (AppState.time.simulationSpeed || 1);
+        const newTime = simulationTime + (now - lastTimeUpdate) * (AppState.time.simulationSpeed || 1);
         update(new Date(newTime));
       }
     }, 1000);

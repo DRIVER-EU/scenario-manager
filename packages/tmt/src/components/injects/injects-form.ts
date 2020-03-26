@@ -208,11 +208,11 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         await TrialSvc.updateInject(inject);
       } else if (isInject(inject) && isInject(copy)) {
         const clone = deepCopy(copy);
-        console.log(TrialSvc.getInjects.length);
+        // console.log(TrialSvc.getInjects.length);
         clone.id = '';
         clone.parentId = inject.parentId;
         await TrialSvc.createInject(clone);
-        console.log(TrialSvc.getInjects.length);
+        // console.log(TrialSvc.getInjects.length);
       }
     }
   };
@@ -252,7 +252,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         return;
       }
       const key = `${inject.id}_${version}`;
-      console.log('Key: ' + key);
+      // console.log('Key: ' + key);
 
       const hasChanged = !deepEqual(inject, original);
       if (hasChanged) {

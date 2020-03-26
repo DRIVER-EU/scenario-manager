@@ -108,7 +108,7 @@ export const SessionTable: FactoryComponent = () => {
     view: () => {
       const injects = RunSvc.getInjects() || [];
       const { injectStates } = AppState;
-      console.log(injects);
+      // console.log(injects);
       const executingInjects = injects
         .filter(i => injectStates.hasOwnProperty(i.id))
         .map(
