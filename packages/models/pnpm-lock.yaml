@@ -3,8 +3,8 @@ dependencies:
   test-bed-schemas: 0.3.8
 devDependencies:
   rimraf: 3.0.2
-  typescript: 3.8.3
-lockfileVersion: 5.1
+  typescript: 4.0.5
+lockfileVersion: 5.2
 packages:
   /@types/geojson/7946.0.7:
     dev: false
@@ -80,13 +80,13 @@ packages:
     dev: false
     resolution:
       integrity: sha512-h3sZ8uF/K2T+yO7E+OE6gFN0htDMlQejhMBFk4lWNbAIH7VfwIxwHSVNpgdzmzkedPDWCsc6I3RGwz2TN0zdLA==
-  /typescript/3.8.3:
+  /typescript/4.0.5:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-MYlEfn5VrLNsgudQTVJeNaQFUAI7DkhnOjdpAp4T+ku1TfQClewlbSuTVHiA+8skNBgaf02TL/kLOvig4y3G8w==
+      integrity: sha512-ywmr/VrTVCmNTJ6iV2LwIrfG1P+lv6luD8sUJs+2eI9NLGigaN+nUQc13iHqisq7bra9lnmUSYqbJvegraBOPQ==
   /wrappy/1.0.2:
     dev: true
     resolution:
@@ -95,4 +95,4 @@ specifiers:
   '@types/geojson': ^7946.0.7
   rimraf: ^3.0.2
   test-bed-schemas: ^0.3.8
-  typescript: ^3.8.3
+  typescript: ^4.0.5
