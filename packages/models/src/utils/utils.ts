@@ -9,7 +9,7 @@ import { IInject, InjectType, MessageType, UnitType, IInjectGroup, IAlert } from
  */
 export const uniqueId = () => {
   // tslint:disable-next-line:no-bitwise
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     // tslint:disable-next-line:no-bitwise
     const r = (Math.random() * 16) | 0;
     // tslint:disable-next-line:no-bitwise
@@ -23,7 +23,7 @@ export const getAncestors = (injects: IInject[], inject: IInject) => {
   let current = inject;
   const ancestors = [] as IInject[];
   while (current.parentId) {
-    const ancestor = injects.filter(i => i.id === current.parentId).shift();
+    const ancestor = injects.filter((i) => i.id === current.parentId).shift();
     if (ancestor) {
       ancestors.push(ancestor);
       current = ancestor;
@@ -43,16 +43,20 @@ export const isAncestor = (injects: IInject[], inject: IInject, potentialParent?
     return true;
   }
   const ancestors = getAncestors(injects, inject);
-  return ancestors.filter(i => i.id === potentialParent.id).length > 0;
+  return ancestors.filter((i) => i.id === potentialParent.id).length > 0;
 };
 
 /** Get the parent of an inject, specifying the inject level */
-export const getParent = (injects: IInject[], id?: string, level = InjectType.SCENARIO): IInject | undefined => {
+export const getParent = (
+  injects: IInject[],
+  id?: string | number,
+  level = InjectType.SCENARIO
+): IInject | undefined => {
   if (!id) {
     return undefined;
   }
   let found = {} as IInject;
-  injects.some(i => {
+  injects.some((i) => {
     if (i.id !== id) {
       return false;
     }
@@ -71,12 +75,12 @@ export const getChildren = (injects: IInject[], id?: string) => {
   if (!id) {
     return [];
   }
-  return injects.filter(i => i.parentId === id);
+  return injects.filter((i) => i.parentId === id);
 };
 
 /** Get all children of an inject, including grandchildren */
 export const getAllChildren = (injects: IInject[], id: string): Array<IInjectGroup | IInject> => {
-  const children = injects.filter(i => i.parentId === id);
+  const children = injects.filter((i) => i.parentId === id);
   return children.reduce((acc, c) => [...acc, ...getAllChildren(injects, c.id)], children);
 };
 
@@ -87,7 +91,7 @@ export const getAllChildren = (injects: IInject[], id: string): Array<IInjectGro
  * @param injects list of all injects
  */
 export const getInject = (id?: string, injects?: IInject[]) =>
-  injects && id ? injects.filter(i => i.id === id).shift() : undefined;
+  injects && id ? injects.filter((i) => i.id === id).shift() : undefined;
 
 /**
  * Transform a time in SI units to msec
@@ -104,7 +108,7 @@ export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boole
   return x instanceof Date && y instanceof Date
     ? x.getTime() === y.getTime()
     : x && y && tx === 'object' && tx === ty
-    ? Object.keys(x).length === Object.keys(y).length && Object.keys(x).every(key => deepEqual(x[key], y[key]))
+    ? Object.keys(x).length === Object.keys(y).length && Object.keys(x).every((key) => deepEqual(x[key], y[key]))
     : x === y;
 };
 
@@ -124,7 +128,7 @@ export const deepCopy = <T>(target: T): T => {
   }
   if (target instanceof Array) {
     const cp = [] as any[];
-    (target as any[]).forEach(v => {
+    (target as any[]).forEach((v) => {
       cp.push(v);
     });
     return cp.map((n: any) => deepCopy<any>(n)) as any;
@@ -133,7 +137,7 @@ export const deepCopy = <T>(target: T): T => {
     const cp = { ...(target as { [key: string]: any }) } as {
       [key: string]: any;
     };
-    Object.keys(cp).forEach(k => {
+    Object.keys(cp).forEach((k) => {
       cp[k] = deepCopy<any>(cp[k]);
     });
     return cp as T;
@@ -164,10 +168,10 @@ export const geojsonToAvro = (geojson?: FeatureCollection) => {
   }
   const avro = { type: 'FeatureCollection' } as { [key: string]: any };
   if (geojson.bbox) {
-    avro.bbox = geojson.bbox.map(b => b);
+    avro.bbox = geojson.bbox.map((b) => b);
   }
   if (geojson.features && geojson.features.length > 0) {
-    avro.features = geojson.features.map(f => {
+    avro.features = geojson.features.map((f) => {
       const avroFeature = {} as { [key: string]: any };
       if (f && f.geometry && Object.keys(f.geometry).length > 1) {
         avroFeature.geometry = {
@@ -217,7 +221,7 @@ export const debounce = <F extends Procedure>(
 ): F => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-  return function(this: any, ...args: any[]) {
+  return function (this: any, ...args: any[]) {
     const context = this;
 
     const doLater = () => {
@@ -270,11 +274,7 @@ export const convertDateToCAPDate = (date: Date) => {
   const tdiffh = Math.floor(Math.abs(tdiff / 60));
   const tdiffm = tdiff % 60;
   const tdiffpm = tdiff <= 0 ? '-' : '+';
-  const isoTmp =
-    date
-      .toISOString()
-      .split('.')
-      .shift() || '';
+  const isoTmp = date.toISOString().split('.').shift() || '';
   const iso = ''.concat(
     isoTmp,
     tdiffpm,
