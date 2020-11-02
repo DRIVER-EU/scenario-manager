@@ -7,7 +7,7 @@ import { TrialList } from '../components/trials/trial-list';
 import { Layout } from '../components/layout';
 // import { InjectsView } from '../components/injects/injects-view';
 // import { UsersView } from '../components/users/users-list';
-import { ObjectivesView, StakeholdersView } from '../components';
+import { AssetsView, ObjectivesView, StakeholdersView, TrialSettings, UsersView } from '../components';
 // import { AssetsView } from '../components/assets';
 // import { SessionState } from '../components/session/session-state';
 // import { TrialSettings } from '../components/configuration/trial-settings';
@@ -68,7 +68,7 @@ class DashboardService {
           : {
               render: () => {
                 const state = states();
-                console.log(`${c.id} was called`);
+                // console.log(`${c.id} was called`);
                 // console.table(state);
                 return m(Layout, { state, actions }, m(c.component, { state, actions }));
               },
@@ -104,14 +104,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
   //   visible: false,
   //   component: SessionView,
   // },
-  // {
-  //   id: Dashboards.SETTINGS,
-  //   title: 'Settings',
-  //   icon: 'settings',
-  //   route: '/settings/users',
-  //   visible: false,
-  //   component: TrialSettings,
-  // },
+  {
+    id: Dashboards.SETTINGS,
+    title: 'Settings',
+    icon: 'settings',
+    route: '/settings/users',
+    visible: false,
+    component: TrialSettings,
+  },
   {
     id: Dashboards.TRIAL_INFO,
     title: 'Info',
@@ -120,14 +120,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     component: TrialForm,
     level: Dashboards.TRIAL,
   },
-  // {
-  //   id: Dashboards.USERS,
-  //   title: 'Users',
-  //   route: '/settings/users',
-  //   visible: false,
-  //   component: UsersView,
-  //   level: Dashboards.SETTINGS,
-  // },
+  {
+    id: Dashboards.USERS,
+    title: 'Users',
+    route: '/settings/users',
+    visible: false,
+    component: UsersView,
+    level: Dashboards.SETTINGS,
+  },
   // {
   //   id: Dashboards.TRIAL_SETTINGS,
   //   title: 'Topics',
@@ -136,14 +136,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
   //   component: TrialSettings,
   //   level: Dashboards.SETTINGS,
   // },
-  // {
-  //   id: Dashboards.ASSETS,
-  //   title: 'Assets',
-  //   route: '/settings/assets',
-  //   visible: false,
-  //   component: AssetsView,
-  //   level: Dashboards.SETTINGS,
-  // },
+  {
+    id: Dashboards.ASSETS,
+    title: 'Assets',
+    route: '/settings/assets',
+    visible: false,
+    component: AssetsView,
+    level: Dashboards.SETTINGS,
+  },
   // {
   //   id: Dashboards.MESSAGES,
   //   title: 'Messages',

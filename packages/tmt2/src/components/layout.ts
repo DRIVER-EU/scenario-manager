@@ -41,6 +41,9 @@ export const Layout: MeiosisComponent = () => {
       if (!attrs || !attrs.state || !attrs.state.app) return;
       const { trial, session } = attrs.state.app;
       const curRoute = m.route.get();
+      if (!trial.id && curRoute !== dashboardSvc.defaultRoute) {
+        return dashboardSvc.switchTo(Dashboards.HOME);
+      }
       const mainPath = (path: string) => {
         const subs = path.split('/');
         if (subs.length > 2) {
@@ -73,7 +76,7 @@ export const Layout: MeiosisComponent = () => {
               'ul.right',
               dashboardSvc
                 .getList()
-                .filter((d) => d.visible)
+                .filter((d) => d.visible || (trial.id && !d.level))
                 .map((d) => m(`li${isActive(mainPath(d.route))}`, m(MenuItem, d)))
             ),
           ]),

@@ -9,6 +9,7 @@ const log = console.log;
 const error = console.error;
 
 export interface IRestService<T extends IContent> {
+  url: string;
   create: (item: Partial<T>, fd?: FormData | undefined) => Promise<void | T>;
   update: (item: Partial<T>, fd?: FormData | undefined) => Promise<void | T>;
   patch: (current: T, old: T) => Promise<void>;
@@ -121,6 +122,7 @@ const createRestServiceFactory = (apiService: string) => {
     };
 
     return {
+      url,
       create,
       update,
       patch,

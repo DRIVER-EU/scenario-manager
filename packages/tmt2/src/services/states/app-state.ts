@@ -7,6 +7,7 @@ import {
   IInject,
   IInjectSimStates,
   IObjective,
+  IPerson,
   ISessionManagement,
   IStakeholder,
   ITimeManagement,
@@ -35,6 +36,10 @@ export interface IAppStateModel {
     stakeholderId: string;
     /** Currently selected objective ID */
     objectiveId: string;
+    /** Currently selected user ID */
+    userId: string;
+    /** Currently selected user ID */
+    assetId: number;
     assets: IAsset[];
     owner: string;
     time: ITimeManagement;
@@ -65,14 +70,26 @@ export interface IAppStateActions {
   loadTrial: (trialId: string) => Promise<void>;
   saveTrial: (trial?: ITrial) => Promise<void>;
   deleteTrial: (trialId: string | number) => Promise<void>;
+
+  selectAsset: (asset: IAsset) => void;
+  createAsset: (asset: IAsset) => Promise<void>;
+  updateAsset: (asset: IAsset, files: FileList) => Promise<void>;
+  deleteAsset: (asset: IAsset) => Promise<void>;
+
   selectStakeholder: (stakeholder: IStakeholder) => void;
   createStakeholder: (stakeholder: IStakeholder) => Promise<void>;
   updateStakeholder: (stakeholder: IStakeholder) => Promise<void>;
   deleteStakeholder: (stakeholder: IStakeholder) => Promise<void>;
+
   selectObjective: (objective: IObjective) => void;
   createObjective: (objective: IObjective) => Promise<void>;
   updateObjective: (objective: IObjective) => Promise<void>;
   deleteObjective: (objective: IObjective) => Promise<void>;
+
+  selectUser: (user: IPerson) => void;
+  createUser: (user: IPerson) => Promise<void>;
+  updateUser: (user: IPerson) => Promise<void>;
+  deleteUser: (user: IPerson) => Promise<void>;
 }
 
 export interface IAppState {
@@ -92,6 +109,8 @@ export const appStateMgmt = {
       trial: {} as ITrial,
       stakeholderId: '',
       objectiveId: '',
+      userId: '',
+      assetId: -1,
       assets: [],
       owner: 'TB_TrialMgmt',
       time: {} as ITimeManagement,
@@ -134,7 +153,10 @@ export const appStateMgmt = {
         if (trial) {
           registerForTrialUpdates(trial.id, states, update);
           assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
-          const assets = await assetsSvc.loadList();
+          const assets = (await assetsSvc.loadList()).map((a) => ({
+            ...a,
+            url: a.filename ? assetsSvc.url + a.id : undefined,
+          }));
           update({ app: { trial, assets } });
         }
       },
@@ -156,6 +178,50 @@ export const appStateMgmt = {
       deleteTrial: async (trialId: string | number) => {
         await trialSvc.del(trialId);
       },
+
+      selectAsset: (asset: IAsset) => update({ app: { assetId: asset.id } }),
+      createAsset: async (asset: IAsset) => {
+        const { assets } = states().app;
+        const newAsset = await assetsSvc.create(asset);
+        if (newAsset) {
+          assets.push(newAsset);
+          update({ app: { assetId: newAsset.id, assets } });
+        }
+      },
+      updateAsset: async (asset: IAsset, files: FileList) => {
+        const files2formData = () => {
+          if (asset && files && files.length > 0) {
+            const data = new FormData();
+            const file = files[0];
+            asset.filename = file.name;
+            asset.mimetype = file.type;
+            if (asset.id) {
+              data.append('id', asset.id.toString());
+            }
+            data.append('file', file);
+            data.append('alias', asset.alias || '');
+            data.append('filename', asset.filename || '');
+            return data;
+          }
+          return undefined;
+        };
+
+        const { assets } = states().app;
+        const fd = files2formData();
+        if (asset.filename) {
+          asset.url = assetsSvc.url + asset.id;
+        }
+        await assetsSvc.update(asset, fd);
+        const updated = assets.map((a) => (a.id === asset.id ? asset : a));
+        update({ app: { assets: updated } });
+      },
+      deleteAsset: async (asset: IAsset) => {
+        const { assets } = states().app;
+        const updated = assets.filter((a) => a.id !== asset.id);
+        await assetsSvc.del(asset.id);
+        update({ app: { assets: updated } });
+      },
+
       selectStakeholder: (stakeholder: IStakeholder) => update({ app: { stakeholderId: stakeholder.id } }),
       createStakeholder: async (stakeholder: IStakeholder) => {
         const { trial } = states().app;
@@ -181,6 +247,7 @@ export const appStateMgmt = {
         await trialSvc.patch(trial, oldTrial);
         update({ app: { stakeholderId: '', trial } });
       },
+
       selectObjective: (objective: IObjective) => update({ app: { objectiveId: objective.id } }),
       createObjective: async (objective: IObjective) => {
         const { trial } = states().app;
@@ -208,6 +275,35 @@ export const appStateMgmt = {
         trial.objectives = trial.objectives.filter((s) => s.id !== objective.id);
         await trialSvc.patch(trial, oldTrial);
         update({ app: { objectiveId: '', trial } });
+      },
+
+      selectUser: (user: IPerson) => update({ app: { userId: user.id } }),
+      createUser: async (User: IPerson) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        if (!trial.users) {
+          trial.users = [];
+        }
+        // console.table(trial.Users);
+        trial.users.push(User);
+        // console.table(trial.Users);
+        await trialSvc.patch(trial, oldTrial);
+        // console.table(trial.Users);
+        update({ app: { UserId: User.id, trial } });
+      },
+      updateUser: async (User: IPerson) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        trial.users = trial.users.map((s) => (s.id === User.id ? User : s));
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { UserId: User.id, trial } });
+      },
+      deleteUser: async (User: IPerson) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        trial.users = trial.users.filter((s) => s.id !== User.id);
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { UserId: '', trial } });
       },
     };
   },

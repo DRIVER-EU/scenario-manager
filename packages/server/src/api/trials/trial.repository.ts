@@ -53,7 +53,7 @@ export class TrialRepository {
         return reject(msg);
       }
       // console.log(`Cloning ${id} - ${filename}...`);
-      fs.exists(filename, exists => {
+      fs.exists(filename, (exists) => {
         if (!exists) {
           const msg = `${filename} no longer exists, cannot clone.`;
           console.error(msg);
@@ -62,13 +62,13 @@ export class TrialRepository {
         const newId = uniqueId();
         const newFilename = this.toFilename(newId);
         console.log(`...to ${newId} - ${newFilename}`);
-        fs.copyFile(filename, newFilename, err => {
+        fs.copyFile(filename, newFilename, (err) => {
           if (err) {
             const msg = `Error copying ${filename} to ${newFilename}:`;
             console.error(msg);
             return reject(msg);
           }
-          const db = new Database(newFilename, async errDb => {
+          const db = new Database(newFilename, async (errDb) => {
             if (errDb) {
               const msg = `Error opening database ${newFilename}:`;
               console.error(msg);
@@ -117,7 +117,7 @@ export class TrialRepository {
       count++;
       p = path.resolve(this.folder, `${baseName} (${count})${ext}`);
     } while (fs.existsSync(p));
-    fs.writeFile(p, file.buffer, err => {
+    fs.writeFile(p, file.buffer, (err) => {
       if (err) {
         return console.error(err);
       }
@@ -136,13 +136,13 @@ export class TrialRepository {
       }
       const now = new Date();
       trial.lastEdit = now;
-      db.get(`UPDATE ${TRIAL} SET data = ?`, JSON.stringify(trial), err => {
+      db.get(`UPDATE ${TRIAL} SET data = ?`, JSON.stringify(trial), (err) => {
         if (err) {
           console.error(err);
           return reject(err);
         }
         this.overview = this.overview
-          .map(t => (t.id === id ? new TrialOverview(trial) : t))
+          .map((t) => (t.id === id ? new TrialOverview(trial) : t))
           .sort(sortTrialsByLastEdit);
         resolve();
       });
@@ -177,13 +177,13 @@ export class TrialRepository {
       if (errors && errors.length > 0 && errors[0] !== null) {
         return reject(errors);
       }
-      db.get(`UPDATE ${TRIAL} SET data = ?`, JSON.stringify(trial), err => {
+      db.get(`UPDATE ${TRIAL} SET data = ?`, JSON.stringify(trial), (err) => {
         if (err) {
           console.error(err);
           return reject(err);
         }
         this.overview = this.overview
-          .map(t => (t.id === id ? new TrialOverview(trial) : t))
+          .map((t) => (t.id === id ? new TrialOverview(trial) : t))
           .sort(sortTrialsByLastEdit);
         server.emit(trial.id, patchObj);
         resolve(trial);
@@ -197,18 +197,18 @@ export class TrialRepository {
         return reject(`Error, no database with ID ${id} exists!`);
       }
       const { db, filename } = this.databases[id];
-      db.close(err => {
+      db.close((err) => {
         if (err) {
           logError(err);
           return reject(err);
         } else {
-          fs.unlink(filename, err2 => {
+          fs.unlink(filename, (err2) => {
             if (err2) {
               logError(err2);
               return reject(err2);
             }
             delete this.databases[id];
-            this.overview = this.overview.filter(s => s.id !== id);
+            this.overview = this.overview.filter((s) => s.id !== id);
             resolve();
           });
         }
@@ -292,16 +292,16 @@ export class TrialRepository {
   async createAsset(id: string, file?: IUploadedFile, alias?: string) {
     return new Promise<{ alias: string; filename: string; mimetype: string }>(
       async (resolve, reject) => {
-        if (!file) {
-          return reject(`Error, no file attached!`);
-        }
+        // if (!file) {
+        //   return reject(`Error, no file attached!`);
+        // }
         const db = this.databases.hasOwnProperty(id)
           ? this.databases[id].db
           : undefined;
         if (!db) {
           return reject(`Error, no database with id ${id} found!`);
         }
-        const { originalname, mimetype, buffer } = file;
+        const { originalname = '', mimetype = '', buffer = null } = file || {};
         db.run(
           `INSERT INTO ${ASSETS}(alias, filename, mimetype, data) VALUES(?, ?, ?, ?)`,
           alias,
@@ -409,8 +409,8 @@ export class TrialRepository {
   private async openAllDatabases() {
     const files = fs.readdirSync(this.folder);
     const dbs = files
-      .filter(f => path.extname(f) === EXT)
-      .map(f => path.resolve(this.folder, f))
+      .filter((f) => path.extname(f) === EXT)
+      .map((f) => path.resolve(this.folder, f))
       .reduce(
         (acc, f) => [...acc, this.openDatabase(f)],
         [] as Array<Promise<{ db: Database; filename: string }>>,
@@ -428,7 +428,7 @@ export class TrialRepository {
   private openDatabase(filename: string) {
     return new Promise<{ filename: string; db: Database }>(
       (resolve, reject) => {
-        const db = new Database(filename, err => {
+        const db = new Database(filename, (err) => {
           if (err) {
             reject(err);
           } else {
@@ -457,7 +457,7 @@ export class TrialRepository {
           `Closing ${trial.title} (${trial.id}). A more recent version is already loaded.`,
         );
         db.db.close(
-          error =>
+          (error) =>
             error && console.error(`Error closing ${trial.id}: ${error}!`),
         );
       } else {
@@ -508,7 +508,7 @@ export class TrialRepository {
   }
 
   private closeAllDatabases() {
-    Object.keys(this.databases).forEach(id => this.databases[id].db.close());
+    Object.keys(this.databases).forEach((id) => this.databases[id].db.close());
   }
 
   private closeAllDatabasesOnExit() {
