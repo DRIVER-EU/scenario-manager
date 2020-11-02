@@ -82,8 +82,8 @@ export const AssetsForm: MeiosisComponent = () => {
                   overlay
                     ? m(LeafletMap, {
                         style: 'width: 100%; height: 400px; margin: 10px;',
-                        overlays: { overlay },
-                        visible: ['overlay'],
+                        overlays: { [asset.alias || asset.filename]: overlay },
+                        visible: [asset.alias || asset.filename],
                         showScale: { imperial: false },
                         onLoaded: (map) => {
                           overlay && map.fitBounds(overlay?.getBounds());

@@ -7,7 +7,7 @@ import { TrialList } from '../components/trials/trial-list';
 import { Layout } from '../components/layout';
 // import { InjectsView } from '../components/injects/injects-view';
 // import { UsersView } from '../components/users/users-list';
-import { AssetsView, ObjectivesView, StakeholdersView, TrialSettings, UsersView } from '../components';
+import { AssetsView, ObjectivesView, OverviewMap, StakeholdersView, TrialSettings, UsersView } from '../components';
 // import { AssetsView } from '../components/assets';
 // import { SessionState } from '../components/session/session-state';
 // import { TrialSettings } from '../components/configuration/trial-settings';
@@ -176,14 +176,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
   //   component: InjectsView,
   //   level: Dashboards.TRIAL,
   // },
-  // {
-  //   id: Dashboards.MAP,
-  //   title: 'Map',
-  //   route: '/edit/map',
-  //   visible: false,
-  //   component: OverviewMap,
-  //   level: Dashboards.TRIAL,
-  // },
+  {
+    id: Dashboards.MAP,
+    title: 'Map',
+    route: '/edit/map',
+    visible: false,
+    component: OverviewMap,
+    level: Dashboards.TRIAL,
+  },
   // {
   //   id: Dashboards.SIMULATION,
   //   title: 'simulation',
