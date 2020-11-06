@@ -6,6 +6,7 @@ import {
   IAsset,
   IInject,
   IInjectSimStates,
+  InjectType,
   IObjective,
   IPerson,
   ISessionManagement,
@@ -13,8 +14,9 @@ import {
   ITimeManagement,
   ITrial,
 } from '../../../../models/dist';
+import { MessageScope } from '../../components/messages';
 import { Dashboards } from '../../models';
-import { validateInjects } from '../../utils';
+import { arrayMove, validateInjects } from '../../utils';
 import { IAppModel, UpdateStream } from '../meiosis';
 
 const trialSvc = restServiceFactory<ITrial>('trials');
@@ -28,19 +30,28 @@ export interface IAppStateModel {
     searchQuery?: string;
     page?: Dashboards;
 
+    /** Operating mode */
+    mode: MessageScope;
     /** Overview of all trials */
     trials: ITrial[];
     /** Active trial */
     trial: ITrial;
     /** Currently selected stakeholder ID */
     stakeholderId: string;
+    /** Currently selected scenario ID */
+    scenarioId: string;
+    /** Currently selected inject ID */
+    injectId: string;
     /** Currently selected objective ID */
     objectiveId: string;
     /** Currently selected user ID */
     userId: string;
     /** Currently selected user ID */
     assetId: number;
+    /** List of all the available assets */
     assets: IAsset[];
+    /** State of the injects tree (items are open or closed) */
+    treeState: { [id: string]: boolean };
     owner: string;
     time: ITimeManagement;
     sessionControl: {
@@ -51,7 +62,6 @@ export interface IAppStateModel {
     };
     scenarioStartTime: Date;
     session: Partial<ISessionManagement>;
-    scenarioId: '';
     injectStates: IInjectSimStates;
     copiedInjectIsCut: boolean;
     copiedInjects: undefined | IInject | IInject[];
@@ -72,9 +82,17 @@ export interface IAppStateActions {
   deleteTrial: (trialId: string | number) => Promise<void>;
 
   selectAsset: (asset: IAsset) => void;
-  createAsset: (asset: IAsset) => Promise<void>;
+  createAsset: (asset: IAsset, files?: FileList) => Promise<void>;
   updateAsset: (asset: IAsset, files: FileList) => Promise<void>;
   deleteAsset: (asset: IAsset) => Promise<void>;
+
+  selectScenario: (scenario: IInject | string) => void;
+
+  selectInject: (inject: IInject) => void;
+  createInject: (inject: IInject) => Promise<void>;
+  updateInject: (inject: IInject) => Promise<void>;
+  deleteInject: (inject: IInject) => Promise<void>;
+  moveInject: (source: IInject, target: IInject) => Promise<void>;
 
   selectStakeholder: (stakeholder: IStakeholder) => void;
   createStakeholder: (stakeholder: IStakeholder) => Promise<void>;
@@ -97,6 +115,23 @@ export interface IAppState {
   actions: (us: UpdateStream, states: Stream<IAppModel>) => IAppStateActions;
 }
 
+const files2formData = (asset: IAsset, files: FileList) => {
+  if (asset && files && files.length > 0) {
+    const data = new FormData();
+    const file = files[0];
+    asset.filename = file.name;
+    asset.mimetype = file.type;
+    if (asset.id) {
+      data.append('id', asset.id.toString());
+    }
+    data.append('file', file);
+    data.append('alias', asset.alias || '');
+    data.append('filename', asset.filename || '');
+    return data;
+  }
+  return undefined;
+};
+
 export const appStateMgmt = {
   initial: {
     app: {
@@ -105,13 +140,16 @@ export const appStateMgmt = {
       isSearching: false,
       searchQuery: '',
 
+      mode: 'edit',
       trials: [],
       trial: {} as ITrial,
       stakeholderId: '',
+      injectId: '',
       objectiveId: '',
       userId: '',
       assetId: -1,
       assets: [],
+      treeState: {},
       owner: 'TB_TrialMgmt',
       time: {} as ITimeManagement,
       scenarioStartTime: new Date(),
@@ -179,35 +217,63 @@ export const appStateMgmt = {
         await trialSvc.del(trialId);
       },
 
+      selectScenario: (scenario: IInject | string) =>
+        update({ app: { scenarioId: typeof scenario === 'string' ? scenario : scenario.id } }),
+
+      selectInject: (inject: IInject) => update({ app: { injectId: inject.id } }),
+      createInject: async (inject: IInject) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        if (!trial.injects) {
+          trial.injects = [];
+        }
+        trial.injects.push(inject);
+        await trialSvc.patch(trial, oldTrial);
+        inject.type === InjectType.SCENARIO
+          ? update({ app: { scenarioId: inject.id, trial } })
+          : update({ app: { injectId: inject.id, trial } });
+      },
+      updateInject: async (inject: IInject) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        trial.injects = trial.injects.map((s) => (s.id === inject.id ? deepCopy(inject) : s));
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { injectId: inject.id, trial } });
+      },
+      deleteInject: async (inject: IInject) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        trial.injects = trial.injects.filter((s) => s.id !== inject.id);
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { injectId: '', trial } });
+      },
+      moveInject: async (source: IInject, after: IInject) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        if (trial && trial.injects) {
+          const sourceIndex = trial.injects.indexOf(source);
+          const afterIndex = trial.injects.indexOf(after);
+          arrayMove(trial.injects, sourceIndex, sourceIndex < afterIndex ? afterIndex : afterIndex + 1);
+          await trialSvc.patch(trial, oldTrial);
+        }
+      },
+
       selectAsset: (asset: IAsset) => update({ app: { assetId: asset.id } }),
-      createAsset: async (asset: IAsset) => {
+      createAsset: async (asset: IAsset, files?: FileList) => {
         const { assets } = states().app;
-        const newAsset = await assetsSvc.create(asset);
+        const fd = files ? files2formData(asset, files) : undefined;
+        const newAsset = await assetsSvc.create(asset, fd);
+        if (newAsset && newAsset.filename) {
+          newAsset.url = assetsSvc.url + newAsset.id;
+        }
         if (newAsset) {
           assets.push(newAsset);
           update({ app: { assetId: newAsset.id, assets } });
         }
       },
       updateAsset: async (asset: IAsset, files: FileList) => {
-        const files2formData = () => {
-          if (asset && files && files.length > 0) {
-            const data = new FormData();
-            const file = files[0];
-            asset.filename = file.name;
-            asset.mimetype = file.type;
-            if (asset.id) {
-              data.append('id', asset.id.toString());
-            }
-            data.append('file', file);
-            data.append('alias', asset.alias || '');
-            data.append('filename', asset.filename || '');
-            return data;
-          }
-          return undefined;
-        };
-
         const { assets } = states().app;
-        const fd = files2formData();
+        const fd = files2formData(asset, files);
         if (asset.filename) {
           asset.url = assetsSvc.url + asset.id;
         }
@@ -236,7 +302,7 @@ export const appStateMgmt = {
       updateStakeholder: async (stakeholder: IStakeholder) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
-        trial.stakeholders = trial.stakeholders.map((s) => (s.id === stakeholder.id ? stakeholder : s));
+        trial.stakeholders = trial.stakeholders.map((s) => (s.id === stakeholder.id ? deepCopy(stakeholder) : s));
         await trialSvc.patch(trial, oldTrial);
         update({ app: { stakeholderId: stakeholder.id, trial } });
       },
@@ -265,7 +331,7 @@ export const appStateMgmt = {
       updateObjective: async (objective: IObjective) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
-        trial.objectives = trial.objectives.map((s) => (s.id === objective.id ? objective : s));
+        trial.objectives = trial.objectives.map((s) => (s.id === objective.id ? deepCopy(objective) : s));
         await trialSvc.patch(trial, oldTrial);
         update({ app: { objectiveId: objective.id, trial } });
       },
@@ -278,30 +344,30 @@ export const appStateMgmt = {
       },
 
       selectUser: (user: IPerson) => update({ app: { userId: user.id } }),
-      createUser: async (User: IPerson) => {
+      createUser: async (user: IPerson) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
         if (!trial.users) {
           trial.users = [];
         }
         // console.table(trial.Users);
-        trial.users.push(User);
+        trial.users.push(user);
         // console.table(trial.Users);
         await trialSvc.patch(trial, oldTrial);
         // console.table(trial.Users);
-        update({ app: { UserId: User.id, trial } });
+        update({ app: { UserId: user.id, trial } });
       },
-      updateUser: async (User: IPerson) => {
+      updateUser: async (user: IPerson) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
-        trial.users = trial.users.map((s) => (s.id === User.id ? User : s));
+        trial.users = trial.users.map((s) => (s.id === user.id ? user : s));
         await trialSvc.patch(trial, oldTrial);
-        update({ app: { UserId: User.id, trial } });
+        update({ app: { UserId: user.id, trial } });
       },
-      deleteUser: async (User: IPerson) => {
+      deleteUser: async (user: IPerson) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
-        trial.users = trial.users.filter((s) => s.id !== User.id);
+        trial.users = trial.users.filter((s) => s.id !== user.id);
         await trialSvc.patch(trial, oldTrial);
         update({ app: { UserId: '', trial } });
       },

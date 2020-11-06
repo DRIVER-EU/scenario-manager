@@ -106,7 +106,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       }
     };
     if (props instanceof Array) {
-      props.forEach(prop => applyChange(prop));
+      props.forEach((prop) => applyChange(prop));
     } else {
       applyChange(props);
     }
@@ -125,13 +125,13 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     idMap[oldParentId] = newParentId;
     return injects
       .map(deepCopy)
-      .map(c => {
+      .map((c) => {
         const id = uniqueId();
         idMap[c.id] = id;
         c.id = id;
         return c;
       })
-      .map(c => {
+      .map((c) => {
         if (c.parentId && idMap.hasOwnProperty(c.parentId)) {
           c.parentId = idMap[c.parentId];
         }
@@ -165,7 +165,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       const { parentId } = inject;
       state.inject = undefined;
       const injects = TrialSvc.getInjects() || [];
-      const parent = injects.filter(i => i.id === parentId).shift() || injects[0];
+      const parent = injects.filter((i) => i.id === parentId).shift() || injects[0];
       await TrialSvc.deleteInject(inject);
       injectsChannel.publish(TopicNames.ITEM_SELECT, { cur: parent });
     }
@@ -184,7 +184,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
       if (isInject(copy)) {
         // Paste copied inject: only injects can be cut, not acts etc.
         if (isAct(inject)) {
-          copy.parentId = newParentId;
+          copy.parentId = newParentId as string;
         } else if (isInject(inject)) {
           copy.parentId = inject.parentId;
         }
@@ -201,10 +201,12 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
         (isStoryline(inject) && isStoryline(copy)) ||
         (isAct(inject) && isAct(copy));
       if (isParentChildRelation) {
-        createFreshInjects(copiedInjects, copy.parentId!, newParentId).map(i => TrialSvc.newInject(i));
+        createFreshInjects(copiedInjects, copy.parentId!, newParentId as string).map((i) => TrialSvc.newInject(i));
         await TrialSvc.updateInject(inject);
       } else if (isSiblingRelation) {
-        createFreshInjects(copiedInjects.slice(1), copy.id, newParentId).map(i => TrialSvc.newInject(i));
+        createFreshInjects(copiedInjects.slice(1), copy.id as string, newParentId as string).map((i) =>
+          TrialSvc.newInject(i)
+        );
         await TrialSvc.updateInject(inject);
       } else if (isInject(inject) && isInject(copy)) {
         const clone = deepCopy(copy);
@@ -230,7 +232,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
     const { inject } = state;
     if (inject) {
       AppState.copiedInjectIsCut = false;
-      AppState.copiedInjects = [inject, ...getAllChildren(TrialSvc.getInjects() || [], inject.id)];
+      AppState.copiedInjects = [inject, ...getAllChildren(TrialSvc.getInjects() || [], inject.id as string)];
     }
   };
 
@@ -306,7 +308,7 @@ export const InjectsForm: FactoryComponent<IInjectsForm> = () => {
                     placeholder: 'Select the message type',
                     checkedId: inject.messageType,
                     options,
-                    onchange: v => {
+                    onchange: (v) => {
                       // console.warn('Getting message form');
                       state.inject!.messageType = v[0] as MessageType;
                     },
@@ -345,7 +347,7 @@ export const SetObjectives: FactoryComponent<{ inject: IInject; disabled?: boole
   return {
     view: ({ attrs: { inject, disabled = false } }) => {
       const isGroup = inject && inject.type !== InjectType.INJECT;
-      const objectives = [{ id: '', title: 'Pick one' }, ...(TrialSvc.getObjectives() || [])].map(o => ({
+      const objectives = [{ id: '', title: 'Pick one' }, ...(TrialSvc.getObjectives() || [])].map((o) => ({
         id: o.id,
         label: o.title,
       }));
@@ -353,7 +355,7 @@ export const SetObjectives: FactoryComponent<{ inject: IInject; disabled?: boole
       const hasObjectives = () =>
         objectives.length > 1 &&
         (injectGroup.mainObjectiveId || injectGroup.secondaryObjectiveId) &&
-        objectives.filter(o => o.id === injectGroup.mainObjectiveId || o.id === injectGroup.secondaryObjectiveId)
+        objectives.filter((o) => o.id === injectGroup.mainObjectiveId || o.id === injectGroup.secondaryObjectiveId)
           .length > 0;
 
       return isGroup && !(disabled && !hasObjectives())

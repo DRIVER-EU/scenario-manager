@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { ScenarioTimeline, ITimelineItem } from 'mithril-scenario-timeline';
-import { TrialSvc } from '../../services';
+import { MeiosisComponent } from '../../services';
 import {
   InjectType,
   IInjectGroup,
@@ -11,10 +11,9 @@ import {
   InjectConditionType,
 } from '../../../../models';
 import { Icon } from 'mithril-materialized';
-import { getIcon, isScenario } from '../../utils';
-import { AppState } from '../../models';
+import { getIcon, getInjects, isScenario } from '../../utils';
 
-export const InjectsTimeline: FactoryComponent = () => {
+export const InjectsTimeline: MeiosisComponent = () => {
   const titleView: FactoryComponent<{ item: ITimelineItem }> = () => {
     return {
       view: ({ attrs: { item } }) => {
@@ -58,18 +57,24 @@ export const InjectsTimeline: FactoryComponent = () => {
   };
 
   const scenarioToTimelineItems = (scenario: IInjectGroup, items: Array<IInjectGroup | IInject>) => {
-    const getChildren = (id: string): Array<IInjectGroup | IInject> => {
+    const getChildren = (id: string | number): Array<IInjectGroup | IInject> => {
       const children = items.filter((i) => i.parentId === id);
-      return children.reduce((acc, c) => [...acc, ...getChildren(c.id as string)], children);
+      return children.reduce((acc, c) => [...acc, ...getChildren(c.id)], children);
     };
-    const ti = [scenario, ...getChildren(scenario.id as string)].map(injectToTimelineItem);
+    const ti = [scenario, ...getChildren(scenario.id)].map(injectToTimelineItem);
     // console.log(JSON.stringify(ti, null, 2));
     return ti;
   };
 
   return {
-    view: () => {
-      const injects = TrialSvc.getInjects() || [];
+    view: ({
+      attrs: {
+        state: {
+          app: { trial, scenarioId },
+        },
+      },
+    }) => {
+      const injects = getInjects(trial) || [];
       const onClick = (item: ITimelineItem) => {
         const inject = injects.filter((i) => i.id === item.id).shift();
         if (inject && inject.type !== InjectType.INJECT) {
@@ -79,7 +84,6 @@ export const InjectsTimeline: FactoryComponent = () => {
       };
 
       const scenarios: IScenario[] = injects ? injects.filter(isScenario) : [];
-      const { scenarioId } = AppState;
       const scenario = scenarios.filter((s) => s.id === scenarioId).shift() || scenarios[0];
       if (injects.length === 0 || !scenario) {
         return;

@@ -1,11 +1,7 @@
 import { FactoryComponent } from 'mithril';
 import Stream from 'mithril/stream';
 import { merge } from '../utils/mergerino';
-import {
-  appStateMgmt,
-  IAppStateActions,
-  IAppStateModel,
-} from './states';
+import { appStateMgmt, IAppStateActions, IAppStateModel } from './states';
 
 export interface IAppModel extends IAppStateModel {}
 
@@ -15,21 +11,16 @@ export type ModelUpdateFunction = Partial<IAppModel> | ((model: Partial<IAppMode
 
 export type UpdateStream = Stream<Partial<ModelUpdateFunction>>;
 
-export type MeiosisComponent = FactoryComponent<{
+export type MeiosisComponent<T = {}> = FactoryComponent<{
   state: IAppModel;
   actions: IActions;
+  options?: T;
 }>;
 
 const app = {
-  initial: Object.assign(
-    {},
-    appStateMgmt.initial,
-  ) as IAppModel,
+  initial: Object.assign({}, appStateMgmt.initial) as IAppModel,
   actions: (update: UpdateStream, states: Stream<IAppModel>) =>
-    Object.assign(
-      {},
-      appStateMgmt.actions(update, states),
-    ) as IActions,
+    Object.assign({}, appStateMgmt.actions(update, states)) as IActions,
 };
 
 const update = Stream<ModelUpdateFunction>();

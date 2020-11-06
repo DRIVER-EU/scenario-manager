@@ -1776,14 +1776,9 @@
         "signature": "088d420a09a36d241f1ddbdcb553951c02ef0844014727a29712d2ced57edd22",
         "affectsGlobalScope": false
       },
-      "../models/dist/content.d.ts": {
-        "version": "ad2108447c3e7226eac917643eda02b12e516b9ce10857351bbf587d05ee2a5b",
-        "signature": "ad2108447c3e7226eac917643eda02b12e516b9ce10857351bbf587d05ee2a5b",
-        "affectsGlobalScope": false
-      },
       "../models/dist/asset.d.ts": {
-        "version": "3bf7e7e98d5d749e202c3c19e60cd7f889a94bb98c602b28f721232435294c05",
-        "signature": "3bf7e7e98d5d749e202c3c19e60cd7f889a94bb98c602b28f721232435294c05",
+        "version": "b63b87cca5fe7949daaf848538710a549d0e5b133fe868fcd1b5e2ee1fcb5204",
+        "signature": "b63b87cca5fe7949daaf848538710a549d0e5b133fe868fcd1b5e2ee1fcb5204",
         "affectsGlobalScope": false
       },
       "../models/node_modules/.pnpm/test-bed-schemas@0.3.8/node_modules/test-bed-schemas/dist/edxl-de/edxl-de-key.d.ts": {
@@ -1969,6 +1964,11 @@
       "../models/dist/connect-message.d.ts": {
         "version": "e20cc1299faa7575c5c1c812176d54673c19b38c2687a1665b8434faa1a4fca5",
         "signature": "e20cc1299faa7575c5c1c812176d54673c19b38c2687a1665b8434faa1a4fca5",
+        "affectsGlobalScope": false
+      },
+      "../models/dist/content.d.ts": {
+        "version": "5d329112977666e48ae0fc3d9a8564e5c5a243d692becfe7fe22c3057c8ef80d",
+        "signature": "5d329112977666e48ae0fc3d9a8564e5c5a243d692becfe7fe22c3057c8ef80d",
         "affectsGlobalScope": false
       },
       "../models/dist/entity-post-message.d.ts": {
@@ -2731,9 +2731,6 @@
         "../../node_modules/.pnpm/@types/minimatch@3.0.3/node_modules/@types/minimatch/index.d.ts",
         "./node_modules/.pnpm/@types/node@14.14.5/node_modules/@types/node/events.d.ts",
         "./node_modules/.pnpm/@types/node@14.14.5/node_modules/@types/node/index.d.ts"
-      ],
-      "../models/dist/asset.d.ts": [
-        "../models/dist/content.d.ts"
       ],
       "../models/dist/connect-message.d.ts": [
         "../models/node_modules/.pnpm/test-bed-schemas@0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"
@@ -4573,9 +4570,6 @@
         "../../node_modules/.pnpm/@types/minimatch@3.0.3/node_modules/@types/minimatch/index.d.ts",
         "./node_modules/.pnpm/@types/node@14.14.5/node_modules/@types/node/events.d.ts",
         "./node_modules/.pnpm/@types/node@14.14.5/node_modules/@types/node/index.d.ts"
-      ],
-      "../models/dist/asset.d.ts": [
-        "../models/dist/content.d.ts"
       ],
       "../models/dist/connect-message.d.ts": [
         "../models/node_modules/.pnpm/test-bed-schemas@0.3.8/node_modules/test-bed-schemas/dist/index.d.ts"

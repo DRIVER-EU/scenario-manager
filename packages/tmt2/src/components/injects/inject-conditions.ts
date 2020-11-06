@@ -10,10 +10,10 @@ import {
   getInject,
   isAncestor,
   UserRole,
+  ITrial,
 } from '../../../../models';
 import { Select, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
-import { TrialSvc } from '../../services';
-import { padLeft } from '../../utils';
+import { getInjects, getUsersByRole, padLeft } from '../../utils';
 
 /*
 # Inject conditions
@@ -47,24 +47,26 @@ For acts and storylines, which are at the beginning of a sequence
 
 /** Allows to set the inject conditions, i.e. when does the inject get executed. */
 export const InjectConditions: FactoryComponent<{
+  trial: ITrial;
   injects: IInject[];
   inject: IInject;
   previousInjects: IInject[];
   disabled?: boolean;
   onChange: (i: IInject, prop: keyof IInject | Array<keyof IInject>) => void;
 }> = () => {
-  const state = {
-    dropdownOptions: { container: document.body, constrainWidth: false },
-  } as {
-    dropdownOptions: Partial<M.DropdownOptions>;
-  };
-  const rolePlayers = TrialSvc.getUsersByRole(UserRole.ROLE_PLAYER).map((rp) => ({ id: rp.id, label: rp.name }));
+  let rolePlayers: Array<{
+    id: string;
+    label: string;
+  }>;
+  let dropdownOptions = { container: document.body, constrainWidth: false } as Partial<M.DropdownOptions>;
   const style = 'margin: 0 auto;';
 
   return {
-    view: ({ attrs: { injects, inject, previousInjects, disabled = false, onChange: oc } }) => {
+    oninit: ({ attrs: { trial } }) => {
+      rolePlayers = getUsersByRole(trial, UserRole.ROLE_PLAYER).map((rp) => ({ id: rp.id, label: rp.name }));
+    },
+    view: ({ attrs: { trial, injects, inject, previousInjects, disabled = false, onChange: oc } }) => {
       const onChange = (i: IInject) => oc(i, 'condition');
-      const { dropdownOptions } = state;
       // console.table(inject);
       if (!inject || inject.type === InjectType.SCENARIO) {
         return undefined;
@@ -81,7 +83,7 @@ export const InjectConditions: FactoryComponent<{
         condition: { injectId, injectState, type, rolePlayerId },
       } = inject;
       // console.table(condition);
-      const dependency = getInject(injectId, TrialSvc.getInjects());
+      const dependency = getInject(injectId, getInjects(trial));
       const previousInjectOptions = previousInjects.map((i) => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =
         dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'ended' }] : [];
@@ -116,7 +118,7 @@ export const InjectConditions: FactoryComponent<{
               {
                 id: InjectConditionType.AT_TIME,
                 label: 'at',
-                disabled: !TrialSvc.getCurrent(),
+                // disabled: !trial.id,
               },
             ],
             onchange: (v) => {
@@ -149,7 +151,7 @@ export const InjectConditions: FactoryComponent<{
             }),
           ],
           type === InjectConditionType.AT_TIME
-            ? m(StartAt, { disabled, condition: inject.condition, inject, onChange })
+            ? m(StartAt, { trial, disabled, condition: inject.condition, inject, onChange })
             : [
                 m(Delay, { disabled, inject, onChange }),
                 m('span.inline', 'after'),
@@ -228,15 +230,15 @@ const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (
 };
 
 const StartAt: FactoryComponent<{
+  trial: ITrial;
   condition: IInjectCondition;
   inject: IInject;
   disabled?: boolean;
   onChange: (inject: IInject) => void;
 }> = () => {
   return {
-    view: ({ attrs: { condition, inject, disabled = false, onChange } }) => {
+    view: ({ attrs: { trial, condition, inject, disabled = false, onChange } }) => {
       const { delay = 0, delayUnitType = 'seconds' } = condition;
-      const trial = TrialSvc.getCurrent();
       if (!trial) {
         return;
       }

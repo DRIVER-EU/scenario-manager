@@ -7,7 +7,15 @@ import { TrialList } from '../components/trials/trial-list';
 import { Layout } from '../components/layout';
 // import { InjectsView } from '../components/injects/injects-view';
 // import { UsersView } from '../components/users/users-list';
-import { AssetsView, ObjectivesView, OverviewMap, StakeholdersView, TrialSettings, UsersView } from '../components';
+import {
+  AssetsView,
+  InjectsView,
+  ObjectivesView,
+  OverviewMap,
+  StakeholdersView,
+  TrialSettings,
+  UsersView,
+} from '../components';
 // import { AssetsView } from '../components/assets';
 // import { SessionState } from '../components/session/session-state';
 // import { TrialSettings } from '../components/configuration/trial-settings';
@@ -88,14 +96,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     visible: true,
     component: TrialList,
   },
-  // {
-  //   id: Dashboards.TRIAL,
-  //   title: 'Edit',
-  //   icon: 'edit',
-  //   route: '/edit/scenarios',
-  //   visible: false,
-  //   component: InjectsView,
-  // },
+  {
+    id: Dashboards.TRIAL,
+    title: 'Edit',
+    icon: 'edit',
+    route: '/edit/scenarios',
+    visible: false,
+    component: InjectsView,
+  },
   // {
   //   id: Dashboards.EXECUTE,
   //   title: 'Run',
@@ -168,14 +176,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     component: ObjectivesView,
     level: Dashboards.TRIAL,
   },
-  // {
-  //   id: Dashboards.SCENARIOS,
-  //   title: 'Scenarios',
-  //   route: '/edit/scenarios',
-  //   visible: false,
-  //   component: InjectsView,
-  //   level: Dashboards.TRIAL,
-  // },
+  {
+    id: Dashboards.SCENARIOS,
+    title: 'Scenarios',
+    route: '/edit/scenarios',
+    visible: false,
+    component: InjectsView,
+    level: Dashboards.TRIAL,
+  },
   {
     id: Dashboards.MAP,
     title: 'Map',

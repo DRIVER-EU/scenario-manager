@@ -1,14 +1,14 @@
 import m from 'mithril';
 import { createPatch } from 'rfc6902';
 import { SocketSvc } from '.';
-import { IContent } from '../../../models/dist';
+import { IAsset, IContent } from '../../../models/dist';
 // import { createPatch, Operation } from 'rfc6902';
 // import { SocketSvc } from './socket-service';
 
 const log = console.log;
 const error = console.error;
 
-export interface IRestService<T extends IContent> {
+export interface IRestService<T extends IContent | IAsset> {
   url: string;
   create: (item: Partial<T>, fd?: FormData | undefined) => Promise<void | T>;
   update: (item: Partial<T>, fd?: FormData | undefined) => Promise<void | T>;
@@ -21,7 +21,7 @@ export interface IRestService<T extends IContent> {
 }
 
 const createRestServiceFactory = (apiService: string) => {
-  return <T extends IContent>(urlFragment: string) => {
+  return <T extends IContent | IAsset>(urlFragment: string) => {
     console.log(apiService);
     const url = `${apiService}/${urlFragment}/`;
     const withCredentials = false;
@@ -61,10 +61,10 @@ const createRestServiceFactory = (apiService: string) => {
       try {
         // console.log('Patch at ' + new Date());
         const patch = createPatch(old, current);
+        console.log(JSON.stringify(patch, null, 2));
         if (patch.length === 0) {
           return;
         }
-        // console.log(JSON.stringify(patch, null, 2));
         m.request<T>({
           method: 'PATCH',
           url: url + current.id,

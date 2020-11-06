@@ -1,6 +1,4 @@
 import m from 'mithril';
-import { Button } from 'mithril-materialized';
-import { deepCopy, deepEqual } from '../../../../models';
 import { MeiosisComponent } from '../../services';
 
 export const TrialSettings: MeiosisComponent = () => {

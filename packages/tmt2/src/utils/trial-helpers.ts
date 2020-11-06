@@ -1,4 +1,5 @@
 import {
+  deepCopy,
   getParent,
   IInject,
   InjectConditionType,
@@ -20,9 +21,10 @@ export const getUsers = (trial: ITrial, filter?: string) => {
   if (!trial || !trial.users) {
     return [];
   }
-  return filter
+  return (filter
     ? trial.users.filter((u) => u.name && u.name.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
-    : trial.users;
+    : trial.users
+  ).map((a) => a);
 };
 
 export const getUsersByRole = (trial: ITrial, role: UserRole) => {
@@ -61,7 +63,7 @@ export const getInjects = (trial?: ITrial, filter?: string) => {
 /** Get a specific inject */
 
 export const getInject = (trial?: ITrial, id?: string) => {
-  return trial && trial.injects && id ? (trial.injects || []).filter((s) => s.id === id).shift() : undefined;
+  return deepCopy(trial && trial.injects && id ? (trial.injects || []).filter((s) => s.id === id).shift() : undefined);
 };
 
 // Delete inject, including all children

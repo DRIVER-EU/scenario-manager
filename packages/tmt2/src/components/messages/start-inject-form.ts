@@ -1,26 +1,29 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestStartInject, InjectKeys } from '../../../../models';
-import { AppState } from '../../models';
+import { getMessage, IInject, MessageType, IRequestStartInject } from '../../../../models';
+import { MeiosisComponent } from '../../services';
+import { getInject } from '../../utils';
 
-export const StartInjectForm: FactoryComponent<{
-  inject: IInject;
-  disabled?: boolean;
-  onChange?: (inject: IInject, prop: InjectKeys) => void;
-}> = () => {
+export const StartInjectForm: MeiosisComponent = () => {
   const setTitle = (inject: IInject, si: IRequestStartInject) => {
     inject.title = `Run inject ${si.inject}`;
   };
 
   return {
-    oninit: ({ attrs: { inject } }) => {
+    view: ({
+      attrs: {
+        state: {
+          app: { trial, injectId, mode, owner },
+        },
+        actions: { updateInject },
+      },
+    }) => {
+      const disabled = mode !== 'edit';
+      const inject = getInject(trial, injectId);
+      if (!inject) return;
       const si = getMessage(inject, MessageType.START_INJECT) as IRequestStartInject;
-      si.id = inject.id as string;
-      si.applicant = AppState.owner;
-    },
-    view: ({ attrs: { inject, disabled, onChange } }) => {
-      const si = getMessage(inject, MessageType.START_INJECT) as IRequestStartInject;
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
+      si.id = inject.id;
+      si.applicant = owner;
 
       return [
         m(TextInput, {
@@ -33,7 +36,7 @@ export const StartInjectForm: FactoryComponent<{
           onchange: (v) => {
             si.inject = v;
             setTitle(inject, si);
-            update(['title', 'message']);
+            updateInject(inject);
           },
         }),
         m(TextArea, {
@@ -42,7 +45,7 @@ export const StartInjectForm: FactoryComponent<{
           initialValue: inject.description,
           onchange: (v: string) => {
             inject.description = v;
-            update('description');
+            updateInject(inject);
           },
           label: 'Description',
           iconName: 'note',

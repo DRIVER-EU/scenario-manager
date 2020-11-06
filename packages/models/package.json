@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "start": "tsc -w",
-    "dev": "tsc -w &",
+    "dev": "tsc -w",
     "build": "tsc"
   },
   "keywords": [],

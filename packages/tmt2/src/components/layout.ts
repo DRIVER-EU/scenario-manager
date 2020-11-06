@@ -41,7 +41,8 @@ export const Layout: MeiosisComponent = () => {
       if (!attrs || !attrs.state || !attrs.state.app) return;
       const { trial, session } = attrs.state.app;
       const curRoute = m.route.get();
-      if (!trial.id && curRoute !== dashboardSvc.defaultRoute) {
+      const curDashboard = dashboardSvc.getCurrent(curRoute);
+      if (!trial.id && curRoute !== dashboardSvc.defaultRoute && curDashboard?.id !== Dashboards.TRIAL_INFO) {
         return dashboardSvc.switchTo(Dashboards.HOME);
       }
       const mainPath = (path: string) => {
@@ -52,9 +53,12 @@ export const Layout: MeiosisComponent = () => {
         return subs.join('/');
       };
       const isActive = (path: string) => (curRoute.indexOf(path) >= 0 ? '.active' : '');
-      const curDashboard = dashboardSvc.getCurrent(curRoute);
-      const subDashboards = curDashboard ? dashboardSvc.getList(curDashboard.level || curDashboard.id) : [];
-      const hasSubDashboards = subDashboards && subDashboards.length > 0;
+      const subDashboards = curDashboard
+        ? dashboardSvc
+            .getList(curDashboard.level || curDashboard.id)
+            .filter((d) => trial.id || d.id === Dashboards.TRIAL_INFO)
+        : [];
+      const hasSubDashboards = subDashboards.length > 0;
       const executeMode = curDashboard
         ? curDashboard.id === Dashboards.EXECUTE || curDashboard.level === Dashboards.EXECUTE
         : false;
@@ -69,7 +73,7 @@ export const Layout: MeiosisComponent = () => {
         m('nav', { class: hasSubDashboards ? 'nav-extended' : '' }, [
           m('.nav-wrapper', [
             m('a.brand-logo', { style: 'margin-left: 20px' }, [
-              m(`img[width=32][height=32][src=${owl}]`, { style: 'margin: 5px 10px 0 -5px;' }),
+              m(`img[width=32][height=32][src=${owl}][alt=Boobook]`, { style: 'margin: 5px 10px 0 -5px;' }),
               m('span.black-text', { style: 'vertical-align: top;' }, title),
             ]),
             m(

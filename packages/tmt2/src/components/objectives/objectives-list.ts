@@ -47,7 +47,7 @@ export const ObjectivesList: MeiosisComponent = () => {
         onDelete: async (ti) => {
           deleteObjective(ti as IObjective);
         },
-        onUpdate: (ti, action) => {
+        onUpdate: (ti, _action) => {
           if (!ti.parentId) {
             ti.parentId = '';
           }
@@ -100,7 +100,7 @@ export const ObjectivesList: MeiosisComponent = () => {
                     title: cur.title,
                     content: cur.description,
                     iconName: 'my_location',
-                    onclick: (i: ICollectionItem) => selectObjective(cur),
+                    onclick: (_: ICollectionItem) => selectObjective(cur),
                   })),
                 })
               : m(TreeContainer, { tree: selectedObjectives, options })

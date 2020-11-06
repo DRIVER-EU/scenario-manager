@@ -1,47 +1,64 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestMove, InjectKeys } from '../../../../models';
+import { getMessage, IInject, MessageType, IRequestMove, ILocation } from '../../../../models';
 import { LeafletMap } from 'mithril-leaflet';
-import { LineString, FeatureCollection } from 'geojson';
-import { GeoJSON } from 'leaflet';
-import { AppState } from '../../models';
-import { geoJSONtoRoute } from '../../utils';
-import { TrialSvc } from '../../services';
+import { LineString, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import { geoJSON, GeoJSON } from 'leaflet';
+import { geoJSONtoRoute, getInject, isJSON, routeToGeoJSON } from '../../utils';
+import { MeiosisComponent } from '../../services';
 
-export const RequestUnitMoveForm: MediaSource = () => {
-  const state = {} as {
-    overlays?: { [key: string]: GeoJSON };
-  };
+export const RequestUnitMoveForm: MeiosisComponent = () => {
+  let overlays: { [key: string]: GeoJSON } = {};
 
   const setTitle = async (inject: IInject, si: IRequestMove) => {
     const newTitle = `Send ${si.entities.join(', ')} to ${si.destination}`;
-    TrialSvc.overlayRename(inject.title, newTitle);
-    state.overlays = await TrialSvc.overlays();
     inject.title = newTitle;
-    // m.redraw();
   };
 
-  return {
-    oninit: async ({ attrs: { inject } }) => {
-      const ut = getMessage(inject, MessageType.REQUEST_UNIT_MOVE) as IRequestMove;
-      ut.applicant = AppState.owner;
-      state.overlays = await TrialSvc.overlays();
-      if (!state.overlays) {
-        state.overlays = {};
-      }
-      if (!state.overlays.hasOwnProperty(inject.title)) {
-        state.overlays[inject.title] = {} as GeoJSON<any>;
-      }
-      m.redraw();
-    },
-    view: ({ attrs: { inject, disabled, onChange } }) => {
-      const { overlays } = state;
-      const ut = getMessage(inject, MessageType.REQUEST_UNIT_MOVE) as IRequestMove;
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') =>
-        onChange && onChange(inject, prop, true);
-      // const route = routeToGeoJSON(ut.waypoints);
-      // const { view, zoom } = centerArea(route);
+  const moveUnitLayer = 'Move unit';
 
+  return {
+    oninit: async ({
+      attrs: {
+        state: {
+          app: { trial, injectId, owner, assets },
+        },
+      },
+    }) => {
+      const inject = getInject(trial, injectId);
+      if (!inject) return;
+      const ut = getMessage(inject, MessageType.REQUEST_UNIT_MOVE) as IRequestMove;
+      ut.applicant = owner;
+      const route = ut.waypoints ? routeToGeoJSON(ut.waypoints) : undefined;
+      overlays[moveUnitLayer] = route || geoJSON();
+      const jsonAssets = assets.filter((a) => a.url && isJSON(a.filename));
+      for (const asset of jsonAssets) {
+        const result = await m.request<FeatureCollection<Geometry, GeoJsonProperties>>(asset.url as string);
+        if (result) {
+          overlays[asset.alias || asset.filename] = geoJSON(result);
+        }
+      }
+    },
+    view: ({
+      attrs: {
+        state: {
+          app: { trial, injectId, mode },
+        },
+        actions: { updateInject },
+      },
+    }) => {
+      const disabled = mode !== 'edit';
+      const inject = getInject(trial, injectId);
+      if (!inject) return;
+      const ut = getMessage<IRequestMove>(inject, MessageType.REQUEST_UNIT_MOVE);
+      const addWaypoints = (r: ILocation[]) => {
+        const inj = getInject(trial, injectId);
+        if (inj) {
+          const m = getMessage<IRequestMove>(inj, MessageType.REQUEST_UNIT_MOVE);
+          m.waypoints = r;
+          updateInject(inj);
+        }
+      };
       return [
         m(TextInput, {
           disabled,
@@ -54,7 +71,7 @@ export const RequestUnitMoveForm: MediaSource = () => {
           onchange: async (v) => {
             ut.entities = v.split(',').map((s) => s.trim());
             await setTitle(inject, ut);
-            update(['title', 'message']);
+            updateInject(inject);
           },
         }),
         m(TextInput, {
@@ -73,7 +90,7 @@ export const RequestUnitMoveForm: MediaSource = () => {
             }
             ut.tags.unit = v;
             await setTitle(inject, ut);
-            update(['title', 'message']);
+            updateInject(inject);
           },
         }),
         m(TextInput, {
@@ -87,31 +104,31 @@ export const RequestUnitMoveForm: MediaSource = () => {
           onchange: async (v) => {
             ut.destination = v;
             await setTitle(inject, ut);
-            update(['title', 'message']);
+            updateInject(inject);
           },
         }),
         m(LeafletMap, {
           style: 'width: 100%; height: 400px; margin-top: 10px;',
           overlays,
           autoFit: true,
-          visible: [inject.title],
-          editable: [inject.title],
+          visible: [moveUnitLayer],
+          editable: [moveUnitLayer],
           showScale: { imperial: false },
           onLayerEdited: (f) => {
             const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
             console.log('onLayerEdited');
             const r = geoJSONtoRoute(geojson);
-            if (r) {
-              ut.waypoints = r;
-              update();
-            }
+            r && addWaypoints(r);
           },
         }),
         m(TextArea, {
           disabled,
           id: 'desc',
           initialValue: inject.description,
-          onchange: (v: string) => (inject.description = v),
+          onchange: (v: string) => {
+            inject.description = v;
+            updateInject(inject);
+          },
           label: 'Description',
           iconName: 'description',
         }),

@@ -27,11 +27,11 @@ import { LineString, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
   Object.keys(e)
     .filter((v, i, arr) => i < arr.length / 2)
-    .map(k => +k);
+    .map((k) => +k);
 
 /** Map a string enum to a list of options */
 export const enumToOptions = <E extends { [P in keyof E]: string }>(e: E) =>
-  Object.keys(e).map(id => ({ id, label: id.replace(/_/g, ' ').toUpperCase() }));
+  Object.keys(e).map((id) => ({ id, label: id.replace(/_/g, ' ').toUpperCase() }));
 
 /**
  * Convert an item array to a tree. Assumes each item has a parentId.
@@ -43,8 +43,8 @@ export const unflatten = <T extends { id?: string; parentId?: string }>(
   tree = [] as Array<T & { children: T[] }>
 ) => {
   const children = (parent.id
-    ? entities.filter(entity => entity.parentId === parent.id)
-    : entities.filter(entity => !entity.parentId)) as Array<T & { children: T[] }>;
+    ? entities.filter((entity) => entity.parentId === parent.id)
+    : entities.filter((entity) => !entity.parentId)) as Array<T & { children: T[] }>;
 
   if (children.length > 0) {
     if (!parent.id) {
@@ -52,7 +52,7 @@ export const unflatten = <T extends { id?: string; parentId?: string }>(
     } else {
       parent.children = children;
     }
-    children.forEach(child => unflatten(entities, child));
+    children.forEach((child) => unflatten(entities, child));
   }
 
   return tree;
@@ -266,7 +266,7 @@ export const userRolesToString = (user: IPerson) => {
 /** Returns true if the user's roles contains the requested role */
 export const userRolesFilter = (user: IPerson, role: UserRole) => {
   const { roles } = user;
-  return roles.filter(r => r === role).length > 0;
+  return roles.filter((r) => r === role).length > 0;
 };
 
 export const eatSpaces = (ev: KeyboardEvent) => {
@@ -315,8 +315,8 @@ export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
   const olderSiblings = (id: string) => {
     let found = false;
     return injects
-      .filter(i => i.parentId === id)
-      .filter(i => {
+      .filter((i) => i.parentId === id)
+      .filter((i) => {
         found = i.id === inject.id;
         return !found;
       });
@@ -331,7 +331,7 @@ export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
   if (!parent) {
     return [];
   }
-  return [parent, ...olderSiblings(parent.id)];
+  return [parent, ...olderSiblings(parent.id as string)];
 };
 
 /**
@@ -342,8 +342,8 @@ export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
 export const getMessageSubjects = (mt: MessageType) => {
   const trial = TrialSvc.getCurrent();
   const messageTopics = trial.messageTopics || [];
-  const messageTopic = messageTopics.filter(t => t.messageType === mt).shift();
-  return messageTopic ? messageTopic.topics.map(t => ({ id: t.id, label: t.subject })) : [];
+  const messageTopic = messageTopics.filter((t) => t.messageType === mt).shift();
+  return messageTopic ? messageTopic.topics.map((t) => ({ id: t.id, label: t.subject })) : [];
 };
 
 /** Create an email link */
@@ -363,7 +363,7 @@ export const createPhoneLink = (phone?: string) => (phone ? `tel:${phone}` : '')
 /** Debounce a function */
 export const debounce = <F extends (...params: any[]) => void>(fn: F, delay = 100) => {
   let timeoutID: number;
-  return function(this: any, ...args: any[]) {
+  return function (this: any, ...args: any[]) {
     clearTimeout(timeoutID);
     timeoutID = window.setTimeout(() => fn.apply(this, args), delay);
   } as F;
@@ -475,7 +475,7 @@ export const affectedAreaToGeoJSON = (area?: IareaPoly) => {
     features: [],
   };
   if (area && area.type && area.coordinates && area.coordinates.length > 0) {
-    area.coordinates.forEach(coordinates =>
+    area.coordinates.forEach((coordinates) =>
       geojson.features.push({
         type: 'Feature',
         properties: {},
@@ -529,7 +529,7 @@ export const geoJSONtoRoute: GeoJSON2Route = (geojson: FeatureCollection<LineStr
   geojson.features.length === 0
     ? undefined
     : geojson.features[0].geometry.coordinates.map(
-        c =>
+        (c) =>
           ({
             longitude: c[0],
             latitude: c[1],

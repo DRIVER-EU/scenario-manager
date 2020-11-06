@@ -61,7 +61,7 @@ export class RestService<T extends { id?: string | number }> {
           body: fd || item,
           withCredentials,
         })
-        .catch(e => console.error(e));
+        .catch((e) => console.error(e));
       // this.setCurrent(data);
       this.setCurrent(item);
       this.updateItemInList(item);
@@ -79,7 +79,7 @@ export class RestService<T extends { id?: string | number }> {
       if (patch.length === 0) {
         return this.current;
       }
-      // console.log(JSON.stringify(patch, null, 2));
+      console.log(JSON.stringify(patch, null, 2));
       const item = await m
         .request<T>({
           method: 'PATCH',
@@ -87,7 +87,7 @@ export class RestService<T extends { id?: string | number }> {
           body: { id, patch },
           withCredentials,
         })
-        .catch(e => console.error(e));
+        .catch((e) => console.error(e));
       if (item) {
         this.setCurrent(item);
         this.updateItemInList(item);
@@ -220,11 +220,11 @@ export class RestService<T extends { id?: string | number }> {
   }
 
   private updateItemInList(item: T) {
-    this.setList(this.list.map(i => (i.id === item.id ? item : i)));
+    this.setList(this.list.map((i) => (i.id === item.id ? item : i)));
   }
 
   private removeItemFromList(id?: string | number) {
-    this.setList([...this.list.filter(i => i.id !== id)]);
+    this.setList([...this.list.filter((i) => i.id !== id)]);
   }
 
   /** Create the base URL, either using the apiService or the apiDevService */

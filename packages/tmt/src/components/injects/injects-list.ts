@@ -35,19 +35,19 @@ export const InjectsList = () => {
       },
     } as Component<ITreeItemViewComponent>,
     onSelect: (ti, isSelected) => injectSelected(ti as IInject, isSelected),
-    onBeforeCreate: ti => {
+    onBeforeCreate: (ti) => {
       TrialSvc.createInject(ti as IInject)
         .then(() => true)
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           return false;
         });
     },
-    onBeforeDelete: ti => console.log(`On before delete ${ti.title}`),
-    onDelete: async ti => {
+    onBeforeDelete: (ti) => console.log(`On before delete ${ti.title}`),
+    onDelete: async (ti) => {
       await TrialSvc.deleteInject(ti.id);
     },
-    onCreate: ti => injectSelected(ti as IInject, true),
+    onCreate: (ti) => injectSelected(ti as IInject, true),
     onBeforeUpdate: (ti, _, newParent) => {
       const src = ti as IInject;
       const tgt = newParent as IInject;
@@ -81,7 +81,7 @@ export const InjectsList = () => {
         if (!parent) {
           return { title: 'New scenario', type: InjectType.SCENARIO };
         }
-        const parentId = parent.id;
+        const parentId = parent.id as string;
         const condition = {
           delay: 0,
           delayUnitType: 'minutes',
@@ -122,7 +122,7 @@ export const InjectsList = () => {
         TrialSvc.validateInjects();
         const scenarios = trial.injects.filter(isScenario);
         const scenarioId = AppState.scenarioId || (scenarios.length > 0 ? scenarios[0].id : '');
-        AppState.scenarioId = scenarioId;
+        AppState.scenarioId = scenarioId as string;
       };
       loadScenarios();
     },
@@ -133,13 +133,13 @@ export const InjectsList = () => {
       const { scenarioId } = AppState;
       const injects = TrialSvc.getInjects() || [];
       const scenarios = injects.filter(isScenario) || [];
-      const scenario = scenarios.filter(s => s.id === scenarioId).shift() || scenarios[0];
+      const scenario = scenarios.filter((s) => s.id === scenarioId).shift() || scenarios[0];
       const filteredInjects = scenario ? pruneInjects(scenario, injects) || [] : [];
-      const scenarioOptions = scenarios.map(s => ({ id: s.id, label: s.title }));
+      const scenarioOptions = scenarios.map((s) => ({ id: s.id, label: s.title }));
       state.injects = filteredInjects;
       if (!state.selected && injects && injects.length > 0) {
         setTimeout(() => {
-          injectSelected(injects.filter(i => !i.parentId).shift(), true);
+          injectSelected(injects.filter((i) => !i.parentId).shift(), true);
           m.redraw();
         }, 0);
       }
@@ -152,9 +152,9 @@ export const InjectsList = () => {
                   options: scenarioOptions,
                   checkedId: scenarioId,
                   iconName: getInjectIcon(InjectType.SCENARIO),
-                  onchange: ids => {
+                  onchange: (ids) => {
                     AppState.scenarioId = ids[0] as string;
-                    const cur = scenarios.filter(s => s.id === ids[0]).shift() as IScenario;
+                    const cur = scenarios.filter((s) => s.id === ids[0]).shift() as IScenario;
                     injectsChannel.publish(TopicNames.ITEM_CREATE, { cur });
                   },
                 } as ISelectOptions),
@@ -171,7 +171,7 @@ export const InjectsList = () => {
                       title: 'New scenario',
                       type: InjectType.SCENARIO,
                     } as IScenario;
-                    AppState.scenarioId = newScenario.id;
+                    AppState.scenarioId = newScenario.id as string;
                     await TrialSvc.createInject(newScenario);
                     injectsChannel.publish(TopicNames.ITEM_CREATE, { cur: newScenario });
                   },

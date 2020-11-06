@@ -5,12 +5,12 @@ dependencies:
   materialize-css: 1.0.0
   mithril: 2.0.4
   mithril-leaflet: 0.4.3_491ddecb47f7cd12dfa6f425d3d35f4a
-  mithril-markdown: 0.3.0
-  mithril-materialized: 0.18.1_f3d9df6f4766fd28b6cfb8072ccbc3ca
+  mithril-markdown: 0.4.0
+  mithril-materialized: 'link:../../../../../Users/vullingshjlm/AppData/Roaming/npm/pnpm-global/node_modules/mithril-materialized'
   mithril-scenario-timeline: 0.1.4_mithril@2.0.4
   mithril-table: 0.2.2
   mithril-tree-component: 0.7.1
-  mithril-ui-form: 0.8.13_300441e9d6c595551d40dcfad08c8da8
+  mithril-ui-form: 0.8.13_8e76e53df606f7c0d046dab143dff384
   rfc6902: 4.0.1
   slimdown-js: 0.3.2
   socket.io-client: 2.3.1
@@ -3572,22 +3572,12 @@ packages:
       mithril: ^2.0.4
     resolution:
       integrity: sha512-vZh0qOQgSJawQpkYbyxqddLjPHTWdVUtv0FveUUBHo0GHjQotdSCTJzwaLQzC3lxPRsY58kh1Kv8QS2+Wk8CMw==
-  /mithril-markdown/0.3.0:
+  /mithril-markdown/0.4.0:
     dependencies:
       mithril: 2.0.4
     dev: false
     resolution:
-      integrity: sha512-al9AH5BEWRVCls7cZ9fVoCYfw2Tmj+QikjzpvDvvIDLIKcnJ0yO/3XccfTVsd+XlmqhTPCuYAB/rMtfPe9nJEA==
-  /mithril-materialized/0.18.1_f3d9df6f4766fd28b6cfb8072ccbc3ca:
-    dependencies:
-      materialize-css: 1.0.0
-      mithril: 2.0.4
-    dev: false
-    peerDependencies:
-      materialize-css: ^1.0.0
-      mithril: ^2.0.4
-    resolution:
-      integrity: sha512-PbnkopibyXOplrXkVywDv6hpYrvgWHvz60+OvCPldiWMHa+lwT6q7aUBXuUde6qrg7Ux0DIiBhqL1AvqrMb/3g==
+      integrity: sha512-MhwTZRDK0TaNIIukSa52Wz/GrZgmnEmnE1rtc0V4lO6446/d2mRBjF9J3GNyWzVg5d5USYuDRlPn5FG/3lBgHg==
   /mithril-scenario-timeline/0.1.4_mithril@2.0.4:
     dependencies:
       mithril: 2.0.4
@@ -3606,13 +3596,13 @@ packages:
     dev: false
     resolution:
       integrity: sha512-eCmpzCQar9yIk06OVf8Jv6XqsKdWmCywN79VcicldjCwdvRx/ftrZFTczEbJI+JNfmaVqwuVvUePr7Ee1WPqjg==
-  /mithril-ui-form/0.8.13_300441e9d6c595551d40dcfad08c8da8:
+  /mithril-ui-form/0.8.13_8e76e53df606f7c0d046dab143dff384:
     dependencies:
       leaflet: 1.7.1
       leaflet-draw: 1.0.4
       materialize-css: 1.0.0
       mithril: 2.0.4
-      mithril-materialized: 0.18.1_f3d9df6f4766fd28b6cfb8072ccbc3ca
+      mithril-materialized: 0.17.1_f3d9df6f4766fd28b6cfb8072ccbc3ca
       slimdown-js: 0.3.2
     dev: false
     peerDependencies:
@@ -5671,8 +5661,8 @@ specifiers:
   materialize-css: ^1.0.0
   mithril: ^2.0.4
   mithril-leaflet: ^0.4.3
-  mithril-markdown: ^0.3.0
-  mithril-materialized: ^0.18.1
+  mithril-markdown: ^0.4.0
+  mithril-materialized: ^0.17.1
   mithril-scenario-timeline: ^0.1.4
   mithril-table: ^0.2.2
   mithril-tree-component: ^0.7.1

@@ -52,7 +52,8 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; edit
     },
     view: ({ attrs: { inject, editing } }) => {
       const { show, isEditing } = state;
-      const { id, state: from, expectedExecutionTimeAt } = inject;
+      const { id: i, state: from, expectedExecutionTimeAt } = inject;
+      const id = i as string;
       const isWaiting = waitingForManualConfirmation(inject);
       const previousInjects = findPreviousInjects(inject, RunSvc.getInjects());
 
@@ -127,7 +128,7 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; edit
               iconClass: 'right',
             }),
             m(ModalPanel, {
-              onCreate: modal => {
+              onCreate: (modal) => {
                 modal.options.endingTop = '5%';
                 state.newInject = { id: uniqueId(), type: InjectType.INJECT, parentId: inject.id } as IInject;
               },
@@ -141,7 +142,7 @@ export const ManualTransition: FactoryComponent<{ inject: IExecutingInject; edit
                   checkedId: state.newInject.messageType,
                   options: state.options,
                   fixedFooter: true,
-                  onchange: v => {
+                  onchange: (v) => {
                     state.newInject.messageType = v[0] as MessageType;
                   },
                 }),

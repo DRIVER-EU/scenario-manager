@@ -39,11 +39,11 @@ export const TimelineView: FactoryComponent = () => {
         ancestors.pop(); // Remove scenario
         acc[cur.id] = ancestors
           .reverse()
-          .map(i => i.title)
+          .map((i) => i.title)
           .join(' > ');
         return acc;
       }, {} as { [key: string]: string });
-      const scenarios = trial.injects.filter(i => i.type === InjectType.SCENARIO);
+      const scenarios = trial.injects.filter((i) => i.type === InjectType.SCENARIO);
       if (!scenarios || scenarios.length === 0) {
         return;
       }
@@ -51,29 +51,29 @@ export const TimelineView: FactoryComponent = () => {
       state.trial = trial;
       state.injectNames = injectNames;
       state.scenarios = scenarios;
-      AppState.scenarioId = scenarioId;
+      AppState.scenarioId = scenarioId as string;
     },
     view: () => {
       const { trial, scenarios, injectNames, selectedId } = state;
       const { scenarioId } = AppState;
-      const scenario = scenarios.filter(s => s.id === scenarioId).shift();
+      const scenario = scenarios.filter((s) => s.id === scenarioId).shift();
       if (!scenario) {
         return undefined;
       }
       const onSelect = (ti: ITimelineItem) => {
         const { id } = ti;
         state.selectedId = id;
-        const inject = executingInjects.filter(i => i.id === id).shift() as IExecutingInject;
+        const inject = executingInjects.filter((i) => i.id === id).shift() as IExecutingInject;
         if (inject) {
           // console.table(inject);
           executingChannel.publish(TopicNames.ITEM_SELECT, { cur: inject });
         }
       };
       const injects = pruneInjects(scenario, trial.injects) || [];
-      const options = scenarios.map(s => ({ id: s.id, label: s.title }));
+      const options = scenarios.map((s) => ({ id: s.id, label: s.title }));
       const autoTransitions = injects
-        .filter(i => i.condition && i.condition.type === InjectConditionType.MANUALLY)
-        .map(i => ({ id: i.id, delayInMSec: 30000 }));
+        .filter((i) => i.condition && i.condition.type === InjectConditionType.MANUALLY)
+        .map((i) => ({ id: i.id as string, delayInMSec: 30000 }));
       const simStates = state.simStates || simulationEngine(trial, scenarioId, autoTransitions);
       if (typeof simStates === 'undefined') {
         return;
@@ -85,10 +85,10 @@ export const TimelineView: FactoryComponent = () => {
       }
 
       const executingInjects = injects
-        .filter(i => i.type === InjectType.INJECT)
-        .filter(i => simStates.hasOwnProperty(i.id))
+        .filter((i) => i.type === InjectType.INJECT)
+        .filter((i) => simStates.hasOwnProperty(i.id))
         .map(
-          i =>
+          (i) =>
             ({
               ...simStates[i.id],
               ...i,
@@ -97,7 +97,7 @@ export const TimelineView: FactoryComponent = () => {
       const items = executingInjects
         .sort((a, b) => (a.lastTransitionAt > b.lastTransitionAt ? 1 : -1))
         .map(
-          i =>
+          (i) =>
             ({
               id: i.id,
               active: selectedId === i.id,
@@ -117,7 +117,7 @@ export const TimelineView: FactoryComponent = () => {
               options,
               checkedId: scenarioId,
               iconName: getInjectIcon(InjectType.SCENARIO),
-              onchange: ids => {
+              onchange: (ids) => {
                 AppState.scenarioId = ids[0] as string;
                 state.simStates = undefined;
               },

@@ -75,11 +75,11 @@ export const SessionTimelineView: FactoryComponent = () => {
 
   const scenarioToTimelineItems = (scenario: IExecutingInject, items: IExecutingInject[]) => {
     const getChildren = (id: string): IExecutingInject[] => {
-      const children = items.filter(i => i.parentId === id);
-      return children.reduce((acc, c) => [...acc, ...getChildren(c.id)], children);
+      const children = items.filter((i) => i.parentId === id);
+      return children.reduce((acc, c) => [...acc, ...getChildren(c.id as string)], children);
     };
     const injectToTimelineItem = injectToTimelineItemFactory(AppState.injectStates);
-    const ti = [scenario, ...getChildren(scenario.id)].map(injectToTimelineItem);
+    const ti = [scenario, ...getChildren(scenario.id as string)].map(injectToTimelineItem);
     // console.log(JSON.stringify(ti, null, 2));
     return ti;
   };
@@ -88,7 +88,7 @@ export const SessionTimelineView: FactoryComponent = () => {
     const { scenarioStartTime } = AppState;
     const { id, startTime = 0 } = ti;
     const { injects, executingInjects } = state;
-    const inject = executingInjects.filter(i => i.id === id).shift();
+    const inject = executingInjects.filter((i) => i.id === id).shift();
     if (inject) {
       const t = new Date(scenarioStartTime.valueOf());
       t.setSeconds(scenarioStartTime.getSeconds() + startTime);
@@ -97,7 +97,7 @@ export const SessionTimelineView: FactoryComponent = () => {
       // inject.expectedExecutionTimeAt = t > lastTransition ? t : lastTransition;
       executingChannel.publish(TopicNames.ITEM_SELECT, { cur: inject });
       if (inject.type !== InjectType.INJECT) {
-        const selInject = injects.filter(i => i.id === inject.id).shift();
+        const selInject = injects.filter((i) => i.id === inject.id).shift();
         if (selInject) {
           selInject.isOpen = !selInject.isOpen;
         }
@@ -137,9 +137,9 @@ export const SessionTimelineView: FactoryComponent = () => {
       const { injectStates } = AppState;
 
       const executingInjects = injects
-        .filter(i => injectStates.hasOwnProperty(i.id))
+        .filter((i) => injectStates.hasOwnProperty(i.id))
         .map(
-          i =>
+          (i) =>
             ({
               ...i,
               ...injectStates[i.id],
@@ -147,7 +147,7 @@ export const SessionTimelineView: FactoryComponent = () => {
         );
       state.executingInjects = executingInjects;
       const activeScenario = executingInjects
-        ? executingInjects.filter(i => i.type === InjectType.SCENARIO).shift()
+        ? executingInjects.filter((i) => i.type === InjectType.SCENARIO).shift()
         : undefined;
 
       const scenario = activeScenario as IScenario;
