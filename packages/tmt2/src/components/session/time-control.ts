@@ -254,8 +254,6 @@ export const TimeControl: FactoryComponent<ITimeControlOptions> = () => {
   const updateStart: (vnode: m.Vnode<ITimeControlOptions, {}>) => void = ({ attrs: { scenario } }) => {
     console.log('scenario', scenario);
     const start = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
-    console.log('start');
-    console.table(scenario);
     state.startTime = formatTime(start);
     state.startDate = start;
   };

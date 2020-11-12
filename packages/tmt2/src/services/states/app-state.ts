@@ -1,4 +1,3 @@
-import io from 'socket.io-client';
 import Stream from 'mithril/stream';
 import { applyPatch, Operation } from 'rfc6902';
 import { actions, IRestService, restServiceFactory, SocketSvc } from '..';
@@ -22,17 +21,10 @@ import { MessageScope } from '../../components/messages';
 import { arrayMove, getInjects, validateInjects } from '../../utils';
 import { IAppModel, UpdateStream } from '../meiosis';
 import { RunSvc } from '../run-service';
-import { isComponentType } from 'mithril-ui-form';
+import { ISessionControl } from '../../models';
 
 const trialSvc = restServiceFactory<ITrial>('trials');
 let assetsSvc: IRestService<IAsset>;
-
-interface ISessionControl {
-  isConnected: boolean;
-  activeSession: boolean;
-  realtime: boolean;
-  host: string;
-}
 
 export interface IApp {
   apiService: string;
@@ -206,13 +198,19 @@ export const appStateMgmt = {
       connectToTestbed: () => {
         const { isConnected } = states().exe.sessionControl;
         const isTestbedConnected = async (data: IConnectMessage) => {
+          console.log('data', data);
           const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
-          await actions.updateSession(session);
-          actions.updateSessionControl({
-            activeSession: session.state === SessionState.Started,
-            isConnected,
-            host,
-            realtime: time?.simulationTime ? Math.abs(time?.simulationTime - Date.now()) < 10000 : true,
+          await actions.updateSession(Object.assign({ tags: undefined }, session));
+          update({
+            exe: {
+              sessionControl: {
+                activeSession: session.state === SessionState.Started || session.state === SessionState.Initializing,
+                isConnected,
+                host,
+                realtime: time?.simulationTime ? Math.abs(time?.simulationTime - Date.now()) < 10000 : true,
+              },
+              time,
+            },
           });
         };
         const connectToTestbed = () => {
@@ -248,7 +246,7 @@ export const appStateMgmt = {
         await RunSvc.load(session);
         update({
           exe: {
-            session,
+            session: session,
             sessionControl: { activeSession: session.state === SessionState.Started } as ISessionControl,
           },
         });
@@ -283,7 +281,11 @@ export const appStateMgmt = {
           const scenario = getInjects(trial)
             .filter((i) => i.type === InjectType.SCENARIO)
             .shift();
-          update({ app: { trial, assets, scenarioId: scenario?.id, mode } });
+          if (mode === 'edit') {
+            update({ app: { trial, assets, scenarioId: scenario?.id, mode } });
+          } else {
+            update({ exe: { trial, scenarioId: scenario?.id, session: {} }, app: { assets, mode } });
+          }
         }
       },
       saveTrial: async (newTrial?: ITrial) => {

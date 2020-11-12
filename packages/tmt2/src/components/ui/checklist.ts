@@ -39,9 +39,11 @@ export const Checklist: MeiosisComponent = () => {
   return {
     oninit: () => console.log('ONINIT Checklist'),
     view: ({ attrs: { state, actions } }) => {
-      const { trial, scenarioId, mode } = state.app;
+      const { mode } = state.app;
+      const isEditing = mode === 'edit';
+      const { trial, scenarioId } = isEditing ? state.app : state.exe;
       const { updateInject } = actions;
-      const disabled = mode !== 'edit';
+      const disabled = !isEditing;
       const scenario = getInject(trial, scenarioId) as IScenario;
       const { todoBefore, todoAfter } = scenario;
 

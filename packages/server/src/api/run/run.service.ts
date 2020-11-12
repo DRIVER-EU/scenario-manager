@@ -72,13 +72,16 @@ export class RunService {
 
     const trial = await this.trialService.findOne(trialId);
     if (!trial) {
+      console.error(`Trial ${trialId} not found!`);
       return false;
     }
     this.executionService.init(trial);
     const scenario = getParent(trial.injects, scenarioId) as IScenario;
     if (!scenario) {
+      console.error(`Scenario ${scenarioId} not found!`);
       return false;
     }
+    session.state = SessionState.Initializing;
     this.session = session;
     this.trial = trial;
     this.scenario = scenario;
@@ -97,11 +100,12 @@ export class RunService {
     };
 
     if (
-      this.kafkaService.once('time', time => {
+      this.kafkaService.once('time', (time) => {
         if (
           time.state === TimeState.Initialization ||
           time.state === TimeState.Started
         ) {
+          console.log('Starting update loop...');
           startUpdateLoop();
         }
       })
@@ -112,14 +116,19 @@ export class RunService {
   /** Close the active scenario */
   public async close() {
     this.isRunning = false;
-    this.activeSession.state = SessionState.Stopped;
-    this.kafkaService.sendSessionMessage(this.activeSession);
+    // this.activeSession.state = SessionState.Stopped;
     // setTimeout(() => {
-    this.session = undefined;
+    this.session = {
+      id: '',
+      state: SessionState.Closed,
+      name: '',
+      tags: {},
+    };
     this.trial = undefined;
     this.scenario = undefined;
     this.injects = [];
     this.states = {};
+    this.kafkaService.sendSessionMessage(this.session);
     this.sendConnectionStatus();
     // }, 1000);
   }
@@ -193,7 +202,7 @@ export class RunService {
     while (this.injectsQueue.length > 0) {
       const inject = this.injectsQueue.shift();
       const { id } = inject;
-      const found = this.injects.findIndex(u => u.id === id);
+      const found = this.injects.findIndex((u) => u.id === id);
       if (found !== -1) {
         console.log(`${new Date()}: Updating inject ${inject.title}.`);
         this.injects[found] = inject;

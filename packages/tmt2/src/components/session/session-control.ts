@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TimeControl } from './time-control';
-import { SocketSvc, RunSvc, MeiosisComponent } from '../../services';
+import { SocketSvc, MeiosisComponent } from '../../services';
 import {
   FlatButton,
   Select,
@@ -11,17 +11,7 @@ import {
   Icon,
   ModalPanel,
 } from 'mithril-materialized';
-import {
-  ITrial,
-  IScenario,
-  InjectType,
-  IConnectMessage,
-  ISessionManagement,
-  SessionState,
-  uniqueId,
-  TimeState,
-  ITimeManagement,
-} from '../../../../models';
+import { IScenario, InjectType, ISessionManagement, SessionState, uniqueId, TimeState } from '../../../../models';
 import { getInjectIcon, getInjects, getInject } from '../../utils';
 
 const isComplete = ({ id: sessionId, name: sessionName }: Partial<ISessionManagement>) =>
@@ -151,34 +141,25 @@ const SessionSettings: MeiosisComponent = () => {
 };
 
 export const SessionControl: MeiosisComponent = () => {
-  const socket = SocketSvc.socket;
   let scenario = undefined as IScenario | undefined;
-  let time = {} as ITimeManagement;
-  let disconnectModal = undefined as undefined | M.Modal;
-  let isTestbedConnected: (data: IConnectMessage) => Promise<void>;
-
-  const updateTime = (tm: ITimeManagement) => {
-    // console.log('Time msg received: ' + JSON.stringify(tm));
-    if (time.state !== tm.state || time.simulationSpeed !== tm.simulationSpeed) {
-      time = tm;
-      m.redraw();
-    }
-  };
 
   return {
-    oninit: async () => {
-      // state.scenarios = state.trial.injects.filter(i => i.type === InjectType.SCENARIO);
-      socket.on('time', updateTime);
-    },
-    onremove: () => {
-      socket.off('time', updateTime);
+    oninit: async ({
+      attrs: {
+        state: {
+          app,
+          exe: { trial = app.trial, scenarioId = app.scenarioId },
+        },
+      },
+    }) => {
+      scenario = getInject(trial, scenarioId) as IScenario;
+      console.log('SC scenario', scenario);
     },
     view: ({ attrs: { state, actions } }) => {
-      const { session, sessionControl } = state.exe;
+      const { session, sessionControl, time } = state.exe;
       const { isConnected } = sessionControl;
       const { updateSessionControl } = actions;
       const { realtime, activeSession } = sessionControl;
-      // const key = scenario ? scenario.id : undefined;
       const canStart = activeSession && isComplete(session);
       const iconName = time
         ? time.state === TimeState.Reset
@@ -212,7 +193,6 @@ export const SessionControl: MeiosisComponent = () => {
         m(SessionSettings, { state, actions }),
         m(
           'div',
-          // { key },
           activeSession
             ? realtime
               ? m(
@@ -233,7 +213,6 @@ export const SessionControl: MeiosisComponent = () => {
                   )
                 )
               : m(TimeControl, {
-                  // style: 'margin-left: 3em',
                   scenario,
                   isConnected,
                   time,
@@ -243,21 +222,19 @@ export const SessionControl: MeiosisComponent = () => {
             : undefined
         ),
         // : undefined,
-        m(ModalPanel, {
-          onCreate: (modal) => {
-            disconnectModal = modal;
-          },
-          id: 'disconnect',
-          title: 'Are you certain you want to disconnect?',
-          description: 'After disconnecting, you will not receive updates anymore.',
-          buttons: [
-            { label: 'No, bring me back to safety' },
-            {
-              label: 'Yes, I am sure!',
-              onclick: () => socket.emit('test-bed-disconnect'),
-            },
-          ],
-        }),
+        // m(ModalPanel, {
+        //   // onCreate: (modal) => {},
+        //   id: 'disconnect',
+        //   title: 'Are you certain you want to disconnect?',
+        //   description: 'After disconnecting, you will not receive updates anymore.',
+        //   buttons: [
+        //     { label: 'No, bring me back to safety' },
+        //     {
+        //       label: 'Yes, I am sure!',
+        //       onclick: () => socket.emit('test-bed-disconnect'),
+        //     },
+        //   ],
+        // }),
       ];
     },
   };

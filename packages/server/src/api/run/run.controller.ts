@@ -92,9 +92,7 @@ export class RunController {
       !this.runService.activeSession ||
       this.runService.activeSession.state !== SessionState.Started
     ) {
-      return response
-        .status(HttpStatus.NOT_FOUND)
-        .send('No scenario active, please activate one first');
+      this.runService.close();
     }
     if (this.runService.activeSession.state === SessionState.Started) {
       await this.runService.close();
@@ -131,9 +129,10 @@ export class RunController {
         .status(HttpStatus.BAD_REQUEST)
         .send('First deactivate current scenario');
     }
+    let result: boolean;
     try {
       this.isLoading = true;
-      this.runService.init(session);
+      result = await this.runService.init(session);
     } catch (err) {
       return response
         .status(HttpStatus.BAD_REQUEST)
@@ -141,7 +140,9 @@ export class RunController {
     } finally {
       this.isLoading = false;
     }
-    return response.sendStatus(HttpStatus.OK);
+    return response.sendStatus(
+      result ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE,
+    );
   }
 
   @ApiOperation({ description: 'Request a state transition which may fail.' })

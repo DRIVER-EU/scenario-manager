@@ -1,16 +1,13 @@
 import m from 'mithril';
 import { TextInput, RoundIconButton, Icon } from 'mithril-materialized';
-import { dashboardSvc, MeiosisComponent, SocketSvc } from '../../services';
+import { dashboardSvc, MeiosisComponent } from '../../services';
 import { titleAndDescriptionFilter, padLeft } from '../../utils';
-import { IConnectMessage, ITrialOverview } from '../../../../models';
+import { ITrialOverview, TimeState } from '../../../../models';
 import { Dashboards } from '../../models';
 
 export const TrialList: MeiosisComponent = () => {
-  const socket = SocketSvc.socket;
   let filterValue: string | undefined;
   let loaded = false;
-  let isTestbedConnected: (data: IConnectMessage) => Promise<void>;
-  let connectToTestbed: () => void;
 
   const formatDate = (date: Date | string) => {
     const d = new Date(date);
@@ -27,10 +24,6 @@ export const TrialList: MeiosisComponent = () => {
       connectToTestbed();
       loaded = true;
     },
-    onremove: () => {
-      socket.off('connect', connectToTestbed);
-      socket.off('is-connected', isTestbedConnected);
-    },
     view: ({
       attrs: {
         state: {
@@ -38,6 +31,7 @@ export const TrialList: MeiosisComponent = () => {
           exe: {
             sessionControl: { isConnected, activeSession },
             session,
+            time: { state },
           },
         },
         actions: { loadTrial },
@@ -48,7 +42,6 @@ export const TrialList: MeiosisComponent = () => {
       const query = titleAndDescriptionFilter(filterValue);
       const filteredTrials = trials.filter(query);
       const apiService = process.env.SERVER || location.origin;
-
       return m('.scenario-list', [
         m('.row', [
           m(TextInput, {
@@ -56,7 +49,11 @@ export const TrialList: MeiosisComponent = () => {
             label: 'Session status',
             className: 'col s6 m3 l2',
             initialValue: `${
-              isConnected ? (activeSession ? `Running ${name}` : 'No active sessions') : 'Not connected'
+              isConnected
+                ? activeSession
+                  ? `${state === TimeState.Started ? 'Running' : 'Loaded'}: ${name}`
+                  : 'No active sessions'
+                : 'Not connected'
             }`,
           }),
           m(RoundIconButton, {
@@ -131,7 +128,7 @@ export const TrialList: MeiosisComponent = () => {
                       iconName: 'content_copy',
                     })
                   ),
-                  (!activeSession || trialId === trial.id) &&
+                  (state === TimeState.Reset || trialId === trial.id) &&
                     m(
                       'a',
                       {

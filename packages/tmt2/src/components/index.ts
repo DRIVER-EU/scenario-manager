@@ -10,3 +10,4 @@ export * from './layout';
 export * from './trials/trial-form';
 export * from './trials/trial-list';
 export * from './executing/executing-inject-view';
+export * from './status/status-bar';

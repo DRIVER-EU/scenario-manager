@@ -107,11 +107,11 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   private subscribe() {
-    this.adapter.on('time', message => {
+    this.adapter.on('time', (message) => {
       this.emit('time', message);
     });
-    this.adapter.on('message', message => this.handleMessage(message));
-    this.adapter.on('error', err =>
+    this.adapter.on('message', (message) => this.handleMessage(message));
+    this.adapter.on('error', (err) =>
       this.log.error(`Consumer received an error: ${err}`),
     );
     // this.adapter.on('offsetOutOfRange', err =>
@@ -199,11 +199,15 @@ export class KafkaService extends EventEmitter implements TimeService {
     });
   }
 
+  private debouncer: NodeJS.Timeout;
+
   private handleMessage(message: IAdapterMessage) {
     switch (message.topic) {
       case TrialManagementSessionMgmtTopic:
         this.session = message.value as ISessionManagement;
-        console.table(this.session);
+        clearTimeout(this.debouncer);
+        this.debouncer = setTimeout(() => console.table(this.session), 1000);
+        // debounce(() => console.table(this.session), 1000);
         this.debouncedEmit('session-update', this.session);
         break;
       default:

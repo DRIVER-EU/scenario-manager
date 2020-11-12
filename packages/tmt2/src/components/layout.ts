@@ -8,6 +8,7 @@ import { Icon } from 'mithril-materialized';
 import { IDashboard } from '../models';
 import { SessionState, TimeState } from '../../../models';
 import { MediaControls } from './session/time-control';
+import { StatusBar } from '.';
 
 export const Layout: MeiosisComponent = () => {
   const MenuItem: FactoryComponent<IDashboard> = () => {
@@ -75,7 +76,13 @@ export const Layout: MeiosisComponent = () => {
               'ul.right',
               dashboardSvc
                 .getList()
-                .filter((d) => d.visible || (trial.id && !d.level))
+                .filter((d) =>
+                  d.id === Dashboards.EXECUTE
+                    ? isExeMode
+                    : d.id === Dashboards.TRIAL
+                    ? !isExeMode && trial.id
+                    : d.visible || (trial.id && !d.level)
+                )
                 .map((d) => m(`li${isActive(mainPath(d.route))}`, m(MenuItem, d)))
             ),
           ]),
@@ -101,7 +108,7 @@ export const Layout: MeiosisComponent = () => {
             ),
         ]),
         m('section.main[id=main]', children),
-        executeMode ? m(StatusBar) : undefined,
+        executeMode && m(StatusBar, { state, actions: attrs.actions }),
       ]);
     },
   };
