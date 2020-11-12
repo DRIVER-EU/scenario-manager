@@ -25,7 +25,10 @@ export const MessageForm: MeiosisComponent = () => {
   const MessageFormSelector: MeiosisComponent = () => {
     return {
       view: ({ attrs: { state, actions } }) => {
-        const { injectId, trial } = state.app;
+        const { mode } = state.app;
+        const isExecuting = mode === 'execute';
+        const { trial, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
+        // const { injectId, trial } = state.app;
         const inject = getInject(trial, injectId);
         if (!inject) return;
         switch (inject.messageType) {
@@ -65,8 +68,10 @@ export const MessageForm: MeiosisComponent = () => {
   return {
     oninit: () => console.log('ONINIT MessageForm'),
     view: ({ attrs: { state, actions } }) => {
-      const { injectId, trial } = state.app;
-      const inject = getInject(trial, injectId);
+      const { mode } = state.app;
+      const isExecuting = mode === 'execute';
+      const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
+      const inject = getInject(trial, injectId || scenarioId);
       return inject
         ? inject.type === InjectType.INJECT
           ? m('.message-form', m(MessageFormSelector, { state, actions }))

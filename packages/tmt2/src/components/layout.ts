@@ -1,12 +1,13 @@
 import m, { FactoryComponent } from 'mithril';
 import owl from '../assets/owl.svg';
-import { dashboardSvc, MeiosisComponent } from '../services';
+import { dashboardSvc, MeiosisComponent, SocketSvc } from '../services';
 import { Dashboards } from '../models/dashboards';
 // import { StatusBar } from './status/status-bar';
 import { Icon } from 'mithril-materialized';
 // import { MediaControls } from './session/time-control';
 import { IDashboard } from '../models';
-import { SessionState } from '../../../models';
+import { SessionState, TimeState } from '../../../models';
+import { MediaControls } from './session/time-control';
 
 export const Layout: MeiosisComponent = () => {
   const MenuItem: FactoryComponent<IDashboard> = () => {
@@ -28,18 +29,12 @@ export const Layout: MeiosisComponent = () => {
   };
 
   return {
-    view: ({
-      children,
-      attrs,
-      // attrs: {
-      //   state: {
-      //     app: { trial, session },
-      //   },
-      //   // actions: { changePage },
-      // },
-    }) => {
+    view: ({ children, attrs }) => {
       if (!attrs || !attrs.state || !attrs.state.app) return;
-      const { trial, session } = attrs.state.app;
+      const state = attrs.state;
+      const isExeMode = state.app.mode === 'execute';
+      const trial = isExeMode && state.exe.trial.id ? state.exe.trial : state.app.trial;
+      const { session, time } = state.exe;
       const curRoute = m.route.get();
       const curDashboard = dashboardSvc.getCurrent(curRoute);
       if (!trial.id && curRoute !== dashboardSvc.defaultRoute && curDashboard?.id !== Dashboards.TRIAL_INFO) {
@@ -84,30 +79,29 @@ export const Layout: MeiosisComponent = () => {
                 .map((d) => m(`li${isActive(mainPath(d.route))}`, m(MenuItem, d)))
             ),
           ]),
-          hasSubDashboards
-            ? m(
-                '.nav-content',
-                m('ul.tabs.tabs-transparent', [
-                  ...subDashboards.map((d) => m(`li.tab${isActive(d.route)}`, m(MenuItem, d))),
-                  // executeMode && time && time.state !== TimeState.Reset
-                  //   ? m(MediaControls, {
-                  //       id: 'layout-controls',
-                  //       className: 'right',
-                  //       socket: SocketSvc.socket,
-                  //       realtime: false,
-                  //       isPaused: time.state === TimeState.Paused,
-                  //       canChangeSpeed: true,
-                  //       canStop: false,
-                  //       time,
-                  //     })
-                  //   : undefined,
-                ])
-              )
-            : undefined,
+          hasSubDashboards &&
+            m(
+              '.nav-content',
+              m('ul.tabs.tabs-transparent', [
+                ...subDashboards.map((d) => m(`li.tab${isActive(d.route)}`, m(MenuItem, d))),
+                executeMode &&
+                  time &&
+                  time.state !== TimeState.Reset &&
+                  m(MediaControls, {
+                    id: 'layout-controls',
+                    className: 'right',
+                    socket: SocketSvc.socket,
+                    realtime: false,
+                    isPaused: time.state === TimeState.Paused,
+                    canChangeSpeed: true,
+                    canStop: false,
+                    time,
+                  }),
+              ])
+            ),
         ]),
         m('section.main[id=main]', children),
-        // m('section.main', { style: 'height: 80vh; overflow-y: auto;' }, vnode.children),
-        // executeMode ? m(StatusBar) : undefined,
+        executeMode ? m(StatusBar) : undefined,
       ]);
     },
   };

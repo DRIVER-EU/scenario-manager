@@ -1,9 +1,9 @@
-import m, { FactoryComponent, Attributes } from 'mithril';
+import m, { Attributes } from 'mithril';
 import { LeafletMap } from 'mithril-leaflet';
-import { IScenario } from '../../../../models';
+import { getMessage, IAffectedArea, IRequestMove, IScenario, MessageType } from '../../../../models';
 import L, { geoJSON, GeoJSON } from 'leaflet';
 import { MeiosisComponent } from '../../services';
-import { isJSON } from '../../utils';
+import { affectedAreaToGeoJSON, getInjects, isJSON, routeToGeoJSON } from '../../utils';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 export interface IOverviewMap extends Attributes {
@@ -16,13 +16,13 @@ export interface IOverviewMap extends Attributes {
  */
 export const OverviewMap: MeiosisComponent = () => {
   let map: L.Map;
-  let overlays = undefined as { [key: string]: GeoJSON } | undefined;
+  let overlays = {} as { [key: string]: GeoJSON };
 
   return {
     oninit: async ({
       attrs: {
         state: {
-          app: { assets },
+          app: { assets, trial },
         },
       },
     }) => {
@@ -39,6 +39,28 @@ export const OverviewMap: MeiosisComponent = () => {
           acc[aliases[index]] = geoJSON(json as GeoJSON.FeatureCollection);
         return acc;
       }, {} as { [key: string]: GeoJSON });
+      getInjects(trial)
+        .filter(
+          (i) => i.messageType === MessageType.REQUEST_UNIT_MOVE || i.messageType === MessageType.SET_AFFECTED_AREA
+        )
+        .forEach((i) => {
+          switch (i.messageType) {
+            case MessageType.REQUEST_UNIT_MOVE:
+              const ut = getMessage<IRequestMove>(i, MessageType.REQUEST_UNIT_MOVE);
+              const route = ut.waypoints ? routeToGeoJSON(ut.waypoints) : undefined;
+              if (route) {
+                overlays[i.title] = route;
+              }
+              break;
+            case MessageType.SET_AFFECTED_AREA:
+              const aa = getMessage<IAffectedArea>(i, MessageType.SET_AFFECTED_AREA);
+              const area = affectedAreaToGeoJSON(aa.area);
+              if (area) {
+                overlays[i.title] = area;
+              }
+              break;
+          }
+        });
     },
     view: () =>
       overlays

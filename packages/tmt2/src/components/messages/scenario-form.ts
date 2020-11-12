@@ -30,9 +30,11 @@ export const ScenarioForm: MeiosisComponent = () => {
       };
     },
     view: ({ attrs: { state, actions } }) => {
-      const { trial, scenarioId, mode } = state.app;
+      const { mode } = state.app;
+      const isExecuting = mode === 'execute';
+      const { trial, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
       const scenario = getInject(trial, scenarioId) as IScenario;
-      const disabled = mode !== 'edit';
+      const disabled = isExecuting;
 
       const startDate = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const endDate = scenario.endDate
@@ -43,23 +45,21 @@ export const ScenarioForm: MeiosisComponent = () => {
       }
       return [
         m(DefaultMessageForm, { state, actions }),
-        disabled
-          ? undefined
-          : [
-              m(DateTimeControl, {
-                className: 'col s12 m6',
-                prefix: 'Start',
-                dt: startDate,
-                onchange: (d: Date) => onchangeDate(scenario, d, 'start'),
-              }),
-              m(DateTimeControl, {
-                className: 'col s12 m6',
-                prefix: 'End',
-                icon: 'timer_off',
-                dt: endDate,
-                onchange: (d: Date) => onchangeDate(scenario, d, 'end'),
-              }),
-            ],
+        m(DateTimeControl, {
+          className: 'col s12 m6',
+          prefix: 'Start',
+          disabled,
+          dt: startDate,
+          onchange: (d: Date) => onchangeDate(scenario, d, 'start'),
+        }),
+        m(DateTimeControl, {
+          className: 'col s12 m6',
+          prefix: 'End',
+          disabled,
+          icon: 'timer_off',
+          dt: endDate,
+          onchange: (d: Date) => onchangeDate(scenario, d, 'end'),
+        }),
         m(Checklist, { state, actions }),
       ];
     },

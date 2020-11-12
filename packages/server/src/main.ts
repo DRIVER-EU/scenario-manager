@@ -7,7 +7,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  process.on('uncaughtException', err => {
+  process.on('uncaughtException', (err) => {
     console.error('Caught exception: ' + err);
   });
   process.on('unhandledRejection', (reason, promise) => {
@@ -16,7 +16,9 @@ async function bootstrap() {
       console.error((reason as any).stack);
     }
   });
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(bodyParser.urlencoded({ limit: '10mb' }));
   app.use(express.static(path.join(process.cwd(), 'public')));
@@ -24,7 +26,7 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('Trial manager service')
     .setDescription('The Trial manager API description')
-    .setVersion('0.1')
+    .setVersion('1.0')
     .addTag('Trial manager service')
     .build();
   const document = SwaggerModule.createDocument(app, options);

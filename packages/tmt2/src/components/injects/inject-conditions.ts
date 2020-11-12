@@ -7,13 +7,13 @@ import {
   IInjectCondition,
   IScenario,
   getParent,
-  getInject,
   isAncestor,
   UserRole,
   ITrial,
 } from '../../../../models';
 import { Select, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
-import { getInjects, getUsersByRole, padLeft } from '../../utils';
+import { findPreviousInjects, getInject, getInjects, getUsersByRole, padLeft } from '../../utils';
+import { MeiosisComponent } from '../../services';
 
 /*
 # Inject conditions
@@ -46,14 +46,7 @@ For acts and storylines, which are at the beginning of a sequence
 */
 
 /** Allows to set the inject conditions, i.e. when does the inject get executed. */
-export const InjectConditions: FactoryComponent<{
-  trial: ITrial;
-  injects: IInject[];
-  inject: IInject;
-  previousInjects: IInject[];
-  disabled?: boolean;
-  onChange: (i: IInject, prop: keyof IInject | Array<keyof IInject>) => void;
-}> = () => {
+export const InjectConditions: MeiosisComponent = () => {
   let rolePlayers: Array<{
     id: string;
     label: string;
@@ -62,15 +55,31 @@ export const InjectConditions: FactoryComponent<{
   const style = 'margin: 0 auto;';
 
   return {
-    oninit: ({ attrs: { trial } }) => {
+    oninit: ({
+      attrs: {
+        state: {
+          app: { trial },
+        },
+      },
+    }) => {
       rolePlayers = getUsersByRole(trial, UserRole.ROLE_PLAYER).map((rp) => ({ id: rp.id, label: rp.name }));
     },
-    view: ({ attrs: { trial, injects, inject, previousInjects, disabled = false, onChange: oc } }) => {
-      const onChange = (i: IInject) => oc(i, 'condition');
+    view: ({
+      attrs: {
+        state: {
+          app: { trial, injectId: iid, mode },
+        },
+        actions: { updateInject },
+      },
+    }) => {
+      const disabled = mode !== 'edit';
+      const inject = getInject(trial, iid);
+      const injects = getInjects(trial);
       // console.table(inject);
       if (!inject || inject.type === InjectType.SCENARIO) {
         return undefined;
       }
+      const previousInjects = findPreviousInjects(inject, getInjects(trial));
       if (!inject.condition) {
         inject.condition = {
           type: InjectConditionType.IMMEDIATELY,
@@ -83,7 +92,7 @@ export const InjectConditions: FactoryComponent<{
         condition: { injectId, injectState, type, rolePlayerId },
       } = inject;
       // console.table(condition);
-      const dependency = getInject(injectId, getInjects(trial));
+      const dependency = getInject(trial, injectId);
       const previousInjectOptions = previousInjects.map((i) => ({ id: i.id, label: i.title }));
       const injectStateOptions: IInputOption[] =
         dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'ended' }] : [];
@@ -131,7 +140,7 @@ export const InjectConditions: FactoryComponent<{
               }
               inject.condition!.type = v[0] as InjectConditionType;
               // state.inject!.condition = condition;
-              onChange(inject);
+              updateInject(inject);
             },
           }),
           type === InjectConditionType.MANUALLY && [
@@ -146,14 +155,14 @@ export const InjectConditions: FactoryComponent<{
               onchange: (v) => {
                 inject.condition!.rolePlayerId = v[0] as string;
                 // state.inject!.condition! = condition;
-                onChange(inject);
+                updateInject(inject);
               },
             }),
           ],
           type === InjectConditionType.AT_TIME
-            ? m(StartAt, { trial, disabled, condition: inject.condition, inject, onChange })
+            ? m(StartAt, { trial, disabled, condition: inject.condition, inject, updateInject })
             : [
-                m(Delay, { disabled, inject, onChange }),
+                m(Delay, { disabled, inject, updateInject }),
                 m('span.inline', 'after'),
                 m(Select, {
                   dropdownOptions,
@@ -166,7 +175,7 @@ export const InjectConditions: FactoryComponent<{
                   onchange: (v) => {
                     inject.condition!.injectId = v[0] as InjectConditionType;
                     // state.inject!.condition = condition;
-                    onChange(inject);
+                    updateInject(inject);
                   },
                 }),
                 m('span.inline', 'has'),
@@ -180,7 +189,7 @@ export const InjectConditions: FactoryComponent<{
                   onchange: (v) => {
                     inject.condition!.injectState = v[0] as InjectState;
                     // state.inject!.condition = condition;
-                    onChange(inject);
+                    updateInject(inject);
                   },
                 }),
               ],
@@ -191,9 +200,13 @@ export const InjectConditions: FactoryComponent<{
   };
 };
 
-const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (inject: IInject) => void }> = () => {
+const Delay: FactoryComponent<{
+  inject: IInject;
+  disabled?: boolean;
+  updateInject: (inject: IInject) => Promise<void>;
+}> = () => {
   return {
-    view: ({ attrs: { inject, disabled = false, onChange } }) => {
+    view: ({ attrs: { inject, disabled = false, updateInject } }) => {
       const { condition } = inject;
       return condition &&
         (condition.type === InjectConditionType.DELAY || condition.type === InjectConditionType.MANUALLY)
@@ -205,7 +218,7 @@ const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (
               initialValue: condition.delay,
               onchange: (v: number) => {
                 inject.condition!.delay = v;
-                onChange(inject);
+                updateInject(inject);
               },
             }),
             m(Select, {
@@ -220,7 +233,7 @@ const Delay: FactoryComponent<{ inject: IInject; disabled?: boolean; onChange: (
               ],
               onchange: (v) => {
                 inject.condition!.delayUnitType = v[0] as 'seconds' | 'minutes' | 'hours' | undefined;
-                onChange(inject);
+                updateInject(inject);
               },
             }),
           ]
@@ -234,10 +247,10 @@ const StartAt: FactoryComponent<{
   condition: IInjectCondition;
   inject: IInject;
   disabled?: boolean;
-  onChange: (inject: IInject) => void;
+  updateInject: (inject: IInject) => Promise<void>;
 }> = () => {
   return {
-    view: ({ attrs: { trial, condition, inject, disabled = false, onChange } }) => {
+    view: ({ attrs: { trial, condition, inject, disabled = false, updateInject } }) => {
       const { delay = 0, delayUnitType = 'seconds' } = condition;
       if (!trial) {
         return;
@@ -274,7 +287,7 @@ const StartAt: FactoryComponent<{
           }
           inject.condition!.delay = dtInSec;
           inject.condition!.delayUnitType = 'seconds';
-          onChange(inject);
+          updateInject(inject);
         },
       });
     },

@@ -17,6 +17,9 @@ When using PNPM, install dependencies using `pnpm --shamefully-hoist`!
 TODO
 
 - Use the active message topics to determine which topics to subscribe to.
+- Refactor MessageType to a Record, where the key is a message type (as string), and the value is an object, either a component or a JSON form that can be turned into a component using the ui-form lib.
+- Timeline should use the state.treeState to show open/closed items
+- Wrap the runSvc in an action.
 
 Add it to the simulation viewer.
 

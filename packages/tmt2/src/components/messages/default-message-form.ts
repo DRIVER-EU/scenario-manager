@@ -9,14 +9,15 @@ import { getInject } from '../../utils';
 export const DefaultMessageForm: MeiosisComponent = () => ({
   view: ({
     attrs: {
-      state: {
-        app: { mode, trial, injectId },
-      },
+      state,
       actions: { updateInject },
     },
   }) => {
-    const inject = getInject(trial, injectId);
-    const disabled = mode !== 'edit';
+    const { mode } = state.app;
+    const isExecuting = mode === 'execute';
+    const { trial, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
+    const inject = getInject(trial, scenarioId);
+    const disabled = isExecuting;
     return (
       inject && [
         m(TextInput, {

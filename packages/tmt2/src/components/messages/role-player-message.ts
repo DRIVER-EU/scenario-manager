@@ -1,14 +1,6 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput, Select, Collection, CollectionMode, Icon, FlatButton } from 'mithril-materialized';
-import {
-  getMessage,
-  MessageType,
-  UserRole,
-  IRolePlayerMsg,
-  RolePlayerMessageType,
-  IPerson,
-  IExecutingInject,
-} from '../../../../models';
+import { getMessage, MessageType, UserRole, IRolePlayerMsg, RolePlayerMessageType, IPerson } from '../../../../models';
 import { MeiosisComponent, RunSvc } from '../../services';
 import { createEmailLink, createPhoneLink, getInject, getRolePlayerMessageIcon, getUsersByRole } from '../../utils';
 
@@ -23,8 +15,6 @@ export const RolePlayerMessageForm: MeiosisComponent<{ checkpoint?: boolean }> =
         actions: { updateInject },
       },
     }) => {
-      // const update = (prop: keyof IInject | Array<keyof IInject>) => onChange && onChange(inject, prop);
-      // const svc = scope === 'edit' ? TrialSvc : RunSvc;
       const inject = getInject(trial, injectId);
       if (!inject) return;
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
@@ -117,10 +107,7 @@ export const RolePlayerMessageForm: MeiosisComponent<{ checkpoint?: boolean }> =
 };
 
 /** A static view on a role player message, i.e. without the possibility to change it */
-export const RolePlayerMessageView: FactoryComponent<{
-  inject: IExecutingInject;
-  disabled?: boolean;
-}> = () => {
+export const RolePlayerMessageView: MeiosisComponent = () => {
   const msgDetails = (rpm: IRolePlayerMsg, _rolePlayer: IPerson, participants?: IPerson[]) => {
     switch (rpm.type) {
       case RolePlayerMessageType.ACTION:
@@ -172,7 +159,11 @@ export const RolePlayerMessageView: FactoryComponent<{
   };
 
   return {
-    view: ({ attrs: { inject } }) => {
+    view: ({ attrs: { state } }) => {
+      const { injectId, trial } = state.app;
+      const inject = getInject(trial, injectId);
+      if (!inject) return;
+
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayer =
         RunSvc.getUsers()

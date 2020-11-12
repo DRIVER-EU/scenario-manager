@@ -102,21 +102,21 @@ class RunService {
     });
   }
 
-  /** Update an inject */
-  public async updateInject(body: IInject) {
+  /** Create an inject */
+  public async createInject(body: IInject) {
     return m.request<void>({
-      method: 'PUT',
-      url: this.baseUrl + 'update',
+      method: 'POST',
+      url: this.baseUrl + 'create',
       withCredentials,
       body,
     });
   }
 
   /** Update an inject */
-  public async createInject(body: IInject) {
+  public async updateInject(body: IInject) {
     return m.request<void>({
-      method: 'POST',
-      url: this.baseUrl + 'create',
+      method: 'PUT',
+      url: this.baseUrl + 'update',
       withCredentials,
       body,
     });

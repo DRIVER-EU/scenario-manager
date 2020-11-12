@@ -27,13 +27,13 @@
     "mithril-leaflet": "^0.4.3",
     "mithril-markdown": "^0.4.0",
     "mithril-materialized": "^0.17.1",
-    "mithril-scenario-timeline": "^0.1.4",
-    "mithril-ui-form": "0.8.13",
+    "mithril-scenario-timeline": "^0.2.2",
     "mithril-table": "^0.2.2",
     "mithril-tree-component": "^0.7.1",
+    "mithril-ui-form": "^0.8.14",
     "rfc6902": "^4.0.1",
     "slimdown-js": "^0.3.2",
-    "socket.io-client": "^2.3.1"
+    "socket.io-client": "2.3.1"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.7",
@@ -42,6 +42,7 @@
     "@types/materialize-css": "^1.0.8",
     "@types/mithril": "^2.0.6",
     "@types/socket.io-client": "^1.4.34",
+    "meiosis-tracer": "^4.0.0",
     "parcel-bundler": "^1.12.4",
     "rimraf": "^3.0.2",
     "typescript": "^4.0.5"

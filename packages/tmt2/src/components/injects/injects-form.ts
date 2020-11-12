@@ -2,7 +2,6 @@ import m, { FactoryComponent, Attributes } from 'mithril';
 import { Icon, Dropdown, Select, FloatingActionButton } from 'mithril-materialized';
 import {
   getInjectIcon,
-  findPreviousInjects,
   getMessageIcon,
   isScenario,
   isStoryline,
@@ -19,12 +18,9 @@ import {
   InjectType,
   IInjectGroup,
   deepCopy,
-  deepEqual,
   MessageType,
   getAllChildren,
   uniqueId,
-  IScenario,
-  InjectKeys,
   ITrial,
 } from '../../../../models';
 import { InjectConditions } from './inject-conditions';
@@ -39,80 +35,6 @@ export const InjectsForm: MeiosisComponent = () => {
   let inject: IInject;
   let copiedInjectIsCut = false;
   let copiedInjects = undefined as undefined | IInject | IInject[];
-
-  // const state = {
-  //   parent: undefined as IInject | IInjectGroup | undefined,
-  //   oldInject: undefined as IInject | undefined,
-  //   inject: undefined as IInject | undefined,
-  //   original: undefined as IInject | undefined,
-  //   saving: undefined as boolean | undefined,
-  //   version: 0,
-  //   // subscription: injectsChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
-  //   //   if (Object.keys(cur).length === 0) {
-  //   //     return;
-  //   //   }
-  //   //   state.version++;
-  //   //   const { inject, original } = state;
-  //   //   if (!state.saving && inject && cur.id !== inject.id && !deepEqual(original, inject)) {
-  //   //     state.oldInject = state.inject;
-  //   //     TrialSvc.updateInject(state.oldInject);
-  //   //   }
-  //   //   state.saving = false;
-  //   //   if (envelope.topic === TopicNames.ITEM_UPDATE && inject && inject.id !== cur.id) {
-  //   //     return;
-  //   //   }
-  //   //   state.inject = cur ? deepCopy(cur) : undefined;
-  //   //   state.original = cur ? deepCopy(cur) : undefined;
-  //   //   state.parent = cur.parentId ? getInject(cur.parentId, TrialSvc.getInjects()) : undefined;
-  //   // }),
-  // };
-
-  const onChange = (inj: IInject, props: InjectKeys, save = false) => {
-    if (!inject) {
-      return;
-    }
-    const applyChange = (prop: InjectKeys) => {
-      switch (prop) {
-        case 'title':
-          inject = { ...inject, title: inj.title };
-          break;
-        case 'description':
-          inject = { ...inject, description: inj.description };
-          break;
-        case 'startDate':
-          inject = { ...inject, startDate: (inj as IScenario).startDate } as IScenario;
-          break;
-        case 'endDate':
-          inject = { ...inject, endDate: (inj as IScenario).endDate } as IScenario;
-          break;
-        case 'todoBefore':
-          inject = { ...inject, todoBefore: (inj as IScenario).todoBefore } as IScenario;
-          break;
-        case 'todoAfter':
-          inject = { ...inject, todoAfter: (inj as IScenario).todoAfter } as IScenario;
-          break;
-        case 'message':
-          inject = { ...inject, message: inj.message };
-          break;
-        case 'condition':
-          inject = { ...inject, condition: inj.condition };
-          break;
-        case 'isOpen':
-          inject = { ...inject, isOpen: inj.isOpen };
-          break;
-      }
-    };
-    if (props instanceof Array) {
-      props.forEach((prop) => applyChange(prop));
-    } else {
-      applyChange(props);
-    }
-    if (save) {
-      // onsubmit();
-      // TODO Save
-    }
-    // console.table(inj);
-  };
 
   /**
    * Create a deep copy of all injects, give them a new ID, and map their parent IDs
@@ -160,11 +82,15 @@ export const InjectsForm: MeiosisComponent = () => {
   return {
     oninit: () => console.log('ONINIT InjectsForm'),
     view: ({ attrs: { state, actions } }) => {
-      const { trial, injectId } = state.app;
+      const { mode } = state.app;
+      const isExecuting = mode === 'execute';
+      const disabled = isExecuting;
+      const { trial, injectId, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
       const { updateInject, createInject, deleteInject } = actions;
 
+      const id = injectId || scenarioId;
       const injects = getInjects(trial);
-      const original = injects.filter((i) => i.id === injectId).shift();
+      const original = injects.filter((i) => i.id === id).shift();
       if (!original) {
         return;
       }
@@ -245,7 +171,6 @@ export const InjectsForm: MeiosisComponent = () => {
           await pasteInject(inject);
         }
       };
-      const disabled = false;
       // const key = `${inject.id}_${Date.now().valueOf()}`;
       // console.log('Key: ' + key);
 
@@ -253,7 +178,6 @@ export const InjectsForm: MeiosisComponent = () => {
       // if (hasChanged) {
       //   updateInject(inject);
       // }
-      const previousInjects = findPreviousInjects(inject, getInjects(trial));
       const selectedMessageTypes = trial.selectedMessageTypes;
       const options = messageOptions(selectedMessageTypes);
 
@@ -316,6 +240,7 @@ export const InjectsForm: MeiosisComponent = () => {
                   : m('h4', [
                       m(Icon, {
                         iconName: getInjectIcon(inject.type),
+                        class: 'small',
                         style: 'margin-right: 12px;',
                       }),
                       inject.type,
@@ -324,16 +249,7 @@ export const InjectsForm: MeiosisComponent = () => {
             ),
             [
               m(MessageForm, { state, actions }),
-              inject.messageType &&
-                isInjectGroup(inject) &&
-                m(InjectConditions, {
-                  trial,
-                  injects: getInjects(trial) || [],
-                  disabled,
-                  inject,
-                  previousInjects,
-                  onChange,
-                }),
+              (inject.messageType || isInjectGroup(inject)) && m(InjectConditions, { state, actions }),
               // : m('div#dummy'),
               m(SetObjectives, { trial, disabled, inject }),
             ],

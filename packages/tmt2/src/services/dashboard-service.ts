@@ -1,29 +1,19 @@
 import m, { RouteDefs } from 'mithril';
 import { IDashboard, Dashboards } from '../models';
 import { actions, states } from './meiosis';
-// import { ObjectivesView } from '../components/objectives/objective-view';
-import { TrialForm } from '../components/trials/trial-form';
-import { TrialList } from '../components/trials/trial-list';
-import { Layout } from '../components/layout';
-// import { InjectsView } from '../components/injects/injects-view';
-// import { UsersView } from '../components/users/users-list';
 import {
+  Layout,
   AssetsView,
+  TrialForm,
+  TrialList,
   InjectsView,
   ObjectivesView,
   OverviewMap,
+  SessionView,
   StakeholdersView,
   TrialSettings,
   UsersView,
 } from '../components';
-// import { AssetsView } from '../components/assets';
-// import { SessionState } from '../components/session/session-state';
-// import { TrialSettings } from '../components/configuration/trial-settings';
-// import { SimulationView } from '../components/simulation';
-// import { SessionView } from '../components/session/session-view';
-// import { OverviewMap } from '../components/map/overview-map';
-// import { SelectMessageTypesForm } from '../components/select-message-types';
-// import { SessionTable } from '../components/session/session-table';
 
 class DashboardService {
   private dashboards!: ReadonlyArray<IDashboard>;
@@ -104,14 +94,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     visible: false,
     component: InjectsView,
   },
-  // {
-  //   id: Dashboards.EXECUTE,
-  //   title: 'Run',
-  //   icon: 'directions_run',
-  //   route: '/execute/session',
-  //   visible: false,
-  //   component: SessionView,
-  // },
+  {
+    id: Dashboards.EXECUTE,
+    title: 'Run',
+    icon: 'directions_run',
+    route: '/execute/session',
+    visible: false,
+    component: SessionView,
+  },
   {
     id: Dashboards.SETTINGS,
     title: 'Settings',

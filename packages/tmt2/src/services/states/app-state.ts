@@ -1,9 +1,12 @@
+import io from 'socket.io-client';
 import Stream from 'mithril/stream';
 import { applyPatch, Operation } from 'rfc6902';
-import { dashboardSvc, IRestService, restServiceFactory, SocketSvc } from '..';
+import { actions, IRestService, restServiceFactory, SocketSvc } from '..';
 import {
   deepCopy,
   IAsset,
+  IConnectMessage,
+  IExecutingInject,
   IInject,
   IInjectSimStates,
   InjectType,
@@ -13,71 +16,92 @@ import {
   IStakeholder,
   ITimeManagement,
   ITrial,
+  SessionState,
 } from '../../../../models/dist';
 import { MessageScope } from '../../components/messages';
-import { Dashboards } from '../../models';
-import { arrayMove, validateInjects } from '../../utils';
+import { arrayMove, getInjects, validateInjects } from '../../utils';
 import { IAppModel, UpdateStream } from '../meiosis';
+import { RunSvc } from '../run-service';
+import { isComponentType } from 'mithril-ui-form';
 
 const trialSvc = restServiceFactory<ITrial>('trials');
 let assetsSvc: IRestService<IAsset>;
 
+interface ISessionControl {
+  isConnected: boolean;
+  activeSession: boolean;
+  realtime: boolean;
+  host: string;
+}
+
+export interface IApp {
+  apiService: string;
+  /** Operating mode */
+  mode: MessageScope;
+  /** Overview of all trials */
+  trials: ITrial[];
+  /** Active trial */
+  trial: ITrial;
+  /** Currently selected stakeholder ID */
+  stakeholderId: string;
+  /** Currently selected scenario ID */
+  scenarioId: string;
+  /** Currently selected inject ID */
+  injectId: string;
+  /** Currently selected objective ID */
+  objectiveId: string;
+  /** Currently selected user ID */
+  userId: string;
+  /** Currently selected user ID */
+  assetId: number;
+  /** List of all the available assets */
+  assets: IAsset[];
+  /** State of the injects tree (items are open or closed) */
+  treeState: {
+    [id: string]: boolean;
+  };
+  owner: string;
+  copiedInjectIsCut: boolean;
+  copiedInjects: undefined | IInject | IInject[];
+}
+
+export interface IExe {
+  /** Executing trial */
+  trial: ITrial;
+  /** Executing scenario ID */
+  scenarioId: string;
+  /** Currently selected inject ID */
+  injectId: string;
+  injectStates: IInjectSimStates;
+  time: ITimeManagement;
+  sessionControl: ISessionControl;
+  scenarioStartTime: Date;
+  session: Partial<ISessionManagement>;
+}
+
 /** Application state */
 export interface IAppStateModel {
-  app: {
-    apiService: string;
-    isSearching: boolean;
-    searchQuery?: string;
-    page?: Dashboards;
-
-    /** Operating mode */
-    mode: MessageScope;
-    /** Overview of all trials */
-    trials: ITrial[];
-    /** Active trial */
-    trial: ITrial;
-    /** Currently selected stakeholder ID */
-    stakeholderId: string;
-    /** Currently selected scenario ID */
-    scenarioId: string;
-    /** Currently selected inject ID */
-    injectId: string;
-    /** Currently selected objective ID */
-    objectiveId: string;
-    /** Currently selected user ID */
-    userId: string;
-    /** Currently selected user ID */
-    assetId: number;
-    /** List of all the available assets */
-    assets: IAsset[];
-    /** State of the injects tree (items are open or closed) */
-    treeState: { [id: string]: boolean };
-    owner: string;
-    time: ITimeManagement;
-    sessionControl: {
-      isConnected: boolean;
-      activeSession: boolean;
-      realtime: boolean;
-      host: string;
-    };
-    scenarioStartTime: Date;
-    session: Partial<ISessionManagement>;
-    injectStates: IInjectSimStates;
-    copiedInjectIsCut: boolean;
-    copiedInjects: undefined | IInject | IInject[];
-  };
+  app: IApp;
+  exe: IExe;
 }
 
 export interface IAppStateActions {
-  search: (isSearching: boolean, searchQuery?: string) => void;
-  changePage: (
-    page: Dashboards,
-    params?: { [key: string]: string | number | undefined },
-    query?: { [key: string]: string | number | undefined }
-  ) => void;
+  /** Pass-through to update function */
+  update: (state: Partial<IAppModel>) => void;
+
+  connectToTestbed: () => void;
+  setEditMode: (editing: boolean) => void;
+  setInjectStates: (injectStates: IInjectSimStates) => void;
+  setScenarioStartTime: (scenarioStartTime: Date) => void;
+  updateSession: (s?: Partial<ISessionManagement>) => Promise<void>;
+  updateSessionControl: (sessionControl: ISessionControl) => void;
+  startSession: (session: ISessionManagement) => Promise<void>;
+  stopSession: () => Promise<void>;
+
+  toggleTreeItem: (id: string) => void;
 
   loadTrials: () => Promise<void>;
-  loadTrial: (trialId: string) => Promise<void>;
+  loadTrial: (trialId: string, mode?: MessageScope) => Promise<void>;
   saveTrial: (trial?: ITrial) => Promise<void>;
   deleteTrial: (trialId: string | number) => Promise<void>;
 
@@ -137,9 +161,6 @@ export const appStateMgmt = {
     app: {
       /** During development, use this URL to access the server. */
       apiService: process.env.SERVER || location.origin,
-      isSearching: false,
-      searchQuery: '',
-
       mode: 'edit',
       trials: [],
       trial: {} as ITrial,
@@ -151,6 +172,15 @@ export const appStateMgmt = {
       assets: [],
       treeState: {},
       owner: 'TB_TrialMgmt',
+      scenarioId: '',
+      copiedInjectIsCut: false,
+      copiedInjects: undefined as undefined | IInject | IInject[],
+    },
+    exe: {
+      trial: {} as ITrial,
+      scenarioId: '',
+      injectId: '',
+      injectStates: {} as IInjectSimStates,
       time: {} as ITimeManagement,
       scenarioStartTime: new Date(),
       sessionControl: {
@@ -166,26 +196,81 @@ export const appStateMgmt = {
         scenarioId: '',
         comments: '',
       } as Partial<ISessionManagement>,
-      scenarioId: '',
-      injectStates: {} as IInjectSimStates,
-      copiedInjectIsCut: false,
-      copiedInjects: undefined as undefined | IInject | IInject[],
     },
   },
 
   actions: (update, states) => {
     return {
-      search: (isSearching: boolean, searchQuery?: string) => update({ app: { isSearching, searchQuery } }),
-      changePage: (page, params, query) => {
-        dashboardSvc.switchTo(page, params, query);
-        update({ app: { page } });
+      update: (state: Partial<IAppModel>) => update(state),
+
+      connectToTestbed: () => {
+        const { isConnected } = states().exe.sessionControl;
+        const isTestbedConnected = async (data: IConnectMessage) => {
+          const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
+          await actions.updateSession(session);
+          actions.updateSessionControl({
+            activeSession: session.state === SessionState.Started,
+            isConnected,
+            host,
+            realtime: time?.simulationTime ? Math.abs(time?.simulationTime - Date.now()) < 10000 : true,
+          });
+        };
+        const connectToTestbed = () => {
+          SocketSvc.socket.on('is-connected', isTestbedConnected);
+          if (!isConnected) SocketSvc.socket.emit('test-bed-connect');
+        };
+        if (SocketSvc.socket.connected) {
+          connectToTestbed();
+        } else {
+          SocketSvc.socket.on('connect', connectToTestbed);
+        }
+      },
+
+      setEditMode: (editing: boolean) => update({ app: { mode: editing ? 'edit' : 'execute' } }),
+      setInjectStates: (injectStates: IInjectSimStates) => update({ exe: { injectStates } }),
+      setScenarioStartTime: (scenarioStartTime: Date) => update({ exe: { scenarioStartTime } }),
+      updateExecutingInject: async (inject: IExecutingInject) => {
+        await RunSvc.updateInject(inject);
+      },
+      updateSessionControl: (sessionControl: ISessionControl) => update({ exe: { sessionControl } }),
+      updateSession: async (s?: Partial<ISessionManagement>) => {
+        const { trial } = states().app;
+        const t = await RunSvc.activeTrial();
+        const session = await RunSvc.activeSession();
+        if (session && (session.state === SessionState.Started || session.state === SessionState.Initializing)) {
+          update({ exe: { session, trial: t || trial } });
+        } else if (s) {
+          // Either no session, or not active, so create a new session
+          update({ exe: { session: s } });
+        }
+      },
+      startSession: async (session: ISessionManagement) => {
+        await RunSvc.load(session);
+        update({
+          exe: {
+            session,
+            sessionControl: { activeSession: session.state === SessionState.Started } as ISessionControl,
+          },
+        });
+      },
+      stopSession: async () => {
+        await RunSvc.unload();
+        const session = await RunSvc.activeSession();
+        if (session) {
+          update({
+            exe: {
+              session,
+              sessionControl: { activeSession: session.state === SessionState.Started } as ISessionControl,
+            },
+          });
+        }
       },
 
       loadTrials: async () => {
         const trials = await trialSvc.loadList();
         update({ app: { trials } });
       },
-      loadTrial: async (trialId: string) => {
+      loadTrial: async (trialId: string, mode: MessageScope = 'edit') => {
         unregisterForTrialUpdates(states);
         const trial = await trialSvc.load(trialId);
         if (trial) {
@@ -195,7 +280,10 @@ export const appStateMgmt = {
             ...a,
             url: a.filename ? assetsSvc.url + a.id : undefined,
           }));
-          update({ app: { trial, assets } });
+          const scenario = getInjects(trial)
+            .filter((i) => i.type === InjectType.SCENARIO)
+            .shift();
+          update({ app: { trial, assets, scenarioId: scenario?.id, mode } });
         }
       },
       saveTrial: async (newTrial?: ITrial) => {
@@ -207,7 +295,7 @@ export const appStateMgmt = {
         validateInjects(t);
         t.lastEdit = new Date();
         const trial = await trialSvc.save(t);
-        update({ app: { trial } });
+        if (trial) update({ app: { trial } });
         // if (trial && (!this.assetSvc || this.assetSvc.trialId !== trial.id)) {
         //   this.assetSvc = new AssetService(trial.id);
         //   return this.assetSvc.loadList();
@@ -217,35 +305,77 @@ export const appStateMgmt = {
         await trialSvc.del(trialId);
       },
 
-      selectScenario: (scenario: IInject | string) =>
-        update({ app: { scenarioId: typeof scenario === 'string' ? scenario : scenario.id } }),
+      selectScenario: (scenario: IInject | string) => {
+        const { mode } = states().app;
+        const scenarioId = typeof scenario === 'string' ? scenario : scenario.id;
+        if (mode === 'edit') {
+          update({ app: { scenarioId } });
+        } else {
+          update({ exe: { scenarioId } });
+        }
+      },
 
-      selectInject: (inject: IInject) => update({ app: { injectId: inject.id } }),
+      toggleTreeItem: (id: string) => {
+        const { treeState: oldTreeState } = states().app;
+        const treeState = deepCopy(oldTreeState);
+        if (treeState) {
+          const ts = treeState[id];
+          if (ts) treeState[id] = !ts;
+          update({ app: { treeState } });
+        }
+      },
+      selectInject: (inject: IInject) => {
+        const { app, exe } = states();
+        const isEditing = app.mode === 'edit';
+        const injectId = isEditing ? app.injectId : exe.injectId;
+        if (injectId === inject.id) return;
+        isEditing ? update({ app: { injectId: inject.id } }) : update({ exe: { injectId: inject.id } });
+      },
       createInject: async (inject: IInject) => {
-        const { trial } = states().app;
+        const { app, exe } = states();
+        const isEditing = app.mode === 'edit';
+        const trial = isEditing ? app.trial : exe.trial;
         const oldTrial = deepCopy(trial);
         if (!trial.injects) {
           trial.injects = [];
         }
         trial.injects.push(inject);
-        await trialSvc.patch(trial, oldTrial);
-        inject.type === InjectType.SCENARIO
-          ? update({ app: { scenarioId: inject.id, trial } })
-          : update({ app: { injectId: inject.id, trial } });
+        if (isEditing) {
+          await trialSvc.patch(trial, oldTrial);
+          inject.type === InjectType.SCENARIO
+            ? update({ app: { scenarioId: inject.id, trial } })
+            : update({ app: { injectId: inject.id, trial } });
+        } else {
+          await RunSvc.createInject(inject);
+          update({ exe: { injectId: inject.id, trial } });
+        }
       },
       updateInject: async (inject: IInject) => {
-        const { trial } = states().app;
+        const { app, exe } = states();
+        const isEditing = app.mode === 'edit';
+        const trial = isEditing ? app.trial : exe.trial;
         const oldTrial = deepCopy(trial);
         trial.injects = trial.injects.map((s) => (s.id === inject.id ? deepCopy(inject) : s));
-        await trialSvc.patch(trial, oldTrial);
-        update({ app: { injectId: inject.id, trial } });
+        if (isEditing) {
+          await trialSvc.patch(trial, oldTrial);
+          update({ app: { injectId: inject.id, trial } });
+        } else {
+          await RunSvc.updateInject(inject);
+        }
       },
       deleteInject: async (inject: IInject) => {
-        const { trial } = states().app;
+        const { app, exe } = states();
+        const isEditing = app.mode === 'edit';
+        const trial = isEditing ? app.trial : exe.trial;
         const oldTrial = deepCopy(trial);
         trial.injects = trial.injects.filter((s) => s.id !== inject.id);
-        await trialSvc.patch(trial, oldTrial);
-        update({ app: { injectId: '', trial } });
+        if (isEditing) {
+          await trialSvc.patch(trial, oldTrial);
+          update({ app: { injectId: '', trial } });
+        } else {
+          // TODO
+          // await RunSvc.
+        }
       },
       moveInject: async (source: IInject, after: IInject) => {
         const { trial } = states().app;
@@ -355,27 +485,28 @@ export const appStateMgmt = {
         // console.table(trial.Users);
         await trialSvc.patch(trial, oldTrial);
         // console.table(trial.Users);
-        update({ app: { UserId: user.id, trial } });
+        update({ app: { userId: user.id, trial } });
       },
       updateUser: async (user: IPerson) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
         trial.users = trial.users.map((s) => (s.id === user.id ? user : s));
         await trialSvc.patch(trial, oldTrial);
-        update({ app: { UserId: user.id, trial } });
+        update({ app: { userId: user.id, trial } });
       },
       deleteUser: async (user: IPerson) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
         trial.users = trial.users.filter((s) => s.id !== user.id);
         await trialSvc.patch(trial, oldTrial);
-        update({ app: { UserId: '', trial } });
+        update({ app: { userId: '', trial } });
       },
     };
   },
 } as IAppState;
 
 const registerForTrialUpdates = (trialId: string, states: Stream<IAppModel>, update: UpdateStream) => {
+  console.log('Registering for trial updates');
   const socket = SocketSvc.socket;
   socket.on(trialId, async (patchObj: { id: string; patch: Operation[] }) => {
     const { id: senderId, patch } = patchObj;

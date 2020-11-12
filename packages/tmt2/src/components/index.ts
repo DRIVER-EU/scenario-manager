@@ -5,3 +5,8 @@ export * from './users/users-list';
 export * from './objectives/objective-view';
 export * from './map/overview-map';
 export * from './injects/injects-view';
+export * from './session/session-view';
+export * from './layout';
+export * from './trials/trial-form';
+export * from './trials/trial-list';
+export * from './executing/executing-inject-view';

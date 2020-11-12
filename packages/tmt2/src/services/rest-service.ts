@@ -22,7 +22,7 @@ export interface IRestService<T extends IContent | IAsset> {
 
 const createRestServiceFactory = (apiService: string) => {
   return <T extends IContent | IAsset>(urlFragment: string) => {
-    console.log(apiService);
+    console.log(`API server: ${apiService}`);
     const url = `${apiService}/${urlFragment}/`;
     const withCredentials = false;
 

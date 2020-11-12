@@ -5,27 +5,28 @@ import { TimeState, SimulationState, ITimeManagement } from '../../../models';
 const log = console.log;
 let socket: SocketIOClient.Socket;
 
-const setupSocket = (autoConnect = true) => {
+export const setupSocket = (autoConnect = true) => {
   if (socket && socket.connected) {
     return socket;
   }
   socket = autoConnect ? io() : io(process.env.SERVER || location.origin);
 
-  socket.on('connect', () => {
-    log('Connected');
-  });
-  socket.on('time-events', (data: unknown) => {
-    console.log('time-events: ', data);
-  });
-  socket.on('connect_error', (data: unknown) => {
+  socket.on('connect', () => log('Connected'));
+  socket.on('disconnect', () => log('Disconnected'));
+  socket.on('connect_error', (err: Error) => {
     socket.close();
     if (autoConnect) {
       SocketSvc.socket = setupSocket(false);
     } else {
-      console.error('event', data);
+      console.error('connect_error: ' + JSON.stringify(err, null, 2));
     }
   });
-  socket.on('disconnect', () => log('Disconnected'));
+  socket.on('exception', (data: any) => {
+    console.log('exception', data);
+  });
+  socket.on('time-events', (data: unknown) => {
+    console.log('time-events: ', data);
+  });
   socket.on('stateUpdated', (state: TimeState) => {
     SimulationState.state = state;
   });

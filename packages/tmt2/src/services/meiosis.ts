@@ -1,15 +1,21 @@
+import meiosisTracer from 'meiosis-tracer';
 import { FactoryComponent } from 'mithril';
 import Stream from 'mithril/stream';
 import { merge } from '../utils/mergerino';
-import { appStateMgmt, IAppStateActions, IAppStateModel } from './states';
+import { appStateMgmt, IApp, IAppStateActions, IAppStateModel, IExe } from './states';
 
 export interface IAppModel extends IAppStateModel {}
 
 export interface IActions extends IAppStateActions {}
 
-export type ModelUpdateFunction = Partial<IAppModel> | ((model: Partial<IAppModel>) => Partial<IAppModel>);
+export type ModelUpdate = {
+  app?: Partial<IApp>;
+  exe?: Partial<IExe>;
+};
 
-export type UpdateStream = Stream<Partial<ModelUpdateFunction>>;
+// export type ModelUpdateFunction = IAppModel | ((model: IAppModel) => IAppModel);
+
+export type UpdateStream = Stream<ModelUpdate>;
 
 export type MeiosisComponent<T = {}> = FactoryComponent<{
   state: IAppModel;
@@ -23,6 +29,8 @@ const app = {
     Object.assign({}, appStateMgmt.actions(update, states)) as IActions,
 };
 
-const update = Stream<ModelUpdateFunction>();
+const update: UpdateStream = Stream<ModelUpdate>();
 export const states = Stream.scan(merge, app.initial, update);
 export const actions = app.actions(update, states);
+
+meiosisTracer({ streams: [states] });

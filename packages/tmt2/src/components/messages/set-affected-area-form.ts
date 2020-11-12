@@ -53,7 +53,7 @@ export const SetAffectedAreaForm: MeiosisComponent = () => {
       const addArea = (area: IareaPoly) => {
         const inj = getInject(trial, injectId);
         if (inj) {
-          const m = getMessage<IAffectedArea>(inj, MessageType.REQUEST_UNIT_MOVE);
+          const m = getMessage<IAffectedArea>(inj, MessageType.SET_AFFECTED_AREA);
           m.area = area;
           updateInject(inj);
         }
