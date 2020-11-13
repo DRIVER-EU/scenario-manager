@@ -92,8 +92,14 @@ export class RunService {
     this.kafkaService.sendSessionMessage(this.session);
 
     const startUpdateLoop = () => {
+      const startDate = new Date(this.scenario.startDate).valueOf() || 0;
+      const endDate = new Date(this.scenario.endDate).valueOf() || startDate;
+      const expDuration = endDate - startDate;
       this.trialTime = this.kafkaService.simulationTime;
       this.scenario.startDate = this.trialTime.toUTCString();
+      this.scenario.endDate = new Date(
+        this.trialTime.valueOf() + expDuration,
+      ).toUTCString();
       this.states = createInitialState(this.trialTime, this.injects);
       this.isRunning = true;
       this.updateLoop();
