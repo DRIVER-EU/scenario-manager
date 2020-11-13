@@ -243,6 +243,7 @@ export const appStateMgmt = {
         }
       },
       startSession: async (session: ISessionManagement) => {
+        debugger;
         await RunSvc.load(session);
         update({
           exe: {

@@ -46,21 +46,17 @@ const SessionSettings: MeiosisComponent = () => {
     }) => {
       const trial = exe.trial.id ? exe.trial : app.trial;
       const { time, session: s, sessionControl } = exe;
-      const session = Object.assign(
-        {},
-        {
-          id: uniqueId(),
-          state: SessionState.Started,
-          name: 'New session',
-          tags: {
-            trialId: trial.id,
-            trialName: trial.title,
-            scenarioId: scenario?.id,
-            scenarioName: scenario?.title,
-          },
+      const session = Object.assign({}, s, {
+        id: uniqueId(),
+        state: SessionState.Started,
+        name: 'New session',
+        tags: {
+          trialId: trial.id,
+          trialName: trial.title,
+          scenarioId: scenario?.id,
+          scenarioName: scenario?.title,
         },
-        s
-      );
+      });
 
       const disabled = sessionControl.activeSession;
       const isConnected = sessionControl?.isConnected;
