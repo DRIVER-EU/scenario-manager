@@ -16,10 +16,10 @@ import {
   Certainty,
   IValueNamePair,
 } from '../../../../models';
-import { MeiosisComponent } from '../../services';
-import { enumToOptions, getInject, getUsersByRole } from '../../utils';
+import { MessageComponent } from '../../services';
+import { enumToOptions, getActiveTrialInfo, getUsersByRole } from '../../utils';
 
-export const CapMessageForm: MeiosisComponent = () => {
+export const CapMessageForm: MessageComponent = () => {
   const state = {} as {
     alert: IAlert;
     alertInfo: IInfo;
@@ -36,14 +36,8 @@ export const CapMessageForm: MeiosisComponent = () => {
   };
 
   return {
-    oninit: ({
-      attrs: {
-        state: {
-          app: { trial, injectId },
-        },
-      },
-    }) => {
-      const inject = getInject(trial, injectId);
+    oninit: ({ attrs: { state: appState } }) => {
+      const { inject, trial } = getActiveTrialInfo(appState);
       if (!inject) {
         return;
       }
@@ -85,10 +79,9 @@ export const CapMessageForm: MeiosisComponent = () => {
     },
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state: appState,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
       const {
@@ -106,10 +99,10 @@ export const CapMessageForm: MeiosisComponent = () => {
       } = state;
       // console.table(statusOptions);
       // const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
-      const inject = getInject(trial, injectId);
-      const disabled = mode !== 'edit';
-
+      const { inject } = getActiveTrialInfo(appState);
       if (!inject) return;
+
+      const disabled = !editing;
 
       return [
         m(TextInput, {

@@ -22,109 +22,11 @@ export const InjectsList: MeiosisComponent = () => {
     oninit: ({
       attrs: {
         state: {
-          app: { trial, scenarioId, treeState },
+          app: { trial },
         },
-        actions: { selectScenario, moveInject, selectInject, createInject, updateInject, deleteInject },
       },
     }) => {
-      injects = getInjects(trial);
-      injects.filter((i) => i.type !== InjectType.INJECT).forEach((i) => (treeState[i.id] = true));
-      const loadScenarios = async () => {
-        validateInjects(trial);
-        const scenarios = injects.filter(isScenario);
-        if (!scenarioId && scenarios.length > 0) {
-          selectScenario(scenarios[0]);
-        }
-      };
-      loadScenarios();
-      // options = {
-      //   id: 'id',
-      //   parentId: 'parentId',
-      //   isOpen: (id: string, action: 'get' | 'set', value?: boolean): boolean | void => {
-      //     if (action === 'get') {
-      //       return treeState.hasOwnProperty(id) ? treeState[id] : false;
-      //     } else if (typeof value !== 'undefined') {
-      //       treeState[id] = value;
-      //     }
-      //   },
-      //   treeItemView: {
-      //     view: ({ attrs }: Vnode<ITreeItemViewComponent>) => {
-      //       const inject = attrs.treeItem as IInject;
-      //       const isValid = inject.isValid || 'valid';
-      //       const className = isValid === 'invalid' ? 'red-text' : isValid === 'childInvalid' ? 'orange-text' : '';
-      //       return m('div.icon-label', [m(Icon, { iconName: getIcon(inject), className }), inject.title]);
-      //     },
-      //   } as Component<ITreeItemViewComponent>,
-      //   onSelect: (ti, isSelected) => isSelected && selectInject(ti as IInject),
-      //   onBeforeCreate: (ti) => {
-      //     createInject(ti as IInject)
-      //       .then(() => true)
-      //       .catch((e) => {
-      //         console.error(e);
-      //         return false;
-      //       });
-      //   },
-      //   onBeforeDelete: (ti) => console.log(`On before delete ${ti.title}`),
-      //   onDelete: async (ti) => {
-      //     await deleteInject(ti.id);
-      //   },
-      //   onCreate: (ti) => selectInject(ti as IInject),
-      //   onBeforeUpdate: (ti, _, newParent) => {
-      //     const src = ti as IInject;
-      //     const tgt = newParent as IInject;
-      //     switch (src.type) {
-      //       case InjectType.INJECT:
-      //         return tgt && tgt.type === InjectType.ACT;
-      //       case InjectType.ACT:
-      //         return tgt && tgt.type === InjectType.STORYLINE;
-      //       case InjectType.STORYLINE:
-      //         return tgt && tgt.type === InjectType.SCENARIO;
-      //       default:
-      //         return true;
-      //     }
-      //   },
-      //   onUpdate: (ti, action) => {
-      //     if (!ti.parentId) {
-      //       ti.parentId = '';
-      //     }
-      //     if (action === 'edit') {
-      //       updateInject(ti as IInject);
-      //     } else {
-      //       // action === move
-      //       if (injects) {
-      //         const index = injects.indexOf(ti as IInject);
-      //         moveInject(ti as IInject, injects[index - 1]);
-      //       }
-      //     }
-      //   },
-      //   create: (parent?: IInject, depth?: number) => {
-      //     const itemFactory: () => Partial<IInject> = () => {
-      //       if (!parent) {
-      //         return { title: 'New scenario', type: InjectType.SCENARIO };
-      //       }
-      //       const parentId = parent.id as string;
-      //       const condition = {
-      //         delay: 0,
-      //         delayUnitType: 'minutes',
-      //         type: InjectConditionType.MANUALLY,
-      //         injectId: parentId,
-      //       } as IInjectCondition;
-      //       const id = uniqueId();
-      //       switch (depth) {
-      //         case 0:
-      //           return { id, title: 'New storyline', type: InjectType.STORYLINE, parentId, condition };
-      //         case 1:
-      //           return { id, title: 'New act', type: InjectType.ACT, parentId, condition };
-      //         default:
-      //           return { id, title: 'New inject', type: InjectType.INJECT, parentId, condition };
-      //       }
-      //     };
-      //     return itemFactory() as ITreeItem;
-      //   },
-      //   maxDepth: 3,
-      //   multipleRoots: false,
-      //   editable: { canCreate: true, canDelete: false, canUpdate: true, canDeleteParent: false },
-      // } as ITreeOptions;
+      validateInjects(trial);
     },
     view: ({
       attrs: {
@@ -239,7 +141,7 @@ export const InjectsList: MeiosisComponent = () => {
             m('.row', [
               m('.col.s10', [
                 m(Select, {
-                  key: scenario ? scenarioId + scenario.title : 'scenario',
+                  // key: scenario ? scenarioId + scenario.title : 'scenario',
                   options: scenarioOptions,
                   checkedId: scenarioId,
                   iconName: getInjectIcon(InjectType.SCENARIO),

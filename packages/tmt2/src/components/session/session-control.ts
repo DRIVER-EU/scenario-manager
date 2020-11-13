@@ -1,16 +1,7 @@
 import m from 'mithril';
 import { TimeControl } from './time-control';
-import { SocketSvc, MeiosisComponent } from '../../services';
-import {
-  FlatButton,
-  Select,
-  ISelectOptions,
-  TextInput,
-  TextArea,
-  InputCheckbox,
-  Icon,
-  ModalPanel,
-} from 'mithril-materialized';
+import { MeiosisComponent } from '../../services';
+import { FlatButton, Select, ISelectOptions, TextInput, TextArea, InputCheckbox, Icon } from 'mithril-materialized';
 import { IScenario, InjectType, ISessionManagement, SessionState, uniqueId, TimeState } from '../../../../models';
 import { getInjectIcon, getInjects, getInject } from '../../utils';
 
@@ -46,24 +37,24 @@ const SessionSettings: MeiosisComponent = () => {
     }) => {
       const trial = exe.trial.id ? exe.trial : app.trial;
       const { time, session: s, sessionControl } = exe;
-      const session = Object.assign({}, s, {
-        id: uniqueId(),
+      const session = {
+        id: s.id || uniqueId(),
+        name: s.name || 'New session',
         state: SessionState.Started,
-        name: 'New session',
         tags: {
           trialId: trial.id,
           trialName: trial.title,
-          scenarioId: scenario?.id,
-          scenarioName: scenario?.title,
+          scenarioId: scenario?.id || '',
+          scenarioName: scenario?.title || '',
+          comment: s.tags?.comment || '',
         },
-      });
+      };
 
       const disabled = sessionControl.activeSession;
       const isConnected = sessionControl?.isConnected;
       const options = scenarios.map((s) => ({ id: s.id, label: s.title }));
 
       if (session && !session.name) {
-        session.id = uniqueId();
         session.name = 'New session';
       }
       return [
@@ -217,20 +208,6 @@ export const SessionControl: MeiosisComponent = () => {
                 })
             : undefined
         ),
-        // : undefined,
-        // m(ModalPanel, {
-        //   // onCreate: (modal) => {},
-        //   id: 'disconnect',
-        //   title: 'Are you certain you want to disconnect?',
-        //   description: 'After disconnecting, you will not receive updates anymore.',
-        //   buttons: [
-        //     { label: 'No, bring me back to safety' },
-        //     {
-        //       label: 'Yes, I am sure!',
-        //       onclick: () => socket.emit('test-bed-disconnect'),
-        //     },
-        //   ],
-        // }),
       ];
     },
   };

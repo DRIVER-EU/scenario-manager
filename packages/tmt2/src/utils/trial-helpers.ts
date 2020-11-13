@@ -4,11 +4,26 @@ import {
   IInject,
   InjectConditionType,
   InjectType,
+  IScenario,
   ITrial,
   MessageType,
   UserRole,
 } from '../../../models/dist';
 import { userRolesFilter } from './utils';
+import { IActiveTrial } from '../services';
+import { MessageScope } from '../components/messages';
+
+export const getActiveTrialInfo = <T extends IInject>(state: {
+  app: IActiveTrial & { mode: MessageScope };
+  exe: IActiveTrial;
+}) => {
+  const { mode } = state.app;
+  const { trial, injectId, scenarioId, treeState } =
+    mode === 'execute' && state.exe.trial && state.exe.trial.id ? state.exe : state.app;
+  const inject = getInject(trial, injectId) as T;
+  const scenario = scenarioId ? (getInject(trial, scenarioId) as IScenario) : undefined;
+  return { trial, injectId, scenarioId, inject, scenario, treeState };
+};
 
 /** Get a user by ID */
 export const getUserById = (trial: ITrial, id: string) => {

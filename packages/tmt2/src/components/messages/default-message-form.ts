@@ -1,23 +1,21 @@
 import m from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { MeiosisComponent } from '../../services';
-import { getInject } from '../../utils';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
 /**
  * Default message form with a title and description.
  */
-export const DefaultMessageForm: MeiosisComponent = () => ({
+export const DefaultMessageForm: MessageComponent = () => ({
   view: ({
     attrs: {
       state,
       actions: { updateInject },
+      options: { editing } = { editing: true },
     },
   }) => {
-    const { mode } = state.app;
-    const isExecuting = mode === 'execute';
-    const { trial, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
-    const inject = getInject(trial, scenarioId);
-    const disabled = isExecuting;
+    const { inject } = getActiveTrialInfo(state);
+    const disabled = !editing;
     return (
       inject && [
         m(TextInput, {

@@ -9,15 +9,12 @@ import {
   rolePlayerMessageToTestbed,
 } from '../../../../models';
 import { MeiosisComponent } from '../../services';
-import { getInject, getUsers, userIcon } from '../../utils';
+import { getActiveTrialInfo, getUsers, userIcon } from '../../utils';
 
 export const RolePlayerExeMessageForm: MeiosisComponent = () => {
   return {
     view: ({ attrs: { state } }) => {
-      const { mode } = state.app;
-      const isExecuting = mode === 'execute';
-      const { trial, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
-      const inject = getInject(trial, scenarioId);
+      const { inject, trial } = getActiveTrialInfo(state);
       if (!inject) return;
       const rpm = getMessage(inject, MessageType.ROLE_PLAYER_MESSAGE) as IRolePlayerMsg;
       const rolePlayer = getUsers(trial)

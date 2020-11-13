@@ -4,10 +4,10 @@ import { getMessage, IInject, MessageType, IRequestMove, ILocation } from '../..
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { geoJSON, GeoJSON } from 'leaflet';
-import { geoJSONtoRoute, getInject, isJSON, routeToGeoJSON } from '../../utils';
-import { MeiosisComponent } from '../../services';
+import { geoJSONtoRoute, getActiveTrialInfo, isJSON, routeToGeoJSON } from '../../utils';
+import { MessageComponent } from '../../services';
 
-export const RequestUnitMoveForm: MeiosisComponent = () => {
+export const RequestUnitMoveForm: MessageComponent = () => {
   let overlays: { [key: string]: GeoJSON } = {};
 
   const setTitle = async (inject: IInject, si: IRequestMove) => {
@@ -18,14 +18,9 @@ export const RequestUnitMoveForm: MeiosisComponent = () => {
   const moveUnitLayer = 'Move unit';
 
   return {
-    oninit: async ({
-      attrs: {
-        state: {
-          app: { trial, injectId, owner, assets },
-        },
-      },
-    }) => {
-      const inject = getInject(trial, injectId);
+    oninit: async ({ attrs: { state } }) => {
+      const { owner, assets } = state.app;
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
       const ut = getMessage(inject, MessageType.REQUEST_UNIT_MOVE) as IRequestMove;
       ut.applicant = owner;
@@ -41,18 +36,17 @@ export const RequestUnitMoveForm: MeiosisComponent = () => {
     },
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const disabled = mode !== 'edit';
-      const inject = getInject(trial, injectId);
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const ut = getMessage<IRequestMove>(inject, MessageType.REQUEST_UNIT_MOVE);
       const addWaypoints = (r: ILocation[]) => {
-        const inj = getInject(trial, injectId);
+        const { inject: inj } = getActiveTrialInfo(state);
         if (inj) {
           const m = getMessage<IRequestMove>(inj, MessageType.REQUEST_UNIT_MOVE);
           m.waypoints = r;

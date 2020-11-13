@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { MessageType, InjectType } from '../../../../models';
+import { MessageType, InjectType, IInject } from '../../../../models';
 import {
   RolePlayerMessageForm,
   PhaseMessageForm,
@@ -16,51 +16,54 @@ import {
   LargeDataUpdateMessageForm,
   PostMessageForm,
 } from '.';
-import { MeiosisComponent } from '../../services';
-import { getInject } from '../../utils';
+import { IActions, IAppModel, MessageComponent } from '../../services';
+import { getActiveTrialInfo, getInject } from '../../utils';
+import { RolePlayerMessageView } from './role-player-message';
 
 export type MessageScope = 'edit' | 'execute';
 
-export const MessageForm: MeiosisComponent = () => {
-  const MessageFormSelector: MeiosisComponent = () => {
+export const getMessageForm = (state: IAppModel, actions: IActions, inject: IInject, editing = true) => {
+  const options = { editing };
+  const sao = { state, actions, options };
+  switch (inject.messageType) {
+    case MessageType.CHECKPOINT:
+      return m(RolePlayerMessageForm, { state, actions, options: { editing, checkpoint: true } });
+    case MessageType.ROLE_PLAYER_MESSAGE:
+      return editing ? m(RolePlayerMessageForm, sao) : m(RolePlayerMessageView, sao);
+    case MessageType.POST_MESSAGE:
+      return m(PostMessageForm, sao);
+    case MessageType.PHASE_MESSAGE:
+      return m(PhaseMessageForm, sao);
+    case MessageType.GEOJSON_MESSAGE:
+      return m(GeoJsonMessageForm, sao);
+    case MessageType.CAP_MESSAGE:
+      return m(CapMessageForm, sao);
+    case MessageType.LCMS_MESSAGE:
+      return m(LcmsMessageForm, sao);
+    case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
+      return m(OstChangeStageMessageForm, sao);
+    case MessageType.START_INJECT:
+      return m(StartInjectForm, sao);
+    case MessageType.LARGE_DATA_UPDATE:
+      return m(LargeDataUpdateMessageForm, sao);
+    case MessageType.SUMO_CONFIGURATION:
+      return m(SumoConfigurationForm, sao);
+    case MessageType.REQUEST_UNIT_MOVE:
+      return m(RequestUnitMoveForm, sao);
+    case MessageType.SET_AFFECTED_AREA:
+      return m(SetAffectedAreaForm, sao);
+    default:
+      return m('.row', 'TODO: ' + inject.messageType);
+  }
+};
+
+export const MessageForm: MessageComponent = () => {
+  const MessageFormSelector: MessageComponent = () => {
     return {
       view: ({ attrs: { state, actions } }) => {
-        const { mode } = state.app;
-        const isExecuting = mode === 'execute';
-        const { trial, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
-        // const { injectId, trial } = state.app;
-        const inject = getInject(trial, injectId);
+        const { inject } = getActiveTrialInfo(state);
         if (!inject) return;
-        switch (inject.messageType) {
-          case MessageType.CHECKPOINT:
-            return m(RolePlayerMessageForm, { state, actions, options: { checkpoint: true } });
-          case MessageType.ROLE_PLAYER_MESSAGE:
-            return m(RolePlayerMessageForm, { state, actions });
-          case MessageType.POST_MESSAGE:
-            return m(PostMessageForm, { state, actions });
-          case MessageType.PHASE_MESSAGE:
-            return m(PhaseMessageForm, { state, actions });
-          case MessageType.GEOJSON_MESSAGE:
-            return m(GeoJsonMessageForm, { state, actions });
-          case MessageType.CAP_MESSAGE:
-            return m(CapMessageForm, { state, actions });
-          case MessageType.LCMS_MESSAGE:
-            return m(LcmsMessageForm, { state, actions });
-          case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
-            return m(OstChangeStageMessageForm, { state, actions });
-          case MessageType.START_INJECT:
-            return m(StartInjectForm, { state, actions });
-          case MessageType.LARGE_DATA_UPDATE:
-            return m(LargeDataUpdateMessageForm, { state, actions });
-          case MessageType.SUMO_CONFIGURATION:
-            return m(SumoConfigurationForm, { state, actions });
-          case MessageType.REQUEST_UNIT_MOVE:
-            return m(RequestUnitMoveForm, { state, actions });
-          case MessageType.SET_AFFECTED_AREA:
-            return m(SetAffectedAreaForm, { state, actions });
-          default:
-            return m('.row', '');
-        }
+        return getMessageForm(state, actions, inject);
       },
     };
   };

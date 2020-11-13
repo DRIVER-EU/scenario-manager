@@ -1,37 +1,25 @@
 import m, { FactoryComponent } from 'mithril';
-import { SocketSvc, RunSvc, MeiosisComponent } from '../../services';
+import { MeiosisComponent, IAppModel } from '../../services';
 import {
   IInject,
   InjectType,
-  deepEqual,
-  IInjectSimStates,
   InjectConditionType,
-  ITimeManagement,
   IInjectSimState,
   IExecutingInject,
   IScenario,
+  IInjectSimStates,
 } from '../../../../models';
 import { ScenarioTimeline, ITimelineItem, IExecutingTimelineItem } from 'mithril-scenario-timeline';
 import { Icon } from 'mithril-materialized';
 import { getIcon, getInjects, injectToTimelineItemFactory } from '../../utils';
 
 export const SessionTimelineView: MeiosisComponent = () => {
-  let time = undefined as number | undefined;
+  let time = undefined as number | undefined | null;
   let simulationSpeed = 1;
   let lastTimeUpdate = Date.now();
-  let timeInterval = undefined as number | undefined;
+  let timeInterval: number;
   let injects = [] as IInject[];
   let executingInjects = [] as Array<IExecutingInject & IInjectSimState>;
-  let socket = SocketSvc.socket;
-
-  // TODO What do we do when the user opened the wrong trial, i.e. not the one that is running?
-  // Automatically load it for him?
-
-  const updateTime = (t = {} as ITimeManagement) => {
-    lastTimeUpdate = Date.now();
-    time = t.simulationTime || 0;
-    simulationSpeed = t.simulationSpeed || 1;
-  };
 
   const scenarioTimer = (update: (t: number | Date) => void) => {
     timeInterval = window.setInterval(() => {
@@ -44,8 +32,25 @@ export const SessionTimelineView: MeiosisComponent = () => {
     }, 1000);
   };
 
+  const scenarioToTimelineItems = (
+    scenario: IExecutingInject,
+    items: IExecutingInject[],
+    injectStates: IInjectSimStates,
+    treeState: { [key: string]: boolean }
+  ) => {
+    const getChildren = (id: string): IExecutingInject[] => {
+      const children = items.filter((i) => i.parentId === id);
+      return children.reduce((acc, c) => [...acc, ...getChildren(c.id as string)], children);
+    };
+    const injectToTimelineItem = injectToTimelineItemFactory(injectStates, treeState);
+    const ti = [scenario, ...getChildren(scenario.id as string)].map(injectToTimelineItem);
+    // console.log(JSON.stringify(ti, null, 2));
+    return ti;
+  };
+
   const titleView: FactoryComponent<{ item: ITimelineItem }> = () => {
     return {
+      onremove: () => clearInterval(timeInterval),
       view: ({ attrs: { item } }) => {
         const { title, highlight } = item;
         const inject = item as IInject;
@@ -71,44 +76,16 @@ export const SessionTimelineView: MeiosisComponent = () => {
     };
   };
 
-  const updatedInjectReceived = (i: IInject) => RunSvc.updatedInjectReceived(i);
-  const newInjectReceived = (i: IInject) => RunSvc.newInjectReceived(i);
-
   return {
-    oninit: ({
-      attrs: {
-        state: {
-          exe: { injectStates: is },
-        },
-        actions: { setInjectStates },
-      },
-    }) => {
-      socket.on('injectStates', (injectStates: IInjectSimStates) => {
-        if (deepEqual(is, injectStates)) {
-          return;
-        }
-        setInjectStates(injectStates);
-        m.redraw();
-      });
-      socket.on('time', updateTime);
-      socket.on('updatedInject', updatedInjectReceived);
-      socket.on('createdInject', newInjectReceived);
-    },
-    onremove: () => {
-      socket.off('injectStates');
-      socket.off('time', updateTime);
-      socket.off('updatedInject', updatedInjectReceived);
-      socket.off('createdInject', newInjectReceived);
-      window.clearInterval(timeInterval);
-    },
     view: ({
       attrs: {
         state: {
-          exe: { injectStates, trial, scenarioStartTime: sst },
+          exe: { injectStates, trial, scenarioId, treeState, scenarioStartTime: sst, time: t },
         },
-        actions: { setScenarioStartTime },
+        actions: { update },
       },
     }) => {
+      time = t.simulationTime;
       const onClick = (ti: IExecutingTimelineItem) => {
         const { id, startTime = 0 } = ti;
         const inject = executingInjects.filter((i) => i.id === id).shift();
@@ -125,19 +102,9 @@ export const SessionTimelineView: MeiosisComponent = () => {
               selInject.isOpen = !selInject.isOpen;
             }
           }
+          update({ exe: { injectId: inject.id } } as Partial<IAppModel>);
           m.redraw();
         }
-      };
-
-      const scenarioToTimelineItems = (scenario: IExecutingInject, items: IExecutingInject[]) => {
-        const getChildren = (id: string): IExecutingInject[] => {
-          const children = items.filter((i) => i.parentId === id);
-          return children.reduce((acc, c) => [...acc, ...getChildren(c.id as string)], children);
-        };
-        const injectToTimelineItem = injectToTimelineItemFactory(injectStates);
-        const ti = [scenario, ...getChildren(scenario.id as string)].map(injectToTimelineItem);
-        // console.log(JSON.stringify(ti, null, 2));
-        return ti;
       };
 
       injects = getInjects(trial) || [];
@@ -151,13 +118,10 @@ export const SessionTimelineView: MeiosisComponent = () => {
               ...injectStates[i.id],
             } as IExecutingInject & IInjectSimState)
         );
-      const activeScenario = executingInjects
-        ? executingInjects.filter((i) => i.type === InjectType.SCENARIO).shift()
-        : undefined;
+      const activeScenario = executingInjects ? executingInjects.filter((i) => i.id === scenarioId).shift() : undefined;
 
       const scenario = activeScenario as IScenario;
-      const scenarioStartTime = activeScenario && scenario.startDate ? new Date(scenario.startDate) : sst;
-      setScenarioStartTime(scenarioStartTime);
+      const scenarioStartTime = scenario && scenario.startDate ? new Date(scenario.startDate) : sst;
       const timelineStart = new Date(Math.floor(scenarioStartTime.valueOf() / 60000) * 60000);
 
       return m('.row', [
@@ -167,7 +131,7 @@ export const SessionTimelineView: MeiosisComponent = () => {
               m(ScenarioTimeline, {
                 // width: 500,
                 lineHeight: 31,
-                timeline: scenarioToTimelineItems(activeScenario, executingInjects),
+                timeline: scenarioToTimelineItems(activeScenario, executingInjects, injectStates, treeState),
                 onClick,
                 time: scenarioTimer,
                 titleView,

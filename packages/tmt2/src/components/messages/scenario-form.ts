@@ -3,15 +3,15 @@ import { IScenario } from '../../../../models';
 import { DateTimeControl } from '../ui/date-time-control';
 import { DefaultMessageForm } from '.';
 import { Checklist } from '../ui/checklist';
-import { MeiosisComponent } from '../../services';
-import { getInject } from '../../utils';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
 const DEFAULT_TRIAL_DURATION = 2;
 
 /**
  * Default message form with a title and description.
  */
-export const ScenarioForm: MeiosisComponent = () => {
+export const ScenarioForm: MessageComponent = () => {
   let onchangeDate: (s: IScenario, d: Date, type: 'start' | 'end') => void;
   return {
     oninit: ({
@@ -29,12 +29,10 @@ export const ScenarioForm: MeiosisComponent = () => {
         updateInject(s);
       };
     },
-    view: ({ attrs: { state, actions } }) => {
-      const { mode } = state.app;
-      const isExecuting = mode === 'execute';
-      const { trial, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
-      const scenario = getInject(trial, scenarioId) as IScenario;
-      const disabled = isExecuting;
+    view: ({ attrs: { state, actions, options: { editing } = { editing: true } } }) => {
+      const { scenario } = getActiveTrialInfo(state);
+      if (!scenario) return;
+      const disabled = !editing;
 
       const startDate = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const endDate = scenario.endDate

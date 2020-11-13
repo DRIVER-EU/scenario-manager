@@ -1,16 +1,16 @@
 import Stream from 'mithril/stream';
 import { applyPatch, Operation } from 'rfc6902';
-import { actions, IRestService, restServiceFactory, SocketSvc } from '..';
+import { IRestService, restServiceFactory, SocketSvc } from '..';
 import {
   deepCopy,
   IAsset,
-  IConnectMessage,
   IExecutingInject,
   IInject,
   IInjectSimStates,
   InjectType,
   IObjective,
   IPerson,
+  IScenario,
   ISessionManagement,
   IStakeholder,
   ITimeManagement,
@@ -18,7 +18,7 @@ import {
   SessionState,
 } from '../../../../models/dist';
 import { MessageScope } from '../../components/messages';
-import { arrayMove, getInjects, validateInjects } from '../../utils';
+import { arrayMove, getInjects, isScenario, validateInjects } from '../../utils';
 import { IAppModel, UpdateStream } from '../meiosis';
 import { RunSvc } from '../run-service';
 import { ISessionControl } from '../../models';
@@ -26,7 +26,16 @@ import { ISessionControl } from '../../models';
 const trialSvc = restServiceFactory<ITrial>('trials');
 let assetsSvc: IRestService<IAsset>;
 
-export interface IApp {
+export interface IActiveTrial {
+  trial: ITrial;
+  scenarioId: string;
+  injectId: string;
+  treeState: {
+    [id: string]: boolean;
+  };
+}
+
+export interface IApp extends IActiveTrial {
   apiService: string;
   /** Operating mode */
   mode: MessageScope;
@@ -57,7 +66,7 @@ export interface IApp {
   copiedInjects: undefined | IInject | IInject[];
 }
 
-export interface IExe {
+export interface IExe extends IActiveTrial {
   /** Executing trial */
   trial: ITrial;
   /** Executing scenario ID */
@@ -81,10 +90,9 @@ export interface IAppStateActions {
   /** Pass-through to update function */
   update: (state: Partial<IAppModel>) => void;
 
-  connectToTestbed: () => void;
   setEditMode: (editing: boolean) => void;
   setInjectStates: (injectStates: IInjectSimStates) => void;
-  setScenarioStartTime: (scenarioStartTime: Date) => void;
+  updateExecutingInject: (inject: IExecutingInject) => Promise<void>;
   updateSession: (s?: Partial<ISessionManagement>) => Promise<void>;
   updateSessionControl: (sessionControl: ISessionControl) => void;
   startSession: (session: ISessionManagement) => Promise<void>;
@@ -172,6 +180,7 @@ export const appStateMgmt = {
       trial: {} as ITrial,
       scenarioId: '',
       injectId: '',
+      treeState: {},
       injectStates: {} as IInjectSimStates,
       time: {} as ITimeManagement,
       scenarioStartTime: new Date(),
@@ -195,38 +204,8 @@ export const appStateMgmt = {
     return {
       update: (state: Partial<IAppModel>) => update(state),
 
-      connectToTestbed: () => {
-        const { isConnected } = states().exe.sessionControl;
-        const isTestbedConnected = async (data: IConnectMessage) => {
-          console.log('data', data);
-          const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
-          await actions.updateSession(Object.assign({ tags: undefined }, session));
-          update({
-            exe: {
-              sessionControl: {
-                activeSession: session.state === SessionState.Started || session.state === SessionState.Initializing,
-                isConnected,
-                host,
-                realtime: time?.simulationTime ? Math.abs(time?.simulationTime - Date.now()) < 10000 : true,
-              },
-              time,
-            },
-          });
-        };
-        const connectToTestbed = () => {
-          SocketSvc.socket.on('is-connected', isTestbedConnected);
-          if (!isConnected) SocketSvc.socket.emit('test-bed-connect');
-        };
-        if (SocketSvc.socket.connected) {
-          connectToTestbed();
-        } else {
-          SocketSvc.socket.on('connect', connectToTestbed);
-        }
-      },
-
       setEditMode: (editing: boolean) => update({ app: { mode: editing ? 'edit' : 'execute' } }),
       setInjectStates: (injectStates: IInjectSimStates) => update({ exe: { injectStates } }),
-      setScenarioStartTime: (scenarioStartTime: Date) => update({ exe: { scenarioStartTime } }),
       updateExecutingInject: async (inject: IExecutingInject) => {
         await RunSvc.updateInject(inject);
       },
@@ -236,14 +215,18 @@ export const appStateMgmt = {
         const t = await RunSvc.activeTrial();
         const session = await RunSvc.activeSession();
         if (session && (session.state === SessionState.Started || session.state === SessionState.Initializing)) {
-          update({ exe: { session, trial: t || trial } });
+          const scenarioId = session.tags ? session.tags.scenarioId : undefined;
+          const scenario = getInjects(trial)
+            .filter((i) => i.id === scenarioId)
+            .shift() as IScenario;
+          const scenarioStartTime = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
+          update({ exe: { session, trial: t || trial, scenarioStartTime } });
         } else if (s) {
           // Either no session, or not active, so create a new session
           update({ exe: { session: s } });
         }
       },
       startSession: async (session: ISessionManagement) => {
-        debugger;
         await RunSvc.load(session);
         update({
           exe: {
@@ -279,13 +262,18 @@ export const appStateMgmt = {
             ...a,
             url: a.filename ? assetsSvc.url + a.id : undefined,
           }));
-          const scenario = getInjects(trial)
-            .filter((i) => i.type === InjectType.SCENARIO)
-            .shift();
+          const scenario = getInjects(trial).filter(isScenario).shift();
+          const treeState = getInjects(trial)
+            .filter((i) => i.type !== InjectType.INJECT)
+            .reduce((acc, i) => {
+              acc[i.id] = true;
+              return acc;
+            }, {} as { [key: string]: boolean });
+
           if (mode === 'edit') {
-            update({ app: { trial, assets, scenarioId: scenario?.id, mode } });
+            update({ app: { trial, assets, scenarioId: scenario?.id, mode, treeState } });
           } else {
-            update({ exe: { trial, scenarioId: scenario?.id, session: {} }, app: { assets, mode } });
+            update({ exe: { trial, scenarioId: scenario?.id, session: {}, treeState }, app: { assets, mode } });
           }
         }
       },

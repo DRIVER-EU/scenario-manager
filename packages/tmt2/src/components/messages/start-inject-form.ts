@@ -1,10 +1,10 @@
 import m from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, IRequestStartInject } from '../../../../models';
-import { MeiosisComponent } from '../../services';
-import { getInject } from '../../utils';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
-export const StartInjectForm: MeiosisComponent = () => {
+export const StartInjectForm: MessageComponent = () => {
   const setTitle = (inject: IInject, si: IRequestStartInject) => {
     inject.title = `Run inject ${si.inject}`;
   };
@@ -12,18 +12,17 @@ export const StartInjectForm: MeiosisComponent = () => {
   return {
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode, owner },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const disabled = mode !== 'edit';
-      const inject = getInject(trial, injectId);
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const si = getMessage(inject, MessageType.START_INJECT) as IRequestStartInject;
       si.id = inject.id;
-      si.applicant = owner;
+      si.applicant = state.app.owner;
 
       return [
         m(TextInput, {

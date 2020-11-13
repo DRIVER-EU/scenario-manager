@@ -19,11 +19,11 @@ import {
   IValueNamePair,
   ResponseType,
 } from '../../../../models';
-import { MeiosisComponent } from '../../services';
-import { getInject, getUsersByRole } from '../../utils';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo, getUsersByRole } from '../../utils';
 
 /** LCMS message, currently a wrapped CAP message */
-export const LcmsMessageForm: MeiosisComponent = () => {
+export const LcmsMessageForm: MessageComponent = () => {
   let participants: IPerson[];
 
   // const validateActionList = debounce((al: IActionList[]) => {
@@ -56,15 +56,14 @@ export const LcmsMessageForm: MeiosisComponent = () => {
     },
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const inject = getInject(trial, injectId);
-      const disabled = mode !== 'edit';
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const mdChanged = (p: IValueNamePair, md: string) => {
         p.value = md;
         updateInject(inject);

@@ -1,23 +1,22 @@
 import m from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
 import { getMessage, MessageType, IOstStageChangeMessage } from '../../../../models';
-import { MeiosisComponent } from '../../services';
-import { getInject } from '../../utils';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
 /** Request the Observer Support Tool to change the list of questions for the observers */
-export const OstChangeStageMessageForm: MeiosisComponent = () => {
+export const OstChangeStageMessageForm: MessageComponent = () => {
   return {
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const disabled = mode !== 'edit';
-      const inject = getInject(trial, injectId);
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const pm = getMessage<IOstStageChangeMessage>(inject, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES);
 
       return m('.row', [

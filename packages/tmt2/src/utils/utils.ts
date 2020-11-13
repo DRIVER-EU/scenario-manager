@@ -24,7 +24,7 @@ import { LineString, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
   Object.keys(e)
-    .filter((v, i, arr) => i < arr.length / 2)
+    .filter((_, i, arr) => i < arr.length / 2)
     .map((k) => +k);
 
 /** Map a string enum to a list of options */
@@ -267,12 +267,6 @@ export const userRolesFilter = (user: IPerson, role: UserRole) => {
   return roles.filter((r) => r === role).length > 0;
 };
 
-export const eatSpaces = (ev: KeyboardEvent) => {
-  if (ev.which === 32) {
-    return false;
-  }
-};
-
 const formatHHmm = (t: Date) => `${padLeft(t.getHours())}:${padLeft(t.getMinutes())}`;
 const formatDate = (t: Date) => `${t.getDate() > 1 ? `${t.getDate() - 1}d ` : ''}`;
 
@@ -509,13 +503,16 @@ export const arrayMove = <T>(arr: Array<T | undefined>, oldIndex: number, newInd
 const waitingForManualConfirmation = (i: IExecutingInject) =>
   i.state === InjectState.SCHEDULED && i.condition && i.condition.type === InjectConditionType.MANUALLY;
 
-export const injectToTimelineItemFactory = (injectStates: IInjectSimStates) => (i: IExecutingInject) => {
+export const injectToTimelineItemFactory = (injectStates: IInjectSimStates, treeState: { [key: string]: boolean }) => (
+  i: IExecutingInject
+) => {
   const { condition, id } = i;
   const isCompleted = i.state === InjectState.EXECUTED;
   const delay = injectStates && injectStates.hasOwnProperty(id) ? injectStates[id].delayInSeconds || 0 : 0;
   const condDelay = condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0;
   return {
     ...i,
+    isOpen: treeState[i.id],
     completed: isCompleted ? 1 : 0,
     highlight: waitingForManualConfirmation(i),
     delay: delay + condDelay,

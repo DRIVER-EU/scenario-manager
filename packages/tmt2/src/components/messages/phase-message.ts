@@ -1,10 +1,10 @@
 import m from 'mithril';
 import { TextArea, TextInput, Select, Switch } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, IPhaseMessage, Phase } from '../../../../models';
-import { MeiosisComponent } from '../../services';
-import { getInject } from '../../utils';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
-export const PhaseMessageForm: MeiosisComponent = () => {
+export const PhaseMessageForm: MessageComponent = () => {
   const setTitle = (inject: IInject, pm: IPhaseMessage) => {
     const name = pm.phase === Phase.PROPER_NAME ? pm.alternativeName : Phase[pm.phase];
     inject.title = `${pm.isStarting ? 'START' : 'END'} ${name}`;
@@ -12,15 +12,14 @@ export const PhaseMessageForm: MeiosisComponent = () => {
   return {
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const disabled = mode !== 'edit';
-      const inject = getInject(trial, injectId);
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const pm = getMessage<IPhaseMessage>(inject, MessageType.PHASE_MESSAGE);
       const options = Object.keys(Phase).map((p) => ({ id: p, label: p }));
       // console.table(pm);

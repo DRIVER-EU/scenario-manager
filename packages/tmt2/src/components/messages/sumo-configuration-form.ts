@@ -1,10 +1,10 @@
 import m from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
 import { getMessage, IInject, MessageType, ISumoConfiguration } from '../../../../models';
-import { MeiosisComponent } from '../../services';
-import { getInject } from '../../utils';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
-export const SumoConfigurationForm: MeiosisComponent = () => {
+export const SumoConfigurationForm: MessageComponent = () => {
   const setTitle = (inject: IInject, sc: ISumoConfiguration) => {
     inject.title = `Run ${sc.configFile}`;
   };
@@ -14,15 +14,14 @@ export const SumoConfigurationForm: MeiosisComponent = () => {
   return {
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const disabled = mode !== 'edit';
-      const inject = getInject(trial, injectId);
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const sc = getMessage(inject, MessageType.SUMO_CONFIGURATION) as ISumoConfiguration;
       sc.begin = sc.begin || -1;
       sc.end = sc.end || -1;

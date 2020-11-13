@@ -23,6 +23,8 @@ export type MeiosisComponent<T = {}> = FactoryComponent<{
   options?: T;
 }>;
 
+export type MessageComponent<T = {}> = MeiosisComponent<{ editing?: boolean } & T>;
+
 const app = {
   initial: Object.assign({}, appStateMgmt.initial) as IAppModel,
   actions: (update: UpdateStream, states: Stream<IAppModel>) =>

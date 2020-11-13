@@ -1,25 +1,24 @@
 import m from 'mithril';
 import { TextArea, TextInput, UrlInput, Select } from 'mithril-materialized';
 import { getMessage, MessageType, ILargeDataUpdate, DataType } from '../../../../models';
-import { MeiosisComponent } from '../../services';
-import { enumToOptions, getInject } from '../../utils';
+import { MessageComponent } from '../../services';
+import { enumToOptions, getActiveTrialInfo } from '../../utils';
 
 /** Inform others about a large data message: note that it only sends a link, not the actual data! */
-export const LargeDataUpdateMessageForm: MeiosisComponent = () => {
+export const LargeDataUpdateMessageForm: MessageComponent = () => {
   const options = enumToOptions(DataType).map((o) => ({ id: o.id, label: o.label.replace('_', ' ').toUpperCase() }));
 
   return {
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const disabled = mode !== 'edit';
-      const inject = getInject(trial, injectId);
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const pm = getMessage(inject, MessageType.LARGE_DATA_UPDATE) as ILargeDataUpdate;
 
       return m('.row', [

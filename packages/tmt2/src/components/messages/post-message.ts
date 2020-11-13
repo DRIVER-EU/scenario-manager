@@ -1,8 +1,8 @@
 import m from 'mithril';
 import { TextArea, TextInput, Select } from 'mithril-materialized';
 import { getMessage, MessageType, IPostMsg, UserRole } from '../../../../models';
-import { enumToOptions, getInject, getUsersByRole } from '../../utils';
-import { MeiosisComponent } from '../../services';
+import { enumToOptions, getActiveTrialInfo, getUsersByRole } from '../../utils';
+import { MessageComponent } from '../../services';
 
 export enum MediumTypes {
   CHAT = 'CHAT',
@@ -16,32 +16,25 @@ export enum MediumTypes {
 }
 
 /** Inform others about a large data message: note that it only sends a link, not the actual data! */
-export const PostMessageForm: MeiosisComponent = () => {
+export const PostMessageForm: MessageComponent = () => {
   let recipients: Array<{ id: string; label: string }> = [];
   const options = enumToOptions(MediumTypes);
 
   return {
-    oninit: ({
-      attrs: {
-        state: {
-          app: { trial },
-        },
-      },
-    }) => {
-      // const svc = scope === 'edit' ? TrialSvc : RunSvc;
+    oninit: ({ attrs: { state } }) => {
+      const { trial } = getActiveTrialInfo(state);
       recipients = getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.id, label: rp.name }));
     },
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const inject = getInject(trial, injectId);
-      const disabled = mode !== 'edit';
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const pm = getMessage(inject, MessageType.POST_MESSAGE) as IPostMsg;
 
       return [

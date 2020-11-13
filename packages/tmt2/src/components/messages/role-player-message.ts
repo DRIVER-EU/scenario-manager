@@ -1,27 +1,31 @@
 import m from 'mithril';
 import { TextArea, TextInput, Select, Collection, CollectionMode, Icon, FlatButton } from 'mithril-materialized';
 import { getMessage, MessageType, UserRole, IRolePlayerMsg, RolePlayerMessageType, IPerson } from '../../../../models';
-import { MeiosisComponent, RunSvc } from '../../services';
-import { createEmailLink, createPhoneLink, getInject, getRolePlayerMessageIcon, getUsersByRole } from '../../utils';
+import { MessageComponent, RunSvc } from '../../services';
+import {
+  createEmailLink,
+  createPhoneLink,
+  getActiveTrialInfo,
+  getRolePlayerMessageIcon,
+  getUsersByRole,
+} from '../../utils';
 
-export const RolePlayerMessageForm: MeiosisComponent<{ checkpoint?: boolean }> = () => {
+export const RolePlayerMessageForm: MessageComponent<{ checkpoint?: boolean }> = () => {
   return {
     view: ({
       attrs: {
-        options: { checkpoint = false } = {},
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
+        options: { editing = true, checkpoint = false } = { editing: true },
         actions: { updateInject },
       },
     }) => {
-      const inject = getInject(trial, injectId);
+      const { inject, trial } = getActiveTrialInfo(state);
       if (!inject) return;
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayers = getUsersByRole(trial, UserRole.ROLE_PLAYER).map((rp) => ({ id: rp.id, label: rp.name }));
       const participants = getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.id, label: rp.name }));
       const types = Object.keys(RolePlayerMessageType).map((t) => ({ id: t, label: t }));
-      const disabled = mode !== 'edit';
+      const disabled = !editing;
 
       if (checkpoint) {
         rpm.type = RolePlayerMessageType.ACTION;
@@ -107,7 +111,7 @@ export const RolePlayerMessageForm: MeiosisComponent<{ checkpoint?: boolean }> =
 };
 
 /** A static view on a role player message, i.e. without the possibility to change it */
-export const RolePlayerMessageView: MeiosisComponent = () => {
+export const RolePlayerMessageView: MessageComponent = () => {
   const msgDetails = (rpm: IRolePlayerMsg, _rolePlayer: IPerson, participants?: IPerson[]) => {
     switch (rpm.type) {
       case RolePlayerMessageType.ACTION:
@@ -160,8 +164,7 @@ export const RolePlayerMessageView: MeiosisComponent = () => {
 
   return {
     view: ({ attrs: { state } }) => {
-      const { injectId, trial } = state.app;
-      const inject = getInject(trial, injectId);
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
 
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);

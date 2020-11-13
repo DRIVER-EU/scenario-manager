@@ -4,10 +4,10 @@ import { getMessage, MessageType, IAffectedArea, IareaPoly } from '../../../../m
 import { LeafletMap } from 'mithril-leaflet';
 import { Polygon, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { FeatureGroup, geoJSON, GeoJSON } from 'leaflet';
-import { affectedAreaToGeoJSON, geoJSONtoAffectedArea, getInject, isJSON } from '../../utils';
-import { MeiosisComponent } from '../../services';
+import { affectedAreaToGeoJSON, geoJSONtoAffectedArea, getActiveTrialInfo, getInject, isJSON } from '../../utils';
+import { MessageComponent } from '../../services';
 
-export const SetAffectedAreaForm: MeiosisComponent = () => {
+export const SetAffectedAreaForm: MessageComponent = () => {
   let overlays: { [key: string]: GeoJSON } = {};
 
   const convertToSec = (n: number) => (n === -1 ? -1 : n / 1000);
@@ -40,18 +40,17 @@ export const SetAffectedAreaForm: MeiosisComponent = () => {
     },
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, mode },
-        },
+        state,
         actions: { updateInject },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const disabled = mode !== 'edit';
-      const inject = getInject(trial, injectId);
+      const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const aa = getMessage<IAffectedArea>(inject, MessageType.SET_AFFECTED_AREA);
       const addArea = (area: IareaPoly) => {
-        const inj = getInject(trial, injectId);
+        const { inject: inj } = getActiveTrialInfo(state);
         if (inj) {
           const m = getMessage<IAffectedArea>(inj, MessageType.SET_AFFECTED_AREA);
           m.area = area;

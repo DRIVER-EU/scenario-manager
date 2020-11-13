@@ -1,28 +1,28 @@
 import m from 'mithril';
 import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
 import { getMessage, MessageType, IGeoJsonMessage } from '../../../../models';
-import { getMessageSubjects, getInject, isJSON } from '../../utils';
+import { getMessageSubjects, isJSON, getActiveTrialInfo } from '../../utils';
 import { UploadAsset } from '../ui';
 import { ILeafletMap, LeafletMap } from 'mithril-leaflet';
 import { geoJSON, GeoJSON } from 'leaflet';
-import { MeiosisComponent } from '../../services';
+import { MessageComponent } from '../../services';
 import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
 
-export const GeoJsonMessageForm: MeiosisComponent = () => {
+export const GeoJsonMessageForm: MessageComponent = () => {
   let overlays: { [key: string]: GeoJSON | undefined };
 
   return {
     view: ({
       attrs: {
-        state: {
-          app: { trial, injectId, assetId, mode, assets },
-        },
+        state,
         actions: { updateInject, createAsset },
+        options: { editing } = { editing: true },
       },
     }) => {
-      const disabled = mode !== 'edit';
-      const inject = getInject(trial, injectId);
+      const { assetId, assets } = state.app;
+      const { trial, inject } = getActiveTrialInfo(state);
       if (!inject) return;
+      const disabled = !editing;
       const gm = getMessage<IGeoJsonMessage>(inject, MessageType.GEOJSON_MESSAGE);
       if (!gm.assetId && assetId) {
         gm.assetId = assetId;
