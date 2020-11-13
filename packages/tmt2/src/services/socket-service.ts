@@ -1,6 +1,17 @@
 import io from 'socket.io-client';
-import { actions, IAppModel } from '.';
-import { TimeState, ITimeManagement } from '../../../models';
+import { actions, IAppModel, states } from '.';
+import {
+  TimeState,
+  ITimeManagement,
+  deepEqual,
+  IInjectSimStates,
+  IInject,
+  uniqueId,
+  IConnectMessage,
+  ISessionManagement,
+  SessionState,
+} from '../../../models';
+import { getInjects } from '../utils';
 
 // tslint:disable-next-line:no-console
 const log = console.log;
@@ -12,7 +23,10 @@ export const setupSocket = (autoConnect = true) => {
   }
   socket = autoConnect ? io() : io(process.env.SERVER || location.origin);
 
-  socket.on('connect', () => log('Connected'));
+  socket.on('connect', () => {
+    socket.emit('test-bed-connect');
+    log('Connected');
+  });
   socket.on('disconnect', () => log('Disconnected'));
   socket.on('connect_error', (err: Error) => {
     socket.close();
@@ -33,27 +47,54 @@ export const setupSocket = (autoConnect = true) => {
     // SimulationState.state = state;
     update({ exe: { time: { state } } } as Partial<IAppModel>);
   });
-  // let handler = -1;
   socket.on('time', (time: ITimeManagement) => {
     const { update } = actions;
     update({ exe: { time } } as Partial<IAppModel>);
-    // SimulationState.simulationTime = time.simulationTime || new Date().setHours(12, 0, 0).valueOf();
-    // SimulationState.simulationSpeed = time.simulationSpeed;
-    // if (time.tags?.timeElapsed) {
-    //   console.log(time);
-    //   SimulationState.tags = { timeElapsed: time.tags.timeElapsed };
-    // }
-    // window.clearInterval(handler);
-    // if (time.simulationSpeed && time.simulationSpeed > 0) {
-    //   const secDuration = 1000;
-    //   handler = window.setInterval(() => {
-    //     if (!SimulationState.simulationTime) {
-    //       SimulationState.simulationTime = 0;
-    //     }
-    //     SimulationState.simulationTime += secDuration;
-    //   }, secDuration / time.simulationSpeed);
-    // }
   });
+  socket.on('is-connected', async (data: IConnectMessage) => {
+    const { update } = actions;
+    console.log('data', data);
+    const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
+    await actions.updateSession(Object.assign({ tags: undefined }, session));
+    update({
+      exe: {
+        sessionControl: {
+          activeSession: session.state === SessionState.Started || session.state === SessionState.Initializing,
+          isConnected,
+          host,
+          realtime: time?.simulationTime ? Math.abs(time?.simulationTime - Date.now()) < 10000 : true,
+        },
+        time,
+      },
+    } as Partial<IAppModel>);
+  });
+  socket.on('injectStates', (injectStates: IInjectSimStates) => {
+    const { update } = actions;
+    const { exe } = states();
+    const { injectStates: curInjectStates } = exe;
+    if (deepEqual(curInjectStates, injectStates)) {
+      return;
+    }
+    update({ exe: { injectStates } } as Partial<IAppModel>);
+  });
+  socket.on('updatedInject', (i: IInject) => {
+    const { update } = actions;
+    const {
+      exe: { trial },
+    } = states();
+    trial.injects = getInjects(trial).map((s) => (s.id === i.id ? i : s));
+    update({ exe: { trial } } as Partial<IAppModel>);
+  });
+  socket.on('createdInject', (i: IInject) => {
+    const { update } = actions;
+    const {
+      exe: { trial },
+    } = states();
+    i.id = i.id || uniqueId();
+    trial.injects && trial.injects.push(i);
+    update({ exe: { trial } } as Partial<IAppModel>);
+  });
+
   return socket;
 };
 socket = setupSocket();
