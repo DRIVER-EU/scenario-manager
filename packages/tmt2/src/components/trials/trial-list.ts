@@ -17,11 +17,10 @@ export const TrialList: MeiosisComponent = () => {
   return {
     oninit: async ({
       attrs: {
-        actions: { loadTrials, connectToTestbed },
+        actions: { loadTrials },
       },
     }) => {
       await loadTrials();
-      connectToTestbed();
       loaded = true;
     },
     view: ({
