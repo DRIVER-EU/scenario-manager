@@ -1,12 +1,13 @@
 import m from 'mithril';
 import { TextArea, TextInput, Select, Collection, CollectionMode, Icon, FlatButton } from 'mithril-materialized';
 import { getMessage, MessageType, UserRole, IRolePlayerMsg, RolePlayerMessageType, IPerson } from '../../../../models';
-import { MessageComponent, RunSvc } from '../../services';
+import { MessageComponent } from '../../services';
 import {
   createEmailLink,
   createPhoneLink,
   getActiveTrialInfo,
   getRolePlayerMessageIcon,
+  getUsers,
   getUsersByRole,
 } from '../../utils';
 
@@ -164,15 +165,15 @@ export const RolePlayerMessageView: MessageComponent = () => {
 
   return {
     view: ({ attrs: { state } }) => {
-      const { inject } = getActiveTrialInfo(state);
+      const { trial, inject } = getActiveTrialInfo(state);
       if (!inject) return;
 
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayer =
-        RunSvc.getUsers()
+        getUsers(trial)
           .filter((u) => u.id === rpm.rolePlayerId)
           .shift() || ({} as IPerson);
-      const participants = RunSvc.getUsers().filter((u) =>
+      const participants = getUsers(trial).filter((u) =>
         rpm.participantIds && rpm.participantIds.indexOf(u.id) >= 0 ? true : false
       );
       return [

@@ -2,11 +2,8 @@ import m from 'mithril';
 import { TimeControl } from './time-control';
 import { MeiosisComponent } from '../../services';
 import { FlatButton, Select, ISelectOptions, TextInput, TextArea, InputCheckbox, Icon } from 'mithril-materialized';
-import { IScenario, InjectType, ISessionManagement, SessionState, uniqueId, TimeState } from '../../../../models';
+import { IScenario, InjectType, SessionState, uniqueId, TimeState } from '../../../../models';
 import { getInjectIcon, getInjects, getInject } from '../../utils';
-
-const isComplete = ({ id: sessionId, name: sessionName }: Partial<ISessionManagement>) =>
-  sessionId && sessionId.length && sessionName && sessionName.length > 1 ? true : false;
 
 /** Helper component to specify the session id, name, comments */
 const SessionSettings: MeiosisComponent = () => {
@@ -143,11 +140,11 @@ export const SessionControl: MeiosisComponent = () => {
       console.log('SC scenario', scenario);
     },
     view: ({ attrs: { state, actions } }) => {
-      const { session, sessionControl, time } = state.exe;
+      const { sessionControl, time } = state.exe;
       const { isConnected } = sessionControl;
       const { updateSessionControl } = actions;
       const { realtime, activeSession } = sessionControl;
-      const canStart = activeSession && isComplete(session);
+      // const canStart = activeSession && isSessionInfoValid(session);
       const iconName = time
         ? time.state === TimeState.Reset
           ? 'timer'
@@ -188,24 +185,11 @@ export const SessionControl: MeiosisComponent = () => {
                     '.col.s12.m6',
                     m('.input-field.col.s12', [
                       m(Icon, { iconName, className: 'prefix' }),
-                      m(TimeControl, {
-                        style: 'margin-left: 3em',
-                        scenario,
-                        isConnected,
-                        time,
-                        canStart,
-                        realtime,
-                      }),
+                      m(TimeControl, { state, actions, options: { style: 'margin-left: 3em' } }),
                     ])
                   )
                 )
-              : m(TimeControl, {
-                  scenario,
-                  isConnected,
-                  time,
-                  canStart,
-                  realtime,
-                })
+              : m(TimeControl, { state, actions })
             : undefined
         ),
       ];

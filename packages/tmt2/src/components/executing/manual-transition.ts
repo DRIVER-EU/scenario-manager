@@ -11,7 +11,7 @@ import {
   uniqueId,
 } from '../../../../models';
 import { FlatButton, ModalPanel, Select } from 'mithril-materialized';
-import { MeiosisComponent, RunSvc, SocketSvc } from '../../services';
+import { MeiosisComponent, SocketSvc } from '../../services';
 import { formatTime, messageOptions, getMessageIcon, getActiveTrialInfo } from '../../utils';
 import { MessageForm } from '../messages/message-form';
 import { InjectConditions } from '../injects/inject-conditions';
@@ -21,13 +21,6 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
   let isEditing = false;
   let msgOptions = [] as Array<{ id: string; label: string }>;
   let newInject = {} as IInject;
-
-  // const state = {
-  //   show: true,
-  //   isEditing: false,
-  //   options: [] as Array<{ id: string; label: string }>,
-  //   newInject: {} as IInject,
-  // };
 
   const waitingForManualConfirmation = (inject: IExecutingInject) =>
     inject.state === InjectState.SCHEDULED &&
@@ -55,31 +48,22 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { inject } = getActiveTrialInfo<IExecutingInject>(state);
-      const { updateExecutingInject } = actions;
+      const { updateExecutingInject, createInject, transitionInject } = actions;
       if (!inject) return;
 
-      // const { show, isEditing } = state;
       const { id: i, state: from, expectedExecutionTimeAt } = inject;
       const id = i as string;
       const isWaiting = waitingForManualConfirmation(inject);
-      // const previousInjects = findPreviousInjects(inject, RunSvc.getInjects());
 
       const onclick = () => {
         show = false;
-        RunSvc.transition({
+        transitionInject({
           id,
           from,
           to: InjectState.IN_PROGRESS,
           expectedExecutionTimeAt: expectedExecutionTimeAt ? expectedExecutionTimeAt.valueOf() : undefined,
         });
       };
-
-      // const onChange = (inj?: IInject) => {
-      //   if (inj) {
-      //     newInject = inj;
-      //   }
-      //   // m.redraw();
-      // };
 
       return m('.row', [
         show &&
@@ -167,7 +151,7 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
                 {
                   label: 'Create',
                   onclick: () => {
-                    RunSvc.createInject(newInject);
+                    createInject(newInject);
                   },
                 },
               ],

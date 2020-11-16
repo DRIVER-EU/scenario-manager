@@ -1,6 +1,6 @@
 import Stream from 'mithril/stream';
 import { applyPatch, Operation } from 'rfc6902';
-import { IRestService, restServiceFactory, SocketSvc } from '..';
+import { IRestService, restServiceFactory, SocketSvc, runServiceFactory } from '..';
 import {
   deepCopy,
   IAsset,
@@ -13,6 +13,7 @@ import {
   IScenario,
   ISessionManagement,
   IStakeholder,
+  IStateTransitionRequest,
   ITimeManagement,
   ITrial,
   SessionState,
@@ -20,11 +21,12 @@ import {
 import { MessageScope } from '../../components/messages';
 import { arrayMove, getInjects, isScenario, validateInjects } from '../../utils';
 import { IAppModel, UpdateStream } from '../meiosis';
-import { RunSvc } from '../run-service';
 import { ISessionControl } from '../../models';
 
 const trialSvc = restServiceFactory<ITrial>('trials');
 let assetsSvc: IRestService<IAsset>;
+
+const runSvc = runServiceFactory(process.env.SERVER || location.origin);
 
 export interface IActiveTrial {
   trial: ITrial;
@@ -117,6 +119,7 @@ export interface IAppStateActions {
   updateInject: (inject: IInject) => Promise<void>;
   deleteInject: (inject: IInject) => Promise<void>;
   moveInject: (source: IInject, target: IInject) => Promise<void>;
+  transitionInject: (st: IStateTransitionRequest) => Promise<boolean>;
 
   selectStakeholder: (stakeholder: IStakeholder) => void;
   createStakeholder: (stakeholder: IStakeholder) => Promise<void>;
@@ -207,13 +210,13 @@ export const appStateMgmt = {
       setEditMode: (editing: boolean) => update({ app: { mode: editing ? 'edit' : 'execute' } }),
       setInjectStates: (injectStates: IInjectSimStates) => update({ exe: { injectStates } }),
       updateExecutingInject: async (inject: IExecutingInject) => {
-        await RunSvc.updateInject(inject);
+        await runSvc.updateInject(inject);
       },
       updateSessionControl: (sessionControl: ISessionControl) => update({ exe: { sessionControl } }),
       updateSession: async (s?: Partial<ISessionManagement>) => {
         const { trial } = states().app;
-        const t = await RunSvc.activeTrial();
-        const session = await RunSvc.activeSession();
+        const t = await runSvc.activeTrial();
+        const session = await runSvc.activeSession();
         if (session && (session.state === SessionState.Started || session.state === SessionState.Initializing)) {
           const scenarioId = session.tags ? session.tags.scenarioId : undefined;
           const scenario = getInjects(trial)
@@ -227,7 +230,7 @@ export const appStateMgmt = {
         }
       },
       startSession: async (session: ISessionManagement) => {
-        await RunSvc.load(session);
+        await runSvc.load(session);
         update({
           exe: {
             session: session,
@@ -236,8 +239,8 @@ export const appStateMgmt = {
         });
       },
       stopSession: async () => {
-        await RunSvc.unload();
-        const session = await RunSvc.activeSession();
+        await runSvc.unload();
+        const session = await runSvc.activeSession();
         if (session) {
           update({
             exe: {
@@ -337,7 +340,7 @@ export const appStateMgmt = {
             ? update({ app: { scenarioId: inject.id, trial } })
             : update({ app: { injectId: inject.id, trial } });
         } else {
-          await RunSvc.createInject(inject);
+          await runSvc.createInject(inject);
           update({ exe: { injectId: inject.id, trial } });
         }
       },
@@ -351,7 +354,7 @@ export const appStateMgmt = {
           await trialSvc.patch(trial, oldTrial);
           update({ app: { injectId: inject.id, trial } });
         } else {
-          await RunSvc.updateInject(inject);
+          await runSvc.updateInject(inject);
         }
       },
       deleteInject: async (inject: IInject) => {
@@ -365,7 +368,7 @@ export const appStateMgmt = {
           update({ app: { injectId: '', trial } });
         } else {
           // TODO
-          // await RunSvc.
+          // await runSvc.
         }
       },
       moveInject: async (source: IInject, after: IInject) => {
@@ -378,6 +381,7 @@ export const appStateMgmt = {
           await trialSvc.patch(trial, oldTrial);
         }
       },
+      transitionInject: async (st: IStateTransitionRequest) => runSvc.transition(st),
 
       selectAsset: (asset: IAsset) => update({ app: { assetId: asset.id } }),
       createAsset: async (asset: IAsset, files?: FileList) => {

@@ -5,6 +5,7 @@ import {
   InjectConditionType,
   InjectType,
   IScenario,
+  ISessionManagement,
   ITrial,
   MessageType,
   UserRole,
@@ -80,6 +81,9 @@ export const getInjects = (trial?: ITrial, filter?: string) => {
 export const getInject = (trial?: ITrial, id?: string) => {
   return deepCopy(trial && trial.injects && id ? (trial.injects || []).filter((s) => s.id === id).shift() : undefined);
 };
+
+export const isSessionInfoValid = ({ id: sessionId, name: sessionName }: Partial<ISessionManagement>) =>
+  sessionId && sessionId.length && sessionName && sessionName.length > 1 ? true : false;
 
 // Delete inject, including all children
 export const canDeleteInject = (trial: ITrial, i: IInject) => {
