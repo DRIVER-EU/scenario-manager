@@ -183,7 +183,7 @@ export const getMessageTitle = (type?: string) => {
     case MessageType.LCMS_MESSAGE:
       return 'LCMS MESSAGE';
     case MessageType.START_INJECT:
-      return 'SEND EVENT / INJECT';
+      return 'START EVENT';
     case MessageType.LARGE_DATA_UPDATE:
       return 'SEND (DATA) LINK';
     case MessageType.REQUEST_UNIT_MOVE:
