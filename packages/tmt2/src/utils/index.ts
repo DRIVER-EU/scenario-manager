@@ -25,12 +25,11 @@ export const uuid4 = () => {
  * @returns RFC4122 version 4 compliant GUID
  */
 export const uniqueId = () => {
-  return 'idxxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'id_xxxxxxxxxx'.replace(/[xy]/g, () => {
     // tslint:disable-next-line:no-bitwise
     const r = (Math.random() * 16) | 0;
     // tslint:disable-next-line:no-bitwise
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
+    return r.toString(16);
   });
 };
 
