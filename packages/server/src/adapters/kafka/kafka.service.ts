@@ -162,7 +162,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public get timeMessage() {
-    this.adapter && console.log(this.adapter.timeElapsed);
+    // this.adapter && console.log(this.adapter.timeElapsed);
     return this.adapter && this.adapter.simulationTime
       ? ({
           timestamp: Date.now(),
@@ -199,14 +199,14 @@ export class KafkaService extends EventEmitter implements TimeService {
     });
   }
 
-  private debouncer: NodeJS.Timeout;
+  // private debouncer: NodeJS.Timeout;
 
   private handleMessage(message: IAdapterMessage) {
     switch (message.topic) {
       case TrialManagementSessionMgmtTopic:
         this.session = message.value as ISessionManagement;
-        clearTimeout(this.debouncer);
-        this.debouncer = setTimeout(() => console.table(this.session), 1000);
+        // clearTimeout(this.debouncer);
+        // this.debouncer = setTimeout(() => console.table(this.session), 1000);
         // debounce(() => console.table(this.session), 1000);
         this.debouncedEmit('session-update', this.session);
         break;
