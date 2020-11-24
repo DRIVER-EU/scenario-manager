@@ -1,3 +1,4 @@
+import m from 'mithril';
 import io from 'socket.io-client';
 import { actions, IAppModel, states } from '.';
 import {
@@ -71,11 +72,15 @@ export const setupSocket = (autoConnect = true) => {
   socket.on('injectStates', (injectStates: IInjectSimStates) => {
     const { update } = actions;
     const { exe } = states();
-    const { injectStates: curInjectStates } = exe;
+    const { injectStates: curInjectStates, trial } = exe;
     if (deepEqual(curInjectStates, injectStates)) {
       return;
     }
-    update({ exe: { injectStates } } as Partial<IAppModel>);
+    if (injectStates) {
+      trial.injects = trial.injects.map((i) => ({ ...i, ...injectStates[i.id] }));
+    }
+    update({ exe: { trial, injectStates } } as Partial<IAppModel>);
+    m.redraw();
   });
   socket.on('updatedInject', (i: IInject) => {
     const { update } = actions;
