@@ -60,27 +60,27 @@ export const getMessageForm = (state: IAppModel, actions: IActions, inject: IInj
 export const MessageForm: MessageComponent = () => {
   const MessageFormSelector: MessageComponent = () => {
     return {
-      view: ({ attrs: { state, actions } }) => {
+      view: ({ attrs: { state, actions, options } }) => {
         const { inject } = getActiveTrialInfo(state);
         if (!inject) return;
-        return getMessageForm(state, actions, inject);
+        return getMessageForm(state, actions, inject, options?.editing);
       },
     };
   };
 
   return {
     oninit: () => console.log('ONINIT MessageForm'),
-    view: ({ attrs: { state, actions } }) => {
+    view: ({ attrs: { state, actions, options } }) => {
       const { mode } = state.app;
       const isExecuting = mode === 'execute';
       const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
       const inject = getInject(trial, injectId || scenarioId);
       return inject
         ? inject.type === InjectType.INJECT
-          ? m('.message-form', m(MessageFormSelector, { state, actions }))
+          ? m('.message-form', m(MessageFormSelector, { state, actions, options }))
           : inject.type === InjectType.SCENARIO
-          ? m(ScenarioForm, { state, actions })
-          : m(DefaultMessageForm, { state, actions })
+          ? m(ScenarioForm, { state, actions, options })
+          : m(DefaultMessageForm, { state, actions, options })
         : undefined;
     },
   };

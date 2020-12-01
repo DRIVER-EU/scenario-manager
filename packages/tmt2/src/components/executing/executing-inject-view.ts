@@ -33,7 +33,7 @@ export const ExecutingInjectView: MeiosisComponent = () => {
                     }),
                     inject.title,
                   ]),
-                  m(MessageForm, { state, actions }),
+                  m(MessageForm, { state, actions, options: { editing } }),
                 ]
               : inject && [
                   m(ManualTransition, { state, actions, options: { editing: (b) => (editing = b) } }), // TODO can set editing to true
@@ -44,7 +44,9 @@ export const ExecutingInjectView: MeiosisComponent = () => {
                     }),
                     getMessageTitle(inject.messageType),
                   ]),
-                  editing ? m(MessageForm, { state, actions }) : m(ExecutingMessageView, { state, actions }),
+                  editing
+                    ? m(MessageForm, { state, actions, options: { editing } })
+                    : m(ExecutingMessageView, { state, actions, options: { editing } }),
                 ]
           )
         ),

@@ -6,7 +6,7 @@ import { getActiveTrialInfo } from '../../utils';
 
 export const StartInjectForm: MessageComponent = () => {
   const setTitle = (inject: IInject, si: IRequestStartInject) => {
-    inject.title = `Run inject ${si.inject}`;
+    inject.title = `Start event: ${si.inject}`;
   };
 
   return {
@@ -23,14 +23,19 @@ export const StartInjectForm: MessageComponent = () => {
       const si = getMessage(inject, MessageType.START_INJECT) as IRequestStartInject;
       si.id = inject.id;
       si.applicant = state.app.owner;
+      if (!si.inject && inject.title) {
+        si.inject = inject.title;
+        setTitle(inject, si);
+        updateInject(inject);
+      }
 
       return [
         m(TextInput, {
           disabled,
-          label: 'Inject',
+          label: 'Event name',
           iconName: 'colorize',
           isMandatory: true,
-          helperText: 'Name of the inject you want to run.',
+          helperText: 'Name of the event / inject you want to run.',
           initialValue: si.inject,
           onchange: (v) => {
             si.inject = v;

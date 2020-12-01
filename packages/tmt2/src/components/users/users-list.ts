@@ -3,7 +3,7 @@ import { UsersForm } from './users-form';
 import { IPerson, UserRole, uniqueId } from '../../../../models';
 import { MeiosisComponent } from '../../services';
 import { RoundIconButton, TextInput, Collection, CollectionMode, ICollectionItem } from 'mithril-materialized';
-import { getUsers, userIcon, userRolesToString } from '../../utils';
+import { getActiveTrialInfo, getUsers, userIcon, userRolesToString } from '../../utils';
 
 const UsersList: MeiosisComponent = () => {
   let filterValue = '' as string | undefined;
@@ -11,12 +11,13 @@ const UsersList: MeiosisComponent = () => {
   return {
     view: ({
       attrs: {
-        state: {
-          app: { trial, userId },
-        },
+        state,
         actions: { createUser, selectUser },
       },
     }) => {
+      const { trial } = getActiveTrialInfo(state);
+      const { userId } = state.app;
+
       const users = getUsers(trial, filterValue).sort((a, b) => (a.name > b.name || a.id > b.id ? 1 : -1));
       if (!userId && users.length > 0) {
         selectUser(users[0]);

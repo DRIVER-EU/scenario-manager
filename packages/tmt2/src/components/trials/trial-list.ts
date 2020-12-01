@@ -2,7 +2,7 @@ import m from 'mithril';
 import { TextInput, RoundIconButton, Icon } from 'mithril-materialized';
 import { dashboardSvc, MeiosisComponent } from '../../services';
 import { titleAndDescriptionFilter, padLeft } from '../../utils';
-import { ITrialOverview, TimeState } from '../../../../models';
+import { ITrialOverview, SessionState, TimeState } from '../../../../models';
 import { Dashboards } from '../../models';
 
 export const TrialList: MeiosisComponent = () => {
@@ -41,6 +41,8 @@ export const TrialList: MeiosisComponent = () => {
       const query = titleAndDescriptionFilter(filterValue);
       const filteredTrials = trials.filter(query);
       const apiService = process.env.SERVER || location.origin;
+      console.table(session);
+      console.table({ isConnected, activeSession });
       return m('.scenario-list', [
         m('.row', [
           m(TextInput, {
@@ -127,7 +129,11 @@ export const TrialList: MeiosisComponent = () => {
                       iconName: 'content_copy',
                     })
                   ),
-                  (state === TimeState.Reset || trialId === trial.id) &&
+                  ((session &&
+                    (session.state === SessionState.Closed ||
+                      session.state === SessionState.Stopped ||
+                      (isConnected && !session.state))) ||
+                    trialId === trial.id) &&
                     m(
                       'a',
                       {

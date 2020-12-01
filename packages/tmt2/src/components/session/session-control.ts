@@ -3,45 +3,29 @@ import { TimeControl } from './time-control';
 import { MeiosisComponent } from '../../services';
 import { FlatButton, Select, ISelectOptions, TextInput, TextArea, InputCheckbox, Icon } from 'mithril-materialized';
 import { IScenario, InjectType, SessionState, uniqueId, TimeState } from '../../../../models';
-import { getInjectIcon, getInjects, getInject } from '../../utils';
+import { getInjectIcon, getInject, getInjects, isScenario } from '../../utils';
 
 /** Helper component to specify the session id, name, comments */
 const SessionSettings: MeiosisComponent = () => {
-  let scenarios: IScenario[] = [];
-  let scenario: IScenario | undefined;
-
   return {
-    oninit: async ({
-      attrs: {
-        state: { app, exe },
-        actions: { updateSession, selectScenario },
-      },
-    }) => {
-      await updateSession();
-      const { mode } = app;
-      const isExecuting = mode === 'execute';
-      const { trial, scenarioId } = isExecuting && exe.trial.id ? exe : app;
-      scenarios = getInjects(trial).filter((i) => i.type === InjectType.SCENARIO);
-      const id = scenarioId || (scenarios.length > 0 ? scenarios[0].id : undefined);
-      scenario = getInject(trial, id);
-      if (id && id !== exe.scenarioId) selectScenario(id);
-    },
     view: ({
       attrs: {
         state: { app, exe },
-        actions: { selectScenario, updateSession, startSession, stopSession },
+        actions: { selectScenario, selectInject, updateSession, startSession, stopSession },
       },
     }) => {
       const trial = exe.trial.id ? exe.trial : app.trial;
-      const { time, session: s, sessionControl } = exe;
+      const { time, session: s, sessionControl, scenarioId, trialId } = exe;
+      const scenarios = getInjects(trial).filter(isScenario);
+      const scenario = getInject(trial, scenarioId) as IScenario;
       const session = {
         id: s.id || uniqueId(),
         name: s.name || 'New session',
         state: SessionState.Started,
         tags: {
-          trialId: trial.id,
+          trialId: trialId,
           trialName: trial.title,
-          scenarioId: scenario?.id || '',
+          scenarioId: scenarioId || '',
           scenarioName: scenario?.title || '',
           comment: s.tags?.comment || '',
         },
@@ -58,6 +42,7 @@ const SessionSettings: MeiosisComponent = () => {
         m('.row', [
           m(
             '.col.s12',
+            { style: 'margin-top: 12px;' },
             m(Select, {
               label: 'Run scenario',
               checkedId: scenario ? scenario.id : undefined,
@@ -67,6 +52,7 @@ const SessionSettings: MeiosisComponent = () => {
               onchange: (ids) => {
                 const id = ids instanceof Array ? ids[0] : ids;
                 selectScenario(id as string);
+                selectInject(id as string);
               },
             } as ISelectOptions)
           ),
@@ -155,6 +141,11 @@ export const SessionControl: MeiosisComponent = () => {
       return [
         m(
           '.row',
+          {
+            style: 'color: #b4790c',
+          },
+          m('.col.s12', m('h4', 'Session Control')),
+          m(SessionSettings, { state, actions }),
           m('.col.s12', [
             isConnected &&
               m(
@@ -174,7 +165,6 @@ export const SessionControl: MeiosisComponent = () => {
               ),
           ])
         ),
-        m(SessionSettings, { state, actions }),
         m(
           'div',
           activeSession

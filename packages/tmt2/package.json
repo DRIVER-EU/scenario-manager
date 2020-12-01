@@ -9,9 +9,9 @@
   },
   "scripts": {
     "postinstall": "rimraf ./node_modules/.ignored",
-    "clean": "rimraf ./public ./.cache ./dist",
     "dev": "npm start",
     "start": "parcel index.html",
+    "clean": "rimraf ./public ./.cache ./dist",
     "build": "parcel build index.html --out-dir ../server/public",
     "build:domain": "npm run clean && npm run build"
   },

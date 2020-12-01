@@ -64,7 +64,7 @@ export const InjectsTimeline: MeiosisComponent = () => {
         return {
           ...i,
           isOpen: treeState[i.id],
-          delay: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
+          startTime: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
           dependsOn:
             condition && condition.injectId
               ? [

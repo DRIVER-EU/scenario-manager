@@ -96,8 +96,8 @@ export class RunController {
     }
     if (this.runService.activeSession.state === SessionState.Started) {
       await this.runService.close();
-      return response.sendStatus(HttpStatus.OK);
     }
+    return response.sendStatus(HttpStatus.OK);
   }
 
   @ApiOperation({

@@ -29,10 +29,10 @@ export const ScenarioForm: MessageComponent = () => {
         updateInject(s);
       };
     },
-    view: ({ attrs: { state, actions, options: { editing } = { editing: true } } }) => {
+    view: ({ attrs: { state, actions, options = { editing: true } } }) => {
       const { scenario } = getActiveTrialInfo(state);
       if (!scenario) return;
-      const disabled = !editing;
+      const disabled = !options.editing;
 
       const startDate = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const endDate = scenario.endDate
@@ -42,7 +42,7 @@ export const ScenarioForm: MessageComponent = () => {
         M.toast({ html: 'End time must be later than start time!', classes: 'orange' });
       }
       return [
-        m(DefaultMessageForm, { state, actions }),
+        m(DefaultMessageForm, { state, actions, options }),
         m(DateTimeControl, {
           className: 'col s12 m6',
           prefix: 'Start',

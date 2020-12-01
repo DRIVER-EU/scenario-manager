@@ -1,6 +1,6 @@
 import Stream from 'mithril/stream';
 import { applyPatch, Operation } from 'rfc6902';
-import { IRestService, restServiceFactory, SocketSvc, runServiceFactory } from '..';
+import { IRestService, restServiceFactory, SocketSvc, runServiceFactory, actions } from '..';
 import {
   deepCopy,
   IAsset,
@@ -17,9 +17,10 @@ import {
   ITimeManagement,
   ITrial,
   SessionState,
+  TimeCommand,
 } from '../../../../models/dist';
 import { MessageScope } from '../../components/messages';
-import { arrayMove, getInjects, isScenario, validateInjects } from '../../utils';
+import { arrayMove, getInjects, getInject, isScenario, validateInjects } from '../../utils';
 import { IAppModel, UpdateStream } from '../meiosis';
 import { ISessionControl } from '../../models';
 
@@ -71,6 +72,8 @@ export interface IApp extends IActiveTrial {
 export interface IExe extends IActiveTrial {
   /** Executing trial */
   trial: ITrial;
+  /** Original trial ID, e.g. when starting a session, the session's trial ID is changed */
+  trialId: string;
   /** Executing scenario ID */
   scenarioId: string;
   /** Currently selected inject ID */
@@ -80,6 +83,8 @@ export interface IExe extends IActiveTrial {
   sessionControl: ISessionControl;
   scenarioStartTime: Date;
   session: Partial<ISessionManagement>;
+  /** When a timeline item starts */
+  startTime?: number;
 }
 
 /** Application state */
@@ -114,7 +119,7 @@ export interface IAppStateActions {
 
   selectScenario: (scenario: IInject | string) => void;
 
-  selectInject: (inject: IInject) => void;
+  selectInject: (inject: IInject | string) => void;
   createInject: (inject: IInject) => Promise<void>;
   updateInject: (inject: IInject) => Promise<void>;
   deleteInject: (inject: IInject) => Promise<void>;
@@ -181,6 +186,7 @@ export const appStateMgmt = {
     },
     exe: {
       trial: {} as ITrial,
+      trialId: '',
       scenarioId: '',
       injectId: '',
       treeState: {},
@@ -239,11 +245,15 @@ export const appStateMgmt = {
         });
       },
       stopSession: async () => {
+        SocketSvc.socket.emit('time-control', { command: TimeCommand.Reset });
+        const { trialId } = states().exe;
         await runSvc.unload();
         const session = await runSvc.activeSession();
-        if (session) {
+        const trial = await trialSvc.load(trialId);
+        if (session && trial) {
           update({
             exe: {
+              trial,
               session,
               sessionControl: { activeSession: session.state === SessionState.Started } as ISessionControl,
             },
@@ -255,28 +265,57 @@ export const appStateMgmt = {
         const trials = await trialSvc.loadList();
         update({ app: { trials } });
       },
-      loadTrial: async (trialId: string, mode: MessageScope = 'edit') => {
-        unregisterForTrialUpdates(states);
-        const trial = await trialSvc.load(trialId);
-        if (trial) {
-          registerForTrialUpdates(trial.id, states, update);
-          assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
-          const assets = (await assetsSvc.loadList()).map((a) => ({
-            ...a,
-            url: a.filename ? assetsSvc.url + a.id : undefined,
-          }));
-          const scenario = getInjects(trial).filter(isScenario).shift();
-          const treeState = getInjects(trial)
-            .filter((i) => i.type !== InjectType.INJECT)
-            .reduce((acc, i) => {
-              acc[i.id] = true;
-              return acc;
-            }, {} as { [key: string]: boolean });
+      loadTrial: async (trialId: string, scope: MessageScope = 'edit') => {
+        if (scope === 'edit') {
+          unregisterForTrialUpdates(states);
+          const trial = await trialSvc.load(trialId);
+          if (trial) {
+            registerForTrialUpdates(trialId, states, update);
+            assetsSvc = restServiceFactory<IAsset>(`trials/${trialId}/assets`);
+            const assets = (await assetsSvc.loadList()).map((a) => ({
+              ...a,
+              url: a.filename ? assetsSvc.url + a.id : undefined,
+            }));
+            const scenario = getInjects(trial).filter(isScenario).shift();
+            const treeState = getInjects(trial)
+              .filter((i) => i.type !== InjectType.INJECT)
+              .reduce((acc, i) => {
+                acc[i.id] = true;
+                return acc;
+              }, {} as { [key: string]: boolean });
 
-          if (mode === 'edit') {
-            update({ app: { trial, assets, scenarioId: scenario?.id, mode, treeState } });
+            update({ app: { trial, assets, scenarioId: scenario?.id, mode: scope, treeState } });
+          }
+        } else {
+          const state = states();
+          const { session = {}, injectStates, trial: t } = state.exe;
+          const isRunning = session.state === SessionState.Initializing || session.state === SessionState.Started;
+          const trial = isRunning ? (t ? t : await runSvc.activeTrial()) : await trialSvc.load(trialId);
+          const scenarioId = session.tags && session.tags.scenarioId ? session.tags.scenarioId : undefined;
+          if (trial && trial.injects) {
+            if (injectStates) {
+              trial.injects = trial.injects.map((i) => ({ ...i, ...injectStates[i.id] }));
+            }
+            assetsSvc = restServiceFactory<IAsset>(`trials/${trialId}/assets`);
+            const assets = (await assetsSvc.loadList()).map((a) => ({
+              ...a,
+              url: a.filename ? assetsSvc.url + a.id : undefined,
+            }));
+            const scenario = (scenarioId
+              ? getInject(trial, scenarioId)
+              : getInjects(trial).filter(isScenario).shift()) as IScenario;
+            const treeState = getInjects(trial)
+              .filter((i) => i.type !== InjectType.INJECT)
+              .reduce((acc, i) => {
+                acc[i.id] = true;
+                return acc;
+              }, {} as { [key: string]: boolean });
+            update({
+              exe: { trial, trialId, scenarioId: scenario?.id, session, treeState },
+              app: { assets, mode: scope },
+            });
           } else {
-            update({ exe: { trial, scenarioId: scenario?.id, session: {}, treeState }, app: { assets, mode } });
+            actions.stopSession();
           }
         }
       },
@@ -318,12 +357,13 @@ export const appStateMgmt = {
           update({ app: { treeState } });
         }
       },
-      selectInject: (inject: IInject) => {
+      selectInject: (inject: IInject | string) => {
         const { app, exe } = states();
         const isEditing = app.mode === 'edit';
+        const iid = typeof inject === 'string' ? inject : inject.id;
         const injectId = isEditing ? app.injectId : exe.injectId;
-        if (injectId === inject.id) return;
-        isEditing ? update({ app: { injectId: inject.id } }) : update({ exe: { injectId: inject.id } });
+        if (injectId === iid) return;
+        isEditing ? update({ app: { injectId: iid } }) : update({ exe: { injectId: iid } });
       },
       createInject: async (inject: IInject) => {
         const { app, exe } = states();
@@ -349,7 +389,7 @@ export const appStateMgmt = {
         const isEditing = app.mode === 'edit';
         const trial = isEditing ? app.trial : exe.trial;
         const oldTrial = deepCopy(trial);
-        trial.injects = trial.injects.map((s) => (s.id === inject.id ? deepCopy(inject) : s));
+        trial.injects = trial.injects.map((i) => (i.id === inject.id ? deepCopy(inject) : i));
         if (isEditing) {
           await trialSvc.patch(trial, oldTrial);
           update({ app: { injectId: inject.id, trial } });
@@ -381,7 +421,7 @@ export const appStateMgmt = {
           await trialSvc.patch(trial, oldTrial);
         }
       },
-      transitionInject: async (st: IStateTransitionRequest) => runSvc.transition(st),
+      transitionInject: (st: IStateTransitionRequest) => runSvc.transition(st),
 
       selectAsset: (asset: IAsset) => update({ app: { assetId: asset.id } }),
       createAsset: async (asset: IAsset, files?: FileList) => {

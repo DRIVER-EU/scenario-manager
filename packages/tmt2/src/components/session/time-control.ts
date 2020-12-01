@@ -86,7 +86,7 @@ const MediaStateControl: MeiosisComponent = () => {
     view: ({
       attrs: {
         state,
-        actions: { stopSession },
+        actions: { stopSession, updateInject },
       },
     }) => {
       const { scenario } = getActiveTrialInfo(state);
@@ -138,18 +138,18 @@ const MediaStateControl: MeiosisComponent = () => {
                   className: 'btn-flat-large',
                   disabled: !canStart,
                   onclick: () => {
-                    if (realtime) {
-                      sendCmd(socket, {
-                        simulationTime: Date.now(),
-                        simulationSpeed: 1,
-                        command: TimeCommand.Init,
-                      });
-                    } else {
-                      sendCmd(socket, {
-                        simulationTime: newTime(),
-                        simulationSpeed: 1,
-                        command: TimeCommand.Init,
-                      });
+                    const simulationTime = realtime ? Date.now() : newTime();
+                    sendCmd(socket, {
+                      simulationTime,
+                      simulationSpeed: 1,
+                      command: TimeCommand.Init,
+                    });
+                    if (scenario && scenario.startDate && scenario.endDate) {
+                      const scenarioDuration =
+                        new Date(scenario.endDate).valueOf() - new Date(scenario.startDate).valueOf();
+                      scenario.startDate = new Date(simulationTime).toUTCString();
+                      scenario.endDate = new Date(simulationTime + scenarioDuration).toUTCString();
+                      updateInject(scenario);
                     }
                     sendCmd(socket, { command: TimeCommand.Start });
                   },
@@ -163,8 +163,8 @@ const MediaStateControl: MeiosisComponent = () => {
             m(FlatButton, {
               label: 'Reset session',
               onclick: async () => {
-                sendCmd(socket, { command: TimeCommand.Reset });
-                stopSession();
+                // sendCmd(socket, { command: TimeCommand.Reset });
+                await stopSession();
               },
             }),
           ]);
@@ -212,9 +212,9 @@ const MediaStateControl: MeiosisComponent = () => {
             '.row',
             m(FlatButton, {
               label: 'Reset session',
-              onclick: () => {
-                sendCmd(socket, { command: TimeCommand.Reset });
-                stopSession();
+              onclick: async () => {
+                // sendCmd(socket, { command: TimeCommand.Reset });
+                await stopSession();
               },
             })
           );

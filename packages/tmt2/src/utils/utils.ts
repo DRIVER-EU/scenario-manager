@@ -525,7 +525,7 @@ export const injectToTimelineItemFactory = (injectStates: IInjectSimStates, tree
             },
           ]
         : undefined,
-  } as ITimelineItem & IExecutingInject;
+  } as ITimelineItem & IExecutingInject & { delay: number };
 };
 
 export const messageOptions = (selectedMessageTypes: string[]) =>

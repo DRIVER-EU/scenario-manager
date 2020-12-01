@@ -81,7 +81,7 @@ export const InjectsForm: MeiosisComponent = () => {
 
   return {
     oninit: () => console.log('ONINIT InjectsForm'),
-    view: ({ attrs: { state, actions } }) => {
+    view: ({ attrs: { state, actions, options } }) => {
       const { mode } = state.app;
       const isExecuting = mode === 'execute';
       const disabled = isExecuting;
@@ -179,7 +179,7 @@ export const InjectsForm: MeiosisComponent = () => {
       //   updateInject(inject);
       // }
       const selectedMessageTypes = trial.selectedMessageTypes;
-      const options = messageOptions(selectedMessageTypes);
+      const messageOpt = messageOptions(selectedMessageTypes);
 
       const canDelete = inject && canDeleteInject(trial, inject);
 
@@ -230,7 +230,7 @@ export const InjectsForm: MeiosisComponent = () => {
                       iconName: getMessageIcon(inject.messageType),
                       placeholder: 'Select the message type',
                       checkedId: inject.messageType,
-                      options,
+                      options: messageOpt,
                       onchange: (v) => {
                         // console.warn('Getting message form');
                         inject!.messageType = v[0] as MessageType;
@@ -248,8 +248,8 @@ export const InjectsForm: MeiosisComponent = () => {
               )
             ),
             [
-              m(MessageForm, { state, actions }),
-              (inject.messageType || isInjectGroup(inject)) && m(InjectConditions, { state, actions }),
+              m(MessageForm, { state, actions, options }),
+              (inject.messageType || isInjectGroup(inject)) && m(InjectConditions, { state, actions, options }),
               // : m('div#dummy'),
               m(SetObjectives, { trial, disabled, inject }),
             ],

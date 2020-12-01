@@ -2,7 +2,7 @@ import m from 'mithril';
 import { TextInput, TextArea, EmailInput, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
 import { IPerson, UserRole, deepCopy, deepEqual } from '../../../../models';
 import { MeiosisComponent } from '../../services';
-import { getUsers, iterEnum, userIcon, userRoleToString } from '../../utils';
+import { getActiveTrialInfo, getUsers, iterEnum, userIcon, userRoleToString } from '../../utils';
 
 const log = console.log;
 
@@ -17,13 +17,15 @@ export const UsersForm: MeiosisComponent = () => {
   return {
     view: ({
       attrs: {
-        state: {
-          app: { userId, trial },
-        },
+        state,
         actions: { selectUser, updateUser, deleteUser },
       },
     }) => {
+      const { trial } = getActiveTrialInfo(state);
+      console.log('trial', trial);
+
       const users = getUsers(trial);
+      const { userId } = state.app;
       if (!userId) {
         return m(
           'p',

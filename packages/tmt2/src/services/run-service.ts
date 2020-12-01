@@ -1,6 +1,5 @@
 import m from 'mithril';
 import { IStateTransitionRequest, ISessionManagement, IInject, ITrial, uniqueId, UserRole } from '../../../models';
-import { userRolesFilter } from '../utils';
 
 const withCredentials = false;
 

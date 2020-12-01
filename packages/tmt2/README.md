@@ -35,3 +35,9 @@ Add it to the simulation viewer.
     SET_AFFECTED_AREA = 9,
     SUMO_CONFIGURATION = 10,
     CHECKPOINT = 11
+
+## Features / Bugs
+
+- In the execution view, I cannot see the route for the ambulance.
+- Can we save the executed trial (to a new name)?
+- Add the option to select the user upon start (while executing?)

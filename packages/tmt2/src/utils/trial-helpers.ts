@@ -13,6 +13,7 @@ import {
 import { userRolesFilter } from './utils';
 import { IActiveTrial } from '../services';
 import { MessageScope } from '../components/messages';
+import { IDependency, ITimelineItem } from 'mithril-scenario-timeline';
 
 export const getActiveTrialInfo = <T extends IInject>(state: {
   app: IActiveTrial & { mode: MessageScope };
@@ -180,4 +181,122 @@ export const getMessageSubjects = (trial: ITrial, mt: MessageType) => {
   const messageTopics = trial.messageTopics || [];
   const messageTopic = messageTopics.filter((t) => t.messageType === mt).shift();
   return messageTopic ? messageTopic.topics.map((t) => ({ id: t.id, label: t.subject })) : [];
+};
+
+/**
+ * Convert the timeline items to their reactive counterpart (IExecutingTimelineItem),
+ * so start time and duration can be computed reactively.
+ */
+export const calcStartEndTimes = <T extends ITimelineItem & { startTime?: number; endTime?: number }>(items: T[]) => {
+  const lookupMap = items.reduce(
+    (acc, cur) => {
+      const { id } = cur;
+      acc[id] = {
+        item: cur,
+        start: [],
+        end: [],
+        hasStartTime: false,
+        hasEndTime: false,
+      };
+      const { start, end } = acc[id];
+      const children = items.filter((i) => i.parentId === id).map((i) => i.id);
+      if (cur.dependsOn && cur.dependsOn.length) {
+        acc[id].start = [...start, ...cur.dependsOn];
+      }
+      if (children.length) {
+        acc[id].end = [...end, ...children.map((i) => ({ id: i, condition: 'finished' } as IDependency))];
+      }
+      return acc;
+    },
+    {} as {
+      [id: string]: {
+        item: T;
+        /** All dependencies to determine the items start time */
+        start: IDependency[];
+        /** All dependencies to determine the items end time, i.e. its children's end time, if any. */
+        end: IDependency[];
+        /** If true, the start time is resolved */
+        hasStartTime: boolean;
+        /** If true, the end time is resolved */
+        hasEndTime: boolean;
+        /** Calculated list of child IDs */
+        children?: string[];
+      };
+    }
+  );
+
+  const resolvable = (deps: IDependency[]) =>
+    deps.reduce((acc, cur) => {
+      return (
+        acc &&
+        lookupMap.hasOwnProperty(cur.id) &&
+        (cur.condition === 'started' ? lookupMap[cur.id].hasStartTime : lookupMap[cur.id].hasEndTime)
+      );
+    }, true);
+
+  // Resolve start/end times
+  let keys = Object.keys(lookupMap);
+  do {
+    let hasChanged = false;
+    keys = keys.filter((key) => {
+      const { item, start, end, hasStartTime, hasEndTime } = lookupMap[key];
+      if (!hasStartTime) {
+        if (start.length === 0) {
+          item.startTime = item.delay || 0;
+          lookupMap[key].hasStartTime = true;
+        } else {
+          const canResolve = resolvable(start);
+          if (canResolve) {
+            item.startTime =
+              (item.delay || 0) +
+              Math.max(
+                ...start.map(
+                  (cur) =>
+                    (cur.condition === 'started' ? lookupMap[cur.id].item.startTime : lookupMap[cur.id].item.endTime) ||
+                    0
+                )
+              );
+            lookupMap[key].hasStartTime = true;
+          }
+        }
+      }
+      if (!hasEndTime) {
+        if (end.length === 0) {
+          if (lookupMap[key].hasStartTime) {
+            item.endTime = item.startTime;
+            lookupMap[key].hasEndTime = true;
+          }
+        } else {
+          const canResolve = resolvable(end);
+          if (canResolve) {
+            item.endTime = Math.max(
+              ...end.map(
+                (cur) =>
+                  (cur.condition === 'started' ? lookupMap[cur.id].item.startTime : lookupMap[cur.id].item.endTime) || 0
+              )
+            );
+            lookupMap[key].hasEndTime = true;
+          }
+        }
+      }
+      hasChanged =
+        hasChanged || hasStartTime !== lookupMap[key].hasStartTime || hasEndTime !== lookupMap[key].hasEndTime;
+      return !(lookupMap[key].hasStartTime && lookupMap[key].hasEndTime);
+    });
+    if (!hasChanged && keys.length) {
+      // console.error(JSON.stringify(lookupMap, null, 2));
+      // console.error(JSON.stringify(keys, null, 2));
+      // TODO Add error callback, and mention possible circular dependencies, e.g.
+      // Return all items that haven't been resolved
+      // Inspect those for head/tail dependencies, i.e. A waits for B to finish, while B waits for A to start.
+      // keys.length = 0; // To stop the loop
+      throw new Error('Cannot resolve circular dependencies');
+    }
+  } while (keys.length);
+
+  // Convert to array
+  return Object.keys(lookupMap).reduce((acc, cur) => {
+    acc.push(lookupMap[cur].item);
+    return acc;
+  }, [] as T[]);
 };

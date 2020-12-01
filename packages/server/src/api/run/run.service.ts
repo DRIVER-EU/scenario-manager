@@ -231,7 +231,7 @@ export class RunService {
   private transition(tr: StateTransitionRequest, t: Date) {
     const state = this.states[tr.id];
     if (state && state.state === tr.from) {
-      if (tr.expectedExecutionTimeAt) {
+      if (typeof tr.expectedExecutionTimeAt === 'number') {
         state.delayInSeconds =
           (t.valueOf() - tr.expectedExecutionTimeAt) / 1000;
       }

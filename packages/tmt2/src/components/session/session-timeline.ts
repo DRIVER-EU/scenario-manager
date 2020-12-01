@@ -8,17 +8,18 @@ import {
   IExecutingInject,
   IScenario,
   IInjectSimStates,
+  TimeState,
 } from '../../../../models';
 import { ScenarioTimeline, ITimelineItem, IExecutingTimelineItem } from 'mithril-scenario-timeline';
 import { Icon } from 'mithril-materialized';
-import { getIcon, getInjects, injectToTimelineItemFactory } from '../../utils';
+import { getIcon, getInject, getInjects, injectToTimelineItemFactory } from '../../utils';
 
 export const SessionTimelineView: MeiosisComponent = () => {
+  let iid: string;
   let time = undefined as number | undefined | null;
   let simulationSpeed = 1;
   let lastTimeUpdate = Date.now();
   let timeInterval: number;
-  let injects = [] as IInject[];
   let executingInjects = [] as Array<IExecutingInject & IInjectSimState>;
 
   const scenarioTimer = (update: (t: number | Date) => void) => {
@@ -80,63 +81,49 @@ export const SessionTimelineView: MeiosisComponent = () => {
     view: ({
       attrs: {
         state: {
-          exe: { injectStates, trial, scenarioId, treeState, scenarioStartTime: sst, time: t },
+          exe: { injectStates, trial, scenarioId, injectId, treeState, scenarioStartTime: sst, time: t },
         },
         actions: { update },
       },
     }) => {
       time = t.simulationTime;
-      const onClick = (ti: IExecutingTimelineItem) => {
+      lastTimeUpdate = t.state === TimeState.Started ? Date.now() : 0;
+      iid = injectId;
+
+      const selectTimelineItem = (ti: IExecutingTimelineItem) => {
         const { id, startTime = 0 } = ti;
         const inject = executingInjects.filter((i) => i.id === id).shift();
         if (inject) {
-          const t = new Date(scenarioStartTime.valueOf());
-          t.setSeconds(scenarioStartTime.getSeconds() + startTime);
+          const t = new Date(scenarioStart.valueOf());
+          t.setSeconds(scenarioStart.getSeconds() + startTime);
           inject.expectedExecutionTimeAt = t;
-          // const lastTransition = new Date(lastTransitionAt);
-          // inject.expectedExecutionTimeAt = t > lastTransition ? t : lastTransition;
-          // executingChannel.publish(TopicNames.ITEM_SELECT, { cur: inject });
-          if (inject.type !== InjectType.INJECT) {
-            const selInject = injects.filter((i) => i.id === inject.id).shift();
-            if (selInject) {
-              selInject.isOpen = !selInject.isOpen;
-            }
+          update({ exe: { injectId: inject.id, startTime } } as Partial<IAppModel>);
+          if (inject.type !== InjectType.INJECT && iid === id) {
+            treeState[id] = !treeState[id];
           }
-          update({ exe: { injectId: inject.id } } as Partial<IAppModel>);
           m.redraw();
         }
       };
 
-      injects = getInjects(trial) || [];
-
-      executingInjects = injects
-        .filter((i) => injectStates.hasOwnProperty(i.id))
-        .map(
-          (i) =>
-            ({
-              ...i,
-              ...injectStates[i.id],
-            } as IExecutingInject & IInjectSimState)
-        );
-      const activeScenario = executingInjects ? executingInjects.filter((i) => i.id === scenarioId).shift() : undefined;
-
-      const scenario = activeScenario as IScenario;
-      const scenarioStartTime = scenario && scenario.startDate ? new Date(scenario.startDate) : sst;
-      const timelineStart = new Date(Math.floor(scenarioStartTime.valueOf() / 60000) * 60000);
+      executingInjects = (getInjects(trial) as Array<IExecutingInject & IInjectSimState>) || [];
+      const scenario = getInject(trial, scenarioId) as IExecutingInject & IScenario;
+      const scenarioStart = scenario && scenario.startDate ? new Date(scenario.startDate) : sst;
+      const timelineStart = new Date(Math.floor(scenarioStart.valueOf() / 60000) * 60000);
+      const timeline = scenarioToTimelineItems(scenario, executingInjects, injectStates, treeState);
 
       return m('.row', [
-        activeScenario
+        scenario
           ? m(
               '.col.s12.sb.large',
               m(ScenarioTimeline, {
                 // width: 500,
                 lineHeight: 31,
-                timeline: scenarioToTimelineItems(activeScenario, executingInjects, injectStates, treeState),
-                onClick,
+                timeline,
+                onClick: selectTimelineItem,
                 time: scenarioTimer,
                 titleView,
                 timelineStart,
-                scenarioStart: new Date(scenarioStartTime),
+                scenarioStart,
               })
             )
           : m('p.center', 'No active scenario loaded'),
