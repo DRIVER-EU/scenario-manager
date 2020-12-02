@@ -21,6 +21,37 @@ import {
 } from '../../../models';
 import { LineString, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 
+export const baseLayers = {
+  OSM: {
+    url: 'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+    options: {
+      minZoom: 3,
+      maxZoom: 20,
+      // tms: true,
+      attribution: '©OpenStreetMap Contributors. Tiles courtesy of Humanitarian OpenStreetMap Team',
+    },
+  },
+  'PDOK grijs': {
+    url:
+      'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartgrijs/EPSG:3857/{z}/{x}/{y}.png',
+    options: {
+      minZoom: 3,
+      maxZoom: 20,
+      // tms: true,
+      attribution: 'Map data: <a href="http://www.kadaster.nl">Kadaster</a>',
+    },
+  },
+  'PDOK kleur': {
+    url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:3857/{z}/{x}/{y}.png',
+    options: {
+      minZoom: 3,
+      maxZoom: 20,
+      // tms: true,
+      attribution: 'Map data: <a href="http://www.kadaster.nl">Kadaster</a>',
+    },
+  },
+};
+
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
   Object.keys(e)

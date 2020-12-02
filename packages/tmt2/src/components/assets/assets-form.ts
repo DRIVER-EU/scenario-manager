@@ -4,7 +4,7 @@ import { TextInput, FileInput, Button, Icon, ModalPanel, MaterialBox, UrlInput }
 import { IAsset, deepCopy, deepEqual } from '../../../../models';
 import { geoJSON, GeoJSON } from 'leaflet';
 import { LeafletMap } from 'mithril-leaflet';
-import { centerArea, isJSON } from '../../utils';
+import { isJSON, baseLayers } from '../../utils';
 import { MeiosisComponent } from '../../services';
 
 export const AssetsForm: MeiosisComponent = () => {
@@ -81,6 +81,7 @@ export const AssetsForm: MeiosisComponent = () => {
                   }),
                   overlay
                     ? m(LeafletMap, {
+                        baseLayers,
                         style: 'width: 100%; height: 400px; margin: 10px;',
                         overlays: { [asset.alias || asset.filename]: overlay },
                         visible: [asset.alias || asset.filename],

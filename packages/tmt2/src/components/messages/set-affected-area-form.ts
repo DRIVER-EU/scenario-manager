@@ -4,7 +4,14 @@ import { getMessage, MessageType, IAffectedArea, IareaPoly } from '../../../../m
 import { LeafletMap } from 'mithril-leaflet';
 import { Polygon, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { FeatureGroup, geoJSON, GeoJSON } from 'leaflet';
-import { affectedAreaToGeoJSON, geoJSONtoAffectedArea, getActiveTrialInfo, getInject, isJSON } from '../../utils';
+import {
+  affectedAreaToGeoJSON,
+  geoJSONtoAffectedArea,
+  getActiveTrialInfo,
+  getInject,
+  isJSON,
+  baseLayers,
+} from '../../utils';
 import { MessageComponent } from '../../services';
 
 export const SetAffectedAreaForm: MessageComponent = () => {
@@ -121,6 +128,7 @@ export const SetAffectedAreaForm: MessageComponent = () => {
           },
         }),
         m(LeafletMap, {
+          baseLayers,
           style: 'width: 100%; height: 400px; margin-top: 10px;',
           // view,
           // zoom,

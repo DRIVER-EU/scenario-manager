@@ -4,7 +4,7 @@ import { getMessage, IInject, MessageType, IRequestMove, ILocation } from '../..
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { geoJSON, GeoJSON } from 'leaflet';
-import { geoJSONtoRoute, getActiveTrialInfo, isJSON, routeToGeoJSON } from '../../utils';
+import { geoJSONtoRoute, getActiveTrialInfo, isJSON, routeToGeoJSON, baseLayers } from '../../utils';
 import { MessageComponent } from '../../services';
 
 export const RequestUnitMoveForm: MessageComponent = () => {
@@ -103,6 +103,7 @@ export const RequestUnitMoveForm: MessageComponent = () => {
         }),
         m(LeafletMap, {
           style: 'width: 100%; height: 400px; margin-top: 10px;',
+          baseLayers,
           overlays,
           autoFit: true,
           visible: [moveUnitLayer],
@@ -110,7 +111,7 @@ export const RequestUnitMoveForm: MessageComponent = () => {
           showScale: { imperial: false },
           onLayerEdited: (f) => {
             const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
-            console.log('onLayerEdited');
+            // console.log('onLayerEdited');
             const r = geoJSONtoRoute(geojson);
             r && addWaypoints(r);
           },

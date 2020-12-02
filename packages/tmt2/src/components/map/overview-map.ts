@@ -3,7 +3,7 @@ import { LeafletMap } from 'mithril-leaflet';
 import { getMessage, IAffectedArea, IRequestMove, IScenario, MessageType } from '../../../../models';
 import L, { geoJSON, GeoJSON } from 'leaflet';
 import { MeiosisComponent } from '../../services';
-import { affectedAreaToGeoJSON, getInjects, isJSON, routeToGeoJSON } from '../../utils';
+import { affectedAreaToGeoJSON, getInjects, isJSON, routeToGeoJSON, baseLayers } from '../../utils';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 export interface IOverviewMap extends Attributes {
@@ -67,6 +67,7 @@ export const OverviewMap: MeiosisComponent = () => {
         ? m(
             'div',
             m(LeafletMap, {
+              baseLayers,
               autoFit: true,
               style: 'width: 100%; height: 90vh; margin: 0;',
               overlays,

@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
 import { getMessage, MessageType, IGeoJsonMessage } from '../../../../models';
-import { getMessageSubjects, isJSON, getActiveTrialInfo } from '../../utils';
+import { getMessageSubjects, isJSON, getActiveTrialInfo, baseLayers } from '../../utils';
 import { UploadAsset } from '../ui';
 import { ILeafletMap, LeafletMap } from 'mithril-leaflet';
 import { geoJSON, GeoJSON } from 'leaflet';
@@ -138,6 +138,7 @@ export const GeoJsonMessageForm: MessageComponent = () => {
           : undefined,
         overlays
           ? m(LeafletMap, {
+              baseLayers,
               style: 'width: 100%; height: 400px; margin: 10px;',
               autoFit: true,
               overlays,
