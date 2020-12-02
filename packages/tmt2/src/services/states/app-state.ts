@@ -122,6 +122,7 @@ export interface IAppStateActions {
 
   selectInject: (inject: IInject | string) => void;
   createInject: (inject: IInject) => Promise<void>;
+  createInjects: (injects: IInject[]) => Promise<void>;
   updateInject: (inject: IInject) => Promise<void>;
   deleteInject: (inject: IInject) => Promise<void>;
   moveInject: (source: IInject, target: IInject) => Promise<void>;
@@ -326,15 +327,10 @@ export const appStateMgmt = {
           app: { trial: s },
         } = states();
         const t = newTrial || s;
-        console.log('Saving trial at ' + Date.now());
         validateInjects(t);
         t.lastEdit = new Date();
         const trial = await trialSvc.save(t);
         if (trial) update({ app: { trial } });
-        // if (trial && (!this.assetSvc || this.assetSvc.trialId !== trial.id)) {
-        //   this.assetSvc = new AssetService(trial.id);
-        //   return this.assetSvc.loadList();
-        // }
       },
       deleteTrial: async (trialId: string | number) => {
         await trialSvc.del(trialId);
@@ -385,6 +381,17 @@ export const appStateMgmt = {
           await runSvc.createInject(inject);
           update({ exe: { injectId: inject.id, trial } });
         }
+      },
+      createInjects: async (injects: IInject[]) => {
+        const { app } = states();
+        const trial = app.trial;
+        const oldTrial = deepCopy(trial);
+        if (!trial.injects) {
+          trial.injects = [];
+        }
+        trial.injects.push(...injects);
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { trial } });
       },
       updateInject: async (inject: IInject) => {
         const { app, exe } = states();
@@ -550,7 +557,6 @@ export const appStateMgmt = {
 } as IAppState;
 
 const registerForTrialUpdates = (trialId: string, states: Stream<IAppModel>, update: UpdateStream) => {
-  console.log('Registering for trial updates');
   const socket = SocketSvc.socket;
   socket.on(trialId, async (patchObj: { id: string; patch: Operation[] }) => {
     const { id: senderId, patch } = patchObj;
@@ -561,7 +567,7 @@ const registerForTrialUpdates = (trialId: string, states: Stream<IAppModel>, upd
       app: { trial: curTrial },
     } = states();
     console.log(`${socket.id} received message on channel ${curTrial.id} from ${senderId}:`);
-    console.log(JSON.stringify(patch, null, 2));
+    // console.log(JSON.stringify(patch, null, 2));
     const errors = applyPatch(curTrial, patch);
 
     if (errors && errors.length > 0 && errors[0] !== null) {

@@ -4,8 +4,6 @@ import { IObjective, deepCopy, deepEqual } from '../../../../models';
 import { MeiosisComponent } from '../../services';
 import { getInjectIcon, getInjects, getObjectives, getStakeholders, isInjectGroup } from '../../utils';
 
-const log = console.log;
-
 export const ObjectiveForm: MeiosisComponent = () => {
   let objective = {} as IObjective;
 
@@ -45,7 +43,6 @@ export const ObjectiveForm: MeiosisComponent = () => {
 
       const onsubmit = (e: UIEvent) => {
         e.preventDefault();
-        log('submitting...');
         if (objective) {
           updateObjective(objective);
         }

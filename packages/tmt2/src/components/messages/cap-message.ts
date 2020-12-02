@@ -54,7 +54,6 @@ export const CapMessageForm: MessageComponent = () => {
         state.alertInfo = alertInfo;
       } else {
         if (alert.info instanceof Array) {
-          // console.log('Converting array')
           alert.info = alert.info[0];
         }
         state.alertInfo = alert.info instanceof Array ? alert.info[0] : alert.info;

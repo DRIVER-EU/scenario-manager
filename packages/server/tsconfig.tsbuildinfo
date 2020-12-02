@@ -2447,7 +2447,7 @@
         "affectsGlobalScope": false
       },
       "./src/api/time/time.events.gateway.ts": {
-        "version": "5cfe89a7c72d6b4eda7e8b67d3d3d5cf8cecee7bf4cb2b177d24a29116164e63",
+        "version": "b3b3fb06bc570e35953ab7bb6175a7ecfa5a12f669467402335da56cfc2974fc",
         "signature": "a1776da8096237cb365e028a7b38c46af2b55150ddd6f0f767937bd7643f4d14",
         "affectsGlobalScope": false
       },

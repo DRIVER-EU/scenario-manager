@@ -12,6 +12,7 @@ import {
   canDeleteInject,
   getInjects,
   getObjectives,
+  getActiveTrialInfo,
 } from '../../utils';
 import {
   IInject,
@@ -35,6 +36,10 @@ export const InjectsForm: MeiosisComponent = () => {
   let inject: IInject;
   let copiedInjectIsCut = false;
   let copiedInjects = undefined as undefined | IInject | IInject[];
+  let messageOpt: Array<{
+    id: string;
+    label: string;
+  }>;
 
   /**
    * Create a deep copy of all injects, give them a new ID, and map their parent IDs
@@ -80,13 +85,17 @@ export const InjectsForm: MeiosisComponent = () => {
   };
 
   return {
-    oninit: () => console.log('ONINIT InjectsForm'),
+    oninit: ({ attrs: { state } }) => {
+      const { trial } = getActiveTrialInfo(state);
+      const selectedMessageTypes = trial.selectedMessageTypes;
+      messageOpt = messageOptions(selectedMessageTypes);
+    },
     view: ({ attrs: { state, actions, options } }) => {
       const { mode } = state.app;
       const isExecuting = mode === 'execute';
       const disabled = isExecuting;
       const { trial, injectId, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
-      const { updateInject, createInject, deleteInject } = actions;
+      const { updateInject, createInject, createInjects, deleteInject } = actions;
 
       const id = injectId || scenarioId;
       const injects = getInjects(trial);
@@ -134,18 +143,14 @@ export const InjectsForm: MeiosisComponent = () => {
             (isStoryline(inject) && isStoryline(copy)) ||
             (isAct(inject) && isAct(copy));
           if (isParentChildRelation) {
-            createFreshInjects(copiedInjects, copy.parentId!, newParentId).map((i) => newInject(i));
-            await updateInject(inject);
+            createInjects(createFreshInjects(copiedInjects, copy.parentId!, newParentId));
           } else if (isSiblingRelation) {
-            createFreshInjects(copiedInjects.slice(1), copy.id as string, newParentId).map((i) => newInject(i));
-            await updateInject(inject);
+            createInjects(createFreshInjects(copiedInjects, copy.parentId!, copy.parentId!));
           } else if (isInject(inject) && isInject(copy)) {
             const clone = deepCopy(copy);
-            // console.log(getInjects.length);
-            clone.id = '';
+            clone.id = uniqueId();
             clone.parentId = inject.parentId;
             await createInject(clone);
-            // console.log(TrialSvc.getInjects.length);
           }
         }
       };
@@ -161,7 +166,7 @@ export const InjectsForm: MeiosisComponent = () => {
       const copyInject = async (inject: IInject) => {
         if (inject) {
           copiedInjectIsCut = false;
-          copiedInjects = [inject, ...getAllChildren(getInjects() || [], inject.id as string)];
+          copiedInjects = [inject, ...getAllChildren(getInjects(trial) || [], inject.id as string)];
         }
       };
 
@@ -171,16 +176,6 @@ export const InjectsForm: MeiosisComponent = () => {
           await pasteInject(inject);
         }
       };
-      // const key = `${inject.id}_${Date.now().valueOf()}`;
-      // console.log('Key: ' + key);
-
-      // const hasChanged = !deepEqual(inject, original);
-      // if (hasChanged) {
-      //   updateInject(inject);
-      // }
-      const selectedMessageTypes = trial.selectedMessageTypes;
-      const messageOpt = messageOptions(selectedMessageTypes);
-
       const canDelete = inject && canDeleteInject(trial, inject);
 
       const canPaste = canPasteInject();

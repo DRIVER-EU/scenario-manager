@@ -123,14 +123,12 @@ export const SessionControl: MeiosisComponent = () => {
       },
     }) => {
       scenario = getInject(trial, scenarioId) as IScenario;
-      console.log('SC scenario', scenario);
     },
     view: ({ attrs: { state, actions } }) => {
       const { sessionControl, time } = state.exe;
       const { isConnected } = sessionControl;
       const { updateSessionControl } = actions;
       const { realtime, activeSession } = sessionControl;
-      // const canStart = activeSession && isSessionInfoValid(session);
       const iconName = time
         ? time.state === TimeState.Reset
           ? 'timer'

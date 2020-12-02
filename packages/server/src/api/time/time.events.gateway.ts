@@ -16,7 +16,6 @@ export class TimeEventsGateway {
     @Inject('KafkaService') private readonly kafkaService: KafkaService,
   ) {
     kafkaService.on('time', (time) => {
-      // console.log(time);
       this.server.emit('time', time);
     });
     kafkaService.on('session-update', (_) => this.sendConnectionStatus());
@@ -24,7 +23,6 @@ export class TimeEventsGateway {
 
   @SubscribeMessage('test-bed-disconnect')
   async disconnect() {
-    // console.log('disconnect received');
     if (!this.kafkaService.isConnected()) {
       return this.isConnected();
     }
@@ -39,7 +37,6 @@ export class TimeEventsGateway {
 
   @SubscribeMessage('test-bed-connect')
   async connect() {
-    // console.log('connect received');
     if (this.kafkaService.isConnected()) {
       return this.sendConnectionStatus();
     }
@@ -62,8 +59,6 @@ export class TimeEventsGateway {
 
   @SubscribeMessage('time-control')
   async timeControl(_client, data: ITimeControl) {
-    // console.log('time-control');
-    // console.table(data);
     return this.kafkaService.sendTimeControlMessage(data);
   }
 }

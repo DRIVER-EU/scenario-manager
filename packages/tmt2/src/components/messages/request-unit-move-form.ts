@@ -111,7 +111,6 @@ export const RequestUnitMoveForm: MessageComponent = () => {
           showScale: { imperial: false },
           onLayerEdited: (f) => {
             const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
-            // console.log('onLayerEdited');
             const r = geoJSONtoRoute(geojson);
             r && addWaypoints(r);
           },

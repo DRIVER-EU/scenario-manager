@@ -88,6 +88,7 @@ export const isSessionInfoValid = ({ id: sessionId, name: sessionName }: Partial
 
 // Delete inject, including all children
 export const canDeleteInject = (trial: ITrial, i: IInject) => {
+  if (i.type === InjectType.INJECT || i.type === InjectType.ACT) return true;
   const injects = getInjects(trial);
   const findChildren = (inject: IInject) => injects.filter((s) => s.parentId === inject.id);
   return findChildren(i).length === 0;

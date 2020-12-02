@@ -37,7 +37,6 @@ export const Checklist: MeiosisComponent = () => {
   ] as IModelField[];
 
   return {
-    oninit: () => console.log('ONINIT Checklist'),
     view: ({ attrs: { state, actions } }) => {
       const { mode } = state.app;
       const isEditing = mode === 'edit';

@@ -19,7 +19,6 @@ export const ScenarioForm: MessageComponent = () => {
         actions: { updateInject },
       },
     }) => {
-      console.log('ONINIT ScenarioForm');
       onchangeDate = (s: IScenario, d: Date, type: 'start' | 'end') => {
         if (type === 'start') {
           s.startDate = d.toISOString();

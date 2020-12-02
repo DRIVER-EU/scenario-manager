@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { ScenarioTimeline, ITimelineItem } from 'mithril-scenario-timeline';
-import { MeiosisComponent } from '../../services';
+import { IAppModel, MeiosisComponent } from '../../services';
 import {
   InjectType,
   IInjectGroup,
@@ -15,6 +15,8 @@ import { getIcon, getInjects, isScenario } from '../../utils';
 import 'mithril-scenario-timeline/dist/mithril-scenario-timeline.css';
 
 export const InjectsTimeline: MeiosisComponent = () => {
+  let iid: string;
+
   const titleView: FactoryComponent<{ item: ITimelineItem }> = () => {
     return {
       view: ({ attrs: { item } }) => {
@@ -44,19 +46,22 @@ export const InjectsTimeline: MeiosisComponent = () => {
     view: ({
       attrs: {
         state: {
-          app: { trial, scenarioId, treeState },
+          app: { trial, scenarioId, injectId, treeState },
         },
-        actions: { toggleTreeItem },
+        actions: { update },
       },
     }) => {
       const injects = getInjects(trial) || [];
-      const onClick = (item: ITimelineItem) => {
-        const inject = injects.filter((i) => i.id === item.id).shift();
-        if (inject && inject.type !== InjectType.INJECT) {
-          toggleTreeItem(inject.id);
-          // treeState[inject.id] = !treeState[inject.id];
-          // m.redraw();
+      iid = injectId;
+
+      const selectTimelineItem = (ti: ITimelineItem) => {
+        const { id } = ti;
+        const inject = injects.filter((i) => i.id === ti.id).shift();
+        if (inject && inject.type !== InjectType.INJECT && iid === id) {
+          treeState[id] = !treeState[id];
         }
+        update({ app: { injectId: id } } as IAppModel);
+        m.redraw();
       };
 
       const injectToTimelineItem = (i: IInject | IInjectGroup) => {
@@ -64,7 +69,7 @@ export const InjectsTimeline: MeiosisComponent = () => {
         return {
           ...i,
           isOpen: treeState[i.id],
-          startTime: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
+          delay: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
           dependsOn:
             condition && condition.injectId
               ? [
@@ -83,7 +88,6 @@ export const InjectsTimeline: MeiosisComponent = () => {
           return children.reduce((acc, c) => [...acc, ...getChildren(c.id)], children);
         };
         const ti = [scenario, ...getChildren(scenario.id)].map(injectToTimelineItem);
-        // console.log(JSON.stringify(ti, null, 2));
         return ti;
       };
 
@@ -94,6 +98,7 @@ export const InjectsTimeline: MeiosisComponent = () => {
       }
       const scenarioStart = new Date(scenario.startDate || new Date());
       const timelineStart = new Date(Math.floor(scenarioStart.valueOf() / 60000) * 60000);
+      const timeline = scenarioToTimelineItems(scenario, injects);
       return m(
         '.row.timeline.sb.large',
         scenario
@@ -102,8 +107,8 @@ export const InjectsTimeline: MeiosisComponent = () => {
               m(ScenarioTimeline, {
                 titleView,
                 lineHeight: 31,
-                timeline: scenarioToTimelineItems(scenario, injects),
-                onClick,
+                timeline,
+                onClick: selectTimelineItem,
                 timelineStart,
                 scenarioStart,
               })

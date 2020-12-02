@@ -3,9 +3,7 @@ import { Button, TextArea, TextInput, FileInput, ModalPanel } from 'mithril-mate
 import { deepCopy, deepEqual, ITrial } from '../../../../models/dist';
 import { dashboardSvc, MeiosisComponent } from '../../services';
 
-const log = console.log;
 const close = async (e?: UIEvent) => {
-  log('closing...');
   // await TrialSvc.unload();
   m.route.set('/');
   if (e) {
@@ -119,7 +117,6 @@ export const TrialForm: MeiosisComponent = () => {
                 iconName: 'save',
                 class: `green ${hasChanged ? '' : 'disabled'}`,
                 onclick: (e: MouseEvent) => {
-                  log('submitting...');
                   e.preventDefault();
                   saveTrial(trial);
                 },

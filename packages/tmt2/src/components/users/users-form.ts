@@ -4,8 +4,6 @@ import { IPerson, UserRole, deepCopy, deepEqual } from '../../../../models';
 import { MeiosisComponent } from '../../services';
 import { getActiveTrialInfo, getUsers, iterEnum, userIcon, userRoleToString } from '../../utils';
 
-const log = console.log;
-
 export const UsersForm: MeiosisComponent = () => {
   let user = {} as IPerson;
 
@@ -22,7 +20,6 @@ export const UsersForm: MeiosisComponent = () => {
       },
     }) => {
       const { trial } = getActiveTrialInfo(state);
-      console.log('trial', trial);
 
       const users = getUsers(trial);
       const { userId } = state.app;
@@ -39,7 +36,6 @@ export const UsersForm: MeiosisComponent = () => {
 
       const onsubmit = (e: UIEvent) => {
         e.preventDefault();
-        log('submitting...');
         if (user) {
           updateUser(user);
         }

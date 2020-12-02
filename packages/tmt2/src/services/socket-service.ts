@@ -15,7 +15,6 @@ import {
 import { getInjects } from '../utils';
 
 // tslint:disable-next-line:no-console
-const log = console.log;
 let socket: SocketIOClient.Socket;
 
 export const setupSocket = (autoConnect = true) => {
@@ -26,9 +25,8 @@ export const setupSocket = (autoConnect = true) => {
 
   socket.on('connect', () => {
     socket.emit('test-bed-connect');
-    log('Connected');
   });
-  socket.on('disconnect', () => log('Disconnected'));
+  // socket.on('disconnect', () => log('Disconnected'));
   socket.on('connect_error', (err: Error) => {
     socket.close();
     if (autoConnect) {
@@ -38,11 +36,11 @@ export const setupSocket = (autoConnect = true) => {
     }
   });
   socket.on('exception', (data: any) => {
-    console.log('exception', data);
+    console.warn('exception', data);
   });
-  socket.on('time-events', (data: unknown) => {
-    console.log('time-events: ', data);
-  });
+  // socket.on('time-events', (data: unknown) => {
+  //   console.log('time-events: ', data);
+  // });
   socket.on('stateUpdated', (state: TimeState) => {
     const { update } = actions;
     // SimulationState.state = state;
@@ -54,7 +52,6 @@ export const setupSocket = (autoConnect = true) => {
   });
   socket.on('is-connected', async (data: IConnectMessage) => {
     const { update } = actions;
-    console.log('data', data);
     const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
     await actions.updateSession(Object.assign({ tags: undefined }, session));
     update({

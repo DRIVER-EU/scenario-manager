@@ -85,7 +85,6 @@ export const TrialList: MeiosisComponent = () => {
                     'a[href=#].card-title',
                     {
                       onclick: async () => {
-                        console.log('Set scenario to ' + trial.title);
                         await loadTrial(trial.id);
                         dashboardSvc.switchTo(Dashboards.TRIAL_INFO);
                       },

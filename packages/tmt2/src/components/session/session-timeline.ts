@@ -45,7 +45,6 @@ export const SessionTimelineView: MeiosisComponent = () => {
     };
     const injectToTimelineItem = injectToTimelineItemFactory(injectStates, treeState);
     const ti = [scenario, ...getChildren(scenario.id as string)].map(injectToTimelineItem);
-    // console.log(JSON.stringify(ti, null, 2));
     return ti;
   };
 

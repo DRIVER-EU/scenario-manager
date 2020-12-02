@@ -63,7 +63,7 @@ export const InjectsList: MeiosisComponent = () => {
               return false;
             });
         },
-        onBeforeDelete: (ti) => console.log(`On before delete ${ti.title}`),
+        // onBeforeDelete: (ti) => console.log(`On before delete ${ti.title}`),
         onDelete: async (ti) => {
           await deleteInject(ti.id);
         },
@@ -82,18 +82,14 @@ export const InjectsList: MeiosisComponent = () => {
               return true;
           }
         },
-        onUpdate: (ti, action) => {
+        onUpdate: (ti, action, tiTarget) => {
           if (!ti.parentId) {
             ti.parentId = '';
           }
           if (action === 'edit') {
             updateInject(ti as IInject);
-          } else {
-            // action === move
-            if (injects) {
-              const index = injects.indexOf(ti as IInject);
-              moveInject(ti as IInject, injects[index - 1]);
-            }
+          } else if (action === 'move' && injects) {
+            moveInject(ti as IInject, tiTarget as IInject);
           }
         },
         create: (parent?: IInject, depth?: number) => {

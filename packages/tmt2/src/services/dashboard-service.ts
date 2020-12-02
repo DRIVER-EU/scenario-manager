@@ -68,8 +68,6 @@ class DashboardService {
           : {
               render: () => {
                 const state = states();
-                // console.log(`${c.id} was called`);
-                // console.table(state);
                 return m(Layout, { state, actions }, m(c.component, { state, actions }));
               },
             };

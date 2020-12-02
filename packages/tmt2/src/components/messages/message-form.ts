@@ -69,7 +69,6 @@ export const MessageForm: MessageComponent = () => {
   };
 
   return {
-    oninit: () => console.log('ONINIT MessageForm'),
     view: ({ attrs: { state, actions, options } }) => {
       const { mode } = state.app;
       const isExecuting = mode === 'execute';

@@ -4,8 +4,6 @@ import { IStakeholder, deepCopy, deepEqual } from '../../../../models';
 import { MeiosisComponent } from '../../services';
 import { getObjectives, getStakeholders, getUsers } from '../../utils';
 
-const log = console.log;
-
 export const StakeholdersForm: MeiosisComponent = () => {
   let stakeholder = {} as IStakeholder;
 
@@ -45,7 +43,6 @@ export const StakeholdersForm: MeiosisComponent = () => {
       const hasChanged = !deepEqual(stakeholder, original);
       const onsubmit = (e: UIEvent) => {
         e.preventDefault();
-        log('submitting...');
         if (stakeholder) {
           updateStakeholder(stakeholder);
         }

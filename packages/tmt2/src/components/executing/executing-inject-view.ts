@@ -14,7 +14,6 @@ export const ExecutingInjectView: MeiosisComponent = () => {
     view: ({ attrs: { state, actions } }) => {
       const { scenarioId, injectId, trial } = state.exe;
       const inject = getInject(trial, injectId || scenarioId);
-      console.log('inject', inject);
       if (!inject) return;
       const isGroupInject = inject && inject.type !== InjectType.INJECT;
 

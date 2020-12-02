@@ -2,11 +2,6 @@ import m from 'mithril';
 import { createPatch } from 'rfc6902';
 import { SocketSvc } from '.';
 import { IAsset, IContent } from '../../../models/dist';
-// import { createPatch, Operation } from 'rfc6902';
-// import { SocketSvc } from './socket-service';
-
-const log = console.log;
-const error = console.error;
 
 export interface IRestService<T extends IContent | IAsset> {
   url: string;
@@ -35,13 +30,12 @@ const createRestServiceFactory = (apiService: string) => {
           withCredentials,
         });
       } catch (err) {
-        return error(err.message);
+        return console.error(err.message);
       }
     };
 
     const update = async (item: Partial<T>, fd?: FormData) => {
       try {
-        console.debug('put');
         return await m
           .request<T>({
             method: 'PUT',
@@ -51,7 +45,7 @@ const createRestServiceFactory = (apiService: string) => {
           })
           .catch((e) => console.error(e));
       } catch (err) {
-        return error(err.message);
+        return console.error(err.message);
       }
     };
 
@@ -59,10 +53,10 @@ const createRestServiceFactory = (apiService: string) => {
 
     const patch = (current: T, old: T) => {
       try {
-        // console.log('Patch at ' + new Date());
         const patch = createPatch(old, current);
-        console.log(JSON.stringify(patch, null, 2));
+        // console.log(JSON.stringify(patch, null, 2));
         if (patch.length === 0) {
+          // console.warn('Nothing to patch');
           return;
         }
         m.request<T>({
@@ -72,7 +66,7 @@ const createRestServiceFactory = (apiService: string) => {
           withCredentials,
         }).catch((e) => console.error(e));
       } catch (err) {
-        error(err.message);
+        console.error(err.message);
       }
     };
 
@@ -83,9 +77,8 @@ const createRestServiceFactory = (apiService: string) => {
           url: url + id,
           withCredentials,
         });
-        log(`Deleted with id: ${id}.`);
       } catch (err) {
-        return error(err.message);
+        return console.error(err.message);
       }
     };
 

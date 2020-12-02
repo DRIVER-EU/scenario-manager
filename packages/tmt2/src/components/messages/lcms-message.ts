@@ -85,7 +85,6 @@ export const LcmsMessageForm: MessageComponent = () => {
         alert.info.urgency = Urgency.Unknown;
         // alertInfo.area = IArea
       } else if (alert.info instanceof Array) {
-        console.log('Converting array');
         alert.info = alert.info[0];
       }
       if (!alert.info.parameter) {

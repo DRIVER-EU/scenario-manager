@@ -36,7 +36,7 @@ export const GeoJsonMessageForm: MessageComponent = () => {
       const availableAssets = assets
         .filter((a) => a.url && isJSON(a.filename))
         .map((a) => ({ id: a.id, label: a.alias || a.filename, url: a.url }));
-      console.log('availableAssets', availableAssets);
+      // console.log('availableAssets', availableAssets);
       const cur = gm.assetId && availableAssets.filter((a) => a.id === gm.assetId).shift();
       if ((!overlays || (gm.alias && !overlays.hasOwnProperty(gm.alias))) && cur && cur.url) {
         m.request<FeatureCollection<Geometry, GeoJsonProperties>>(cur.url as string).then((r) => {
@@ -144,7 +144,6 @@ export const GeoJsonMessageForm: MessageComponent = () => {
               overlays,
               visible: gm && gm.alias ? [gm.alias] : undefined,
               // editable: ['overlay'],
-              // onMapClicked: console.log,
               showScale: { imperial: false },
               // onLayerEdited: (f: FeatureGroup) => {
               //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;

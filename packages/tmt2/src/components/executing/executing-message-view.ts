@@ -15,7 +15,6 @@ export const ExecutingMessageView: MeiosisComponent = () => {
     view: ({ attrs: { state, actions } }) => {
       const { injectId, trial } = state.exe;
       const inject = getInject(trial, injectId);
-      console.log('inject', inject);
       if (!inject) return;
 
       return inject && inject.type === InjectType.INJECT ? getMessageForm(state, actions, inject, false) : undefined;

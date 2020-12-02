@@ -119,12 +119,6 @@ export const titleAndDescriptionFilter = (filterValue?: string) => {
         (content.description && content.description.toLowerCase().indexOf(filterValue as string) >= 0);
 };
 
-// let i = 0;
-// console.log(`${++i}: ${deepEqual([1, 2, 3], [1, 2, 3])}`);
-// console.log(`${++i}: ${deepEqual([1, 2, 3], [1, 2, 3, 4])}`);
-// console.log(`${++i}: ${deepEqual({ a: 'foo', b: 'bar' }, { a: 'foo', b: 'bar' })}`);
-// console.log(`${++i}: ${deepEqual({ a: 'foo', b: 'bar' }, { b: 'bar', a: 'foo' })}`);
-
 /**
  * Represent the inject with an icon.
  * @param type inject type
