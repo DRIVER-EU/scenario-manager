@@ -128,14 +128,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     component: UsersView,
     level: Dashboards.SETTINGS,
   },
-  // {
-  //   id: Dashboards.TRIAL_SETTINGS,
-  //   title: 'Topics',
-  //   route: '/settings/topics',
-  //   visible: false,
-  //   component: TrialSettings,
-  //   level: Dashboards.SETTINGS,
-  // },
+  {
+    id: Dashboards.TRIAL_SETTINGS,
+    title: 'Topics',
+    route: '/settings/topics',
+    visible: false,
+    component: TrialSettings,
+    level: Dashboards.SETTINGS,
+  },
   {
     id: Dashboards.ASSETS,
     title: 'Assets',

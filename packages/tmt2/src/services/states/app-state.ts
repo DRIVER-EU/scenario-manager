@@ -7,6 +7,7 @@ import {
   IExecutingInject,
   IInject,
   IInjectSimStates,
+  IMessageTopic,
   InjectType,
   IObjective,
   IPerson,
@@ -125,6 +126,7 @@ export interface IAppStateActions {
   deleteInject: (inject: IInject) => Promise<void>;
   moveInject: (source: IInject, target: IInject) => Promise<void>;
   transitionInject: (st: IStateTransitionRequest) => Promise<boolean>;
+  updateMessageTopics: (topics: IMessageTopic[]) => Promise<void>;
 
   selectStakeholder: (stakeholder: IStakeholder) => void;
   createStakeholder: (stakeholder: IStakeholder) => Promise<void>;
@@ -422,6 +424,13 @@ export const appStateMgmt = {
         }
       },
       transitionInject: (st: IStateTransitionRequest) => runSvc.transition(st),
+      updateMessageTopics: async (topics: IMessageTopic[]) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        trial.messageTopics = topics;
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { trial } });
+      },
 
       selectAsset: (asset: IAsset) => update({ app: { assetId: asset.id } }),
       createAsset: async (asset: IAsset, files?: FileList) => {
