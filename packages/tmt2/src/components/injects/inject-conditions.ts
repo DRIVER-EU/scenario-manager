@@ -127,7 +127,6 @@ export const InjectConditions: MeiosisComponent = () => {
               {
                 id: InjectConditionType.AT_TIME,
                 label: 'at',
-                // disabled: !trial.id,
               },
             ],
             onchange: (v) => {
@@ -139,7 +138,6 @@ export const InjectConditions: MeiosisComponent = () => {
                 inject.condition.delay = 0;
               }
               inject.condition!.type = v[0] as InjectConditionType;
-              // state.inject!.condition = condition;
               updateInject(inject);
             },
           }),
@@ -148,13 +146,12 @@ export const InjectConditions: MeiosisComponent = () => {
             m(Select, {
               disabled,
               style,
-              placeholder: 'Role player',
+              placeholder: 'Role player...',
               className: 'inline',
               options: rolePlayers,
               checkedId: rolePlayerId,
               onchange: (v) => {
                 inject.condition!.rolePlayerId = v[0] as string;
-                // state.inject!.condition! = condition;
                 updateInject(inject);
               },
             }),
@@ -174,7 +171,6 @@ export const InjectConditions: MeiosisComponent = () => {
                   options: previousInjectOptions,
                   onchange: (v) => {
                     inject.condition!.injectId = v[0] as InjectConditionType;
-                    // state.inject!.condition = condition;
                     updateInject(inject);
                   },
                 }),
@@ -188,7 +184,6 @@ export const InjectConditions: MeiosisComponent = () => {
                   options: injectStateOptions,
                   onchange: (v) => {
                     inject.condition!.injectState = v[0] as InjectState;
-                    // state.inject!.condition = condition;
                     updateInject(inject);
                   },
                 }),
