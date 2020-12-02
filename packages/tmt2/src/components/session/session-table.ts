@@ -22,6 +22,7 @@ import {
 } from '../../utils';
 
 export const SessionTable: MeiosisComponent = () => {
+  let updater: number;
   let time = Date.now();
   let trial: ITrial;
   let scenarioStartTime = new Date();
@@ -82,10 +83,12 @@ export const SessionTable: MeiosisComponent = () => {
         },
       },
     }) => {
+      updater = window.setInterval(() => m.redraw(), 1000);
       trial = tr;
       const scenario = getInject(trial, scenarioId) as IScenario;
       scenarioStartTime = (scenario && scenario.startDate && new Date(scenario.startDate)) || new Date();
     },
+    onbeforeremove: () => window.clearInterval(updater),
     view: ({ attrs: { state } }) => {
       const { treeState, trial } = getActiveTrialInfo(state);
       const { injectStates, time: t } = state.exe;
