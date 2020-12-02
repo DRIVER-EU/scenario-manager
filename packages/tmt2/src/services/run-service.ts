@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { IStateTransitionRequest, ISessionManagement, IInject, ITrial, uniqueId, UserRole } from '../../../models';
+import { IStateTransitionRequest, ISessionManagement, IInject, ITrial } from '../../../models';
 
 const withCredentials = false;
 
