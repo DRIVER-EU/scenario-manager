@@ -27,26 +27,31 @@ export const baseLayers = {
     options: {
       minZoom: 3,
       maxZoom: 20,
-      // tms: true,
       attribution: '©OpenStreetMap Contributors. Tiles courtesy of Humanitarian OpenStreetMap Team',
     },
   },
-  'PDOK grijs': {
+  'NL lucht': {
+    url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/2019_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
+    options: {
+      minZoom: 3,
+      maxZoom: 19,
+      attribution: 'Map data: <a href="http://www.pdok.nl">PDOK</a>',
+    },
+  },
+  'NL grijs': {
     url:
       'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartgrijs/EPSG:3857/{z}/{x}/{y}.png',
     options: {
       minZoom: 3,
       maxZoom: 20,
-      // tms: true,
       attribution: 'Map data: <a href="http://www.kadaster.nl">Kadaster</a>',
     },
   },
-  'PDOK kleur': {
+  'NL kleur': {
     url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:3857/{z}/{x}/{y}.png',
     options: {
       minZoom: 3,
       maxZoom: 20,
-      // tms: true,
       attribution: 'Map data: <a href="http://www.kadaster.nl">Kadaster</a>',
     },
   },
