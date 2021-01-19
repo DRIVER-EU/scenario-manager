@@ -21,7 +21,7 @@
   "dependencies": {
     "leaflet": "^1.7.1",
     "leaflet-draw": "^1.0.4",
-    "material-icons": "^0.3.1",
+    "material-icons": "^0.5.2",
     "materialize-css": "^1.0.0",
     "mithril": "^2.0.4",
     "mithril-leaflet": "^0.4.3",
@@ -30,21 +30,21 @@
     "mithril-scenario-timeline": "^0.2.2",
     "mithril-table": "^0.2.2",
     "mithril-tree-component": "^0.7.1",
-    "mithril-ui-form": "^0.8.14",
+    "mithril-ui-form": "^0.9.1",
     "rfc6902": "^4.0.1",
     "slimdown-js": "^0.3.2",
     "socket.io-client": "2.3.1"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.7",
-    "@types/leaflet": "^1.5.19",
+    "@types/leaflet": "^1.5.20",
     "@types/leaflet-draw": "^1.0.3",
     "@types/materialize-css": "^1.0.8",
     "@types/mithril": "^2.0.6",
-    "@types/socket.io-client": "^1.4.34",
+    "@types/socket.io-client": "^1.4.35",
     "meiosis-tracer": "^4.0.0",
     "parcel-bundler": "^1.12.4",
     "rimraf": "^3.0.2",
-    "typescript": "^4.0.5"
+    "typescript": "^4.1.3"
   }
 }
