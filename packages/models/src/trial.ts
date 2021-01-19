@@ -1,14 +1,4 @@
-import {
-  IMessageTopic,
-  IObjective,
-  IStakeholder,
-  IInjectGroup,
-  IInject,
-  IPerson,
-  ILocationAddress,
-  IPersonOfInterest,
-  IObjectOfInterest,
-} from '.';
+import { IMessageTopic, IObjective, IStakeholder, IInjectGroup, IInject, IPerson } from '.';
 
 export interface ITrialOverview {
   /** Refers to the filename on disk */
@@ -27,12 +17,12 @@ export interface ITrialOverview {
 export interface ITrial extends ITrialOverview {
   /** Specifies relation between message types and topics */
   messageTopics: IMessageTopic[];
-  /** Objects of interest that play a role in the scenario */
-  objects: IObjectOfInterest[];
-  /** Persons of interest that play a role in the scenario */
-  players: IPersonOfInterest[];
-  /** Locations of interest that play a role in the scenario */
-  locations: ILocationAddress[];
+  // /** Objects of interest that play a role in the scenario */
+  // objects: IObjectOfInterest[];
+  // /** Persons of interest that play a role in the scenario */
+  // players: IPersonOfInterest[];
+  // /** Locations of interest that play a role in the scenario */
+  // locations: ILocationAddress[];
   /** Persons that can login, and play one of more roles, such as editors, stakeholders, role players */
   users: IPerson[];
   /** Solutions, departments, organisations that have an interest in the scenario */

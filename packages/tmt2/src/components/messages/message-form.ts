@@ -53,7 +53,7 @@ export const getMessageForm = (state: IAppModel, actions: IActions, inject: IInj
     case MessageType.SET_AFFECTED_AREA:
       return m(SetAffectedAreaForm, sao);
     default:
-      return m('.row', 'TODO: ' + inject.messageType);
+      return inject.messageType && m('.row', 'TODO: ' + inject.messageType);
   }
 };
 

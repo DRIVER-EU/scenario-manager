@@ -1,5 +1,5 @@
+import m, { FactoryComponent } from 'mithril';
 import meiosisTracer from 'meiosis-tracer';
-import { FactoryComponent } from 'mithril';
 import Stream from 'mithril/stream';
 import { merge } from '../utils/mergerino';
 import { appStateMgmt, IApp, IAppStateActions, IAppStateModel, IExe } from './states';
@@ -9,8 +9,8 @@ export interface IAppModel extends IAppStateModel {}
 export interface IActions extends IAppStateActions {}
 
 export type ModelUpdate = {
-  app?: Partial<IApp>;
-  exe?: Partial<IExe>;
+  app?: Partial<IApp> | (() => Partial<IApp>);
+  exe?: Partial<IExe> | (() => Partial<IExe>);
 };
 
 // export type ModelUpdateFunction = IAppModel | ((model: IAppModel) => IAppModel);
@@ -36,3 +36,8 @@ export const states = Stream.scan(merge, app.initial, update);
 export const actions = app.actions(update, states);
 
 meiosisTracer({ streams: [states] });
+
+states.map(() => {
+  // effects.forEach((effect) => effect(state));
+  m.redraw();
+});

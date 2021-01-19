@@ -15,6 +15,7 @@ import {
   TrialSettings,
   UsersView,
   SessionTable,
+  SelectMessageTypesForm,
 } from '../components';
 
 class DashboardService {
@@ -142,14 +143,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     component: AssetsView,
     level: Dashboards.SETTINGS,
   },
-  // {
-  //   id: Dashboards.MESSAGES,
-  //   title: 'Messages',
-  //   route: '/settings/messages',
-  //   visible: false,
-  //   component: SelectMessageTypesForm,
-  //   level: Dashboards.SETTINGS,
-  // },
+  {
+    id: Dashboards.MESSAGES,
+    title: 'Messages',
+    route: '/settings/messages',
+    visible: false,
+    component: SelectMessageTypesForm,
+    level: Dashboards.SETTINGS,
+  },
   {
     id: Dashboards.STAKEHOLDERS,
     title: 'Stakeholders',

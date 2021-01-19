@@ -1,5 +1,4 @@
 import m from 'mithril';
-import { IScenario } from '../../../../models';
 import { DateTimeControl } from '../ui/date-time-control';
 import { DefaultMessageForm } from '.';
 import { Checklist } from '../ui/checklist';
@@ -12,24 +11,10 @@ const DEFAULT_TRIAL_DURATION = 2;
  * Default message form with a title and description.
  */
 export const ScenarioForm: MessageComponent = () => {
-  let onchangeDate: (s: IScenario, d: Date, type: 'start' | 'end') => void;
   return {
-    oninit: ({
-      attrs: {
-        actions: { updateInject },
-      },
-    }) => {
-      onchangeDate = (s: IScenario, d: Date, type: 'start' | 'end') => {
-        if (type === 'start') {
-          s.startDate = d.toISOString();
-        } else {
-          s.endDate = d.toISOString();
-        }
-        updateInject(s);
-      };
-    },
     view: ({ attrs: { state, actions, options = { editing: true } } }) => {
       const { scenario } = getActiveTrialInfo(state);
+      const { updateInject } = actions;
       if (!scenario) return;
       const disabled = !options.editing;
 
@@ -42,21 +27,31 @@ export const ScenarioForm: MessageComponent = () => {
       }
       return [
         m(DefaultMessageForm, { state, actions, options }),
-        m(DateTimeControl, {
-          className: 'col s12 m6',
-          prefix: 'Start',
-          disabled,
-          dt: startDate,
-          onchange: (d: Date) => onchangeDate(scenario, d, 'start'),
-        }),
-        m(DateTimeControl, {
-          className: 'col s12 m6',
-          prefix: 'End',
-          disabled,
-          icon: 'timer_off',
-          dt: endDate,
-          onchange: (d: Date) => onchangeDate(scenario, d, 'end'),
-        }),
+        [
+          m(DateTimeControl, {
+            key: Date.now(),
+            className: 'col s12 m6',
+            prefix: 'Start',
+            disabled,
+            dt: startDate,
+            onchange: (d: Date) => {
+              scenario.startDate = d.toISOString();
+              updateInject(scenario);
+            },
+          }),
+          m(DateTimeControl, {
+            key: Date.now(),
+            className: 'col s12 m6',
+            prefix: 'End',
+            disabled,
+            icon: 'timer_off',
+            dt: endDate,
+            onchange: (d: Date) => {
+              scenario.endDate = d.toISOString();
+              updateInject(scenario);
+            },
+          }),
+        ],
         m(Checklist, { state, actions }),
       ];
     },

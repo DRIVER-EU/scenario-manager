@@ -38,7 +38,7 @@ export const Layout: MeiosisComponent = () => {
       const { session, time } = state.exe;
       const curRoute = m.route.get();
       const curDashboard = dashboardSvc.getCurrent(curRoute);
-      if (!trial.id && curRoute !== dashboardSvc.defaultRoute && curDashboard?.id !== Dashboards.TRIAL_INFO) {
+      if (trial && !trial.id && curRoute !== dashboardSvc.defaultRoute && curDashboard?.id !== Dashboards.TRIAL_INFO) {
         return dashboardSvc.switchTo(Dashboards.HOME);
       }
       const mainPath = (path: string) => {
@@ -80,8 +80,8 @@ export const Layout: MeiosisComponent = () => {
                   d.id === Dashboards.EXECUTE
                     ? isExeMode
                     : d.id === Dashboards.TRIAL
-                    ? !isExeMode && trial.id
-                    : d.visible || (trial.id && !d.level)
+                    ? !isExeMode && trial && trial.id
+                    : d.visible || (trial && trial.id && !d.level)
                 )
                 .map((d) => m(`li${isActive(mainPath(d.route))}`, m(MenuItem, d)))
             ),

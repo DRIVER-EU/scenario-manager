@@ -17,8 +17,11 @@ import {
   IStateTransitionRequest,
   ITimeManagement,
   ITrial,
+  MessageType,
   SessionState,
   TimeCommand,
+  uniqueId,
+  UserRole,
 } from '../../../../models/dist';
 import { MessageScope } from '../../components/messages';
 import { arrayMove, getInjects, getInject, isScenario, validateInjects } from '../../utils';
@@ -110,7 +113,8 @@ export interface IAppStateActions {
 
   loadTrials: () => Promise<void>;
   loadTrial: (trialId: string, mode?: MessageScope) => Promise<void>;
-  saveTrial: (trial?: ITrial) => Promise<void>;
+  newTrial: () => void;
+  saveTrial: (trial: ITrial) => Promise<void>;
   deleteTrial: (trialId: string | number) => Promise<void>;
 
   selectAsset: (asset: IAsset) => void;
@@ -133,6 +137,8 @@ export interface IAppStateActions {
   createStakeholder: (stakeholder: IStakeholder) => Promise<void>;
   updateStakeholder: (stakeholder: IStakeholder) => Promise<void>;
   deleteStakeholder: (stakeholder: IStakeholder) => Promise<void>;
+
+  updateSelectedMessageTypes: (messageTypes: string[]) => Promise<void>;
 
   selectObjective: (objective: IObjective) => void;
   createObjective: (objective: IObjective) => Promise<void>;
@@ -322,18 +328,67 @@ export const appStateMgmt = {
           }
         }
       },
-      saveTrial: async (newTrial?: ITrial) => {
-        const {
-          app: { trial: s },
-        } = states();
-        const t = newTrial || s;
+      newTrial: () => {
+        const hostId = uniqueId();
+        const probId = uniqueId();
+        const trial = {
+          id: '',
+          title: 'New trial',
+          users: [
+            { id: hostId, name: 'Host', roles: [UserRole.STAKEHOLDER] },
+            { id: probId, name: 'Problem owner', roles: [UserRole.STAKEHOLDER] },
+            { id: uniqueId(), name: 'Execution manager', roles: [UserRole.ADMIN, UserRole.ROLE_PLAYER] },
+            { id: uniqueId(), name: 'Participant 1', roles: [UserRole.PARTICIPANT], email: 'participant1@tmt.eu' },
+            { id: uniqueId(), name: 'Participant 2', roles: [UserRole.PARTICIPANT], email: 'participant2@tmt.eu' },
+            { id: uniqueId(), name: 'Role player 1', roles: [UserRole.ROLE_PLAYER] },
+            { id: uniqueId(), name: 'Role player 2', roles: [UserRole.ROLE_PLAYER] },
+          ],
+          stakeholders: [
+            {
+              id: uniqueId(),
+              name: 'Host',
+              notes: 'The host is responsible for preparing the facilities during the exercise.',
+              contactIds: [hostId],
+              roles: [UserRole.STAKEHOLDER],
+            },
+            {
+              id: uniqueId(),
+              name: 'Problem owner',
+              notes:
+                'The problem owner is responsible for defining the gaps, and validating the objectives of the playbook.',
+              contactIds: [probId],
+              roles: [UserRole.STAKEHOLDER],
+            },
+          ],
+          objectives: [{ id: uniqueId(), title: 'Fix gap 1' }],
+          messageTopics: [],
+          selectedMessageTypes: [
+            MessageType.ROLE_PLAYER_MESSAGE,
+            MessageType.POST_MESSAGE,
+            MessageType.GEOJSON_MESSAGE,
+            MessageType.CAP_MESSAGE,
+            MessageType.START_INJECT,
+            MessageType.LARGE_DATA_UPDATE,
+            MessageType.PHASE_MESSAGE,
+            MessageType.CHECKPOINT,
+          ],
+          injects: [],
+        } as Partial<ITrial>;
+        update({ app: { trial: () => trial } } as any);
+      },
+      saveTrial: async (t: ITrial) => {
+        // const {
+        //   app: { trial: s },
+        // } = states();
+        // const t = newTrial || s;
         validateInjects(t);
         t.lastEdit = new Date();
-        const trial = await trialSvc.save(t);
-        if (trial) update({ app: { trial } });
+        const trial = (await trialSvc.save(t)) || t;
+        update({ app: { trial } });
       },
       deleteTrial: async (trialId: string | number) => {
         await trialSvc.del(trialId);
+        update({ app: { trial: undefined } });
       },
 
       selectScenario: (scenario: IInject | string) => {
@@ -522,6 +577,15 @@ export const appStateMgmt = {
         trial.objectives = trial.objectives.filter((s) => s.id !== objective.id);
         await trialSvc.patch(trial, oldTrial);
         update({ app: { objectiveId: '', trial } });
+      },
+
+      updateSelectedMessageTypes: async (messageTypes: string[]) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        trial.selectedMessageTypes = messageTypes;
+        console.log(messageTypes);
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { trial } });
       },
 
       selectUser: (user: IPerson) => update({ app: { userId: user.id } }),

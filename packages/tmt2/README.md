@@ -38,6 +38,7 @@ Add it to the simulation viewer.
 
 ## Features / Bugs
 
+- Add message selector back again
 - In the execution view, I cannot see the route for the ambulance.
 - Can we save the executed trial (to a new name)?
 - Add the option to select the user upon start (while executing?)

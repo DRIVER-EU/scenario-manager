@@ -28,8 +28,10 @@ const StakeholdersList: MeiosisComponent = () => {
             className: 'yellow black-text',
             active: curStakeholderId === cur.id,
             content: cur.notes
-              ? cur.notes +
-                '<br>' +
+              ? '<em>' +
+                cur.notes +
+                '</em>' +
+                '<br><b>Contacts: </b>' +
                 (cur.contactIds
                   ? cur.contactIds
                       .map((id) => getUserById(trial, id))

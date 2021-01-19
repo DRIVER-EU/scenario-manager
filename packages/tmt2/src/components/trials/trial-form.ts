@@ -1,11 +1,12 @@
 import m from 'mithril';
 import { Button, TextArea, TextInput, FileInput, ModalPanel } from 'mithril-materialized';
 import { deepCopy, deepEqual, ITrial } from '../../../../models/dist';
+import { Dashboards } from '../../models';
 import { dashboardSvc, MeiosisComponent } from '../../services';
 
 const close = async (e?: UIEvent) => {
   // await TrialSvc.unload();
-  m.route.set('/');
+  dashboardSvc.switchTo(Dashboards.HOME);
   if (e) {
     e.preventDefault();
   }
@@ -43,7 +44,7 @@ export const TrialForm: MeiosisComponent = () => {
         },
       },
     }) => {
-      trial = curTrial.creationDate ? deepCopy(curTrial) : ({ title: 'New trial', creationDate: new Date() } as ITrial);
+      trial = deepCopy(curTrial);
     },
     view: ({
       attrs: {
@@ -116,9 +117,9 @@ export const TrialForm: MeiosisComponent = () => {
                 label: 'Save',
                 iconName: 'save',
                 class: `green ${hasChanged ? '' : 'disabled'}`,
-                onclick: (e: MouseEvent) => {
-                  e.preventDefault();
-                  saveTrial(trial);
+                onclick: async (e: MouseEvent) => {
+                  // e.preventDefault();
+                  await saveTrial(trial);
                 },
               }),
               ' ',

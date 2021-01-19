@@ -11,35 +11,23 @@ export interface IDateTimeControl extends Attributes {
 }
 
 export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
-  const state = {
-    time: '09:00',
-    date: new Date(),
-    hours: 9,
-    min: 0,
-  } as {
-    hours: number;
-    min: number;
-    time: string;
-    date: Date;
-    onchange?: (d: Date) => void;
-  };
+  let time = '09:00';
+  let date = new Date();
+  let hours = 9;
+  let min = 0;
   const timeRegex = /(\d{1,2}):(\d{1,2})/g;
 
   const getTime = () => {
-    const { date, hours, min } = state;
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, min, 0, 0);
   };
 
-  const changeTime = () => (state.onchange ? state.onchange(getTime()) : undefined);
-
   return {
-    oninit: ({ attrs: { onchange }}) => state.onchange = onchange,
-    view: ({ attrs: { dt, prefix, icon, className = 'col s12', disabled } }) => {
+    view: ({ attrs: { dt, prefix, icon, className = 'col s12', disabled, onchange } }) => {
       if (dt) {
-        state.date = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-        state.hours = dt.getHours();
-        state.min = dt.getMinutes();
-        state.time = `${padLeft(state.hours)}:${padLeft(state.min)}`;
+        date = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+        hours = dt.getHours();
+        min = dt.getMinutes();
+        time = `${padLeft(hours)}:${padLeft(min)}`;
       }
       return m('.input-field', { className, style: 'margin: 0 auto;' }, [
         m(Icon, { iconName: icon || 'timer', className: 'prefix', style: 'margin-top: 0.8em;' }),
@@ -49,16 +37,16 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
             '.col.s5',
             m(TimePicker, {
               disabled,
-              initialValue: state.time,
+              initialValue: time,
               twelveHour: false,
               onchange: (time: string) => {
                 const match = timeRegex.exec(time);
                 if (match && match.length >= 2) {
-                  state.hours = +match[1];
-                  state.min = +match[2];
-                  state.time = `${padLeft(state.hours)}:${padLeft(state.min)}`;
+                  hours = +match[1];
+                  min = +match[2];
+                  time = `${padLeft(hours)}:${padLeft(min)}`;
                 }
-                changeTime();
+                onchange && onchange(getTime());
               },
             })
           ),
@@ -66,10 +54,10 @@ export const DateTimeControl: FactoryComponent<IDateTimeControl> = () => {
             '.col.s7',
             m(DatePicker, {
               disabled,
-              initialValue: state.date,
+              initialValue: date,
               onchange: (d: Date) => {
-                state.date = d;
-                changeTime();
+                date = d;
+                onchange && onchange(getTime());
               },
             })
           ),

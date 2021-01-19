@@ -33,7 +33,7 @@ export const TrialList: MeiosisComponent = () => {
             time: { state },
           },
         },
-        actions: { loadTrial },
+        actions: { loadTrial, newTrial },
       },
     }) => {
       const { name, tags } = session;
@@ -62,6 +62,7 @@ export const TrialList: MeiosisComponent = () => {
             class: 'green input-field right btn-medium',
             style: 'margin: 1em 1em 0 0;',
             onclick: () => {
+              newTrial();
               dashboardSvc.switchTo(Dashboards.TRIAL_INFO);
             },
           }),

@@ -437,8 +437,8 @@
         "affectsGlobalScope": false
       },
       "./src/trial.ts": {
-        "version": "79c45bd91a76ea5088a158650a8ff102cb55a17819af352f403e62827d1b6005",
-        "signature": "c39b9adffb2c87081c5bcd7a65ed162f1e9e272431bdd5eb9a7593ca5ed35b4c",
+        "version": "27593d5c00360e9851ba9b783ce8eab3793fe7843944d10ddc1ebd13113a3856",
+        "signature": "e035c602c5c1ed3582e219d8aae1cda4907a8493e1f6726524775797a43023cf",
         "affectsGlobalScope": false
       },
       "./node_modules/.pnpm/@types/geojson@7946.0.7/node_modules/@types/geojson/index.d.ts": {
@@ -467,8 +467,8 @@
         "affectsGlobalScope": false
       },
       "./src/inject.ts": {
-        "version": "ec984ca872174dbe84ee6ab9003076fb0520e13b7fdf849cf98837a01f9da1c0",
-        "signature": "ab96fe7bd2ebdaabf0e61f764afbdfdba0c190db445bfe01287232bbe0887711",
+        "version": "5a6dead16cc6a26a1696fe185f98861aa6db48f40373190f1fb3cc36ac219fa8",
+        "signature": "7358dada0af604d55b494d85f7e72483375af49431bb13a4500f4cc798067f5b",
         "affectsGlobalScope": false
       },
       "./src/executing-inject.ts": {
@@ -740,6 +740,7 @@
       "esModuleInterop": true,
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
+      "watch": true,
       "configFilePath": "./tsconfig.json"
     },
     "referencedMap": {

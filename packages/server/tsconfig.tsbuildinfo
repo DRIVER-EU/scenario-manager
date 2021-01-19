@@ -1997,8 +1997,8 @@
         "affectsGlobalScope": false
       },
       "../models/dist/inject.d.ts": {
-        "version": "ab96fe7bd2ebdaabf0e61f764afbdfdba0c190db445bfe01287232bbe0887711",
-        "signature": "ab96fe7bd2ebdaabf0e61f764afbdfdba0c190db445bfe01287232bbe0887711",
+        "version": "7358dada0af604d55b494d85f7e72483375af49431bb13a4500f4cc798067f5b",
+        "signature": "7358dada0af604d55b494d85f7e72483375af49431bb13a4500f4cc798067f5b",
         "affectsGlobalScope": false
       },
       "../models/dist/executing-inject.d.ts": {
@@ -2097,8 +2097,8 @@
         "affectsGlobalScope": false
       },
       "../models/dist/trial.d.ts": {
-        "version": "c39b9adffb2c87081c5bcd7a65ed162f1e9e272431bdd5eb9a7593ca5ed35b4c",
-        "signature": "c39b9adffb2c87081c5bcd7a65ed162f1e9e272431bdd5eb9a7593ca5ed35b4c",
+        "version": "e035c602c5c1ed3582e219d8aae1cda4907a8493e1f6726524775797a43023cf",
+        "signature": "e035c602c5c1ed3582e219d8aae1cda4907a8493e1f6726524775797a43023cf",
         "affectsGlobalScope": false
       },
       "../models/node_modules/.pnpm/@types/geojson@7946.0.7/node_modules/@types/geojson/index.d.ts": {
