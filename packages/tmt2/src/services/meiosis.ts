@@ -1,4 +1,4 @@
-import m, { FactoryComponent } from 'mithril';
+import { FactoryComponent } from 'mithril';
 import meiosisTracer from 'meiosis-tracer';
 import Stream from 'mithril/stream';
 import { merge } from '../utils/mergerino';
@@ -37,7 +37,7 @@ export const actions = app.actions(update, states);
 
 meiosisTracer({ streams: [states] });
 
-states.map(() => {
-  // effects.forEach((effect) => effect(state));
-  m.redraw();
-});
+// states.map(() => {
+//   // effects.forEach((effect) => effect(state));
+//   m.redraw();
+// });
