@@ -136,27 +136,30 @@ export const GeoJsonMessageForm: MessageComponent = () => {
               properties: gm.properties,
             })
           : undefined,
-        overlays
-          ? m(LeafletMap, {
-              baseLayers,
-              style: 'width: 100%; height: 400px; margin: 10px;',
-              autoFit: true,
-              overlays,
-              visible: gm && gm.alias ? [gm.alias] : undefined,
-              // editable: ['overlay'],
-              showScale: { imperial: false },
-              // onLayerEdited: (f: FeatureGroup) => {
-              //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
-              //   const r = geoJSONtoRoute(geojson);
-              //   if (r) {
-              //     ut.route = r;
-              //     if (onChange) {
-              //       onChange();
-              //     }
-              //   }
-              // },
-            } as ILeafletMap)
-          : undefined,
+        [
+          overlays
+            ? m(LeafletMap, {
+                key: inject.id,
+                baseLayers,
+                style: 'width: 100%; height: 400px; margin: 10px;',
+                autoFit: true,
+                overlays,
+                visible: gm && gm.alias ? [gm.alias] : undefined,
+                // editable: ['overlay'],
+                showScale: { imperial: false },
+                // onLayerEdited: (f: FeatureGroup) => {
+                //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
+                //   const r = geoJSONtoRoute(geojson);
+                //   if (r) {
+                //     ut.route = r;
+                //     if (onChange) {
+                //       onChange();
+                //     }
+                //   }
+                // },
+              } as ILeafletMap)
+            : undefined,
+        ],
         m(ModalPanel, {
           disabled,
           id: 'upload',

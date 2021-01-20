@@ -20,7 +20,7 @@ export const InjectsView: MeiosisComponent = () => {
               m(Tabs, {
                 tabWidth: 'fixed',
                 selectedTabId,
-                onShow: (newContent) => (selectedTabId = newContent.id === 'timeline' ? 'timeline' : 'message'),
+                // onShow: (newContent) => (selectedTabId = newContent.id === 'timeline' ? 'timeline' : 'message'),
                 tabs: [
                   {
                     id: 'message',
