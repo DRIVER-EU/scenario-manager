@@ -1,5 +1,5 @@
 {
-  "name": "tmt",
+  "name": "tmt_old",
   "version": "1.0.0",
   "description": "Scenario manager interface for performing Concept Development & Experimentations.",
   "main": "app.js",
