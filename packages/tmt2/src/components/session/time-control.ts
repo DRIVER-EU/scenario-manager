@@ -1,8 +1,8 @@
 import m, { FactoryComponent } from 'mithril';
 import { TimePicker, DatePicker, FlatButton, ModalPanel } from 'mithril-materialized';
-import { TimeState, IScenario, ITimeManagement, ITimeControl, TimeCommand } from '../../../../models';
+import { TimeState, IScenario, ITimeManagement, ITimeControl, TimeCommand, UserRole } from '../../../../models';
 import { SocketSvc, MeiosisComponent } from '../../services';
-import { formatTime, getActiveTrialInfo, isSessionInfoValid, padLeft } from '../../utils';
+import { formatTime, getActiveTrialInfo, getUserById, hasUserRole, isSessionInfoValid, padLeft } from '../../utils';
 
 const sendCmd = (socket: SocketIOClient.Socket, msg: ITimeControl) => {
   socket.emit('time-control', msg);
@@ -40,7 +40,7 @@ export const MediaControls: FactoryComponent<{
           ? m(FlatButton, {
               modalId: 'stopPanel',
               iconName: 'stop',
-              disabled: time.state === TimeState.Initialization,
+              disabled: canChangeSpeed === false || time.state === TimeState.Initialization,
             })
           : undefined,
         realtime
@@ -94,11 +94,16 @@ const MediaStateControl: MeiosisComponent = () => {
         time,
         sessionControl: { realtime, activeSession },
         session,
+        trial,
+        userId,
       } = state.exe;
       const st = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
       startTime = startTime || `${padLeft(st.getHours())}:${padLeft(st.getMinutes())}` || '09:00';
       startDate = startDate || st;
       const canStart = activeSession && isSessionInfoValid(session);
+
+      const loggedInUser = getUserById(trial, userId);
+      const disabled = !loggedInUser || !hasUserRole(loggedInUser, UserRole.EXCON);
 
       switch (time.state) {
         default:
@@ -116,6 +121,7 @@ const MediaStateControl: MeiosisComponent = () => {
                       container: '#main',
                       initialValue: startTime,
                       twelveHour: false,
+                      disabled,
                       onSelect,
                     })
                   ),
@@ -125,6 +131,7 @@ const MediaStateControl: MeiosisComponent = () => {
                       label: 'Start date:',
                       initialValue: startDate,
                       container: document.getElementById('main') as Element,
+                      disabled,
                       onchange: (d: Date) => (startDate = d),
                     })
                   )
@@ -136,7 +143,7 @@ const MediaStateControl: MeiosisComponent = () => {
                 m(FlatButton, {
                   label: 'Initialize scenario',
                   className: 'btn-flat-large',
-                  disabled: !canStart,
+                  disabled: disabled || !canStart,
                   onclick: () => {
                     const simulationTime = realtime ? Date.now() : newTime();
                     sendCmd(socket, {
@@ -162,6 +169,7 @@ const MediaStateControl: MeiosisComponent = () => {
             m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time, realtime }),
             m(FlatButton, {
               label: 'Reset session',
+              disabled,
               onclick: async () => {
                 // sendCmd(socket, { command: TimeCommand.Reset });
                 await stopSession();
@@ -177,18 +185,20 @@ const MediaStateControl: MeiosisComponent = () => {
                 container: '#main',
                 initialValue: startTime,
                 twelveHour: false,
+                disabled,
                 onSelect,
               }),
               m(DatePicker, {
                 label: 'Updated date:',
                 container: document.getElementById('main') as Element,
                 initialValue: startDate,
+                disabled,
                 onchange: (d: Date) => (startDate = d),
               }),
               m(FlatButton, {
                 label: 'Update time',
                 iconName: 'update',
-                disabled: timeHasNotChanged(st),
+                disabled: disabled || timeHasNotChanged(st),
                 onclick: () => {
                   sendCmd(socket, {
                     simulationTime: newTime(),
@@ -201,10 +211,10 @@ const MediaStateControl: MeiosisComponent = () => {
           ]);
         case TimeState.Started:
           return m('.col.s12', [
-            m(MediaControls, { socket, isPaused: false, canChangeSpeed: true, time, realtime }),
+            m(MediaControls, { socket, isPaused: false, canChangeSpeed: !disabled, time, realtime }),
             m('em', `Speed: ${time.simulationSpeed}x`),
             time.simulationSpeed !== 1
-              ? m(FlatButton, { iconName: 'restore', onclick: () => updateSpeed(socket, 1) })
+              ? m(FlatButton, { iconName: 'restore', disabled, onclick: () => updateSpeed(socket, 1) })
               : undefined,
           ]);
         case TimeState.Stopped:
@@ -212,6 +222,7 @@ const MediaStateControl: MeiosisComponent = () => {
             '.row',
             m(FlatButton, {
               label: 'Reset session',
+              disabled,
               onclick: async () => {
                 // sendCmd(socket, { command: TimeCommand.Reset });
                 await stopSession();

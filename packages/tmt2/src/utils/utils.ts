@@ -264,16 +264,14 @@ export const userIcon = (user: IPerson) => {
   switch (user.roles[0]) {
     default:
       return 'person';
-    case UserRole.EDITOR:
-      return 'edit';
     case UserRole.PARTICIPANT:
       return 'face';
     case UserRole.ROLE_PLAYER:
       return 'record_voice_over';
     case UserRole.STAKEHOLDER:
       return 'attach_money';
-    case UserRole.ADMIN:
-      return 'supervisor_account';
+    case UserRole.EXCON:
+      return 'volume_up';
   }
 };
 
@@ -292,7 +290,7 @@ export const userRolesToString = (user: IPerson) => {
 };
 
 /** Returns true if the user's roles contains the requested role */
-export const userRolesFilter = (user: IPerson, role: UserRole) => {
+export const hasUserRole = (user: IPerson, role: UserRole) => {
   const { roles } = user;
   return roles.filter((r) => r === role).length > 0;
 };

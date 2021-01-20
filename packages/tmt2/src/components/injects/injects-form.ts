@@ -32,7 +32,7 @@ export interface IInjectsForm extends Attributes {
   disabled?: boolean;
 }
 
-export const InjectsForm: MeiosisComponent = () => {
+export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
   let inject: IInject;
   let copiedInjectIsCut = false;
   let copiedInjects = undefined as undefined | IInject | IInject[];
@@ -190,31 +190,32 @@ export const InjectsForm: MeiosisComponent = () => {
             style: 'color: #b4790c',
           },
           [
-            m(FloatingActionButton, {
-              className: 'red',
-              iconName: 'add',
-              direction: 'left',
-              position: 'right',
-              buttons: [
-                {
-                  iconName: 'delete',
-                  className: `red ${canDelete ? '' : ' disabled'}`,
-                  onClick: async () => await deleteInject(inject),
-                },
-                {
-                  iconName: 'content_cut',
-                  className: `red ${canDelete ? '' : ' disabled'}`,
-                  onClick: async () => await cutInject(inject),
-                },
-                {
-                  iconName: 'content_paste',
-                  className: `red ${canPaste ? '' : ' disabled'}`,
-                  onClick: async () => await pasteInject(inject),
-                },
-                { iconName: 'content_copy', className: 'green', onClick: () => copyInject(inject) },
-                { iconName: 'add', className: 'blue', onClick: () => cloneInject(inject) },
-              ],
-            }),
+            options?.editing &&
+              m(FloatingActionButton, {
+                className: 'red',
+                iconName: 'add',
+                direction: 'left',
+                position: 'right',
+                buttons: [
+                  {
+                    iconName: 'delete',
+                    className: `red ${canDelete ? '' : ' disabled'}`,
+                    onClick: async () => await deleteInject(inject),
+                  },
+                  {
+                    iconName: 'content_cut',
+                    className: `red ${canDelete ? '' : ' disabled'}`,
+                    onClick: async () => await cutInject(inject),
+                  },
+                  {
+                    iconName: 'content_paste',
+                    className: `red ${canPaste ? '' : ' disabled'}`,
+                    onClick: async () => await pasteInject(inject),
+                  },
+                  { iconName: 'content_copy', className: 'green', onClick: () => copyInject(inject) },
+                  { iconName: 'add', className: 'blue', onClick: () => cloneInject(inject) },
+                ],
+              }),
             m(
               '.row',
               m(

@@ -80,6 +80,8 @@ export interface IExe extends IActiveTrial {
   trialId: string;
   /** Executing scenario ID */
   scenarioId: string;
+  /** ID of the currently active user */
+  userId: string;
   /** Currently selected inject ID */
   injectId: string;
   injectStates: IInjectSimStates;
@@ -123,6 +125,7 @@ export interface IAppStateActions {
   deleteAsset: (asset: IAsset) => Promise<void>;
 
   selectScenario: (scenario: IInject | string) => void;
+  loginUser: (userId: string) => void;
 
   selectInject: (inject: IInject | string) => void;
   createInject: (inject: IInject) => Promise<void>;
@@ -197,6 +200,7 @@ export const appStateMgmt = {
       trial: {} as ITrial,
       trialId: '',
       scenarioId: '',
+      userId: '',
       injectId: '',
       treeState: {},
       injectStates: {} as IInjectSimStates,
@@ -337,7 +341,7 @@ export const appStateMgmt = {
           users: [
             { id: hostId, name: 'Host', roles: [UserRole.STAKEHOLDER] },
             { id: probId, name: 'Problem owner', roles: [UserRole.STAKEHOLDER] },
-            { id: uniqueId(), name: 'Execution manager', roles: [UserRole.ADMIN, UserRole.ROLE_PLAYER] },
+            { id: uniqueId(), name: 'Exercise Control', roles: [UserRole.EXCON, UserRole.ROLE_PLAYER] },
             { id: uniqueId(), name: 'Participant 1', roles: [UserRole.PARTICIPANT], email: 'participant1@tmt.eu' },
             { id: uniqueId(), name: 'Participant 2', roles: [UserRole.PARTICIPANT], email: 'participant2@tmt.eu' },
             { id: uniqueId(), name: 'Role player 1', roles: [UserRole.ROLE_PLAYER] },
@@ -400,6 +404,8 @@ export const appStateMgmt = {
           update({ exe: { scenarioId } });
         }
       },
+
+      loginUser: (userId: string) => update({ exe: { userId } }),
 
       toggleTreeItem: (id: string) => {
         const { treeState: oldTreeState } = states().app;

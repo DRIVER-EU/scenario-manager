@@ -1,14 +1,15 @@
 import m, { FactoryComponent } from 'mithril';
 import owl from '../assets/owl.svg';
-import { dashboardSvc, MeiosisComponent, SocketSvc } from '../services';
+import { actions, dashboardSvc, MeiosisComponent, SocketSvc } from '../services';
 import { Dashboards } from '../models/dashboards';
 // import { StatusBar } from './status/status-bar';
 import { Icon } from 'mithril-materialized';
 // import { MediaControls } from './session/time-control';
 import { IDashboard } from '../models';
-import { SessionState, TimeState } from '../../../models';
+import { SessionState, TimeState, UserRole } from '../../../models';
 import { MediaControls } from './session/time-control';
 import { StatusBar } from '.';
+import { getUserById } from '../utils';
 
 export const Layout: MeiosisComponent = () => {
   const MenuItem: FactoryComponent<IDashboard> = () => {
@@ -35,7 +36,7 @@ export const Layout: MeiosisComponent = () => {
       const state = attrs.state;
       const isExeMode = state.app.mode === 'execute';
       const trial = isExeMode && state.exe.trial.id ? state.exe.trial : state.app.trial;
-      const { session, time } = state.exe;
+      const { session, time, userId } = state.exe;
       const curRoute = m.route.get();
       const curDashboard = dashboardSvc.getCurrent(curRoute);
       if (trial && !trial.id && curRoute !== dashboardSvc.defaultRoute && curDashboard?.id !== Dashboards.TRIAL_INFO) {
@@ -65,16 +66,39 @@ export const Layout: MeiosisComponent = () => {
           ? `${session.tags.trialName} - ${session.tags.sessionName.toLowerCase()}`
           : trialTitle;
 
+      const users =
+        executeMode &&
+        trial.users &&
+        trial.users.filter(
+          (user) => user.roles && user.roles.some((role) => [UserRole.EXCON, UserRole.ROLE_PLAYER].indexOf(role) >= 0)
+        );
+      const loggedInUser = getUserById(trial, userId);
+
       return m('container', [
+        users &&
+          users.length > 0 &&
+          m(
+            'ul#login.dropdown-content',
+            users.map((user) =>
+              m(
+                'li',
+                {
+                  onclick: () => {
+                    actions.loginUser(user.id);
+                  },
+                },
+                user.name
+              )
+            )
+          ),
         m('nav', { class: hasSubDashboards ? 'nav-extended' : '' }, [
           m('.nav-wrapper', [
             m('a.brand-logo', { style: 'margin-left: 20px' }, [
               m(`img[width=32][height=32][src=${owl}][alt=Boobook]`, { style: 'margin: 5px 10px 0 -5px;' }),
               m('span.black-text', { style: 'vertical-align: top;' }, title),
             ]),
-            m(
-              'ul.right',
-              dashboardSvc
+            m('ul.right', [
+              ...dashboardSvc
                 .getList()
                 .filter((d) =>
                   d.id === Dashboards.EXECUTE
@@ -83,8 +107,24 @@ export const Layout: MeiosisComponent = () => {
                     ? !isExeMode && trial && trial.id
                     : d.visible || (trial && trial.id && !d.level)
                 )
-                .map((d) => m(`li${isActive(mainPath(d.route))}`, m(MenuItem, d)))
-            ),
+                .map((d) => m(`li${isActive(mainPath(d.route))}`, m(MenuItem, d))),
+              users &&
+                users.length > 0 &&
+                m(
+                  'li.right',
+                  m(
+                    'a.dropdown-trigger',
+                    {
+                      'data-target': 'login',
+                      oncreate: ({ dom }) => M.Dropdown.init(dom, { hover: false }),
+                    },
+                    [
+                      loggedInUser ? loggedInUser.name : 'Select user',
+                      m(Icon, { iconName: 'arrow_drop_down', className: 'right' }),
+                    ]
+                  )
+                ),
+            ]),
           ]),
           hasSubDashboards &&
             m(

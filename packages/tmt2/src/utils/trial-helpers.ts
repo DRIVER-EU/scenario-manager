@@ -10,7 +10,7 @@ import {
   MessageType,
   UserRole,
 } from '../../../models/dist';
-import { userRolesFilter } from './utils';
+import { hasUserRole } from './utils';
 import { IActiveTrial } from '../services';
 import { MessageScope } from '../components/messages';
 import { IDependency, ITimelineItem } from 'mithril-scenario-timeline';
@@ -30,7 +30,7 @@ export const getActiveTrialInfo = <T extends IInject>(state: {
 /** Get a user by ID */
 export const getUserById = (trial: ITrial, id: string) => {
   const users = getUsers(trial);
-  return users ? users.filter((u) => u.id === id).shift() : undefined;
+  return users && users.filter((u) => u.id === id).shift();
 };
 
 /** Get all contacts (or filter by name) */
@@ -45,7 +45,7 @@ export const getUsers = (trial: ITrial, filter?: string) => {
 };
 
 export const getUsersByRole = (trial: ITrial, role: UserRole) => {
-  return getUsers(trial).filter((u) => userRolesFilter(u, role));
+  return getUsers(trial).filter((u) => hasUserRole(u, role));
 };
 
 /** Get all stakeholders (or filter by name) */

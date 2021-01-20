@@ -2,8 +2,8 @@ import m from 'mithril';
 import { TimeControl } from './time-control';
 import { MeiosisComponent } from '../../services';
 import { FlatButton, Select, ISelectOptions, TextInput, TextArea, InputCheckbox, Icon } from 'mithril-materialized';
-import { IScenario, InjectType, SessionState, uniqueId, TimeState } from '../../../../models';
-import { getInjectIcon, getInject, getInjects, isScenario } from '../../utils';
+import { IScenario, InjectType, SessionState, uniqueId, TimeState, UserRole } from '../../../../models';
+import { getInjectIcon, getInject, getInjects, isScenario, getUserById, hasUserRole } from '../../utils';
 
 /** Helper component to specify the session id, name, comments */
 const SessionSettings: MeiosisComponent = () => {
@@ -15,7 +15,7 @@ const SessionSettings: MeiosisComponent = () => {
       },
     }) => {
       const trial = exe.trial.id ? exe.trial : app.trial;
-      const { time, session: s, sessionControl, scenarioId, trialId } = exe;
+      const { time, session: s, sessionControl, scenarioId, trialId, userId } = exe;
       const scenarios = getInjects(trial).filter(isScenario);
       const scenario = getInject(trial, scenarioId) as IScenario;
       const session = {
@@ -30,8 +30,8 @@ const SessionSettings: MeiosisComponent = () => {
           comment: s.tags?.comment || '',
         },
       };
-
-      const disabled = sessionControl.activeSession;
+      const loggedInUser = getUserById(trial, userId);
+      const disabled = sessionControl.activeSession || !loggedInUser || !hasUserRole(loggedInUser, UserRole.EXCON);
       const isConnected = sessionControl?.isConnected;
       const options = scenarios.map((s) => ({ id: s.id, label: s.title }));
 
@@ -111,21 +111,9 @@ const SessionSettings: MeiosisComponent = () => {
 };
 
 export const SessionControl: MeiosisComponent = () => {
-  let scenario = undefined as IScenario | undefined;
-
   return {
-    oninit: async ({
-      attrs: {
-        state: {
-          app,
-          exe: { trial = app.trial, scenarioId = app.scenarioId },
-        },
-      },
-    }) => {
-      scenario = getInject(trial, scenarioId) as IScenario;
-    },
     view: ({ attrs: { state, actions } }) => {
-      const { sessionControl, time } = state.exe;
+      const { sessionControl, time, trial, userId } = state.exe;
       const { isConnected } = sessionControl;
       const { updateSessionControl } = actions;
       const { realtime, activeSession } = sessionControl;
@@ -136,6 +124,10 @@ export const SessionControl: MeiosisComponent = () => {
           ? 'timer_off'
           : 'access_time'
         : 'access_time';
+
+      const loggedInUser = getUserById(trial, userId);
+      const disabled = !loggedInUser || !hasUserRole(loggedInUser, UserRole.EXCON);
+
       return [
         m(
           '.row',
@@ -154,6 +146,7 @@ export const SessionControl: MeiosisComponent = () => {
                   m(InputCheckbox, {
                     label: 'Real time',
                     checked: realtime,
+                    disabled,
                     onchange: (s) => {
                       sessionControl.realtime = s;
                       updateSessionControl(sessionControl);

@@ -397,8 +397,8 @@
         "affectsGlobalScope": false
       },
       "./src/user-role.ts": {
-        "version": "135b0f626cb6d9a89991cf32470370e4e7266fb4a91bfaa882d5d2b2232f5908",
-        "signature": "72a2c0ecac57f3b31d80387e72fd37592bf20a9b1f3e75a08bf8ec9cd177226f",
+        "version": "b6ef35ce55dabb35bbe195e24f53db53beaf2f91021f9390d76d717f1dcb5b92",
+        "signature": "c464037b2c861487c0b7822e5c3d64c7e9d2142cd803465fe1af5c2a630cae35",
         "affectsGlobalScope": false
       },
       "./src/person.ts": {

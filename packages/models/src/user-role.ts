@@ -1,7 +1,6 @@
 export enum UserRole {
-  // OWNER = 'OWNER',
-  /** An admin can do anything */
-  ADMIN = 0,
+  /** Exercise control can do anything */
+  EXCON = 0,
   /** An editor can edit, but not start a scenario */
   EDITOR = 1,
   /** An stakeholder can edit objectives */
