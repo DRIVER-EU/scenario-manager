@@ -23,6 +23,7 @@
     "@nestjs/platform-socket.io": "^7.5.1",
     "@nestjs/swagger": "^4.7.0",
     "@nestjs/websockets": "^7.5.1",
+    "@nestjs/config": "^0.6.1",
     "body-parser": "^1.19.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
@@ -44,9 +45,10 @@
     "@types/node": "^14.14.6",
     "@types/socket.io": "^2.1.11",
     "@types/sqlite3": "^3.1.6",
+    "nest-config": "^1.0.0",
     "rimraf": "^3.0.2",
     "tsc-watch": "^4.2.9",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.1.3"
   }
 }
