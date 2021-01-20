@@ -127,7 +127,7 @@ export class TrialRepository {
   }
 
   async updateTrial(id: string, trial: TrialOverview) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const db = this.databases.hasOwnProperty(id)
         ? this.databases[id].db
         : null;
@@ -192,7 +192,7 @@ export class TrialRepository {
   }
 
   async removeTrial(id: string) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (!this.databases.hasOwnProperty(id)) {
         return reject(`Error, no database with ID ${id} exists!`);
       }
@@ -472,7 +472,7 @@ export class TrialRepository {
 
   private async createDb(trial: TrialOverview) {
     const { id } = trial;
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (this.databases.hasOwnProperty(id)) {
         return reject(
           `Cannot create DB: Database with ID ${id} already exists!`,
