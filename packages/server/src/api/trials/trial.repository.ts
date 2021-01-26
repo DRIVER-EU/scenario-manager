@@ -256,7 +256,7 @@ export class TrialRepository {
   async getAsset(id: string, assetId: number | string) {
     return new Promise<{
       id: number;
-      data: Uint8Array;
+      data: Buffer;
       mimetype: string;
       filename: string;
     }>(async (resolve, reject) => {
@@ -275,7 +275,7 @@ export class TrialRepository {
             id: number;
             alias: string;
             mimetype: string;
-            data: Uint8Array;
+            data: Buffer;
             filename: string;
           },
         ) => {

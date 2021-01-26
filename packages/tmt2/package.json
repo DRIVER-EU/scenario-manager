@@ -1,6 +1,6 @@
 {
   "name": "tmt",
-  "version": "1.0.0",
+  "version": "2.2.0",
   "description": "Scenario manager interface for performing Concept Development & Experimentations.",
   "main": "app.js",
   "repository": {

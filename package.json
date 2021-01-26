@@ -6,9 +6,9 @@
     "start": "lerna run --parallel start",
     "build": "lerna run build",
     "docker:build": "docker build -t trial-management-tool .",
-    "docker:tag": "docker tag trial-management-tool drivereu/trial-management-tool:2.0.8",
+    "docker:tag": "docker tag trial-management-tool drivereu/trial-management-tool:2.2.0",
     "docker:tag:latest": "docker tag trial-management-tool drivereu/trial-management-tool:latest",
-    "docker:publish": "docker push drivereu/trial-management-tool:2.0.8",
+    "docker:publish": "docker push drivereu/trial-management-tool:2.2.0",
     "docker:publish:latest": "docker push drivereu/trial-management-tool:latest",
     "docker:latest": "npm run  docker:tag:latest && npm run docker:publish:latest",
     "docker": "npm run docker:local && npm run docker:publish && npm run docker:latest",
@@ -17,8 +17,8 @@
     "docker:sh": "docker run -it trial-management-tool sh"
   },
   "devDependencies": {
-    "handlebars": "^4.7.3",
-    "lerna": "^3.20.2"
+    "handlebars": "^4.7.6",
+    "lerna": "^3.22.1"
   },
   "name": "trial-management-tool"
 }

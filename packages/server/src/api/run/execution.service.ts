@@ -173,10 +173,9 @@ export class ExecutionService implements IExecutionService {
     const encodedAssets =
       assets &&
       assets.reduce((acc, cur) => {
-        const base64encoded = Buffer.from(cur.data.toString()).toString(
+        acc[cur.filename] = `data:${cur.mimetype};base64,${cur.data.toString(
           'base64',
-        );
-        acc[base64encoded] = cur.mimetype;
+        )}`;
         return acc;
       }, {} as Record<string, string>);
     const senderName = `${sender.name}<${sender.email}>`;
