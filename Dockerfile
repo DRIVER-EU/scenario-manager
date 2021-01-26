@@ -25,9 +25,10 @@ WORKDIR /packages/server
 RUN yalc add trial-manager-models && \
   npm install && \
   npm run build
-COPY ./packages/tmt /packages/tmt
+COPY ./packages/tmt2 /packages/tmt
 WORKDIR /packages/tmt
-RUN yalc add trial-manager-models && \
+RUN rm -fr node_modules && \
+  yalc add trial-manager-models && \
   npm install && \
   npm run build
 
