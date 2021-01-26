@@ -122,7 +122,7 @@ export class ExecutionService implements IExecutionService {
       const parameters =
         info.parameter instanceof Array ? info.parameter : [info.parameter];
       info.parameter = parameters.map(
-        p =>
+        (p) =>
           ({
             valueName: p.valueName,
             value: p.valueName[0] !== '_' ? parse(p.value) : p.value,
@@ -150,18 +150,42 @@ export class ExecutionService implements IExecutionService {
   private async sendPostMessage(i: IInject) {
     const post = getMessage<IPostMsg>(i, MessageType.POST_MESSAGE);
     const topic = 'simulation_entity_post';
-    const sender = this.trial.users.filter(u => u.id === post.senderId).shift();
+    const sender = this.trial.users
+      .filter((u) => u.id === post.senderId)
+      .shift();
+    if (!sender) {
+      console.error(`POST without sender - skipping inject ${i.title}!`);
+      return;
+    }
     const recipients = post.recipientIds
       ? this.trial.users
-          .filter(u => u.email && post.recipientIds.indexOf(u.id) >= 0)
-          .map(u => u.email)
+          .filter((u) => u.email && post.recipientIds.indexOf(u.id) >= 0)
+          .map((u) => `${u.name}<${u.email}>`)
       : [];
 
+    const assets =
+      post.attachments &&
+      (await Promise.all(
+        post.attachments.map((id) =>
+          this.trialService.getAsset(this.trial.id, id),
+        ),
+      ));
+    const encodedAssets =
+      assets &&
+      assets.reduce((acc, cur) => {
+        const base64encoded = Buffer.from(cur.data.toString()).toString(
+          'base64',
+        );
+        acc[base64encoded] = cur.mimetype;
+        return acc;
+      }, {} as Record<string, string>);
+    const senderName = `${sender.name}<${sender.email}>`;
     const postMsg = postMessageToTestbed(
       post,
-      sender.email,
+      senderName,
       recipients,
       this.kafkaService.simulationTime,
+      encodedAssets,
     );
     this.kafkaService.sendMessage(postMsg, topic);
   }
@@ -169,13 +193,13 @@ export class ExecutionService implements IExecutionService {
   private async sendRolePlayerMessage(i: IInject, comment?: string) {
     const rpm = getMessage<IRolePlayerMsg>(i, MessageType.ROLE_PLAYER_MESSAGE);
     const rolePlayer = this.trial.users
-      .filter(u => u.id === rpm.rolePlayerId)
+      .filter((u) => u.id === rpm.rolePlayerId)
       .shift();
     const rolePlayerName = rolePlayer ? rolePlayer.name : 'Unknown';
     const participants = rpm.participantIds
       ? this.trial.users
-          .filter(u => rpm.participantIds.indexOf(u.id) >= 0)
-          .map(u => u.name)
+          .filter((u) => rpm.participantIds.indexOf(u.id) >= 0)
+          .map((u) => u.name)
       : [];
     const msg = rolePlayerMessageToTestbed(
       rpm,
@@ -236,12 +260,12 @@ export class ExecutionService implements IExecutionService {
       return;
     }
     const mt = this.trial.messageTopics
-      .filter(t => t.messageType === messageType)
+      .filter((t) => t.messageType === messageType)
       .shift();
     if (!mt || !mt.topics) {
       return;
     }
-    const topic = mt.topics.filter(t => t.id === subjectId).shift();
+    const topic = mt.topics.filter((t) => t.id === subjectId).shift();
     return topic && topic.topic ? topic.topic : undefined;
   }
 }

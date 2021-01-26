@@ -62,7 +62,7 @@ export class TrialService {
     return this.repo.updateTrial(id, trial);
   }
 
-  async patch(id: string, patchObj: { id: string, patch: Operation[] }) {
+  async patch(id: string, patchObj: { id: string; patch: Operation[] }) {
     return this.repo.patchTrial(id, patchObj, this.server);
   }
 

@@ -121,7 +121,7 @@ export interface IAppStateActions {
 
   selectAsset: (asset: IAsset) => void;
   createAsset: (asset: IAsset, files?: FileList) => Promise<void>;
-  updateAsset: (asset: IAsset, files: FileList) => Promise<void>;
+  updateAsset: (asset: IAsset, files?: FileList) => Promise<void>;
   deleteAsset: (asset: IAsset) => Promise<void>;
 
   selectScenario: (scenario: IInject | string) => void;
@@ -513,9 +513,9 @@ export const appStateMgmt = {
           update({ app: { assetId: newAsset.id, assets } });
         }
       },
-      updateAsset: async (asset: IAsset, files: FileList) => {
+      updateAsset: async (asset: IAsset, files?: FileList) => {
         const { assets } = states().app;
-        const fd = files2formData(asset, files);
+        const fd = files && files2formData(asset, files);
         if (asset.filename) {
           asset.url = assetsSvc.url + asset.id;
         }

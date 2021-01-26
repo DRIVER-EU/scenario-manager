@@ -115,7 +115,7 @@ export const AssetsForm: MeiosisComponent = () => {
                       iconName: 'save',
                       class: `green ${hasChanged ? '' : 'disabled'}`,
                       onclick: async () => {
-                        files && (await updateAsset(asset, files));
+                        await updateAsset(asset, files);
                         files = undefined;
                       },
                     }),

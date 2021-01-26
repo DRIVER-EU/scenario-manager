@@ -180,7 +180,7 @@ export class KafkaService extends EventEmitter implements TimeService {
 
   public sendMessage<T>(m: T, topic: string) {
     return new Promise<boolean>((resolve, reject) => {
-      console.table(m);
+      // console.table(m);
       const payload = {
         topic,
         messages: m,

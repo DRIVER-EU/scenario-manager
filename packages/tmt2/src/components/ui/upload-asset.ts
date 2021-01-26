@@ -24,6 +24,7 @@ export const UploadAsset: FactoryComponent<IUploadAsset> = () => {
         }
         const asset = { alias } as IAsset;
         await createAsset(asset, files);
+        alias = '';
         done && done();
       };
 

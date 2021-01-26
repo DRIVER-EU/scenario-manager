@@ -1,8 +1,9 @@
 import m from 'mithril';
-import { TextArea, TextInput, Select } from 'mithril-materialized';
+import { TextArea, TextInput, Select, FlatButton, ModalPanel } from 'mithril-materialized';
 import { getMessage, MessageType, IPostMsg, UserRole } from '../../../../models';
 import { enumToOptions, getActiveTrialInfo, getUsersByRole } from '../../utils';
 import { MessageComponent } from '../../services';
+import { UploadAsset } from '../ui';
 
 export enum MediumTypes {
   CHAT = 'CHAT',
@@ -28,19 +29,24 @@ export const PostMessageForm: MessageComponent = () => {
     view: ({
       attrs: {
         state,
-        actions: { updateInject },
+        actions: { updateInject, createAsset },
         options: { editing } = { editing: true },
       },
     }) => {
       const { inject } = getActiveTrialInfo(state);
+      const { assets } = state.app;
+
       if (!inject) return;
       const disabled = !editing;
       const pm = getMessage(inject, MessageType.POST_MESSAGE) as IPostMsg;
+
+      const availableAssets = assets.map((a) => ({ id: a.id, label: a.alias || a.filename }));
 
       return [
         m(Select, {
           disabled,
           label: 'Media type',
+          isMandatory: true,
           iconName: 'message',
           className: 'col s12 m3',
           placeholder: 'Pick one',
@@ -53,8 +59,9 @@ export const PostMessageForm: MessageComponent = () => {
         }),
         m(Select, {
           disabled,
-          label: 'Sender',
-          iconName: 'record_voice_over',
+          label: 'From',
+          isMandatory: true,
+          // iconName: 'record_voice_over',
           className: 'col s12 m3',
           placeholder: 'Pick participant',
           options: recipients,
@@ -66,10 +73,11 @@ export const PostMessageForm: MessageComponent = () => {
           },
         }),
         m(Select, {
-          label: 'Participant(s)',
+          label: 'To',
           id: 'person',
+          isMandatory: true,
           disabled,
-          iconName: 'people',
+          // iconName: 'people',
           className: 'col s12 m6',
           placeholder: 'Pick one or more',
           multiple: true,
@@ -80,6 +88,27 @@ export const PostMessageForm: MessageComponent = () => {
             updateInject(inject);
             // update();
           },
+        }),
+        m(Select, {
+          disabled,
+          label: 'Attachments',
+          isMandatory: true,
+          iconName: 'attach_file',
+          placeholder: 'Select attachments',
+          className: 'col s11',
+          checkedId: pm.attachments,
+          options: availableAssets,
+          multiple: true,
+          onchange: (v) => {
+            pm.attachments = v;
+            updateInject(inject);
+          },
+        }),
+        m(FlatButton, {
+          disabled,
+          className: 'input-field col s1',
+          modalId: 'upload',
+          iconName: 'file_upload',
         }),
         m(TextInput, {
           disabled,
@@ -106,6 +135,23 @@ export const PostMessageForm: MessageComponent = () => {
           label: 'Content',
           iconName: 'note',
           className: 'col s12',
+        }),
+        m(ModalPanel, {
+          disabled,
+          id: 'upload',
+          title: 'Upload a file',
+          description: m(UploadAsset, {
+            accept: ['.json', '.geojson', '.png', '.jpg', '.jpeg', '*'],
+            placeholder: 'Upload a file.',
+            createAsset,
+            done: () => {
+              const el = document.getElementById('upload');
+              if (el) {
+                M.Modal.getInstance(el).close();
+              }
+            },
+          }),
+          bottomSheet: true,
         }),
       ];
     },
