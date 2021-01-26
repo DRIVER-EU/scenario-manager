@@ -8,13 +8,12 @@
     "url": "git+https://github.com/DRIVER-EU/scenario-manager.git"
   },
   "scripts": {
-    "preinstall": "rimraf ./node_modules/.ignored",
-    "clean": "rimraf ./dist ./.cache ./node_modules/.ignored",
+    "preinstall:old": "rimraf ./node_modules/.ignored",
+    "clean:old": "rimraf ./dist ./.cache ./node_modules/.ignored",
     "start:old": "webpack serve",
-    "dev": "webpack-dev-server --open --hotOnly",
-    "build": "webpack --env.production",
-    "watch": "webpack --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:old": "webpack-dev-server --open --hotOnly",
+    "build:old": "webpack --env.production",
+    "watch:old": "webpack --watch"
   },
   "keywords": [],
   "author": "Erik Vullings <erik.vullings@gmail.com>",

@@ -15,8 +15,21 @@ dependencies:
   slimdown-js: 0.3.2
   socket.io-client: 2.3.1
 devDependencies:
+  '@babel/core': 7.12.10
+  '@babel/plugin-proposal-class-properties': 7.12.1_@babel+core@7.12.10
+  '@babel/plugin-proposal-decorators': 7.12.12_@babel+core@7.12.10
+  '@babel/plugin-proposal-export-namespace-from': 7.12.1_@babel+core@7.12.10
+  '@babel/plugin-proposal-function-sent': 7.12.1_@babel+core@7.12.10
+  '@babel/plugin-proposal-json-strings': 7.12.1_@babel+core@7.12.10
+  '@babel/plugin-proposal-numeric-separator': 7.12.7_@babel+core@7.12.10
+  '@babel/plugin-proposal-optional-chaining': 7.12.7_@babel+core@7.12.10
+  '@babel/plugin-proposal-throw-expressions': 7.12.1_@babel+core@7.12.10
+  '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.12.10
+  '@babel/plugin-syntax-import-meta': 7.10.4_@babel+core@7.12.10
+  '@babel/preset-env': 7.12.11_@babel+core@7.12.10
+  '@babel/preset-typescript': 7.12.7_@babel+core@7.12.10
   '@types/geojson': 7946.0.7
-  '@types/leaflet': 1.5.20
+  '@types/leaflet': 1.5.21
   '@types/leaflet-draw': 1.0.3
   '@types/materialize-css': 1.0.8
   '@types/mithril': 2.0.6
@@ -281,6 +294,17 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-cKp3dlQsFsEs5CWKnN7BnSHOd0EOW8EKpEjkoz1pO2E5KzIDNV9Ros1b0CnmbVgAGXJubOYVBOGCT1OmJwOI7w==
+  /@babel/plugin-proposal-decorators/7.12.12_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-create-class-features-plugin': 7.12.1_@babel+core@7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+      '@babel/plugin-syntax-decorators': 7.12.1_@babel+core@7.12.10
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-fhkE9lJYpw2mjHelBpM2zCbaA11aov2GJs7q4cFaXNrWx0H3bW58H9Esy2rdtYOghFBEYUDRIpvlgi+ZD+AvvQ==
   /@babel/plugin-proposal-dynamic-import/7.12.1_@babel+core@7.12.10:
     dependencies:
       '@babel/core': 7.12.10
@@ -301,6 +325,17 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-6CThGf0irEkzujYS5LQcjBx8j/4aQGiVv7J9+2f7pGfxqyKh3WnmVJYW3hdrQjyksErMGBPQrCnHfOtna+WLbw==
+  /@babel/plugin-proposal-function-sent/7.12.1_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+      '@babel/helper-wrap-function': 7.12.3
+      '@babel/plugin-syntax-function-sent': 7.12.1_@babel+core@7.12.10
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-EXB01ACyNW0WCffP4ip40TH82X86+U0dakFZjyiMpoZ8NFmL5MMARzVBzy+Gg59B6vTgfvIhRHUhe6tNUw+vjw==
   /@babel/plugin-proposal-json-strings/7.12.1_@babel+core@7.12.10:
     dependencies:
       '@babel/core': 7.12.10
@@ -383,6 +418,16 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-mwZ1phvH7/NHK6Kf8LP7MYDogGV+DKB1mryFOEwx5EBNQrosvIczzZFTUmWaeujd5xT6G1ELYWUz3CutMhjE1w==
+  /@babel/plugin-proposal-throw-expressions/7.12.1_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+      '@babel/plugin-syntax-throw-expressions': 7.12.1_@babel+core@7.12.10
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-kiWkKtm05K86C+T/nUazv+/Vxu93Aulrvof/ZrxVyGoUBVsVEWDrw9iChbe8tV+aPVQcjg4FQxKW3wUF7cRcpg==
   /@babel/plugin-proposal-unicode-property-regex/7.12.1_@babel+core@7.12.10:
     dependencies:
       '@babel/core': 7.12.10
@@ -413,6 +458,15 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-U40A76x5gTwmESz+qiqssqmeEsKvcSyvtgktrm0uzcARAmM9I1jR221f6Oq+GmHrcD+LvZDag1UTOTe2fL3TeA==
+  /@babel/plugin-syntax-decorators/7.12.1_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-ir9YW5daRrTYiy9UJ2TzdNIJEZu8KclVzDcfSt4iEmOtwQ4llPtWInNKJyKnVXp1vE4bbVd5S31M/im3mYMO1w==
   /@babel/plugin-syntax-dynamic-import/7.8.3_@babel+core@7.12.10:
     dependencies:
       '@babel/core': 7.12.10
@@ -440,6 +494,24 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-1lBLLmtxrwpm4VKmtVFselI/P3pX+G63fAtUUt6b2Nzgao77KNDwyuRt90Mj2/9pKobtt68FdvjfqohZjg/FCA==
+  /@babel/plugin-syntax-function-sent/7.12.1_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-mtBQvNHcIzLnmQZhgzigzrgFzIe95WvBXJuTN0m4CvhDK0gRNQ2MC2AVSzB6w7VnVh/z5+0iHFcbfqKMlFwTkQ==
+  /@babel/plugin-syntax-import-meta/7.10.4_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-Yqfm+XDx0+Prh3VSeEQCPU81yC+JWZ2pDPFSS4ZdpfZhp4MkFMaDC1UqseovEKwSUpnIL7+vK+Clp7bfh0iD7g==
   /@babel/plugin-syntax-json-strings/7.8.3_@babel+core@7.12.10:
     dependencies:
       '@babel/core': 7.12.10
@@ -512,6 +584,15 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==
+  /@babel/plugin-syntax-throw-expressions/7.12.1_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-+8FLGK1PYYB7D8tU9U5zX23fnzkpxw4a7lAyyZbgk6b6bN0k2dft/xwcxIE+86i54wLJ83BaAboh2Ow6wf6jHw==
   /@babel/plugin-syntax-top-level-await/7.12.1_@babel+core@7.12.10:
     dependencies:
       '@babel/core': 7.12.10
@@ -521,6 +602,15 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-i7ooMZFS+a/Om0crxZodrTzNEPJHZrlMVGMTEpFAj6rYY/bKCddB0Dk/YxfPuYXOopuhKk/e1jV6h+WUU9XN3A==
+  /@babel/plugin-syntax-typescript/7.12.1_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-UZNEcCY+4Dp9yYRCAHrHDU+9ZXLYaY9MgBXSRLkB9WjYFRR6quJBumfVrEkUxrePPBwFcpWfNKXqVRQQtm7mMA==
   /@babel/plugin-transform-arrow-functions/7.12.1_@babel+core@7.12.10:
     dependencies:
       '@babel/core': 7.12.10
@@ -838,6 +928,17 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-JQ6H8Rnsogh//ijxspCjc21YPd3VLVoYtAwv3zQmqAt8YGYUtdo5usNhdl4b9/Vir2kPFZl6n1h0PfUz4hJhaA==
+  /@babel/plugin-transform-typescript/7.12.1_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-create-class-features-plugin': 7.12.1_@babel+core@7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+      '@babel/plugin-syntax-typescript': 7.12.1_@babel+core@7.12.10
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-VrsBByqAIntM+EYMqSm59SiMEf7qkmI9dqMt6RbD/wlwueWmYcI0FFK5Fj47pP6DRZm+3teXjosKlwcZJ5lIMw==
   /@babel/plugin-transform-unicode-escapes/7.12.1_@babel+core@7.12.10:
     dependencies:
       '@babel/core': 7.12.10
@@ -944,6 +1045,17 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-J36NhwnfdzpmH41M1DrnkkgAqhZaqr/NBdPfQ677mLzlaXo+oDiv1deyCDtgAhz8p328otdob0Du7+xgHGZbKg==
+  /@babel/preset-typescript/7.12.7_@babel+core@7.12.10:
+    dependencies:
+      '@babel/core': 7.12.10
+      '@babel/helper-plugin-utils': 7.10.4
+      '@babel/helper-validator-option': 7.12.11
+      '@babel/plugin-transform-typescript': 7.12.1_@babel+core@7.12.10
+    dev: true
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    resolution:
+      integrity: sha512-nOoIqIqBmHBSEgBXWR4Dv/XBehtIFcw9PqZw6rFYuKrzsZmOQm3PR5siLBnKZFEsDb03IegG8nSjU/iXXXYRmw==
   /@babel/runtime/7.12.5:
     dependencies:
       regenerator-runtime: 0.13.7
@@ -1065,6 +1177,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-0H3F45Qb41ZLDjnichyrv9ts9KjijzN9acNt/i657jMcWFwHvZogBsBzBbUb3cwHyOxX/2qEMegacaHsXq23YA==
+  /@types/leaflet/1.5.21:
+    dependencies:
+      '@types/geojson': 7946.0.7
+    dev: true
+    resolution:
+      integrity: sha512-b+BOkwJDq6DK4m+jFUOHNCFinIkO4CF1MjnOwYgZFX+oElpYpXCCIsxZ3+zQWIRSLVUbRXvaQq2K935jGIyp7A==
   /@types/materialize-css/1.0.8:
     dependencies:
       '@types/jquery': 3.5.5
@@ -1788,7 +1906,7 @@ packages:
     resolution:
       integrity: sha512-LO8uL9lOIyRRrQmZxHZFl1RV+ZbcsAkFWTktn5SmH40WgLtSNYN4m4W2v9ONT147PxBY/XrRhrWq8TlvObyUjQ==
   /core-js/2.6.12:
-    deprecated: 'core-js@<3 is no longer maintained and not recommended for usage due to the number of issues. Please, upgrade your dependencies to the actual version of core-js@3.'
+    deprecated: core-js@<3 is no longer maintained and not recommended for usage due to the number of issues. Please, upgrade your dependencies to the actual version of core-js@3.
     dev: true
     requiresBuild: true
     resolution:
@@ -4682,7 +4800,7 @@ packages:
       request-promise-core: 1.1.4_request@2.88.2
       stealthy-require: 1.1.1
       tough-cookie: 2.5.0
-    deprecated: 'request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142'
+    deprecated: request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
     dev: true
     engines:
       node: '>=0.12.0'
@@ -4712,7 +4830,7 @@ packages:
       tough-cookie: 2.5.0
       tunnel-agent: 0.6.0
       uuid: 3.4.0
-    deprecated: 'request has been deprecated, see https://github.com/request/request/issues/3142'
+    deprecated: request has been deprecated, see https://github.com/request/request/issues/3142
     dev: true
     engines:
       node: '>= 6'
@@ -4725,7 +4843,7 @@ packages:
     resolution:
       integrity: sha1-six699nWiBvItuZTM17rywoYh0g=
   /resolve-url/0.2.1:
-    deprecated: 'https://github.com/lydell/resolve-url#deprecated'
+    deprecated: https://github.com/lydell/resolve-url#deprecated
     dev: true
     resolution:
       integrity: sha1-LGN/53yJOv0qZj/iGqkIAGjiBSo=
@@ -5462,7 +5580,7 @@ packages:
     resolution:
       integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   /urix/0.1.0:
-    deprecated: 'Please see https://github.com/lydell/urix#deprecated'
+    deprecated: Please see https://github.com/lydell/urix#deprecated
     dev: true
     resolution:
       integrity: sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
@@ -5637,8 +5755,21 @@ packages:
     resolution:
       integrity: sha1-AI4G2AlDIMNy28L47XagymyKxBk=
 specifiers:
+  '@babel/core': 7.12.10
+  '@babel/plugin-proposal-class-properties': 7.12.1
+  '@babel/plugin-proposal-decorators': 7.12.12
+  '@babel/plugin-proposal-export-namespace-from': 7.12.1
+  '@babel/plugin-proposal-function-sent': 7.12.1
+  '@babel/plugin-proposal-json-strings': 7.12.1
+  '@babel/plugin-proposal-numeric-separator': 7.12.7
+  '@babel/plugin-proposal-optional-chaining': 7.12.7
+  '@babel/plugin-proposal-throw-expressions': 7.12.1
+  '@babel/plugin-syntax-dynamic-import': 7.8.3
+  '@babel/plugin-syntax-import-meta': 7.10.4
+  '@babel/preset-env': 7.12.11
+  '@babel/preset-typescript': 7.12.7
   '@types/geojson': ^7946.0.7
-  '@types/leaflet': ^1.5.20
+  '@types/leaflet': ^1.5.21
   '@types/leaflet-draw': ^1.0.3
   '@types/materialize-css': ^1.0.8
   '@types/mithril': ^2.0.6
