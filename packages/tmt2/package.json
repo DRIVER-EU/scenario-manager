@@ -12,7 +12,7 @@
     "dev": "npm start",
     "start": "parcel index.html",
     "clean": "rimraf ./public ./.cache ./dist",
-    "build": "parcel build index.html --out-dir ../server/public",
+    "build": "parcel build index.html --out-dir ../server/public --public-url .",
     "build:domain": "npm run clean && npm run build"
   },
   "keywords": [],

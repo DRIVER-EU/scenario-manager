@@ -16,6 +16,14 @@ In a Trial, experiment or exercise, there is a need to control the crisis manage
   - The events are sent to remote simulators and solutions, e.g. to start a flooding or other incident.
   - Tasks are offered to role players, which need to execute them and indicate when they are done.
 
+## Sending a GeoJSON message
+
+![Sending a GeoJSON message](img/send_geojson_msg.png)
+
+## Executing a scenario
+
+![Executing a scenario](img/executing.png)
+
 ## Installing
 
 The application is a mono repository split into 3 packages:
