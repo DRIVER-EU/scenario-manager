@@ -18,7 +18,6 @@ import {
   Body,
   UploadedFile,
   UseInterceptors,
-  Inject,
 } from '@nestjs/common';
 import { Operation } from 'rfc6902';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -30,9 +29,7 @@ import { ApiFile } from '../../adapters/models/api-file';
 @ApiTags('trials')
 @Controller('trials')
 export class TrialController {
-  constructor(
-    @Inject('TrialService') private readonly trialService: TrialService,
-  ) {}
+  constructor(private readonly trialService: TrialService) {}
 
   @ApiOperation({ description: 'Get trials' })
   @ApiQuery({
@@ -74,10 +71,16 @@ export class TrialController {
     return this.trialService.update(id, scenario);
   }
 
-  @ApiOperation({ description: 'Patch a trial by id, where the patch represents a deep-diff between the current and new scenario.' })
+  @ApiOperation({
+    description:
+      'Patch a trial by id, where the patch represents a deep-diff between the current and new scenario.',
+  })
   @ApiResponse({ status: 200, type: TrialOverview })
   @Patch(':id')
-  async patch(@Param('id') id: string, @Body() patchObj: { id: string, patch: Operation[] }) {
+  async patch(
+    @Param('id') id: string,
+    @Body() patchObj: { id: string; patch: Operation[] },
+  ) {
     // console.log(JSON.stringify(patch, null, 2));
     return this.trialService.patch(id, patchObj);
   }

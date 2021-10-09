@@ -1,6 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
 import {
   createInitialState,
   createSimState,
@@ -8,7 +7,6 @@ import {
   getParent,
   IConnectMessage,
   IExecutingInject,
-  IExecutionService,
   IInject,
   IInjectGroup,
   IInjectSimStates,
@@ -20,10 +18,12 @@ import {
   transitionInjects,
   TimeState,
 } from '../../../../models';
+import { Server } from 'socket.io';
 import { KafkaService } from '../../adapters/kafka';
 import { StateTransitionRequest } from '../../adapters/models';
 import { Trial } from '../../adapters/models/trial';
 import { TrialService } from '../trials/trial.service';
+import { ExecutionService } from '../execution/execution.service';
 
 @Injectable()
 @WebSocketGateway()
@@ -41,10 +41,9 @@ export class RunService {
   private trialTime: Date;
 
   constructor(
-    @Inject('TrialService') private readonly trialService: TrialService,
-    @Inject('KafkaService') private readonly kafkaService: KafkaService,
-    @Inject('ExecutionService')
-    private readonly executionService: IExecutionService,
+    private readonly trialService: TrialService,
+    private readonly kafkaService: KafkaService,
+    private readonly executionService: ExecutionService,
   ) {}
 
   public get activeSession() {

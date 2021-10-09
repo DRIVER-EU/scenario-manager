@@ -3,7 +3,6 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Inject } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { KafkaService, ITimeControl } from '../../adapters/kafka';
 import { IConnectMessage } from '../../../../models';
@@ -12,9 +11,7 @@ import { IConnectMessage } from '../../../../models';
 export class TimeEventsGateway {
   @WebSocketServer() server: Server;
 
-  constructor(
-    @Inject('KafkaService') private readonly kafkaService: KafkaService,
-  ) {
+  constructor(private readonly kafkaService: KafkaService) {
     kafkaService.on('time', (time) => {
       this.server.emit('time', time);
     });

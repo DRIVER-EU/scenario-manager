@@ -1,10 +1,10 @@
 import * as path from 'path';
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
+import * as compression from 'compression';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { urlencoded, json, static as expressStatic } from 'express';
 
 async function bootstrap() {
   process.on('uncaughtException', (err) => {
@@ -17,11 +17,13 @@ async function bootstrap() {
     }
   });
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: false,
     cors: true,
   });
-  app.use(bodyParser.json({ limit: '10mb' }));
-  app.use(bodyParser.urlencoded({ limit: '10mb' }));
-  app.use(express.static(path.join(process.cwd(), 'public')));
+  app.use(compression());
+  app.use(json({ limit: '10mb' }));
+  app.use(urlencoded({ limit: '10mb', extended: true }));
+  app.use(expressStatic(path.join(process.cwd(), 'public')));
 
   const options = new DocumentBuilder()
     .setTitle('Trial manager service')

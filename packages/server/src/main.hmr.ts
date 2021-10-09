@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
+import { json, urlencoded } from 'body-parser';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -9,7 +9,7 @@ import { AppModule } from './app.module';
 declare const module: any;
 
 async function bootstrap() {
-  process.on('uncaughtException', err => {
+  process.on('uncaughtException', (err) => {
     console.error('Caught exception: ' + err.message);
     console.error('Stack trace: ' + err.stack);
   });
@@ -19,9 +19,11 @@ async function bootstrap() {
       console.error((reason as any).stack);
     }
   });
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
-  app.use(bodyParser.json({ limit: '10mb' }));
-  app.use(bodyParser.urlencoded({ limit: '10mb' }));
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
+  app.use(json({ limit: '10mb' }));
+  app.use(urlencoded({ limit: '10mb' }));
   app.use(express.static(path.join(process.cwd(), 'public')));
 
   const options = new DocumentBuilder()

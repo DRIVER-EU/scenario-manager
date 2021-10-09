@@ -5,7 +5,6 @@ import {
   Put,
   Post,
   Delete,
-  Inject,
   Body,
   Header,
   HttpStatus,
@@ -26,7 +25,7 @@ import { Trial } from '../../adapters/models/trial';
 export class RunController {
   private isLoading = false;
 
-  constructor(@Inject('RunService') private readonly runService: RunService) {}
+  constructor(private readonly runService: RunService) {}
 
   @ApiOperation({ description: 'Get active session' })
   @ApiResponse({

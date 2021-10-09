@@ -10,7 +10,7 @@
       "name": "Launch proxy",
       "program": "${workspaceFolder}/packages/proxy/start.js"
     },
-  
+
     {
       "type": "node",
       "request": "launch",
@@ -19,9 +19,7 @@
       "sourceMaps": true,
       "smartStep": true,
       "program": "${workspaceFolder}/packages/server/src/main.hmr.ts",
-      "outFiles": [
-        "${workspaceFolder}/packages/server/dist/**/*.js"
-      ]
+      "outFiles": ["${workspaceFolder}/packages/server/dist/**/*.js"]
     },
     {
       "type": "chrome",

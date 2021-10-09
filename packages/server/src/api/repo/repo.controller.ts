@@ -5,7 +5,6 @@ import {
   Get,
   Post,
   Param,
-  Inject,
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
@@ -18,9 +17,7 @@ import { ApiFile } from '../../adapters/models/api-file';
 @ApiTags('repo')
 @Controller('repo')
 export class RepoController {
-  constructor(
-    @Inject('TrialService') private readonly trialService: TrialService,
-  ) {}
+  constructor(private readonly trialService: TrialService) {}
 
   @ApiOperation({ description: 'Download a trial as SQLite3 database by id' })
   @Get(':id')

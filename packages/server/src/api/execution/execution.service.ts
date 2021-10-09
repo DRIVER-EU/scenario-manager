@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   ITrial,
   IInject,
@@ -23,7 +23,7 @@ import {
   ILargeDataUpdate,
   IPostMsg,
   postMessageToTestbed,
-} from '../../../../models';
+} from '../../../../models/dist';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
 import { parse } from '../../utils';
@@ -33,8 +33,8 @@ export class ExecutionService implements IExecutionService {
   private trial: ITrial;
 
   constructor(
-    @Inject('KafkaService') private readonly kafkaService: KafkaService,
-    @Inject('TrialService') private readonly trialService: TrialService,
+    private readonly kafkaService: KafkaService,
+    private readonly trialService: TrialService,
   ) {}
 
   public init(trial: ITrial) {
