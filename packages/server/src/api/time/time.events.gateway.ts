@@ -7,7 +7,12 @@ import { Server } from 'socket.io';
 import { KafkaService, ITimeControl } from '../../adapters/kafka';
 import { IConnectMessage } from '../../../../models';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+})
 export class TimeEventsGateway {
   @WebSocketServer() server: Server;
 

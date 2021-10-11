@@ -5,6 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { urlencoded, json, static as expressStatic } from 'express';
+import { SocketAdapter } from './adapters';
 
 async function bootstrap() {
   process.on('uncaughtException', (err) => {
@@ -20,6 +21,7 @@ async function bootstrap() {
     bodyParser: false,
     cors: true,
   });
+  app.useWebSocketAdapter(new SocketAdapter(app));
   app.use(compression());
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ limit: '10mb', extended: true }));
