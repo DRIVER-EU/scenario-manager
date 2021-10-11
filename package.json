@@ -1,10 +1,9 @@
 {
   "scripts": {
-    "postinstall": "lerna bootstrap",
-    "clean": "lerna run --parallel clean",
-    "run-proxy": "lerna run --parallel run-proxy",
-    "start": "lerna run --parallel start",
-    "build": "lerna run build",
+    "clean": "pnpm recursive run clean",
+    "run-proxy": "pnpm --parallel run run-proxy",
+    "start": "pnpm --parallel run dev",
+    "build": "pnpm --parallel run build",
     "docker:build": "docker build -t trial-management-tool .",
     "docker:tag": "docker tag trial-management-tool drivereu/trial-management-tool:2.2.2",
     "docker:tag:latest": "docker tag trial-management-tool drivereu/trial-management-tool:latest",
@@ -17,8 +16,7 @@
     "docker:sh": "docker run -it trial-management-tool sh"
   },
   "devDependencies": {
-    "handlebars": "^4.7.6",
-    "lerna": "^3.22.1"
+    "pnpm": "^6.16.1"
   },
   "name": "trial-management-tool"
 }
