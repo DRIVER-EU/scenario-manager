@@ -151,12 +151,25 @@ export class RunController {
     this.runService.stateTransitionRequest(tr);
   }
 
-  @ApiOperation({ description: 'Get a list of all topics registered.' })
+  @ApiOperation({
+    description:
+      'Get a list of all registered message topics. Ignores system_logging, system_heartbeat, simulation_time_control, and simulation_session_mgmt',
+  })
   @ApiResponse({ status: 200, type: String, isArray: true })
   @Get('topics')
   getTopics(@Res() response: Response) {
-    const topics = this.runService.getProduceTopics();
-    console.table(topics);
+    const topics = this.runService
+      .getProduceTopics()
+      .map((t) => t.toLowerCase())
+      .filter(
+        (t) =>
+          [
+            'system_logging',
+            'system_heartbeat',
+            'simulation_time_control',
+            'simulation_session_mgmt',
+          ].indexOf(t) < 0,
+      );
     return response.send(topics);
   }
 
