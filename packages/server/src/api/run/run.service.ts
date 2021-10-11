@@ -26,7 +26,12 @@ import { TrialService } from '../trials/trial.service';
 import { ExecutionService } from '../execution/execution.service';
 
 @Injectable()
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+})
 export class RunService {
   @WebSocketServer() private server: Server;
   private session: ISessionManagement;
@@ -146,6 +151,10 @@ export class RunService {
       host: this.kafkaService.hostname,
     } as IConnectMessage;
     this.server.emit('is-connected', cm);
+  }
+
+  public getProduceTopics() {
+    return this.kafkaService.getProduceTopics();
   }
 
   /** Add a request for a state transition */

@@ -151,6 +151,15 @@ export class RunController {
     this.runService.stateTransitionRequest(tr);
   }
 
+  @ApiOperation({ description: 'Get a list of all topics registered.' })
+  @ApiResponse({ status: 200, type: String, isArray: true })
+  @Get('topics')
+  getTopics(@Res() response: Response) {
+    const topics = this.runService.getProduceTopics();
+    console.table(topics);
+    return response.send(topics);
+  }
+
   @ApiOperation({ description: 'Update an inject in a running scenario.' })
   @ApiBody({ type: ScenarioInject })
   @Put('update')

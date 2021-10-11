@@ -70,6 +70,10 @@ export class KafkaService extends EventEmitter implements TimeService {
     this.debouncedEmit = debounce(this.emit, 1000);
   }
 
+  public getProduceTopics() {
+    return this.options.produce;
+  }
+
   public connect() {
     console.log('Connecting...');
     this.adapter = new TestBedAdapter(this.options);
