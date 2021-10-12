@@ -26,6 +26,14 @@ async function bootstrap() {
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ limit: '10mb', extended: true }));
   app.use(expressStatic(path.join(process.cwd(), 'public')));
+  app.use(
+    '/topics',
+    expressStatic(path.join(process.cwd(), 'topics'), {
+      setHeaders: (res) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      },
+    }),
+  );
 
   const options = new DocumentBuilder()
     .setTitle('Trial manager service')
@@ -35,12 +43,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
-
-  process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection:', reason);
-    // Recommended: send the information to sentry.io
-    // or whatever crash reporting service you use
-  });
 
   const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3210;
   await app.listen(port, () => {

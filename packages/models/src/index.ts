@@ -25,6 +25,7 @@ export * from './todo';
 export * from './trial';
 export * from './user-role';
 export * from './utils';
+export * from './gui-template';
 export {
   ILargeDataUpdate,
   DataType,
