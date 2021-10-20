@@ -42,8 +42,8 @@ export class ExecutionService implements IExecutionService {
   }
 
   public execute(i: IInject, _state = InjectState.EXECUTED, comment?: string) {
-    const { messageType } = i;
-    switch (messageType) {
+    const { topic } = i;
+    switch (topic) {
       case MessageType.GEOJSON_MESSAGE:
         this.sendGeoJSON(i);
         break;
@@ -83,17 +83,18 @@ export class ExecutionService implements IExecutionService {
         break;
       default:
         console.warn(
-          `${MessageType[messageType]} is not yet supported by the execution service.`,
+          `${MessageType[topic]} is not yet supported by the execution service.`,
         );
     }
   }
 
   private async sendGeoJSON(i: IInject) {
     const message = getMessage<IGeoJsonMessage>(i, MessageType.GEOJSON_MESSAGE);
-    const topic = this.findTopic(
-      MessageType.GEOJSON_MESSAGE,
-      message.subjectId,
-    );
+    const { topic } = i;
+    // const topic = this.findTopic(
+    //   MessageType.GEOJSON_MESSAGE,
+    //   message.subjectId,
+    // );
     if (!topic) {
       return console.warn(
         `Could not send message (${i.title}) - no topic configured`,
@@ -253,18 +254,18 @@ export class ExecutionService implements IExecutionService {
     this.kafkaService.sendSumoConfiguration(msg);
   }
 
-  /** Find the topic that should be used for publishing. */
-  private findTopic(messageType: MessageType, subjectId: string) {
-    if (!this.trial.messageTopics) {
-      return;
-    }
-    const mt = this.trial.messageTopics
-      .filter((t) => t.messageType === messageType)
-      .shift();
-    if (!mt || !mt.topics) {
-      return;
-    }
-    const topic = mt.topics.filter((t) => t.id === subjectId).shift();
-    return topic && topic.topic ? topic.topic : undefined;
-  }
+  // /** Find the topic that should be used for publishing. */
+  // private findTopic(messageType: MessageType, subjectId: string) {
+  //   if (!this.trial.messageTopics) {
+  //     return;
+  //   }
+  //   const mt = this.trial.messageTopics
+  //     .filter((t) => t.topic === messageType)
+  //     .shift();
+  //   if (!mt || !mt.topics) {
+  //     return;
+  //   }
+  //   const topic = mt.topics.filter((t) => t.id === subjectId).shift();
+  //   return topic && topic.topic ? topic.topic : undefined;
+  // }
 }

@@ -1,0 +1,92 @@
+{
+  "label": "Send email, reports or other posts",
+  "icon": "mail",
+  "ui": [
+    { "id": "messageType", "value": "POST_MESSAGE", "type": "none" },
+    {
+      "id": "message",
+      "label": " ",
+      "type": [
+        {
+          "id": "POST_MESSAGE",
+          "label": " ",
+          "type": [
+            {
+              "id": "type",
+              "label": "Media type",
+              "icon": "message",
+              "className": "col s12 m3",
+              "placeholder": "Pick one",
+              "required": true,
+              "value": "MAIL",
+              "type": "select",
+              "options": [
+                { "id": "CHAT", "label": "CHAT" },
+                { "id": "INCIDENT_REPORT", "label": "INCIDENT REPORT" },
+                { "id": "MAIL", "label": "MAIL" },
+                { "id": "MICROBLOG", "label": "MICROBLOG" },
+                { "id": "NEWS", "label": "NEWS" },
+                { "id": "SITUATION_REPORT", "label": "SITUATION REPORT" },
+                { "id": "SOCIAL_NETWORK", "label": "SOCIAL NETWORK" },
+                { "id": "VIDEO", "label": "VIDEO" }
+              ]
+            },
+            {
+              "id": "senderId",
+              "label": "From",
+              "className": "col s12 m3",
+              "placeholder": "Pick participant",
+              "required": true,
+              "type": "select",
+              "options": "&participants"
+            },
+            {
+              "id": "recipientIds",
+              "label": "To",
+              "className": "col s12 m6",
+              "placeholder": "Pick one or more",
+              "multiple": true,
+              "required": true,
+              "type": "select",
+              "options": "&participants"
+            },
+            {
+              "id": "attachments",
+              "label": "Attachments",
+              "icon": "attach_file",
+              "className": "col s11",
+              "placeholder": "Select attachments",
+              "multiple": true,
+              "required": true,
+              "type": "select",
+              "options": "&assets"
+            },
+            {
+              "id": "file_upload_button",
+              "icon": "file_upload",
+              "className": "input-field col s1",
+              "type": "modal",
+              "modalId": "upload"
+            },
+            {
+              "id": "title",
+              "label": "Subject",
+              "icon": "title",
+              "type": "text"
+            },
+            {
+              "id": "description",
+              "label": "Content",
+              "icon": "note",
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "update": {
+    "description": "&message.POST_MESSAGE.description",
+    "title": "&message.POST_MESSAGE.title"
+  }
+}

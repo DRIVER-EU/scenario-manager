@@ -1,4 +1,4 @@
-import { IContent, MessageType, ITodo } from '.';
+import { IContent, ITodo } from '.';
 
 /** The inject state communicates the state of an inject during execution of a scenario. */
 export enum InjectState {
@@ -64,12 +64,14 @@ export interface IInject extends IContent {
   condition?: IInjectCondition;
   /** Is it a storyline, act or inject */
   type: InjectType;
-  /** What kind of message are we sending */
-  messageType?: MessageType;
+  /** Topic for the inject */
+  topic?: string;
+  /** Type of message: is used to extract the relevant message content */
+  messageType?: string;
   /** Inject message */
   message?: {
-    /** Key is the the same as the InjectType */
-    [key: string]: unknown;
+    /** Key is the the same as the topic */
+    [messageType: string]: unknown;
   };
   /** Inject validation state */
   isValid?: InjectValidationState;

@@ -1,0 +1,60 @@
+{
+  "label": "Change exercise phase",
+  "icon": "flag",
+  "ui": [
+    { "id": "messageType", "value": "PHASE_MESSAGE", "type": "none" },
+    {
+      "id": "message",
+      "label": " ",
+      "type": [
+        {
+          "id": "PHASE_MESSAGE",
+          "label": " ",
+          "type": [
+            {
+              "id": "isStarting",
+              "label": "Start event",
+              "className": "col s12 m4",
+              "type": "switch"
+            },
+            {
+              "id": "phase",
+              "label": "Scenario phase",
+              "icon": "message",
+              "className": "col s12 m4",
+              "placeholder": "Select the phase type",
+              "required": true,
+              "type": "select",
+              "options": [
+                { "id": "INITIALIZATION", "label": "INITIALIZATION" },
+                { "id": "PREPARATION", "label": "PREPARATION" },
+                { "id": "PRE_INCIDENT", "label": "PRE-INCIDENT" },
+                { "id": "INCIDENT", "label": "INCIDENT" },
+                { "id": "POST_INCIDENT", "label": "POST-INCIDENT" },
+                { "id": "PROPER_NAME", "label": "PROPER NAME" }
+              ]
+            },
+            {
+              "id": "alternativeName",
+              "label": "Title",
+              "className": "col s12 m4",
+              "icon": "title",
+              "type": "text",
+              "show": "phase=PROPER_NAME"
+            },
+            {
+              "id": "description",
+              "label": "Description",
+              "icon": "note",
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "update": {
+    "description": "&message.PHASE_MESSAGE.description",
+    "title": "${&message.PHASE_MESSAGE.isStarting ? 'Start' : 'End'} ${'&message.PHASE_MESSAGE.phase' === 'PROPER_NAME' ? '&message.PHASE_MESSAGE.alternativeName' : '&message.PHASE_MESSAGE.phase'}"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "label": "Send inject",
+  "icon": "colorize",
+  "ui": [
+    { "id": "messageType", "value": "START_INJECT", "type": "none" },
+    {
+      "id": "message",
+      "label": " ",
+      "type": [
+        {
+          "id": "START_INJECT",
+          "label": " ",
+          "type": [
+            {
+              "id": "id",
+              "value": "&id",
+              "type": "none"
+            },
+            {
+              "id": "applicant",
+              "value": "&owner",
+              "type": "none"
+            },
+            {
+              "id": "inject",
+              "label": "Event name",
+              "type": "text",
+              "placeholder": "Name of the event / inject you want to run."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "description",
+      "label": "Description",
+      "type": "textarea"
+    }
+  ],
+  "update": {
+    "title": "Start event: &message.START_INJECT.inject"
+  }
+}
