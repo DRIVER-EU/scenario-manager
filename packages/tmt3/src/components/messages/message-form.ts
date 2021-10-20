@@ -81,6 +81,7 @@ export type MessageScope = 'edit' | 'execute';
 export const MessageForm: MessageComponent = () => {
   const getPathRegex = /&([\w.]+)/;
   let participants: string;
+  let participantEmails: string;
   let availableAssets: string;
 
   return {
@@ -92,6 +93,9 @@ export const MessageForm: MessageComponent = () => {
       const { trial } = isExecuting && state.exe.trial.id ? state.exe : state.app;
       participants = JSON.stringify(
         getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.id, label: rp.name }))
+      );
+      participantEmails = JSON.stringify(
+        getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.email, label: rp.name }))
       );
       availableAssets = JSON.stringify(assets.map((a) => ({ id: a.id, label: a.alias || a.filename })));
     },
@@ -116,6 +120,7 @@ export const MessageForm: MessageComponent = () => {
               .replace(/&title/g, inject.title)
               .replace(/&owner/g, owner)
               .replace(/"&participants"/g, participants)
+              .replace(/"&participantEmails"/g, participantEmails)
               .replace(/"&assets"/g, availableAssets)
           ) as UIForm);
         // console.log(JSON.stringify(inject, null, 2));

@@ -1,0 +1,51 @@
+{
+  "label": "Change observer questionnaire",
+  "icon": "mail",
+  "ui": [
+    {
+      "id": "messageType",
+      "value": "CHANGE_OBSERVER_QUESTIONNAIRES",
+      "type": "none"
+    },
+    {
+      "id": "title",
+      "label": "Title",
+      "icon": "title",
+      "type": "text"
+    },
+    {
+      "id": "description",
+      "label": "Description",
+      "icon": "note",
+      "type": "textarea"
+    },
+    {
+      "id": "message",
+      "label": " ",
+      "type": [
+        {
+          "id": "CHANGE_OBSERVER_QUESTIONNAIRES",
+          "label": " ",
+          "type": [
+            {
+              "iconName": "filter_1",
+              "id": "ostTrialSessionId",
+              "label": "OST trial session ID",
+              "type": "number",
+              "className": "col s6",
+              "description": "The session id for the running Trial."
+            },
+            {
+              "iconName": "filter_2",
+              "id": "ostTrialStageId",
+              "label": "OST trial stage ID",
+              "type": "number",
+              "className": "col s6",
+              "description": "The stage id of the stage that should be activated."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -38,7 +38,7 @@
               "placeholder": "Select the sender",
               "required": true,
               "type": "select",
-              "options": "&participants"
+              "options": "&participantEmails"
             },
             {
               "id": "description",
@@ -148,7 +148,7 @@
                   "placeholder": "Select the sender",
                   "required": true,
                   "type": "select",
-                  "options": "&participants"
+                  "options": "&participantEmails"
                 },
                 {
                   "id": "description",
@@ -562,7 +562,7 @@
                     },
                     {
                       "id": "size",
-                      "label": "size",
+                      "label": "Size",
                       "type": "text",
                       "className": "col s12 m6"
                     },
