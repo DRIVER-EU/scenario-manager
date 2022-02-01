@@ -104,6 +104,6 @@ coverage
 
 build
 dist
-trials
+/trials
 trials - Copy*
 schemas
