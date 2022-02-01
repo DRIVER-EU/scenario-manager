@@ -1,5 +1,5 @@
 import { RunResult } from 'sqlite3';
-import * as marked from 'marked';
+import { marked } from 'marked';
 
 marked.setOptions({
   renderer: new marked.Renderer(),
