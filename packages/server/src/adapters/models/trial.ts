@@ -4,6 +4,7 @@ import {
   IExecutingInject,
   IPerson,
   IInjectGroup,
+  IKafkaMessage,
 } from '../../../../models';
 
 /** Describes a manual state transition request, e.g. when a role player wants to set the state to EXECUTED. */
@@ -17,14 +18,14 @@ export class Trial implements Partial<ITrial> {
   @ApiProperty({ description: 'Users' })
   public readonly users: IPerson[];
   @ApiProperty({ description: 'Selected message types' })
-  public readonly selectedMessageTypes: string[];
+  public readonly selectedMessageTypes:  IKafkaMessage[];
 
   constructor(
     id: string,
     title: string,
     injects: Array<IExecutingInject | IInjectGroup>,
     users: IPerson[],
-    selectedMessageTypes: string[],
+    selectedMessageTypes: IKafkaMessage[],
   ) {
     this.id = id;
     this.title = title;

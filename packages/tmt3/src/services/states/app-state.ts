@@ -8,6 +8,7 @@ import {
   IGuiTemplate,
   IInject,
   IInjectSimStates,
+  IKafkaMessage,
   IMessageTopic,
   InjectType,
   IObjective,
@@ -74,6 +75,8 @@ export interface IApp extends IActiveTrial {
   copiedInjects: undefined | IInject | IInject[];
   /** GUI Templates */
   templates: IGuiTemplate[];
+  /** kafkaTopics */
+  kafkaTopics: string[];
 }
 
 export interface IExe extends IActiveTrial {
@@ -155,6 +158,9 @@ export interface IAppStateActions {
   createUser: (user: IPerson) => Promise<void>;
   updateUser: (user: IPerson) => Promise<void>;
   deleteUser: (user: IPerson) => Promise<void>;
+
+  saveNewKafkaMessage: (fn: string, tn: string) => void;
+  deleteKafkaMessage: (entr: IKafkaMessage) => void;
 }
 
 export interface IAppState {
@@ -199,6 +205,7 @@ export const appStateMgmt = {
       copiedInjectIsCut: false,
       copiedInjects: undefined as undefined | IInject | IInject[],
       templates: [],
+      kafkaTopics: [],
     },
     exe: {
       trial: {} as ITrial,
@@ -280,7 +287,8 @@ export const appStateMgmt = {
 
       loadTrials: async () => {
         const trials = await trialSvc.loadList();
-        update({ app: { trials } });
+        const kafkaTopics = await SocketSvc.getKafkaTopics() as string[];
+        update({ app: { trials, kafkaTopics: kafkaTopics } });
       },
       loadTrial: async (trialId: string, scope: MessageScope = 'edit') => {
         if (scope === 'edit') {
@@ -372,14 +380,13 @@ export const appStateMgmt = {
           objectives: [{ id: uniqueId(), title: 'Fix gap 1' }],
           messageTopics: [],
           selectedMessageTypes: [
-            MessageType.ROLE_PLAYER_MESSAGE,
-            MessageType.POST_MESSAGE,
-            MessageType.GEOJSON_MESSAGE,
-            MessageType.CAP_MESSAGE,
-            MessageType.START_INJECT,
-            MessageType.LARGE_DATA_UPDATE,
-            MessageType.PHASE_MESSAGE,
-            MessageType.CHECKPOINT,
+            { name: MessageType.ROLE_PLAYER_MESSAGE, topic: 'system_tm_role_player' },
+            { name: MessageType.POST_MESSAGE, topic: 'simulation_entity_post' },
+            { name: MessageType.GEOJSON_MESSAGE, topic: 'geojson' },
+            { name: MessageType.CAP_MESSAGE, topic: 'standard_cap' },
+            { name: MessageType.START_INJECT, topic: 'simulation_request_startinject' },
+            { name: MessageType.LARGE_DATA_UPDATE, topic: 'system_large_data_update' },
+            { name: MessageType.CHECKPOINT, topic: 'system_tm_role_player' },
           ],
           injects: [
             {
@@ -605,7 +612,9 @@ export const appStateMgmt = {
       updateSelectedMessageTypes: async (messageTypes: string[]) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
-        trial.selectedMessageTypes = messageTypes;
+        trial.selectedMessageTypes = messageTypes.map((msg: string) => {
+          return {name: msg, topic: ''}
+        });
         console.log(messageTypes);
         await trialSvc.patch(trial, oldTrial);
         update({ app: { trial } });
@@ -639,6 +648,22 @@ export const appStateMgmt = {
         await trialSvc.patch(trial, oldTrial);
         update({ app: { userId: '', trial } });
       },
+      saveNewKafkaMessage: async (fn: string, tn: string) => {
+        const { trial } = states().app
+        const oldTrial = deepCopy(trial);
+        trial.selectedMessageTypes.push({name: fn, topic: tn} as IKafkaMessage);
+        await trialSvc.patch(trial, oldTrial);
+        update({app: {trial: trial}})
+      },
+      deleteKafkaMessage: async (entr: IKafkaMessage) => {
+        const { trial } = states().app
+        const oldTrial = deepCopy(trial);
+        trial.selectedMessageTypes.forEach( (item, index) => {
+          if(item === entr) trial.selectedMessageTypes.splice(index,1);
+        });
+        await trialSvc.patch(trial, oldTrial);
+        update({app: {trial: trial}})
+      }
     };
   },
 } as IAppState;
