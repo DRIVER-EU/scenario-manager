@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { Label, Options } from 'mithril-materialized';
-import { MessageType } from '../../../../models';
+import { IKafkaMessage, MessageType } from '../../../../models';
 import { MeiosisComponent } from '../../services';
 import { enumToOptions, getMessageTitleFromTemplate } from '../../utils';
 
@@ -26,6 +26,7 @@ export const SelectMessageTypesForm: MeiosisComponent = () => {
       },
     }) => {
       const { selectedMessageTypes = [] } = trial;
+      const messageNames = selectedMessageTypes.map((sMsg: IKafkaMessage) => sMsg.name)
       const options = enumToOptions(MessageType).map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
       return m('.row', [
         [
@@ -35,7 +36,7 @@ export const SelectMessageTypesForm: MeiosisComponent = () => {
             m(Options, {
               multiple: true,
               options,
-              initialValue: selectedMessageTypes,
+              initialValue: messageNames,
               onchange: (ids) => updateSelectedMessageTypes(ids as string[]),
             })
           ),

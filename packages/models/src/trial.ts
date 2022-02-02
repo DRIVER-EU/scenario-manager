@@ -14,6 +14,11 @@ export interface ITrialOverview {
   // boundingBox: number[];
 }
 
+export interface IKafkaMessage {
+  name: string;
+  topic: string
+}
+
 export interface ITrial extends ITrialOverview {
   /** Specifies relation between message types and topics */
   messageTopics: IMessageTopic[];
@@ -32,5 +37,5 @@ export interface ITrial extends ITrialOverview {
   /** The actual messages that encompass the scenario */
   injects: Array<IInject | IInjectGroup>;
   /** The actual message types that will be used */
-  selectedMessageTypes: string[];
+  selectedMessageTypes: IKafkaMessage[];
 }

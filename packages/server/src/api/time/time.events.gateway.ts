@@ -63,4 +63,11 @@ export class TimeEventsGateway {
   async timeControl(_client, data: ITimeControl) {
     return this.kafkaService.sendTimeControlMessage(data);
   }
+
+  @SubscribeMessage('getKafkaTopics')
+  async returnKafkaTopics() {
+    const topics = this.kafkaService.getProduceTopics();
+    console.log(topics)
+    return topics
+  }
 }

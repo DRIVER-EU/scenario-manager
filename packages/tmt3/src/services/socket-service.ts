@@ -108,4 +108,12 @@ socket = setupSocket();
  */
 export const SocketSvc = {
   socket: socket || setupSocket(),
+  getKafkaTopics: async () => {
+    return await new Promise(resolve => {
+      SocketSvc.socket.emit('getKafkaTopics', (data: string[]) => {
+        console.log(data)
+        resolve(data as string[]);
+      });      
+    });
+  }
 };
