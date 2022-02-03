@@ -34,7 +34,8 @@
     "mithril-ui-form": "^1.4.4",
     "rfc6902": "^5.0.0",
     "slimdown-js": "^0.6.1",
-    "socket.io-client": "4.4.1"
+    "socket.io-client": "4.4.1",
+    "trial-manager-models": "workspace:*"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.8",

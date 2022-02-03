@@ -10,7 +10,7 @@ import {
   isAncestor,
   UserRole,
   ITrial,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { Select, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
 import { findPreviousInjects, getInject, getInjects, getUsersByRole, padLeft } from '../../utils';
 import { MeiosisComponent } from '../../services';

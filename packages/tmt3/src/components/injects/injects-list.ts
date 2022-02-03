@@ -21,7 +21,7 @@ import {
   UserRole,
   IPerson,
   InjectState,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 
 export const InjectsList: MeiosisComponent = () => {
