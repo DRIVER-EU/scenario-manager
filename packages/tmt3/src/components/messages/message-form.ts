@@ -83,11 +83,12 @@ export const MessageForm: MessageComponent = () => {
   let participants: string;
   let participantEmails: string;
   let availableAssets: string;
+  let kafkaTopicOpts: string;
 
   return {
     oninit: ({ attrs: { state } }) => {
       const {
-        app: { mode, assets },
+        app: { mode, assets, kafkaTopics },
       } = state;
       const isExecuting = mode === 'execute';
       const { trial } = isExecuting && state.exe.trial.id ? state.exe : state.app;
@@ -98,6 +99,7 @@ export const MessageForm: MessageComponent = () => {
         getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.email, label: rp.name }))
       );
       availableAssets = JSON.stringify(assets.map((a) => ({ id: a.id, label: a.alias || a.filename })));
+      kafkaTopicOpts = JSON.stringify(kafkaTopics.filter((topic: string) => ('send_file'.indexOf(topic) < 0)).map((topic: string) => ({ id: topic, label: topic })))
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { owner, mode, templates, assets } = state.app;
@@ -122,6 +124,7 @@ export const MessageForm: MessageComponent = () => {
               .replace(/"&participants"/g, participants)
               .replace(/"&participantEmails"/g, participantEmails)
               .replace(/"&assets"/g, availableAssets)
+              .replace(/"&kafkaTopics"/g, kafkaTopicOpts)
           ) as UIForm);
         // console.log(JSON.stringify(inject, null, 2));
         return (

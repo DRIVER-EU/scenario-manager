@@ -33,9 +33,9 @@ export default () => ({
     fetchAllSchemas: false,
     fetchAllVersions: false,
     // autoRegisterSchemas: true,
-    autoRegisterSchemas: false,
+    autoRegisterSchemas: true,
     wrapUnions: 'auto',
-    schemaFolder: './data/schemas',
+    schemaFolder: '../../docker/schemas',
     // consume: [],
     produce: process.env.PRODUCE
       ? process.env.PRODUCE.split(',')
@@ -47,6 +47,8 @@ export default () => ({
         // 'flood_prediction_geojson',
         'standard_cap',
         'simulation_entity_post',
+        'send_file',
+        'named_json',
         // 'standard_geojson',
         // 'large_data_update',
         'simulation_request_startinject',

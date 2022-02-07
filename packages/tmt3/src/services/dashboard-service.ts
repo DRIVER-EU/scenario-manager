@@ -17,7 +17,6 @@ import {
   SessionTable,
   SelectMessageTypesForm,
 } from '../components';
-import { KafkaMessage } from '../components/kafka/add-kafka-message';
 
 class DashboardService {
   private dashboards!: ReadonlyArray<IDashboard>;
@@ -152,14 +151,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     component: SelectMessageTypesForm,
     level: Dashboards.SETTINGS,
   },
-  {
+  /*{
     id: Dashboards.KAFKA,
     title: 'Kafka',
     route: '/settings/kafka',
     visible: false,
     component: KafkaMessage,
     level: Dashboards.SETTINGS,
-  },
+  },*/
   {
     id: Dashboards.STAKEHOLDERS,
     title: 'Stakeholders',

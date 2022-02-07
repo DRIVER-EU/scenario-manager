@@ -23,6 +23,7 @@ import {
   ILargeDataUpdate,
   IPostMsg,
   postMessageToTestbed,
+  ISendFileMessage,
 } from '../../../../models/dist';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -44,6 +45,9 @@ export class ExecutionService implements IExecutionService {
   public execute(i: IInject, _state = InjectState.EXECUTED, comment?: string) {
     const { topic } = i;
     switch (topic) {
+      case MessageType.SEND_FILE:
+        this.sendFile(i);
+        break;
       case MessageType.GEOJSON_MESSAGE:
         this.sendGeoJSON(i);
         break;
@@ -86,6 +90,22 @@ export class ExecutionService implements IExecutionService {
           `${MessageType[topic]} is not yet supported by the execution service.`,
         );
     }
+  }
+
+  private async sendFile(i: IInject) {
+    const message = getMessage<ISendFileMessage>(i, MessageType.SEND_FILE);
+
+    const topic = message.kafkaTopicId;
+    if(!topic) {
+      return console.warn(`There is no topic set`);
+    }
+    const asset = message.file && await this.trialService.getAsset(this.trial.id, message.file);
+    if (!asset) {
+      return console.warn(`Could not open asset with ID (${message.file})`);
+    }
+    console.log(asset)
+
+    //this.kafkaService.sendMessage(asset, topic);
   }
 
   private async sendGeoJSON(i: IInject) {

@@ -1,0 +1,56 @@
+{
+  "label": "Send file",
+  "icon": "attach_file",
+  "ui": [
+    { "id": "messageType", "value": "SEND_FILE", "type": "none" },
+    {
+      "id": "message",
+      "label": " ",
+      "type": [
+        {
+          "id": "SEND_FILE",
+          "label": " ",
+          "type": [
+            {
+              "id": "title",
+              "label": "Subject",
+              "icon": "title",
+              "type": "text"
+            },
+            {
+              "id": "file",
+              "label": "File",
+              "icon": "attach_file",
+              "className": "col s11",
+              "placeholder": "Select file",
+              "multiple": false,
+              "required": true,
+              "type": "select",
+              "options": "&assets"
+            },
+            {
+              "id": "file_upload_button",
+              "icon": "file_upload",
+              "className": "input-field col s1",
+              "type": "modal",
+              "modalId": "upload"
+            },
+            {
+              "id": "kafkaTopicId",
+              "label": "Select Kafka topic",
+              "className": "col s12 m6",
+              "placeholder": "Pick one",
+              "multiple": false,
+              "required": true,
+              "type": "select",
+              "options": "&kafkaTopics"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "update": {
+    "title": "Start event: &message.SEND_FILE.inject"
+  }
+}
