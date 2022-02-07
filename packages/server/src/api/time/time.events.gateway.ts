@@ -67,7 +67,6 @@ export class TimeEventsGateway {
   @SubscribeMessage('getKafkaTopics')
   async returnKafkaTopics() {
     const topics = this.kafkaService.getProduceTopics();
-    console.log(topics)
     return topics
   }
 }

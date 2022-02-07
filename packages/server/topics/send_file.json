@@ -2,7 +2,22 @@
   "label": "Send file",
   "icon": "attach_file",
   "ui": [
-    { "id": "messageType", "value": "SEND_FILE", "type": "none" },
+    { "id": "messageType", 
+      "value": "SEND_FILE", 
+      "type": "none" 
+    },
+    {
+      "id": "title",
+      "label": "Subject",
+      "icon": "title",
+      "type": "text"
+    },
+    {
+      "id": "description",
+      "label": "Description",
+      "icon": "note",
+      "type": "textarea"
+    },
     {
       "id": "message",
       "label": " ",
@@ -11,12 +26,6 @@
           "id": "SEND_FILE",
           "label": " ",
           "type": [
-            {
-              "id": "title",
-              "label": "Subject",
-              "icon": "title",
-              "type": "text"
-            },
             {
               "id": "file",
               "label": "File",
@@ -49,8 +58,5 @@
         }
       ]
     }
-  ],
-  "update": {
-    "title": "Start event: &message.SEND_FILE.inject"
-  }
+  ]
 }

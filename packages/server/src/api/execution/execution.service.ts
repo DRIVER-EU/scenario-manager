@@ -43,8 +43,8 @@ export class ExecutionService implements IExecutionService {
   }
 
   public execute(i: IInject, _state = InjectState.EXECUTED, comment?: string) {
-    const { topic } = i;
-    switch (topic) {
+    const { messageType } = i;
+    switch (messageType) {
       case MessageType.SEND_FILE:
         this.sendFile(i);
         break;
@@ -87,7 +87,7 @@ export class ExecutionService implements IExecutionService {
         break;
       default:
         console.warn(
-          `${MessageType[topic]} is not yet supported by the execution service.`,
+          `${messageType} is not yet supported by the execution service.`,
         );
     }
   }
@@ -96,16 +96,21 @@ export class ExecutionService implements IExecutionService {
     const message = getMessage<ISendFileMessage>(i, MessageType.SEND_FILE);
 
     const topic = message.kafkaTopicId;
-    if(!topic) {
+    if (!topic) {
       return console.warn(`There is no topic set`);
     }
-    const asset = message.file && await this.trialService.getAsset(this.trial.id, message.file);
+    const asset =
+      message.file &&
+      (await this.trialService.getAsset(this.trial.id, message.file));
     if (!asset) {
       return console.warn(`Could not open asset with ID (${message.file})`);
+    } else {
+      const data = asset.data.toString();
+      this.kafkaService.sendMessage(
+        { name: asset.filename, json_string: data },
+        topic,
+      );
     }
-    console.log(asset)
-
-    //this.kafkaService.sendMessage(asset, topic);
   }
 
   private async sendGeoJSON(i: IInject) {
@@ -170,6 +175,7 @@ export class ExecutionService implements IExecutionService {
 
   private async sendPostMessage(i: IInject) {
     const post = getMessage<IPostMsg>(i, MessageType.POST_MESSAGE);
+    post.id = i.id;
     const topic = 'simulation_entity_post';
     const sender = this.trial.users
       .filter((u) => u.id === post.senderId)
@@ -232,6 +238,7 @@ export class ExecutionService implements IExecutionService {
 
   private async sendPhaseMessage(i: IInject, comment?: string) {
     const msg = getMessage(i, MessageType.PHASE_MESSAGE) as IPhaseMessage;
+    msg.id = i.id;
     this.kafkaService.sendPhaseMessage(msg);
   }
 
