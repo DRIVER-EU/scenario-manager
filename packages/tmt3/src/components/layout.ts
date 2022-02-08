@@ -70,7 +70,7 @@ export const Layout: MeiosisComponent = () => {
         executeMode &&
         trial.users &&
         trial.users.filter(
-          (user) => user.roles && user.roles.some((role) => [UserRole.EXCON, UserRole.ROLE_PLAYER].indexOf(role) >= 0)
+          (user) => user.roles && user.roles.some((role) => [UserRole.EXCON, UserRole.ROLE_PLAYER, UserRole.VIEWER].indexOf(role) >= 0)
         );
       const loggedInUser = getUserById(trial, userId);
 

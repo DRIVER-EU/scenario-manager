@@ -161,6 +161,8 @@ export interface IAppStateActions {
 
   saveNewKafkaMessage: (fn: string, tn: string) => void;
   deleteKafkaMessage: (entr: IKafkaMessage) => void;
+
+  setPresetRole: (role: UserRole) => void;
 }
 
 export interface IAppState {
@@ -287,7 +289,7 @@ export const appStateMgmt = {
 
       loadTrials: async () => {
         const trials = await trialSvc.loadList();
-        const kafkaTopics = await SocketSvc.getKafkaTopics() as string[];
+        const kafkaTopics = (await SocketSvc.getKafkaTopics()) as string[];
         update({ app: { trials, kafkaTopics: kafkaTopics } });
       },
       loadTrial: async (trialId: string, scope: MessageScope = 'edit') => {
@@ -359,6 +361,7 @@ export const appStateMgmt = {
             { id: uniqueId(), name: 'Participant 2', roles: [UserRole.PARTICIPANT], email: 'participant2@tmt.eu' },
             { id: uniqueId(), name: 'Role player 1', roles: [UserRole.ROLE_PLAYER] },
             { id: uniqueId(), name: 'Role player 2', roles: [UserRole.ROLE_PLAYER] },
+            { id: uniqueId(), name: 'Spectator', roles: [UserRole.VIEWER] },
           ],
           stakeholders: [
             {
@@ -613,7 +616,7 @@ export const appStateMgmt = {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
         trial.selectedMessageTypes = messageTypes.map((msg: string) => {
-          return {name: msg, topic: ''}
+          return { name: msg, topic: '' };
         });
         console.log(messageTypes);
         await trialSvc.patch(trial, oldTrial);
@@ -649,21 +652,28 @@ export const appStateMgmt = {
         update({ app: { userId: '', trial } });
       },
       saveNewKafkaMessage: async (fn: string, tn: string) => {
-        const { trial } = states().app
+        const { trial } = states().app;
         const oldTrial = deepCopy(trial);
-        trial.selectedMessageTypes.push({name: fn, topic: tn} as IKafkaMessage);
+        trial.selectedMessageTypes.push({ name: fn, topic: tn } as IKafkaMessage);
         await trialSvc.patch(trial, oldTrial);
-        update({app: {trial: trial}})
+        update({ app: { trial: trial } });
       },
       deleteKafkaMessage: async (entr: IKafkaMessage) => {
-        const { trial } = states().app
+        const { trial } = states().app;
         const oldTrial = deepCopy(trial);
-        trial.selectedMessageTypes.forEach( (item, index) => {
-          if(item === entr) trial.selectedMessageTypes.splice(index,1);
+        trial.selectedMessageTypes.forEach((item, index) => {
+          if (item === entr) trial.selectedMessageTypes.splice(index, 1);
         });
         await trialSvc.patch(trial, oldTrial);
-        update({app: {trial: trial}})
-      }
+        update({ app: { trial: trial } });
+      },
+      setPresetRole: (role: UserRole) => {
+        const curTrial = states().exe.trial;
+        const userId = curTrial.users.find((user: IPerson) => {
+          return user.roles.includes(role);
+        })?.id;
+        update({ exe: { userId } });
+      },
     };
   },
 } as IAppState;
