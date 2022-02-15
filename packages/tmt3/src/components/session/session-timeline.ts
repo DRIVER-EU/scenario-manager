@@ -116,7 +116,7 @@ export const SessionTimelineView: MeiosisComponent = () => {
 
       executingInjects = (getInjects(trial) as Array<IExecutingInject & IInjectSimState>) || [];
       const scenario = getInject(trial, scenarioId) as IExecutingInject & IScenario;
-      const scenarioStart = scenario && scenario.startDate ? new Date(scenario.startDate) : sst;
+      const scenarioStart = scenario && scenario.startDate ? new Date(scenario.startDate) : Object.prototype.toString.call(sst) === "[object Date]" ? sst : new Date();
       const timelineStart = new Date(Math.floor(scenarioStart.valueOf() / 60000) * 60000);
       const timeline = scenarioToTimelineItems(scenario, executingInjects, injectStates, treeState);
 

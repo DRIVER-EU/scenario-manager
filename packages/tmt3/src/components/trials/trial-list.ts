@@ -1,9 +1,12 @@
 import m from 'mithril';
-import { TextInput, RoundIconButton, Icon, Button } from 'mithril-materialized';
+import { TextInput, RoundIconButton, Icon, Button, Select } from 'mithril-materialized';
 import { dashboardSvc, MeiosisComponent } from '../../services';
 import { titleAndDescriptionFilter, padLeft } from '../../utils';
 import { ITrialOverview, SessionState, TimeState, UserRole } from '../../../../models';
 import { Dashboards } from '../../models';
+
+let ignoreActive: boolean;
+let roleID: string;
 
 export const TrialList: MeiosisComponent = () => {
   let filterValue: string | undefined;
@@ -20,6 +23,8 @@ export const TrialList: MeiosisComponent = () => {
         actions: { loadTrials },
       },
     }) => {
+      ignoreActive = false;
+      //activeSession ? roles = await getRoles(session.tags?.trialId as string) : undefined
       await loadTrials();
       // loaded = true;
     },
@@ -28,6 +33,7 @@ export const TrialList: MeiosisComponent = () => {
         state: {
           app: { trials },
           exe: {
+            trial,
             sessionControl: { isConnected, activeSession },
             session,
             time: { state },
@@ -44,31 +50,52 @@ export const TrialList: MeiosisComponent = () => {
       console.table(session);
       console.table({ isConnected, activeSession });
 
-      return activeSession
+      const options =
+        trial.users &&
+        trial.users
+          .filter(
+            (user) =>
+              user.roles &&
+              user.roles.some((role) => [UserRole.EXCON, UserRole.ROLE_PLAYER, UserRole.VIEWER].indexOf(role) >= 0)
+          )
+          .map((u) => {
+            return { id: u.id, label: u.name };
+          });
+
+      return activeSession && !ignoreActive
         ? [
-          m('h4', 'A trial is already running. Join the active session and select a role.'),
-          m(Button, {
-            href: '#!',
-            label: 'Join as spectator',
-            onclick: async () => {
-              await loadTrial(session.tags?.trialId as string, 'execute');
-              setPresetRole(UserRole.VIEWER)
-              dashboardSvc.switchTo(Dashboards.EXECUTE);
-            },
-
-          }),
-          m(Button, {
-            href: '#!',
-            label: 'Join as Exercise Control',
-            class: 'red',
-            onclick: async () => {
-              await loadTrial(session.tags?.trialId as string, 'execute');
-              setPresetRole(UserRole.EXCON)
-              dashboardSvc.switchTo(Dashboards.EXECUTE);
-            },
-
-          })
-         ]
+            m('h4', 'A trial is already running.'),
+            m('row', [
+              options
+                ? m(Select, {
+                    placeholder: 'Pick one',
+                    className: 'inline large',
+                    options: options,
+                    onchange: (v) => {
+                      roleID = v[0] as string;
+                    },
+                  })
+                : undefined,
+              m(Button, {
+                href: '#!',
+                label: 'Continue',
+                onclick: async () => {
+                  await loadTrial(session.tags?.trialId as string, 'execute');
+                  setPresetRole(roleID);
+                  dashboardSvc.switchTo(Dashboards.EXECUTE);
+                },
+              }),
+              m(Button, {
+                href: '#!',
+                label: 'Cancel',
+                class: 'red',
+                onclick: async () => {
+                  ignoreActive = true;
+                  m.redraw();
+                },
+              }),
+            ]),
+          ]
         : m('.scenario-list', [
             m('.row', [
               m(TextInput, {

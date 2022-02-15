@@ -4,7 +4,6 @@ import {
   getInjectIcon,
   isScenario,
   isStoryline,
-  isAct,
   isInject,
   isInjectGroup,
   canDeleteInject,
@@ -72,10 +71,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
       return isScenario(copy) || isStoryline(copy);
     }
     if (isStoryline(inject)) {
-      return isAct(copy) || isStoryline(copy);
-    }
-    if (isAct(inject)) {
-      return isAct(copy) || isInject(copy);
+      return isInject(copy) || isStoryline(copy);
     }
     if (isInject(inject)) {
       return isInject(copy);
@@ -129,9 +125,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
         if (copiedInjectIsCut) {
           if (isInject(copy)) {
             // Paste copied inject: only injects can be cut, not acts etc.
-            if (isAct(inject)) {
-              copy.parentId = newParentId;
-            } else if (isInject(inject)) {
+            if (isInject(inject)) {
               copy.parentId = inject.parentId;
             }
             newInject(copy);
@@ -140,12 +134,11 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
         } else if (copiedInjects instanceof Array) {
           const isParentChildRelation =
             (isScenario(inject) && isStoryline(copy)) ||
-            (isStoryline(inject) && isAct(copy)) ||
-            (isAct(inject) && isInject(copy));
+            (isStoryline(inject) && isInject(copy)) ||
+            (isInject(copy));
           const isSiblingRelation =
             (isScenario(inject) && isScenario(copy)) ||
-            (isStoryline(inject) && isStoryline(copy)) ||
-            (isAct(inject) && isAct(copy));
+            (isStoryline(inject) && isStoryline(copy))
           if (isParentChildRelation) {
             createInjects(createFreshInjects(copiedInjects, copy.parentId!, newParentId));
           } else if (isSiblingRelation) {

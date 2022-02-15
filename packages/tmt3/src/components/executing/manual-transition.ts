@@ -104,7 +104,7 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
             },
           }),
         show &&
-          inject.type === InjectType.ACT && [
+          inject.type === InjectType.INJECT && [
             m(FlatButton, {
               modalId: 'add-modal',
               className: 'right',

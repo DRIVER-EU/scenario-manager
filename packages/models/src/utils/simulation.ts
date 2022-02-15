@@ -25,9 +25,8 @@ export const pruneInjects = (scenario: IScenario, allInjects: IInject[]) => {
   const children = (id: string) => allInjects.filter(i => i.parentId === id);
   const scenarioId = scenario.id;
   const storylines = children(scenarioId) as IInjectGroup[];
-  const acts = storylines.reduce((acc, s) => [...acc, ...children(s.id)], [] as IInjectGroup[]);
-  const injects = acts.reduce((acc, a) => [...acc, ...children(a.id)], [] as IInject[]);
-  return [scenario, ...storylines, ...acts, ...injects];
+  const injects = storylines.reduce((acc, s) => [...acc, ...children(s.id)], [] as IInject[]);
+  return [scenario, ...storylines, ...injects];
 };
 
 /**

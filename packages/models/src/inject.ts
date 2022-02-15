@@ -16,7 +16,6 @@ export enum InjectState {
 
 export enum InjectType {
   INJECT = 'INJECT',
-  ACT = 'ACT',
   STORYLINE = 'STORYLINE',
   SCENARIO = 'SCENARIO',
 }

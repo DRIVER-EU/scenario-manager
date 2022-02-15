@@ -30,7 +30,7 @@
               "id": "file",
               "label": "File",
               "icon": "attach_file",
-              "className": "col s11",
+              "className": "col s5",
               "placeholder": "Select file",
               "multiple": false,
               "required": true,
@@ -47,7 +47,7 @@
             {
               "id": "kafkaTopicId",
               "label": "Select Kafka topic",
-              "className": "col s12 m6",
+              "className": "col s6",
               "placeholder": "Pick one",
               "multiple": false,
               "required": true,

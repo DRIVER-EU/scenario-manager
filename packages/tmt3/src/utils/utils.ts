@@ -128,8 +128,6 @@ export const getInjectIcon = (type?: InjectType) => {
   switch (type) {
     case InjectType.INJECT:
       return 'message';
-    case InjectType.ACT:
-      return 'call_to_action'; // 'chat';
     case InjectType.STORYLINE:
       return 'art_track';
     default:
@@ -398,9 +396,6 @@ export const isScenario = (i: IInject): i is IScenario => i.type === InjectType.
 
 /** Type guard check if we are dealing with a storyline  */
 export const isStoryline = (i: IInject): i is IScenario => i.type === InjectType.STORYLINE;
-
-/** Type guard check if we are dealing with an act  */
-export const isAct = (i: IInject): i is IScenario => i.type === InjectType.ACT;
 
 /** Type guard check if we are dealing with a pure inject  */
 export const isInject = (i: IInject): i is IScenario => i.type === InjectType.INJECT;

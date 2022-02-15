@@ -99,8 +99,6 @@ export const InjectsList: MeiosisComponent = () => {
 
             switch (src.type) {
               case InjectType.INJECT:
-                return tgt && tgt.type === InjectType.ACT;
-              case InjectType.ACT:
                 return tgt && tgt.type === InjectType.STORYLINE;
               case InjectType.STORYLINE:
                 return tgt && tgt.type === InjectType.SCENARIO;
@@ -144,7 +142,7 @@ export const InjectsList: MeiosisComponent = () => {
             };
             return itemFactory() as ITreeItem;
           },
-          maxDepth: 3,
+          maxDepth: 2,
           multipleRoots: false,
           editable: { canCreate: true, canDelete: false, canUpdate: true, canDeleteParent: false },
         } as ITreeOptions);
