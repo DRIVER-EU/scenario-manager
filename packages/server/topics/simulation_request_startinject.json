@@ -6,10 +6,12 @@
     {
       "id": "message",
       "label": " ",
+      "className":"col s12",
       "type": [
         {
           "id": "START_INJECT",
           "label": " ",
+          "className":"col s12",
           "type": [
             {
               "id": "id",
