@@ -254,7 +254,11 @@ export const appStateMgmt = {
           const scenario = getInjects(trial)
             .filter((i) => i.id === scenarioId)
             .shift() as IScenario;
-          const scenarioStartTime = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
+          let scenarioStartTime = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
+          if(t){
+            const scenario = t.injects.find((inj) => inj.type === 'SCENARIO') as IScenario
+            scenarioStartTime = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
+          }
           update({ exe: { session, trial: t || trial, scenarioStartTime } });
         } else if (s) {
           // Either no session, or not active, so create a new session
