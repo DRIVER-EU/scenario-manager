@@ -147,7 +147,7 @@ export const Layout: MeiosisComponent = () => {
               ])
             ),
         ]),
-        m('section.main[id=main]', children),
+        m('section.main[id=main]', {style: 'padding: 15px'}, children),
         executeMode && m(StatusBar, { state, actions: attrs.actions }),
       ]);
     },
