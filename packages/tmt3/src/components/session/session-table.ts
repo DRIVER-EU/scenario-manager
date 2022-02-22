@@ -23,13 +23,11 @@ import {
 
 export const SessionTable: MeiosisComponent = () => {
   let updater: number;
-  let time = Date.now();
   let trial: ITrial;
-  let scenarioStartTime = new Date();
+  let scenarioStartTime: Date;
   let executingInjects = [] as Array<ITimelineItem & IExecutingInject>;
   let getMessageIcon: (topic?: string) => string;
-
-  const toTime = (delayInSec = 0) => new Date(scenarioStartTime.valueOf() + delayInSec * 1000);
+  let serverTime: Date;
 
   const formatTime = (d: Date) => `${padLeft(d.getHours())}:${padLeft(d.getMinutes())}:${padLeft(d.getSeconds())}`;
 
@@ -45,17 +43,17 @@ export const SessionTable: MeiosisComponent = () => {
   };
 
   const toTableRow = (ei: ITimelineItem & IExecutingInject, i: number, arr: ITimelineItem[]) => {
-    const st = ei.startTime || 0;
-    const next = i < arr.length - 1 ? arr[i + 1].startTime || 0 : Infinity;
-    // const next = i < arr.length - 1 ? toTime(arr[i + 1].startTime) : new Date(ttime.valueOf() + 365 * 24 * 3600000);
+    const st = new Date((scenarioStartTime.getTime() / 1000 + ei.startTime) * 1000) || 0;
+    const next =
+      i < arr.length - 1 ? new Date((scenarioStartTime.getTime() / 1000 + arr[i + 1].startTime) * 1000) || 0 : Infinity;
     const isDone = ei.state === InjectState.EXECUTED;
     const role = ei.condition && ei.condition.rolePlayerId ? getRole(trial, ei.condition.rolePlayerId) : '−';
-    const isActive = st <= time && time <= next;
-    const isStarting = i === 0 && !isActive && time <= next;
+    const isActive = st <= serverTime && serverTime <= next;
+    const isStarting = i === 0 && !isActive && serverTime <= next;
     return [
       isStarting && m(curTime),
       m(`tr${isActive ? '.active' : ''}${isDone ? '.done' : ''}`, [
-        m('td', formatTime(toTime(st))),
+        m('td', formatTime(st)),
         m('td', m('i.material-icons', getMessageIcon(ei.topic))),
         m('td', role),
         m('td', ei.title),
@@ -81,7 +79,7 @@ export const SessionTable: MeiosisComponent = () => {
       attrs: {
         state: {
           app: { templates },
-          exe: { trial: tr, scenarioId },
+          exe: { trial: tr, scenarioId, scenarioStartTime: sst },
         },
       },
     }) => {
@@ -89,13 +87,17 @@ export const SessionTable: MeiosisComponent = () => {
       updater = window.setInterval(() => m.redraw(), 1000);
       trial = tr;
       const scenario = getInject(trial, scenarioId) as IScenario;
-      scenarioStartTime = (scenario && scenario.startDate && new Date(scenario.startDate)) || new Date();
+      scenarioStartTime =
+        scenario && scenario.startDate
+          ? new Date(scenario.startDate)
+          : Object.prototype.toString.call(sst) === '[object Date]'
+          ? sst
+          : new Date();
     },
     onbeforeremove: () => window.clearInterval(updater),
     view: ({ attrs: { state } }) => {
       const { treeState, trial } = getActiveTrialInfo(state);
-      const { injectStates, time: t } = state.exe;
-      time = (new Date(t.simulationTime || 0).valueOf() - scenarioStartTime.valueOf()) / 1000;
+      const { injectStates, time } = state.exe;
       const injects = getInjects(trial);
 
       const injectToTimelineItem = injectToTimelineItemFactory(injectStates, treeState);
@@ -111,6 +113,8 @@ export const SessionTable: MeiosisComponent = () => {
           )
           .map(injectToTimelineItem)
       );
+
+      serverTime = time && time.simulationTime ? new Date(time.simulationTime) : new Date();
 
       const tli = executingInjects.filter((i) => i.type === InjectType.INJECT).sort(sortByTime);
 

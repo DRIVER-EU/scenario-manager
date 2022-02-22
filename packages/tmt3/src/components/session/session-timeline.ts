@@ -97,6 +97,7 @@ export const SessionTimelineView: MeiosisComponent = () => {
     }) => {
       time = t.simulationTime;
       lastTimeUpdate = t.state === TimeState.Started ? Date.now() : 0;
+      simulationSpeed = t.simulationSpeed as number;
       iid = injectId;
 
       const selectTimelineItem = (ti: IExecutingTimelineItem) => {

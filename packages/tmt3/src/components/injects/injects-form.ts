@@ -238,8 +238,8 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
                   ])
             ),
             [
-              m(MessageForm, { state, actions, options }),
               (inject.topic || isInjectGroup(inject)) && m(InjectConditions, { state, actions, options }),
+              m(MessageForm, { state, actions, options }),
               // : m('div#dummy'),
               m(SetObjectives, { trial, disabled, inject }),
             ],

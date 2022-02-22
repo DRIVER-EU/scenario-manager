@@ -1,10 +1,10 @@
 import m from 'mithril';
-import { InjectType, UserRole } from '../../../../models';
+import { IAsset, InjectType, UserRole } from '../../../../models';
 import { ScenarioForm, DefaultMessageForm } from '.';
-import { MessageComponent } from '../../services';
+import { MessageComponent, restServiceFactory } from '../../services';
 import { getInject, getPath, getUsersByRole } from '../../utils';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
-import { ModalPanel } from 'mithril-materialized';
+import { ModalPanel, TextArea } from 'mithril-materialized';
 import { UploadAsset } from '../ui';
 
 export type MessageScope = 'edit' | 'execute';
@@ -84,6 +84,8 @@ export const MessageForm: MessageComponent = () => {
   let participantEmails: string;
   let availableAssets: string;
   let kafkaTopicOpts: string;
+  let filePreview: string;
+  let prev_file_id = -1;
 
   return {
     oninit: ({ attrs: { state } }) => {
@@ -99,7 +101,29 @@ export const MessageForm: MessageComponent = () => {
         getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.email, label: rp.name }))
       );
       availableAssets = JSON.stringify(assets.map((a) => ({ id: a.id, label: a.alias || a.filename })));
-      kafkaTopicOpts = JSON.stringify(kafkaTopics.filter((topic: string) => ('send_file'.indexOf(topic) < 0)).map((topic: string) => ({ id: topic, label: topic })))
+      kafkaTopicOpts = JSON.stringify(
+        kafkaTopics
+          .filter((topic: string) => 'send_file'.indexOf(topic) < 0)
+          .map((topic: string) => ({ id: topic, label: topic }))
+      );
+    },
+    onupdate: async ({ attrs: { state } }) => {
+      const { mode } = state.app;
+      const isExecuting = mode === 'execute';
+      const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
+      const inject = getInject(trial, injectId || scenarioId);
+
+      //@ts-ignore
+      if (inject && inject.message && inject.message.SEND_FILE && inject.message.SEND_FILE.file) {
+        //@ts-ignore
+        if (prev_file_id != inject.message.SEND_FILE.file) {
+          const assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
+          //@ts-ignore
+          filePreview = JSON.stringify(await assetsSvc.load(inject.message.SEND_FILE.file), undefined, 4);
+          //@ts-ignore
+          prev_file_id = inject.message.SEND_FILE.file;
+        }
+      }
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { owner, mode, templates, assets } = state.app;
@@ -153,6 +177,22 @@ export const MessageForm: MessageComponent = () => {
                 updateInject(inject);
               },
             }),
+            topic.icon === 'attach_file' &&
+            filePreview &&
+            inject.message &&
+            inject.message.SEND_FILE &&
+            //@ts-ignore
+            inject.message.SEND_FILE.file
+              ? [
+                  m(TextArea, {
+                    label: 'File Preview',
+                    iconName: 'attach_file',
+                    className: 'col s12',
+                    initialValue: filePreview,
+                    disabled: true,
+                  }),
+                ]
+              : undefined,
             m(ModalPanel, {
               disabled,
               id: 'upload',

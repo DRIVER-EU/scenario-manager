@@ -158,6 +158,9 @@ const MediaStateControl: MeiosisComponent = () => {
                       scenario.startDate = new Date(simulationTime).toUTCString();
                       scenario.endDate = new Date(simulationTime + scenarioDuration).toUTCString();
                       updateInject(scenario);
+                    } else if (scenario ){
+                      scenario.startDate = new Date(simulationTime).toUTCString();
+                      updateInject(scenario);
                     }
                     sendCmd(socket, { command: TimeCommand.Start });
                   },
