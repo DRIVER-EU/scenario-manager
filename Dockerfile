@@ -6,7 +6,7 @@
 #   docker run -it -p 8888:3210 trial-management-tool
 
 FROM node:alpine AS builder
-RUN apk add --no-cache --virtual .gyp python make g++ git && \
+RUN apk add --no-cache --virtual .gyp python3 make g++ git vips-dev && \
   npm i -g yalc
 # ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 # optionally if you want to run npm global bin without specifying path
@@ -25,7 +25,7 @@ WORKDIR /packages/server
 RUN yalc add trial-manager-models && \
   npm install && \
   npm run build
-COPY ./packages/tmt2 /packages/tmt
+COPY ./packages/tmt3 /packages/tmt
 WORKDIR /packages/tmt
 RUN rm -fr node_modules && \
   yalc add trial-manager-models && \
@@ -38,6 +38,7 @@ RUN mkdir -p /app/trials
 COPY --from=builder /packages/server/package.json /app/package.json
 COPY --from=builder /packages/server/certs /app/certs
 COPY --from=builder /packages/server/dist /app/dist
+COPY --from=builder /packages/server/topics /app/topics
 COPY --from=builder /packages/models/dist /models
 COPY --from=builder /packages/models/node_modules /models/node_modules
 COPY --from=builder /packages/server/.yalc /app/.yalc
