@@ -24,7 +24,7 @@ async function bootstrap() {
   });
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ limit: '10mb' }));
-  app.use(express.static(path.join(process.cwd(), 'public')));
+  app.use('/tmt', express.static(path.join(process.cwd(), 'public')));
 
   const options = new DocumentBuilder()
     .setTitle('Trial manager service')

@@ -25,7 +25,7 @@ async function bootstrap() {
   app.use(compression());
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ limit: '10mb', extended: true }));
-  app.use(expressStatic(path.join(process.cwd(), 'public')));
+  app.use('/tmt', expressStatic(path.join(process.cwd(), 'public')));
   app.use(
     '/topics',
     expressStatic(path.join(process.cwd(), 'topics'), {

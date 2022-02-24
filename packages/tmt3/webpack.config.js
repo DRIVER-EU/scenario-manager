@@ -7,8 +7,8 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = (env) => {
   const isProduction = env.production;
-  const outputPath = path.resolve(__dirname, isProduction ? '../../docs' : 'dist');
-  const publicPath = isProduction ? 'https://erikvullings.github.io/scenario-manager/' : '/';
+  const outputPath = path.resolve(__dirname, isProduction ? 'dist' : 'dist');
+  const publicPath = isProduction ? '/tmt/' : '/tmt/';
 
   console.log(`Running in ${isProduction ? 'production' : 'development'} mode, output directed to ${outputPath}.`);
 
