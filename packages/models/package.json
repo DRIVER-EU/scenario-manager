@@ -9,7 +9,7 @@
     "clean": "rimraf ./dist",
     "start": "tsc -w",
     "dev": "tsc -w",
-    "build": "tsc"
+    "build": "tsc -b"
   },
   "keywords": [],
   "author": "Erik Vullings <erik.vullings@gmail.com>",

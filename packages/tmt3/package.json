@@ -22,7 +22,7 @@
   "dependencies": {
     "leaflet": "^1.7.1",
     "leaflet-draw": "^1.0.4",
-    "material-icons": "^1.10.6",
+    "material-icons": "^1.10.7",
     "materialize-css": "^1.0.0",
     "mithril": "^2.0.4",
     "mithril-leaflet": "^0.4.3",
@@ -32,16 +32,17 @@
     "mithril-table": "^0.2.2",
     "mithril-tree-component": "^0.7.1",
     "mithril-ui-form": "^1.4.5",
-    "rfc6902": "^5.0.0",
+    "rfc6902": "^5.0.1",
     "slimdown-js": "^0.6.1",
-    "socket.io-client": "4.4.1"
+    "socket.io-client": "4.4.1",
+    "trial-manager-models": "file:../models"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.8",
     "@types/leaflet": "^1.7.9",
     "@types/leaflet-draw": "^1.0.5",
     "@types/materialize-css": "^1.0.11",
-    "@types/mithril": "^2.0.8",
+    "@types/mithril": "^2.0.9",
     "css-loader": "^6.6.0",
     "css-minimizer-webpack-plugin": "^3.4.1",
     "dotenv-webpack": "^7.1.0",
@@ -53,7 +54,7 @@
     "style-loader": "^3.3.1",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.5",
-    "webpack": "^5.69.0",
+    "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4"
   }
