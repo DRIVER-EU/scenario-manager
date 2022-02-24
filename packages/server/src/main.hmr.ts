@@ -26,6 +26,8 @@ async function bootstrap() {
   app.use(urlencoded({ limit: '10mb' }));
   app.use('/tmt', express.static(path.join(process.cwd(), 'public')));
 
+  app.setGlobalPrefix('tmt')
+
   const options = new DocumentBuilder()
     .setTitle('Trial manager service')
     .setDescription('The Trial manager API description')
@@ -33,7 +35,7 @@ async function bootstrap() {
     .addTag('Trial manager service')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('/tmt/api', app, document);
 
   const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3210;
   await app.listen(port, () => {
