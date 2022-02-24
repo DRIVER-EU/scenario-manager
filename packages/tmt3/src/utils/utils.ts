@@ -18,7 +18,7 @@ import {
   toMsec,
   IInjectSimStates,
   IGuiTemplate,
-} from '../../../models';
+} from 'trial-manager-models';
 import { LineString, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 
 export const baseLayers = {

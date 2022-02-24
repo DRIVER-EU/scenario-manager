@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { MeiosisComponent, states } from '../../services';
-import { ITimeManagement, TimeState } from '../../../../models';
+import { ITimeManagement, TimeState } from 'trial-manager-models';
 import { formatTime, formatMsec } from '../../utils';
 import { ISessionControl } from '../../models';
 

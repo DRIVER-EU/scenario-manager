@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, MessageType, IAffectedArea, IareaPoly } from '../../../../models';
+import { getMessage, MessageType, IAffectedArea, IareaPoly } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { Polygon, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { FeatureGroup, geoJSON, GeoJSON } from 'leaflet';

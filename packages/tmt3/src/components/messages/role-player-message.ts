@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextArea, TextInput, Select, Collection, CollectionMode, Icon, FlatButton } from 'mithril-materialized';
-import { getMessage, MessageType, UserRole, IRolePlayerMsg, RolePlayerMessageType, IPerson } from '../../../../models';
+import { getMessage, MessageType, UserRole, IRolePlayerMsg, RolePlayerMessageType, IPerson } from 'trial-manager-models';
 import { MessageComponent } from '../../services';
 import {
   createEmailLink,

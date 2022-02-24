@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { InjectType } from '../../../../models';
+import { InjectType } from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 import { getInject } from '../../utils';
 import { MessageForm } from '../messages';

@@ -7,7 +7,7 @@ import {
   MessageType,
   deepCopy,
   TimeState,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { FlatButton, ModalPanel, Select, TextArea, TextInput } from 'mithril-materialized';
 import { IExe, MeiosisComponent } from '../../services';
 import { getMessageIconFromTemplate, getActiveTrialInfo, uniqueId } from '../../utils';

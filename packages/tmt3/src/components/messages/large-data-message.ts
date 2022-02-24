@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextArea, TextInput, UrlInput, Select } from 'mithril-materialized';
-import { getMessage, MessageType, ILargeDataUpdate, DataType } from '../../../../models';
+import { getMessage, MessageType, ILargeDataUpdate, DataType } from 'trial-manager-models';
 import { MessageComponent } from '../../services';
 import { enumToOptions, getActiveTrialInfo } from '../../utils';
 

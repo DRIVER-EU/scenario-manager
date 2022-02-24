@@ -15,7 +15,6 @@ import {
   TrialSettings,
   UsersView,
   SessionTable,
-  SelectMessageTypesForm,
 } from '../components';
 
 class DashboardService {
@@ -127,14 +126,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     component: UsersView,
     level: Dashboards.SETTINGS,
   },
-  {
+  /*{
     id: Dashboards.TRIAL_SETTINGS,
     title: 'Topics',
     route: '/settings/topics',
     visible: false,
     component: TrialSettings,
     level: Dashboards.SETTINGS,
-  },
+  },*/
   {
     id: Dashboards.ASSETS,
     title: 'Assets',
@@ -143,7 +142,7 @@ export const dashboardSvc: DashboardService = new DashboardService([
     component: AssetsView,
     level: Dashboards.SETTINGS,
   },
-  {
+  /*{
     id: Dashboards.MESSAGES,
     title: 'Messages',
     route: '/settings/messages',
@@ -151,12 +150,12 @@ export const dashboardSvc: DashboardService = new DashboardService([
     component: SelectMessageTypesForm,
     level: Dashboards.SETTINGS,
   },
-  /*{
-    id: Dashboards.KAFKA,
-    title: 'Kafka',
-    route: '/settings/kafka',
+  {
+    id: Dashboards.MESSAGE_CONFIG,
+    title: 'Message Config',
+    route: '/settings/message_config',
     visible: false,
-    component: KafkaMessage,
+    component: MessageConfigView,
     level: Dashboards.SETTINGS,
   },*/
   {

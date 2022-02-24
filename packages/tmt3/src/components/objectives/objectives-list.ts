@@ -2,7 +2,7 @@ import m, { Component } from 'mithril';
 import { TextInput, Collection, ICollectionItem } from 'mithril-materialized';
 import { getObjectives } from '../../utils';
 import { TreeContainer, ITreeOptions, ITreeItem, ITreeItemViewComponent } from 'mithril-tree-component';
-import { IObjective, uniqueId } from '../../../../models';
+import { IObjective, uniqueId } from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 
 export const ObjectivesList: MeiosisComponent = () => {

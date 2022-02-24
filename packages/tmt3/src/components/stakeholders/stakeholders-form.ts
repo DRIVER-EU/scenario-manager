@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextInput, TextArea, Button, Icon, Select, ModalPanel, Collapsible } from 'mithril-materialized';
-import { IStakeholder, deepCopy, deepEqual } from '../../../../models';
+import { IStakeholder, deepCopy, deepEqual } from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 import { getObjectives, getStakeholders, getUsers } from '../../utils';
 

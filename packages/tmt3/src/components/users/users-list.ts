@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { UsersForm } from './users-form';
-import { IPerson, UserRole, uniqueId } from '../../../../models';
+import { IPerson, UserRole, uniqueId } from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 import { RoundIconButton, TextInput, Collection, CollectionMode, ICollectionItem } from 'mithril-materialized';
 import { getActiveTrialInfo, getUsers, userIcon, userRolesToString } from '../../utils';

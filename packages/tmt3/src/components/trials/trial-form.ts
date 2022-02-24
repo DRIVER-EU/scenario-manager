@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { Button, TextArea, TextInput, FileInput, ModalPanel } from 'mithril-materialized';
-import { deepCopy, deepEqual, ITrial } from '../../../../models/dist';
+import { deepCopy, deepEqual, ITrial } from 'trial-manager-models';
 import { Dashboards } from '../../models';
 import { dashboardSvc, MeiosisComponent } from '../../services';
 

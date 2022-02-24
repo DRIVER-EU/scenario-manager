@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ISessionManagement, SessionState } from '../../../../models';
+import { ISessionManagement, SessionState } from 'trial-manager-models';
 
 export class SessionMessage implements ISessionManagement {
   @ApiProperty()

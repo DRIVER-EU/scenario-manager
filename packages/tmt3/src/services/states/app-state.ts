@@ -24,7 +24,7 @@ import {
   TimeCommand,
   uniqueId,
   UserRole,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { MessageScope } from '../../components/messages';
 import { arrayMove, getInjects, getInject, isScenario, validateInjects } from '../../utils';
 import { IAppModel, UpdateStream } from '../meiosis';
@@ -42,6 +42,12 @@ export interface IActiveTrial {
   treeState: {
     [id: string]: boolean;
   };
+}
+
+export interface ICustomMessage {
+  name: string;
+  type: string;
+  kafkaTopic: string;
 }
 
 export interface IApp extends IActiveTrial {

@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestMove, ILocation } from '../../../../models';
+import { getMessage, IInject, MessageType, IRequestMove, ILocation } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { geoJSON, GeoJSON } from 'leaflet';

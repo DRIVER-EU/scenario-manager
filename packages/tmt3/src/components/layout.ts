@@ -6,7 +6,7 @@ import { Dashboards } from '../models/dashboards';
 import { Icon } from 'mithril-materialized';
 // import { MediaControls } from './session/time-control';
 import { IDashboard } from '../models';
-import { SessionState, TimeState, UserRole } from '../../../models';
+import { SessionState, TimeState, UserRole } from 'trial-manager-models';
 import { MediaControls } from './session/time-control';
 import { StatusBar } from '.';
 import { getUserById } from '../utils';

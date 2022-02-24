@@ -11,7 +11,7 @@ import {
   IConnectMessage,
   ISessionManagement,
   SessionState,
-} from '../../../models';
+} from 'trial-manager-models';
 import { getInjects } from '../utils';
 
 // tslint:disable-next-line:no-console
@@ -111,7 +111,6 @@ export const SocketSvc = {
   getKafkaTopics: async () => {
     return await new Promise(resolve => {
       SocketSvc.socket.emit('getKafkaTopics', (data: string[]) => {
-        console.log(data)
         resolve(data as string[]);
       });      
     });

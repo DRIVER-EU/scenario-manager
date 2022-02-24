@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestStartInject } from '../../../../models';
+import { getMessage, IInject, MessageType, IRequestStartInject } from 'trial-manager-models';
 import { MessageComponent } from '../../services';
 import { getActiveTrialInfo } from '../../utils';
 

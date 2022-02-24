@@ -1,6 +1,6 @@
 import m, { Attributes } from 'mithril';
 import { LeafletMap } from 'mithril-leaflet';
-import { getMessage, IAffectedArea, IRequestMove, IScenario, MessageType } from '../../../../models';
+import { getMessage, IAffectedArea, IRequestMove, IScenario, MessageType } from 'trial-manager-models';
 import { geoJSON, GeoJSON } from 'leaflet';
 import { MeiosisComponent } from '../../services';
 import { affectedAreaToGeoJSON, getInjects, isJSON, routeToGeoJSON, baseLayers } from '../../utils';

@@ -18,7 +18,7 @@ import {
   Certainty,
   IValueNamePair,
   ResponseType,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { MessageComponent } from '../../services';
 import { getActiveTrialInfo, getUsersByRole } from '../../utils';
 

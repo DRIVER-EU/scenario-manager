@@ -35,7 +35,7 @@ export default () => ({
     // autoRegisterSchemas: true,
     autoRegisterSchemas: true,
     wrapUnions: 'auto',
-    schemaFolder: '../../docker/schemas',
+    schemaFolder: './topics/schemas',
     // consume: [],
     produce: process.env.PRODUCE
       ? process.env.PRODUCE.split(',')

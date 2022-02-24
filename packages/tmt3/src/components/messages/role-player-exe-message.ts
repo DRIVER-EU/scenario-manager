@@ -7,7 +7,7 @@ import {
   IPerson,
   IRolePlayerMsg,
   rolePlayerMessageToTestbed,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 import { getActiveTrialInfo, getUsers, userIcon } from '../../utils';
 

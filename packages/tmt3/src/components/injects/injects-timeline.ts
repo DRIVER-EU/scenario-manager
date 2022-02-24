@@ -9,7 +9,7 @@ import {
   IScenario,
   InjectState,
   InjectConditionType,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { Icon } from 'mithril-materialized';
 import { getIconFromTemplate, getInjects, isScenario } from '../../utils';
 import 'mithril-scenario-timeline/dist/mithril-scenario-timeline.css';

@@ -4,7 +4,7 @@ import { InjectsForm } from '../injects/injects-form';
 import { dashboardSvc, MeiosisComponent } from '../../services';
 import { getActiveTrialInfo } from '../../utils';
 import { ModalPanel, Select } from 'mithril-materialized';
-import { UserRole } from '../../../../models/dist';
+import { UserRole } from 'trial-manager-models';
 import { Dashboards } from '../../models';
 
 let roleID: string;

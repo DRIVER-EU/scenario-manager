@@ -24,7 +24,7 @@ import {
   IPostMsg,
   postMessageToTestbed,
   ISendFileMessage,
-} from '../../../../models/dist';
+} from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
 import { parse } from '../../utils';

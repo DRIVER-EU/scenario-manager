@@ -17,7 +17,7 @@ import {
   StateTransitionRequest,
   Inject as ScenarioInject,
 } from '../../adapters/models';
-import { SessionState } from '../../../../models';
+import { SessionState } from 'trial-manager-models';
 import { Trial } from '../../adapters/models/trial';
 
 @ApiTags('run')

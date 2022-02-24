@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { IAsset, InjectType, UserRole } from '../../../../models';
+import { IAsset, InjectType, UserRole } from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm } from '.';
 import { MessageComponent, restServiceFactory } from '../../services';
 import { getInject, getPath, getUsersByRole } from '../../utils';
@@ -108,9 +108,9 @@ export const MessageForm: MessageComponent = () => {
       );
     },
     onupdate: async ({ attrs: { state } }) => {
-      const { mode } = state.app;
-      const isExecuting = mode === 'execute';
-      const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
+      //const { mode } = state.app;
+      //const isExecuting = mode === 'execute';
+      const { trial, scenarioId, injectId } = state.app;
       const inject = getInject(trial, injectId || scenarioId);
 
       //@ts-ignore

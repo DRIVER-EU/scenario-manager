@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { InjectType } from '../../../../models';
+import { InjectType } from 'trial-manager-models';
 import { Icon } from 'mithril-materialized';
 import { getMessageIconFromTemplate, getInjectIcon, getInject, getMessageTitleFromTemplate } from '../../utils';
 import { ManualTransition } from './manual-transition';

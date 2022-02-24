@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { createPatch } from 'rfc6902';
 import { SocketSvc } from '.';
-import { IAsset, IContent } from '../../../models/dist';
+import { IAsset, IContent } from 'trial-manager-models';
 
 export interface IRestService<T extends IContent | IAsset> {
   url: string;

@@ -1,7 +1,7 @@
 import m, { FactoryComponent } from 'mithril';
 import { Socket } from 'socket.io-client';
 import { TimePicker, DatePicker, FlatButton, ModalPanel } from 'mithril-materialized';
-import { TimeState, IScenario, ITimeManagement, ITimeControl, TimeCommand, UserRole } from '../../../../models';
+import { TimeState, IScenario, ITimeManagement, ITimeControl, TimeCommand, UserRole } from 'trial-manager-models';
 import { SocketSvc, MeiosisComponent } from '../../services';
 import { formatTime, getActiveTrialInfo, getUserById, hasUserRole, isSessionInfoValid, padLeft } from '../../utils';
 

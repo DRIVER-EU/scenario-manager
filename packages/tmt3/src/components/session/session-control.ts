@@ -2,7 +2,7 @@ import m from 'mithril';
 import { TimeControl } from './time-control';
 import { MeiosisComponent } from '../../services';
 import { FlatButton, Select, ISelectOptions, TextInput, TextArea, InputCheckbox, Icon } from 'mithril-materialized';
-import { IScenario, InjectType, SessionState, uniqueId, TimeState, UserRole } from '../../../../models';
+import { IScenario, InjectType, SessionState, uniqueId, TimeState, UserRole } from 'trial-manager-models';
 import { getInjectIcon, getInject, getInjects, isScenario, getUserById, hasUserRole } from '../../utils';
 
 /** Helper component to specify the session id, name, comments */

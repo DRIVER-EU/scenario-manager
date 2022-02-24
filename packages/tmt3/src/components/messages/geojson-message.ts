@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
-import { getMessage, MessageType, IGeoJsonMessage } from '../../../../models';
+import { getMessage, MessageType, IGeoJsonMessage } from 'trial-manager-models';
 import { isJSON, getActiveTrialInfo, baseLayers } from '../../utils';
 import { UploadAsset } from '../ui';
 import { ILeafletMap, LeafletMap } from 'mithril-leaflet';

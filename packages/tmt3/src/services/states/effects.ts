@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { actions } from '..';
-import { IGuiTemplate } from '../../../../models/dist';
+import { IGuiTemplate } from 'trial-manager-models';
 import { IActions, IAppModel } from '../meiosis';
 
 export const LoadGuiTemplates = (_actions: IActions) => {

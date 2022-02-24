@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { IScenario, ITodo } from '../../../../models';
+import { IScenario, ITodo } from 'trial-manager-models';
 import { FlatButton, Kanban, IModelField, IKanban } from 'mithril-materialized';
 import { MeiosisComponent } from '../../services';
 import { getInject } from '../../utils';

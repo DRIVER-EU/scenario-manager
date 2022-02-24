@@ -1,6 +1,6 @@
 import m, { FactoryComponent, Attributes } from 'mithril';
 import { TextInput, FileInput } from 'mithril-materialized';
-import { IAsset } from '../../../../models';
+import { IAsset } from 'trial-manager-models';
 
 export interface IUploadAsset extends Attributes {
   /** Text to show as placeholder of the FileInput */

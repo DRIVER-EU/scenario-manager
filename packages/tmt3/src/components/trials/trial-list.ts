@@ -2,7 +2,7 @@ import m from 'mithril';
 import { TextInput, RoundIconButton, Icon, ModalPanel, Select } from 'mithril-materialized';
 import { dashboardSvc, MeiosisComponent } from '../../services';
 import { titleAndDescriptionFilter, padLeft } from '../../utils';
-import { ITrialOverview, SessionState, TimeState, UserRole } from '../../../../models';
+import { ITrialOverview, SessionState, TimeState, UserRole } from 'trial-manager-models';
 import { Dashboards } from '../../models';
 
 let ignoreActive: boolean;

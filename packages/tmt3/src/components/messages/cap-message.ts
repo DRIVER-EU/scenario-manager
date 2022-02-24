@@ -15,7 +15,7 @@ import {
   Severity,
   Certainty,
   IValueNamePair,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { MessageComponent } from '../../services';
 import { enumToOptions, getActiveTrialInfo, getUsersByRole } from '../../utils';
 

@@ -8,7 +8,7 @@ import {
   UserRole,
   ITrial,
   IScenario,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { ITimelineItem } from 'mithril-scenario-timeline';
 import {
   injectToTimelineItemFactory,

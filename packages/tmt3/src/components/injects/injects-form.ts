@@ -20,7 +20,7 @@ import {
   getAllChildren,
   uniqueId,
   ITrial,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages';
 import { MeiosisComponent } from '../../services';

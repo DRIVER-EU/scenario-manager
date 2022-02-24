@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { Label, Options } from 'mithril-materialized';
-import { IKafkaMessage, MessageType } from '../../../../models';
+import { IKafkaMessage, MessageType } from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 import { enumToOptions, getMessageTitleFromTemplate } from '../../utils';
 

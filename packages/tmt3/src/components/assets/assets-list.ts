@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { AssetsForm } from './assets-form';
-import { IAsset } from '../../../../models';
+import { IAsset } from 'trial-manager-models';
 import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
 import { assetIcon } from '../../utils';
 import { MeiosisComponent } from '../../services';

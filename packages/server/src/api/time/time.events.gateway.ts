@@ -5,7 +5,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { KafkaService, ITimeControl } from '../../adapters/kafka';
-import { IConnectMessage } from '../../../../models';
+import { IConnectMessage } from 'trial-manager-models';
 
 @WebSocketGateway({
   cors: {

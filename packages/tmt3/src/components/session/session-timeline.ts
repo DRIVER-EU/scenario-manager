@@ -9,7 +9,7 @@ import {
   IScenario,
   IInjectSimStates,
   TimeState,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { ScenarioTimeline, ITimelineItem, IExecutingTimelineItem } from 'mithril-scenario-timeline';
 import { Icon } from 'mithril-materialized';
 import { getIconFromTemplate, getInject, getInjects, injectToTimelineItemFactory } from '../../utils';

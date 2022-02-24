@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { StakeholdersForm } from './stakeholders-form';
-import { IStakeholder, uniqueId } from '../../../../models';
+import { IStakeholder, uniqueId } from 'trial-manager-models';
 import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
 import { MeiosisComponent } from '../../services';
 import { getStakeholders, getUserById } from '../../utils';

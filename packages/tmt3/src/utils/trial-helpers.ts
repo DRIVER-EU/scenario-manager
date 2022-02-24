@@ -8,7 +8,7 @@ import {
   ISessionManagement,
   ITrial,
   UserRole,
-} from '../../../models/dist';
+} from 'trial-manager-models';
 import { hasUserRole } from './utils';
 import { IActiveTrial } from '../services';
 import { MessageScope } from '../components/messages';

@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, MessageType, IOstStageChangeMessage } from '../../../../models';
+import { getMessage, MessageType, IOstStageChangeMessage } from 'trial-manager-models';
 import { MessageComponent } from '../../services';
 import { getActiveTrialInfo } from '../../utils';
 

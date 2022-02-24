@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { TextInput, TextArea, EmailInput, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
-import { IPerson, UserRole, deepCopy, deepEqual } from '../../../../models';
+import { IPerson, UserRole, deepCopy, deepEqual } from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 import { getActiveTrialInfo, getUsers, iterEnum, userIcon, userRoleToString } from '../../utils';
 

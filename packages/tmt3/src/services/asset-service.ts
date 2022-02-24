@@ -1,6 +1,6 @@
 // import { RestService } from './rest-service';
 // import { ChannelNames } from '../models/channels';
-// import { IAsset } from '../../../models';
+// import { IAsset } from 'trial-manager-models';
 // import { isJSON } from '../utils';
 // import { AppState } from '../models';
 // import { messageBus } from './message-bus-service';
