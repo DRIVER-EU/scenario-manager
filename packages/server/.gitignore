@@ -106,3 +106,4 @@ build
 dist
 trials
 trials - Copy*
+!src/api/trials

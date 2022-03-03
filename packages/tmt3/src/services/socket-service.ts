@@ -18,7 +18,7 @@ import { getInjects } from '../utils';
 let socket: Socket;
 
 export const setupSocket = (autoConnect = true) => {
-  console.table(process.env.SERVER);
+  console.table(location.origin);
   if (socket && socket.connected) {
     return socket;
   }
