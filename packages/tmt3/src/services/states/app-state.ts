@@ -33,7 +33,7 @@ import { ISessionControl } from '../../models';
 const trialSvc = restServiceFactory<ITrial>('trials');
 let assetsSvc: IRestService<IAsset>;
 
-const runSvc = runServiceFactory(process.env.SERVER || location.origin);
+const runSvc = runServiceFactory(process.env.SERVER || location.origin + '/tmt');
 
 export interface IActiveTrial {
   trial: ITrial;

@@ -18,11 +18,11 @@ import { getInjects } from '../utils';
 let socket: Socket;
 
 export const setupSocket = (autoConnect = true) => {
-  console.table(location.origin);
+  console.table(location.origin + '/tmt/');
   if (socket && socket.connected) {
     return socket;
   }
-  socket = autoConnect ? io() : io(process.env.SERVER || location.origin);
+  socket = autoConnect ? io() : io(process.env.SERVER || location.origin+'/tmt');
 
   socket.on('connect', () => {
     socket.emit('test-bed-connect');
