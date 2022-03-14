@@ -22,13 +22,22 @@ export const setupSocket = (autoConnect = true) => {
   if (socket && socket.connected) {
     return socket;
   }
-  socket = autoConnect ? io() : io(process.env.SERVER || location.origin+'/tmt');
+  // https://socket.io/docs/v4/client-options/
+  console.log('origin is ' + location.origin);
+  socket = /*autoConnect ? io() : */io(/*process.env.SERVER || location.origin , */
+     { 
+	    path: '/tmt/socket.io',
+		transports: ["websocket", "polling"] // use WebSocket first, if available
+	});
 
   socket.on('connect', () => {
+	console.log("Websocket connected");
     socket.emit('test-bed-connect');
   });
   // socket.on('disconnect', () => log('Disconnected'));
   socket.on('connect_error', (err: Error) => {
+	  console.log("Websocket error " + JSON.stringify(err));
+	  console.log(`connect_error due to ${err.message}`);
     socket.close();
     if (autoConnect) {
       SocketSvc.socket = setupSocket(false);
