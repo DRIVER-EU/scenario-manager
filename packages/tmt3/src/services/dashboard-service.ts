@@ -15,6 +15,7 @@ import {
   TrialSettings,
   UsersView,
   SessionTable,
+  MessageConfigView,
 } from '../components';
 
 class DashboardService {
@@ -149,7 +150,7 @@ export const dashboardSvc: DashboardService = new DashboardService([
     visible: false,
     component: SelectMessageTypesForm,
     level: Dashboards.SETTINGS,
-  },
+  },*/
   {
     id: Dashboards.MESSAGE_CONFIG,
     title: 'Message Config',
@@ -157,7 +158,7 @@ export const dashboardSvc: DashboardService = new DashboardService([
     visible: false,
     component: MessageConfigView,
     level: Dashboards.SETTINGS,
-  },*/
+  },
   {
     id: Dashboards.STAKEHOLDERS,
     title: 'Stakeholders',

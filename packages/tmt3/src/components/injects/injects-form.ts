@@ -10,6 +10,7 @@ import {
   getInjects,
   getObjectives,
   getMessageIconFromTemplate,
+  getActiveTrialInfo,
 } from '../../utils';
 import {
   IInject,
@@ -20,10 +21,11 @@ import {
   getAllChildren,
   uniqueId,
   ITrial,
+  IKafkaMessage,
 } from 'trial-manager-models';
 import { InjectConditions } from './inject-conditions';
 import { MessageForm } from '../messages';
-import { MeiosisComponent } from '../../services';
+import { actions, MeiosisComponent } from '../../services';
 
 export interface IInjectsForm extends Attributes {
   disabled?: boolean;
@@ -85,7 +87,9 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
         app: { templates },
       } = state;
       getMessageIcon = getMessageIconFromTemplate(templates);
-      messageOpt = templates.map((t) => ({ id: t.topic, label: t.label }));
+      const { trial } = getActiveTrialInfo(state);
+      //messageOpt = templates.map((t) => ({ id: t.topic, label: t.label }));
+      messageOpt = trial.selectedMessageTypes.map((t) => ({ id: t.id, label: t.name }));
       // const { trial } = getActiveTrialInfo(state);
       // const selectedMessageTypes = trial.selectedMessageTypes;
       // messageOpt = messageOptions(selectedMessageTypes);
@@ -96,6 +100,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
       const disabled = isExecuting;
       const { trial, injectId, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
       const { updateInject, createInject, createInjects, deleteInject } = actions;
+      const selectedMessageTypes = trial.selectedMessageTypes;
 
       const id = injectId || scenarioId;
       const injects = getInjects(trial);
@@ -133,12 +138,9 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
           }
         } else if (copiedInjects instanceof Array) {
           const isParentChildRelation =
-            (isScenario(inject) && isStoryline(copy)) ||
-            (isStoryline(inject) && isInject(copy)) ||
-            (isInject(copy));
+            (isScenario(inject) && isStoryline(copy)) || (isStoryline(inject) && isInject(copy)) || isInject(copy);
           const isSiblingRelation =
-            (isScenario(inject) && isScenario(copy)) ||
-            (isStoryline(inject) && isStoryline(copy))
+            (isScenario(inject) && isScenario(copy)) || (isStoryline(inject) && isStoryline(copy));
           if (isParentChildRelation) {
             createInjects(createFreshInjects(copiedInjects, copy.parentId!, newParentId));
           } else if (isSiblingRelation) {
@@ -183,7 +185,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
         m(
           '.col.s12',
           {
-            // key: inject.id,
+            key: inject.id,
             style: 'color: #b4790c',
           },
           [
@@ -220,11 +222,15 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
                     disabled,
                     iconName: getMessageIcon(inject.topic),
                     placeholder: 'Select the message type',
-                    checkedId: inject.topic,
+                    checkedId: inject.topicId,
                     options: messageOpt,
                     onchange: (v) => {
                       // console.warn('Getting message form');
-                      inject!.topic = v[0] as MessageType;
+                      const selMsg = selectedMessageTypes.find((msg: IKafkaMessage) => msg.id === v[0]);
+                      inject!.selectedMessage = selMsg;
+                      inject!.topic = selMsg?.messageForm as MessageType;
+                      inject!.topicId = v[0] as string;
+                      inject!.kafkaTopic = selMsg?.kafkaTopic as string;
                       updateInject(inject);
                     },
                   })
@@ -266,29 +272,46 @@ export const SetObjectives: FactoryComponent<{ trial: ITrial; inject: IInject; d
         objectives.filter((o) => o.id === injectGroup.mainObjectiveId || o.id === injectGroup.secondaryObjectiveId)
           .length > 0;
 
+      const getInjectGroup = () => {
+        return injectGroup;
+      };
+
       return isGroup && !(disabled && !hasObjectives())
         ? m('.row', [
             m(Dropdown, {
+              key: inject.id + 'primary',
               disabled,
-              id: 'primary',
+              id: 'primary' + inject.id,
               className: 'col s6',
               helperText: 'Main objective',
-              checkedId: injectGroup.mainObjectiveId,
+              checkedId: getInjectGroup().mainObjectiveId,
               items: objectives,
-              onchange: (id: string | number) => (injectGroup.mainObjectiveId = id as string),
+              onchange: (id: string | number) => {
+                if (id !== 'Pick one') {
+                  const ijg = getInjectGroup();
+                  ijg.mainObjectiveId = id as string;
+                  actions.updateInject(ijg);
+                }
+              },
             }),
-            injectGroup.mainObjectiveId
-              ? m(Dropdown, {
-                  disabled,
-                  id: 'secondary',
-                  className: 'col s6',
-                  helperText: 'Secondary objective',
-                  checkedId: injectGroup.secondaryObjectiveId,
-                  items: objectives,
-                  onchange: (id: string | number) => (injectGroup.secondaryObjectiveId = id as string),
-                })
-              : undefined,
-          ])
+            injectGroup.mainObjectiveId &&
+              m(Dropdown, {
+                key: inject.id + 'secondary',
+                disabled,
+                id: 'secondary' + inject.id,
+                className: 'col s6',
+                helperText: 'Secondary objective',
+                checkedId: getInjectGroup().secondaryObjectiveId,
+                items: objectives,
+                onchange: (id: string | number) => {
+                  if (id !== 'Pick one') {
+                    const ijg = getInjectGroup();
+                    ijg.secondaryObjectiveId = id as string;
+                    actions.updateInject(ijg);
+                  }
+                },
+              })
+          ].filter(Boolean))
         : undefined;
     },
   };

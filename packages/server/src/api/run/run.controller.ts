@@ -168,6 +168,8 @@ export class RunController {
             'system_heartbeat',
             'simulation_time_control',
             'simulation_session_mgmt',
+            'named_json',
+            'system_tm_role_player'
           ].indexOf(t) < 0,
       );
     return response.send(topics);

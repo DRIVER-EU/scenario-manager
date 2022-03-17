@@ -11,8 +11,11 @@ export const AssetsForm: MeiosisComponent = () => {
   let asset = {} as IAsset;
   let files = undefined as FileList | undefined;
   let overlay = undefined as GeoJSON | undefined;
+  let filePreview: string = '';
+  let prev_file_id: number;
 
   return {
+
     view: ({
       attrs: {
         state: {
@@ -38,6 +41,17 @@ export const AssetsForm: MeiosisComponent = () => {
             overlay = geoJSON(json as GeoJSON.FeatureCollection);
           }
         });
+      }
+      if (asset.id && prev_file_id != asset?.id && asset.url) {
+        prev_file_id = asset?.id;
+        asset.url.length > 1
+          ? m.request({ url: asset?.url as string, method: 'GET' }).then((json) => {
+              filePreview = JSON.stringify(json, undefined, 4);
+            })
+          : undefined;
+      } else if (!asset.url) {
+        filePreview = '';
+        prev_file_id = asset.id;
       }
 
       return m('.row.sb.large', [
@@ -82,7 +96,7 @@ export const AssetsForm: MeiosisComponent = () => {
                   overlay
                     ? m(LeafletMap, {
                         baseLayers,
-                        style: 'width: 100%; height: 400px; margin: 10px;',
+                        style: 'width: 100%; height: 200px; margin: 5px;',
                         overlays: { [asset.alias || asset.filename]: overlay },
                         visible: [asset.alias || asset.filename],
                         showScale: { imperial: false },
@@ -100,6 +114,16 @@ export const AssetsForm: MeiosisComponent = () => {
                           height: 200,
                         })
                       )
+                    : undefined,
+                  filePreview !== ''
+                    ? m('div.input-field.col.s12', { style: 'height: 200px; margin-bottom: 40px' }, [
+                        m('span', 'File Preview'),
+                        m(
+                          'textarea.materialize-textarea',
+                          { style: 'height: 200px; overflow-y: auto;', disabled: true, id: 'previewArea' },
+                          filePreview
+                        ),
+                      ])
                     : undefined,
                 ],
                 m(

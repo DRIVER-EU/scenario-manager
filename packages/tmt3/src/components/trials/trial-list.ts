@@ -10,6 +10,7 @@ let roleID: string;
 
 export const TrialList: MeiosisComponent = () => {
   let filterValue: string | undefined;
+  let mdl: M.Modal;
   // let loaded = false;
 
   const formatDate = (date: Date | string) => {
@@ -37,9 +38,9 @@ export const TrialList: MeiosisComponent = () => {
         },
       },
     }) => {
-      const elem = document.getElementById('session-running');
-      const instance = M.Modal.init(elem as HTMLElement);
-      instance && !instance.isOpen && !ignoreActive && activeSession ? instance.open() : undefined;
+      if((!mdl || !mdl.isOpen) && !ignoreActive && activeSession) {
+        mdl.open();
+      }
     },
     view: ({
       attrs: {
@@ -59,7 +60,7 @@ export const TrialList: MeiosisComponent = () => {
       const trialId = tags ? tags.trialId || (session as any).trialId : undefined;
       const query = titleAndDescriptionFilter(filterValue);
       const filteredTrials = trials.filter(query);
-      const apiService = process.env.SERVER || location.origin + '/tmt';
+      const apiService = (process.env.SERVER || location.origin) + '/tmt';
       console.table(session);
       console.table({ isConnected, activeSession });
 
@@ -75,11 +76,12 @@ export const TrialList: MeiosisComponent = () => {
             return { id: u.id, label: u.name };
           });
 
-      return [
-        m(ModalPanel, {
-          fixedFooter: true,
+      return [ m(ModalPanel, {
+          //fixedFooter: true,
+          options: { opacity: 0.7 },
           onCreate: (modal) => {
             modal.options.endingTop = '5%';
+            mdl = modal;
           },
           id: 'session-running',
           title: 'A Session is already running',
@@ -92,6 +94,7 @@ export const TrialList: MeiosisComponent = () => {
                 roleID = v[0] as string;
               },
             }),
+            m('div', {style: 'margin-bottom: 150px'})
           ]),
           buttons: [
             {

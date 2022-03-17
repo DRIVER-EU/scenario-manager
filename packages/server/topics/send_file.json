@@ -53,7 +53,7 @@
               "placeholder": "Pick one",
               "multiple": false,
               "required": true,
-              "type": "select",
+              "type": "&kafkaTopicSet",
               "options": "&kafkaTopics"
             }
           ]

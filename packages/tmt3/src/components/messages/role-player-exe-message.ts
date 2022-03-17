@@ -28,7 +28,6 @@ export const RolePlayerExeMessageForm: MeiosisComponent = () => {
       );
       return [
         rpm.type === RolePlayerMessageType.CALL ? m(CallMessage, { rolePlayer, msg, participants }) : undefined,
-        // m(TextArea, { initialValue: inject.})
       ];
     },
   };

@@ -1,4 +1,4 @@
-import { IMessageTopic, IObjective, IStakeholder, IInjectGroup, IInject, IPerson } from '.';
+import { IMessageTopic, IObjective, IStakeholder, IInjectGroup, IInject, IPerson, MessageType } from '.';
 
 export interface ITrialOverview {
   /** Refers to the filename on disk */
@@ -15,8 +15,14 @@ export interface ITrialOverview {
 }
 
 export interface IKafkaMessage {
+  id: string;
   name: string;
-  topic: string
+  messageForm: string;
+  messageType: MessageType;
+  kafkaTopic: string;
+  useNamespace: boolean;
+  namespace?: string;
+  iconName: string;
 }
 
 export interface ITrial extends ITrialOverview {

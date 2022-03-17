@@ -26,9 +26,10 @@ export const MediaControls: FactoryComponent<{
   isPaused: boolean;
   realtime: boolean;
   className?: string;
+  stopDisabled?: boolean;
 }> = () => {
   return {
-    view: ({ attrs: { id, time, socket, isPaused, canChangeSpeed, canStop = true, realtime, className } }) => {
+    view: ({ attrs: { id, time, socket, isPaused, canChangeSpeed, canStop = true, realtime, className, stopDisabled = true } }) => {
       return m('div', { id, className }, [
         realtime
           ? undefined
@@ -41,7 +42,7 @@ export const MediaControls: FactoryComponent<{
           ? m(FlatButton, {
               modalId: 'stopPanel',
               iconName: 'stop',
-              disabled: canChangeSpeed === false || time.state === TimeState.Initialization,
+              disabled: stopDisabled && canChangeSpeed === false || time.state === TimeState.Initialization,
             })
           : undefined,
         realtime
@@ -182,7 +183,7 @@ const MediaStateControl: MeiosisComponent = () => {
           ]);
         case TimeState.Paused:
           return m('.row', [
-            m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time, realtime }),
+            m(MediaControls, { socket, isPaused: true, canChangeSpeed: false, time, realtime, stopDisabled: false }),
             m('.col.s12.left', [
               m(TimePicker, {
                 label: 'Updated time:',
@@ -215,7 +216,7 @@ const MediaStateControl: MeiosisComponent = () => {
           ]);
         case TimeState.Started:
           return m('.col.s12', [
-            m(MediaControls, { socket, isPaused: false, canChangeSpeed: !disabled, time, realtime }),
+            m(MediaControls, { socket, isPaused: false, canChangeSpeed: !disabled, time, realtime, stopDisabled: false }),
             m('em', `Speed: ${time.simulationSpeed}x`),
             time.simulationSpeed !== 1
               ? m(FlatButton, { iconName: 'restore', disabled, onclick: () => updateSpeed(socket, 1) })

@@ -1,10 +1,10 @@
 import m from 'mithril';
-import { IAsset, InjectType, UserRole } from 'trial-manager-models';
+import { IAsset, IInject, InjectType, ITrial, UserRole } from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm } from '.';
 import { MessageComponent, restServiceFactory } from '../../services';
 import { getInject, getPath, getUsersByRole } from '../../utils';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
-import { ModalPanel, TextArea } from 'mithril-materialized';
+import { ModalPanel } from 'mithril-materialized';
 import { UploadAsset } from '../ui';
 
 export type MessageScope = 'edit' | 'execute';
@@ -84,8 +84,18 @@ export const MessageForm: MessageComponent = () => {
   let participantEmails: string;
   let availableAssets: string;
   let kafkaTopicOpts: string;
-  let filePreview: string;
+  let filePreview: string = '';
   let prev_file_id = -1;
+
+  const updateFilePreview = async (inject: IInject, trial: ITrial) => {
+    if (inject && inject.message && inject.message.SEND_FILE && (inject.message.SEND_FILE as any).file) {
+      if (prev_file_id != (inject.message.SEND_FILE as any).file) {
+        const assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
+        filePreview = JSON.stringify(await assetsSvc.load((inject.message.SEND_FILE as any).file), undefined, 4);
+        prev_file_id = (inject.message.SEND_FILE as any).file;
+      }
+    }
+  };
 
   return {
     oninit: ({ attrs: { state } }) => {
@@ -104,26 +114,25 @@ export const MessageForm: MessageComponent = () => {
       kafkaTopicOpts = JSON.stringify(
         kafkaTopics
           .filter((topic: string) => 'send_file'.indexOf(topic) < 0)
-          .map((topic: string) => ({ id: topic, label: topic }))
+          .map((topic: string) => ({
+            id: topic,
+            label: topic.charAt(0).toUpperCase() + topic.replace(/_/g, ' ').slice(1),
+          }))
       );
     },
-    onupdate: async ({ attrs: { state } }) => {
-      //const { mode } = state.app;
-      //const isExecuting = mode === 'execute';
-      const { trial, scenarioId, injectId } = state.app;
+    oncreate: async ({ attrs: { state } }) => {
+      const { mode } = state.app;
+      const isExecuting = mode === 'execute';
+      const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
       const inject = getInject(trial, injectId || scenarioId);
-
-      //@ts-ignore
-      if (inject && inject.message && inject.message.SEND_FILE && inject.message.SEND_FILE.file) {
-        //@ts-ignore
-        if (prev_file_id != inject.message.SEND_FILE.file) {
-          const assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
-          //@ts-ignore
-          filePreview = JSON.stringify(await assetsSvc.load(inject.message.SEND_FILE.file), undefined, 4);
-          //@ts-ignore
-          prev_file_id = inject.message.SEND_FILE.file;
-        }
-      }
+      !isExecuting && updateFilePreview(inject as IInject, trial);
+    },
+    onupdate: async ({ attrs: { state } }) => {
+      const { mode } = state.app;
+      const isExecuting = mode === 'execute';
+      const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
+      const inject = getInject(trial, injectId || scenarioId);
+      !isExecuting && updateFilePreview(inject as IInject, trial);
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { owner, mode, templates, assets } = state.app;
@@ -132,6 +141,7 @@ export const MessageForm: MessageComponent = () => {
       const inject = getInject(trial, injectId || scenarioId);
 
       if (inject && inject.type === InjectType.INJECT) {
+        let kafkaTopicSelect = inject.kafkaTopic === 'send_file' ? JSON.stringify('select') : JSON.stringify('none');
         const { updateInject, createAsset } = actions;
         const { editing = true } = options || {};
         const disabled = !editing;
@@ -149,6 +159,7 @@ export const MessageForm: MessageComponent = () => {
               .replace(/"&participantEmails"/g, participantEmails)
               .replace(/"&assets"/g, availableAssets)
               .replace(/"&kafkaTopics"/g, kafkaTopicOpts)
+              .replace(/"&kafkaTopicSet"/g, kafkaTopicSelect)
           ) as UIForm);
         // console.log(JSON.stringify(inject, null, 2));
         return (
@@ -177,20 +188,16 @@ export const MessageForm: MessageComponent = () => {
                 updateInject(inject);
               },
             }),
-            topic.icon === 'attach_file' &&
-            filePreview &&
-            inject.message &&
-            inject.message.SEND_FILE &&
-            //@ts-ignore
-            inject.message.SEND_FILE.file
+            filePreview !== ''
               ? [
-                  m(TextArea, {
-                    label: 'File Preview',
-                    iconName: 'attach_file',
-                    className: 'col s12',
-                    initialValue: filePreview,
-                    disabled: true,
-                  }),
+                  m('div.input-field.col.s12', { style: 'height: 300px' }, [
+                    m('span', 'File Preview'),
+                    m(
+                      'textarea.materialize-textarea',
+                      { style: 'height: 300px; overflow-y: auto; disabled', disabled: true, id: 'previewArea' },
+                      filePreview
+                    ),
+                  ]),
                 ]
               : undefined,
             m(ModalPanel, {

@@ -1,13 +1,30 @@
 import m from 'mithril';
 import { MessageConfigForm } from './message-config-form';
 import { MeiosisComponent } from '../../services';
-import { RoundIconButton, TextInput } from 'mithril-materialized';
+import { Collection, CollectionMode, ICollectionItem, RoundIconButton } from 'mithril-materialized';
+import { getActiveTrialInfo } from '../../utils';
+import { IKafkaMessage, MessageType, uniqueId } from 'trial-manager-models';
 
 const MessageConfigList: MeiosisComponent = () => {
-  //let filterValue = '' as string | undefined;
 
   return {
-    view: () => {
+    view: ({attrs: {state, actions}}) => {
+      const { trial } = getActiveTrialInfo(state);
+      const messages = trial.selectedMessageTypes;
+      const { messageId } = state.app;
+
+      const items = messages.map(
+        (msg) =>
+          ({
+            id: msg.id,
+            title: msg.name || '?',
+            iconName: 'create',
+            className: 'yellow black-text',
+            active: messageId === msg.id,
+            content: `${msg.name + ' ' + msg.kafkaTopic}`,
+            onclick: () => actions.selectMessage(msg),
+          } as ICollectionItem)
+      );
       return [
         m(
           '.row',
@@ -17,21 +34,21 @@ const MessageConfigList: MeiosisComponent = () => {
               class: 'green right btn-small',
               style: 'margin: 1em;',
               onclick: async () => {
-                //await createUser(user);
+                const msg = {
+                  id: uniqueId(),
+                  name: 'New message',
+                  kafkaTopic: '',
+                  messageForm: '',
+                  messageType: MessageType.SEND_FILE as MessageType,
+                } as IKafkaMessage;
+                await actions.createMessage(msg);
               },
-            }),
-            m(TextInput, {
-              label: 'Filter',
-              id: 'filter',
-              iconName: 'filter_list',
-              //onkeyup: (_: KeyboardEvent, v?: string) => (filterValue = v),
-              className: 'right',
             }),
           ])
         ),
-        //users.length > 0
-        //  ? m('.row.sb', m('.col.s12', m(Collection, { mode: CollectionMode.AVATAR, items })))
-        //  : undefined,
+        messages.length > 0
+          ? m('.row.sb', m('.col.s12', m(Collection, { mode: CollectionMode.BASIC, items })))
+          : undefined,
       ];
     },
   };

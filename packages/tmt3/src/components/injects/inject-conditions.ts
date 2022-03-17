@@ -244,8 +244,13 @@ const StartAt: FactoryComponent<{
   disabled?: boolean;
   updateInject: (inject: IInject) => Promise<void>;
 }> = () => {
+  let latestInject = {} as IInject
+  const getLatestInject = () => {
+    return latestInject;
+  }
   return {
     view: ({ attrs: { trial, condition, inject, disabled = false, updateInject } }) => {
+      latestInject = inject;
       const { delay = 0, delayUnitType = 'seconds' } = condition;
       if (!trial) {
         return;
@@ -258,13 +263,16 @@ const StartAt: FactoryComponent<{
       const delayInSeconds = delay * sec;
       const trialStart = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const atTime = new Date(trialStart.getTime() + delayInSeconds * 1000);
+      inject.condition ? inject.condition.injectId = inject.parentId : undefined;
       return m(TimePicker, {
+        key: inject.id,
         disabled,
         className: 'inline',
         initialValue: `${padLeft(atTime.getHours(), 2)}:${padLeft(atTime.getMinutes(), 2)}`,
         prefix: 'Start',
         dt: atTime,
         onchange: (time: string) => {
+          inject = getLatestInject();
           const regex = /(\d{1,2}):(\d{1,2})/g;
           const match = regex.exec(time);
           if (!match || match.length < 2) {

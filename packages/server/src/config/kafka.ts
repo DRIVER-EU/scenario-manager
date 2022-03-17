@@ -56,6 +56,10 @@ export default () => ({
         // 'sumo_AffectedArea',
         // 'simulation_request_unittransport',
         // 'standard_named_geojson',
+        'cbrn_geojson',
+        'chemical_incident',
+        'resource',
+        'simulation_entity_featurecollection'
       ],
     logging: {
       logToConsole: LogLevel.Debug,

@@ -128,4 +128,4 @@ const createRestServiceFactory = (apiService: string) => {
   };
 };
 
-export const restServiceFactory = createRestServiceFactory(process.env.SERVER || location.origin + '/tmt');
+export const restServiceFactory = createRestServiceFactory((process.env.SERVER || location.origin) + '/tmt');

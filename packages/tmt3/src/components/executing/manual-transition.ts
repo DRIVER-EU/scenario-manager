@@ -9,7 +9,7 @@ import {
   TimeState,
 } from 'trial-manager-models';
 import { FlatButton, ModalPanel, Select, TextArea, TextInput } from 'mithril-materialized';
-import { IExe, MeiosisComponent } from '../../services';
+import { MeiosisComponent } from '../../services';
 import { getMessageIconFromTemplate, getActiveTrialInfo, uniqueId } from '../../utils';
 
 export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void }> = () => {
@@ -40,7 +40,7 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
       const { inject, scenario } = getActiveTrialInfo<IExecutingInject>(state);
       const { time } = state.exe;
       const { startTime = 0 } = state.exe;
-      const { updateExecutingInject, createInject, transitionInject, update } = actions;
+      const { updateExecutingInject, createInject, transitionInject } = actions;
       if (!inject) return;
 
       const { id, state: from } = inject;
@@ -130,10 +130,10 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
                 newInject = {
                   id: uniqueId(),
                   type: InjectType.INJECT,
-                  parentId: inject.id,
+                  parentId: inject.parentId,
                   condition: {
                     type: InjectConditionType.MANUALLY,
-                    injectId: inject.id,
+                    injectId: inject.parentId,
                     injectState: InjectState.SCHEDULED,
                     delayUnitType: 'seconds',
                     //rolePlayerId:
@@ -181,13 +181,6 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
                   onclick: async () => {
                     isEditing = true;
                     options && options.editing && options.editing(isEditing);
-                    const scenarioStart = scenario && scenario.startDate ? new Date(scenario.startDate) : undefined;
-                    const relativeStartTime =
-                      scenarioStart && time.simulationTime ? (time.simulationTime - scenarioStart.valueOf()) / 1000 : 0;
-                    const delay = relativeStartTime - (startTime || 0);
-                    if (newInject.condition) newInject.condition.delay = delay;
-                    console.table(newInject);
-                    update({ exe: { startTime: relativeStartTime } as IExe });
                     await createInject(deepCopy(newInject));
                   },
                 },

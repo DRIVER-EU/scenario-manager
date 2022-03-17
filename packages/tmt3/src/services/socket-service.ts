@@ -22,7 +22,7 @@ export const setupSocket = (autoConnect = true) => {
   if (socket && socket.connected) {
     return socket;
   }
-  socket = autoConnect ? io() : io(process.env.SERVER || location.origin+'/tmt');
+  socket = io(process.env.SERVER || location.origin, {path: '/tmt/socket.io'});
 
   socket.on('connect', () => {
     socket.emit('test-bed-connect');

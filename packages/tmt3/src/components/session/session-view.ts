@@ -11,6 +11,8 @@ let roleID: string;
 let loggedIn: boolean;
 
 export const SessionView: MeiosisComponent = () => {
+  let mdl: M.Modal;
+
   return {
     oninit: ({
       attrs: {
@@ -22,65 +24,70 @@ export const SessionView: MeiosisComponent = () => {
       scenario && selectInject(scenario);
       m.redraw();
     },
-    onupdate: ({ attrs: { state } }) => {
-      loggedIn = state.exe.userId ? true : false
-      const elem = document.getElementById('session-start');
-      const instance = M.Modal.init(elem as HTMLElement);
-      instance && !instance.isOpen && !loggedIn ? instance.open() : undefined;
+    onupdate: () => {
+      if ((!mdl || !mdl.isOpen) && !loggedIn) {
+        mdl.open();
+      }
     },
     view: ({ attrs: { state, actions } }) => {
       const options = { editing: false };
-      loggedIn = state.exe.userId ? true : false
+      loggedIn = state.exe.userId ? true : false;
 
       const selOpts =
-      state.exe.trial.users &&
-      state.exe.trial.users
-        .filter(
-          (user) =>
-            user.roles &&
-            user.roles.some((role) => [UserRole.EXCON, UserRole.ROLE_PLAYER, UserRole.VIEWER].indexOf(role) >= 0)
-        )
-        .map((u) => {
-          return { id: u.id, label: u.name };
-        });
+        state.exe.trial.users &&
+        state.exe.trial.users
+          .filter(
+            (user) =>
+              user.roles &&
+              user.roles.some((role) => [UserRole.EXCON, UserRole.ROLE_PLAYER, UserRole.VIEWER].indexOf(role) >= 0)
+          )
+          .map((u) => {
+            return { id: u.id, label: u.name };
+          });
 
-      return[ m(ModalPanel, {
-        className: 'show',
-        fixedFooter: true,
-        onCreate: (modal) => {
-          modal.options.endingTop = '5%';
-        },
-        id: 'session-start',
-        title: 'Role selection',
-        description: m('div', [
-          m(Select, {
-            placeholder: 'Pick a role',
-            className: 'inline large',
-            options: selOpts ? selOpts : [],
-            onchange: (v) => {
-              roleID = v[0] as string;
-            },
-          })
-        ]),
-        buttons: [
-          { label: 'Cancel',
-          onclick: async () => {
-            dashboardSvc.switchTo(Dashboards.HOME);
-          }, },
-          {
-            label: 'Start',
-            onclick: async () => {
-              actions.loginUser(roleID);
-              loggedIn = true;
-            },
+      return [
+        m(ModalPanel, {
+          className: 'show',
+          options: { opacity: 0.7 },
+          //fixedFooter: true,
+          onCreate: (modal) => {
+            modal.options.endingTop = '5%';
+            mdl = modal;
           },
-        ],
-      }),
-      m('.row.sb.large', [
-        m('.col.s12.m4', m(SessionControl, { state, actions, options })),
-        m('.col.s12.m8', m(InjectsForm, { state, actions, options })),
-      ])]
+          id: 'session-start',
+          title: 'Role selection',
+          description: m('div', [
+            m(Select, {
+              placeholder: 'Pick a role',
+              className: 'inline large',
+              options: selOpts ? selOpts : [],
+              onchange: (v) => {
+                roleID = v[0] as string;
+              },
+            }),
+            m('div', { style: 'margin-bottom: 150px' }),
+          ]),
+          buttons: [
+            {
+              label: 'Cancel',
+              onclick: async () => {
+                dashboardSvc.switchTo(Dashboards.HOME);
+              },
+            },
+            {
+              label: 'Start',
+              onclick: async () => {
+                actions.loginUser(roleID);
+                loggedIn = true;
+              },
+            },
+          ],
+        }),
+        m('.row.sb.large', [
+          m('.col.s12.m4', m(SessionControl, { state, actions, options })),
+          m('.col.s12.m8', m(InjectsForm, { state, actions, options })),
+        ]),
+      ];
     },
   };
 };
-

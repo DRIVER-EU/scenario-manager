@@ -24,10 +24,12 @@ import {
   IPostMsg,
   postMessageToTestbed,
   ISendFileMessage,
+  IFeatureCollection,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
 import { parse } from '../../utils';
+import { IFeature } from 'node-test-bed-adapter';
 
 @Injectable()
 export class ExecutionService implements IExecutionService {
@@ -95,9 +97,17 @@ export class ExecutionService implements IExecutionService {
   private async sendFile(i: IInject) {
     const message = getMessage<ISendFileMessage>(i, MessageType.SEND_FILE);
 
-    const topic = message.kafkaTopicId;
+    let topic: string;
+    if(i.kafkaTopic !== 'send_file') {
+      topic = i.kafkaTopic
+    }
+    
     if (!topic) {
-      return console.warn(`There is no topic set`);
+      topic = message.kafkaTopicId;
+      //topic = i.kafkaTopic
+      if(!topic) {
+        return console.warn(`There is no topic set`);
+      }
     }
     const asset =
       message.file &&
@@ -105,11 +115,22 @@ export class ExecutionService implements IExecutionService {
     if (!asset) {
       return console.warn(`Could not open asset with ID (${message.file})`);
     } else {
-      const data = asset.data.toString();
+      let data = asset.data.toString();
+
+      if(i.selectedMessage.useNamespace) {
+        data = this.prepareGeoJSON(data, i.selectedMessage.namespace)
+      }
+
+      if(topic === 'named_json') {
       this.kafkaService.sendMessage(
         { name: asset.filename, json_string: data },
         topic,
       );
+      }
+      else {
+        data = JSON.parse(data);
+        this.kafkaService.sendMessage(data, topic)
+      }
     }
   }
 
@@ -295,4 +316,20 @@ export class ExecutionService implements IExecutionService {
   //   const topic = mt.topics.filter((t) => t.id === subjectId).shift();
   //   return topic && topic.topic ? topic.topic : undefined;
   // }
+
+  private prepareGeoJSON(data: string, namespace: string) {
+    const obj = JSON.parse(data);
+    if(obj.type && obj.type === 'FeatureCollection') {
+      obj.features && obj.features.forEach((ft: any) => {
+        const namespaceName = namespace + '.' + ft.geometry.type as string
+        ft.geometry = {[namespaceName]: ft.geometry}
+      })
+    }
+    else if (obj.type && obj.type === 'Feature') {
+      const namespaceName = namespace + '.' + obj.geometry.type as string
+      obj.geometry = {[namespaceName]: obj.geometry}
+    }
+
+    return JSON.stringify(obj)
+  }
 }
