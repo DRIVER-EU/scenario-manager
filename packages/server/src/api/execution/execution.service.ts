@@ -117,7 +117,7 @@ export class ExecutionService implements IExecutionService {
     } else {
       let data = asset.data.toString();
 
-      if(i.selectedMessage.useNamespace) {
+      if(i.selectedMessage && i.selectedMessage.useNamespace) {
         data = this.prepareGeoJSON(data, i.selectedMessage.namespace)
       }
 

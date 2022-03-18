@@ -1,4 +1,5 @@
 import { IMessageTopic, IObjective, IStakeholder, IInjectGroup, IInject, IPerson, MessageType } from '.';
+import { IAsset } from './asset';
 
 export interface ITrialOverview {
   /** Refers to the filename on disk */
@@ -23,6 +24,8 @@ export interface IKafkaMessage {
   useNamespace: boolean;
   namespace?: string;
   iconName: string;
+  useCustomGUI: boolean;
+  asset?: IAsset;
 }
 
 export interface ITrial extends ITrialOverview {

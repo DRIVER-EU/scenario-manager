@@ -341,3 +341,13 @@ tr.active {
   overflow-y: auto !important;
   height: 400px;
 }
+
+.checkbox-margin {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.checkbox-margin-large {
+  margin-top: 16px;
+  margin-bottom: 45px;
+}

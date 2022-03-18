@@ -40,6 +40,7 @@ const MessageConfigList: MeiosisComponent = () => {
                   kafkaTopic: '',
                   messageForm: '',
                   messageType: MessageType.SEND_FILE as MessageType,
+                  useCustomGUI: false
                 } as IKafkaMessage;
                 await actions.createMessage(msg);
               },

@@ -1,11 +1,12 @@
 import m from 'mithril';
-import { Button, Icon, InputCheckbox, ModalPanel, Select, TextInput } from 'mithril-materialized';
-import { deepCopy, deepEqual, IGuiTemplate, IKafkaMessage } from 'trial-manager-models';
+import { Button, FileInput, Icon, InputCheckbox, ModalPanel, Select, TextInput, UrlInput } from 'mithril-materialized';
+import { deepCopy, deepEqual, IAsset, IGuiTemplate, IKafkaMessage } from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 import { getActiveTrialInfo } from '../../utils';
 
 export const MessageConfigForm: MeiosisComponent = () => {
   let message = {} as IKafkaMessage;
+  let files = undefined as FileList | undefined;
 
   return {
     view: ({ attrs: { state, actions } }) => {
@@ -27,9 +28,12 @@ export const MessageConfigForm: MeiosisComponent = () => {
       }
 
       const onsubmit = (e: UIEvent) => {
+        if(message.asset && message.messageForm === '') {
+          message.messageForm = message.name
+        }
         e.preventDefault();
         if (message) {
-          actions.updateMessage(message);
+          actions.updateMessage(message, files);
         }
       };
       const hasChanged = !deepEqual(message, original);
@@ -71,7 +75,7 @@ export const MessageConfigForm: MeiosisComponent = () => {
                     }),
                     m(TextInput, {
                       id: 'iconName',
-                      className: 'col s4',
+                      className: 'col s2',
                       isMandatory: true,
                       initialValue: message.iconName,
                       onchange: (v: string) => (message.iconName = v),
@@ -79,10 +83,37 @@ export const MessageConfigForm: MeiosisComponent = () => {
                     }),
                     m(Icon, {
                       iconName: message.iconName,
-                      className: 'col s2',
+                      className: 'col s1',
                       style: 'margin-top: 16px;',
                     }),
-                    m(Select, {
+                    m(InputCheckbox, {
+                      label: 'Upload GUI',
+                      className: 'col s3 checkbox-margin',
+                      checked: message.useCustomGUI,
+                      onchange: (v) => {
+                        message ? (message.useCustomGUI = v as boolean) : undefined
+                        message && !message.asset ? (message.asset = {alias: 'gui_form'} as IAsset) : undefined
+                        if(!v && message && message.asset) { 
+                          actions.deleteAsset(message.asset)
+                          message.asset = {} as IAsset
+                        }
+                      }
+                    }),
+                    message.useCustomGUI ? [
+                    m(FileInput, {
+                      initialValue: message.asset?.filename,
+                      className: 'col s6',
+                      placeholder: 'Select or replace the file',
+                      onchange: (fl: FileList) => (files = fl),
+                    }), m(UrlInput, {
+                      id: 'file',
+                      initialValue: message.asset?.url,
+                      disabled: true,
+                      label: 'URL',
+                      iconName: 'link',
+                      className: 'col s6',
+                      style: 'margin-bottom: 51px'
+                    }) ] : m(Select, {
                       label: 'Form for the message',
                       className: 'col s6',
                       placeholder: 'Message form',
@@ -90,7 +121,6 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       checkedId: message.messageForm,
                       onchange: (v) => {message ? (message.messageForm = v[0] as string) : undefined},
                     }),
-                    message.messageForm === 'send_file' ? [
                       m(Select, {
                       label: 'Kafka topic for the message',
                       className: 'col s6',
@@ -100,8 +130,8 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       onchange: (v) => {message ? (message.kafkaTopic = v[0] as string) : undefined},
                     }), 
                     m(InputCheckbox, {
-                      label: 'Will the file be GeoJSON?',
-                      className: 'col s6',
+                      label: 'GeoJSON?',
+                      className: 'col s6 checkbox-margin-large',
                       checked: message.useNamespace,
                       onchange: (v) => {
                         message ? (message.useNamespace = v as boolean) : undefined
@@ -116,7 +146,6 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       onchange: (v: string) => (message.namespace = v),
                       label: 'Namespace',
                     }) : undefined,
-                  ] : undefined,
                   ],
                   m('form.col.s12', [
                     m(Button, {

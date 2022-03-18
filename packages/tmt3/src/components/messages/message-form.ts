@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { IAsset, IInject, InjectType, ITrial, UserRole } from 'trial-manager-models';
+import { IAsset, IGuiTemplate, IInject, IKafkaMessage, InjectType, ITrial, UserRole } from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm } from '.';
 import { MessageComponent, restServiceFactory } from '../../services';
 import { getInject, getPath, getUsersByRole } from '../../utils';
@@ -86,6 +86,7 @@ export const MessageForm: MessageComponent = () => {
   let kafkaTopicOpts: string;
   let filePreview: string = '';
   let prev_file_id = -1;
+  let customTemplates = [] as IGuiTemplate[];
 
   const updateFilePreview = async (inject: IInject, trial: ITrial) => {
     if (inject && inject.message && inject.message.SEND_FILE && (inject.message.SEND_FILE as any).file) {
@@ -98,7 +99,7 @@ export const MessageForm: MessageComponent = () => {
   };
 
   return {
-    oninit: ({ attrs: { state } }) => {
+    oninit: async ({ attrs: { state } }) => {
       const {
         app: { mode, assets, kafkaTopics },
       } = state;
@@ -110,7 +111,7 @@ export const MessageForm: MessageComponent = () => {
       participantEmails = JSON.stringify(
         getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.email, label: rp.name }))
       );
-      availableAssets = JSON.stringify(assets.map((a) => ({ id: a.id, label: a.alias || a.filename })));
+      availableAssets = JSON.stringify(assets.filter((a) => a.alias !== 'gui_form').map((a) => ({ id: a.id, label: a.alias || a.filename })));
       kafkaTopicOpts = JSON.stringify(
         kafkaTopics
           .filter((topic: string) => 'send_file'.indexOf(topic) < 0)
@@ -119,6 +120,19 @@ export const MessageForm: MessageComponent = () => {
             label: topic.charAt(0).toUpperCase() + topic.replace(/_/g, ' ').slice(1),
           }))
       );
+      const assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
+      const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.asset)
+      customForms.forEach(async (msg: IKafkaMessage) => {
+        if(msg.asset) {
+        const gui = JSON.parse(JSON.stringify(await assetsSvc.load(msg.asset.id)))
+        customTemplates.push({
+          label: msg.name,
+          icon: msg.iconName,
+          topic: msg.name,
+          ui: JSON.stringify(gui.ui),
+        } as IGuiTemplate)
+        }
+      })
     },
     oncreate: async ({ attrs: { state } }) => {
       const { mode } = state.app;
@@ -145,8 +159,11 @@ export const MessageForm: MessageComponent = () => {
         const { updateInject, createAsset } = actions;
         const { editing = true } = options || {};
         const disabled = !editing;
-        const topic = templates.find((t) => t.topic === inject.topic);
-        if (!topic) return;
+        let topic = templates.find((t) => t.topic === inject.topic);
+        if (!topic) {
+          topic = customTemplates.find((t) => t.topic === inject.topic);
+          if(!topic) return;
+        }
         const { update } = topic;
         const ui =
           typeof topic.ui === 'string' &&

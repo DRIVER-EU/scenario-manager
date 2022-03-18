@@ -174,7 +174,7 @@ export interface IAppStateActions {
 
   selectMessage: (msg: IKafkaMessage) => void;
   createMessage: (msg: IKafkaMessage) => Promise<void>;
-  updateMessage: (msg: IKafkaMessage) => Promise<void>;
+  updateMessage: (msg: IKafkaMessage, files?: FileList) => Promise<void>;
   deleteMessage: (msg: IKafkaMessage) => Promise<void>;
 }
 
@@ -200,26 +200,24 @@ const files2formData = (asset: IAsset, files: FileList) => {
   return undefined;
 };
 
-
-
 const stripNamespaces = (fd: FormData) => {
-  let text: string = ''
+  let text: string = '';
   const handleFileLoad = (event: any) => {
     console.log(event);
-    text = event.target.result
-  }
+    text = event.target.result;
+  };
 
   fd.forEach((value) => {
-    if(value instanceof File) {
+    if (value instanceof File) {
       const fr = new FileReader();
       fr.onload = handleFileLoad;
-      fr.readAsText(value)
+      fr.readAsText(value);
     }
-  })
-  console.log(text)
+  });
+  console.log(text);
 
-  return fd
-}
+  return fd;
+};
 
 export const appStateMgmt = {
   initial: {
@@ -290,8 +288,8 @@ export const appStateMgmt = {
             .filter((i) => i.id === scenarioId)
             .shift() as IScenario;
           let scenarioStartTime = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
-          if(t){
-            const scenario = t.injects.find((inj) => inj.type === 'SCENARIO') as IScenario
+          if (t) {
+            const scenario = t.injects.find((inj) => inj.type === 'SCENARIO') as IScenario;
             scenarioStartTime = scenario && scenario.startDate ? new Date(scenario.startDate) : new Date();
           }
           update({ exe: { session, trial: t || trial, scenarioStartTime } });
@@ -422,12 +420,66 @@ export const appStateMgmt = {
           objectives: [{ id: uniqueId(), title: 'Fix gap 1' }],
           messageTopics: [],
           selectedMessageTypes: [
-            { id: uniqueId(), name: 'Change observer questionnaire', messageForm: 'system_request_change_of_trial_stage', messageType: MessageType.CHANGE_OBSERVER_QUESTIONNAIRES, kafkaTopic: 'system_request_change_of_trial_stage', useNamespace: false, iconName: 'attach_file' },
-            { id: uniqueId(), name: 'Change exercise phase', messageForm: 'system_tm_phase_message', messageType: MessageType.PHASE_MESSAGE, kafkaTopic: 'system_tm_phase_message', useNamespace: false, iconName: 'attach_file' },
-            { id: uniqueId(), name: 'send CAP message', messageForm: 'standard_cap', messageType: MessageType.CAP_MESSAGE, kafkaTopic: 'standard_cap', useNamespace: false, iconName: 'attach_file' },
-            { id: uniqueId(), name: 'Send email, reports, or other posts', messageForm: 'simulation_entity_post', messageType: MessageType.POST_MESSAGE, kafkaTopic: 'simulation_entity_post', useNamespace: false, iconName: 'attach_file' },
-            { id: uniqueId(), name: 'Send file', messageForm: 'send_file', messageType: MessageType.SEND_FILE, kafkaTopic: 'send_file', useNamespace: false, iconName: 'attach_file' },
-            { id: uniqueId(), name: 'Send inject', messageForm: 'simulation_request_startinject', messageType: MessageType.START_INJECT, kafkaTopic: 'simulation_request_startinject', useNamespace: false, iconName: 'attach_file' },
+            {
+              id: uniqueId(),
+              name: 'Change observer questionnaire',
+              messageForm: 'system_request_change_of_trial_stage',
+              messageType: MessageType.CHANGE_OBSERVER_QUESTIONNAIRES,
+              kafkaTopic: 'system_request_change_of_trial_stage',
+              useNamespace: false,
+              iconName: 'attach_file',
+              useCustomGUI: false,
+            },
+            {
+              id: uniqueId(),
+              name: 'Change exercise phase',
+              messageForm: 'system_tm_phase_message',
+              messageType: MessageType.PHASE_MESSAGE,
+              kafkaTopic: 'system_tm_phase_message',
+              useNamespace: false,
+              iconName: 'attach_file',
+              useCustomGUI: false,
+            },
+            {
+              id: uniqueId(),
+              name: 'send CAP message',
+              messageForm: 'standard_cap',
+              messageType: MessageType.CAP_MESSAGE,
+              kafkaTopic: 'standard_cap',
+              useNamespace: false,
+              iconName: 'attach_file',
+              useCustomGUI: false,
+            },
+            {
+              id: uniqueId(),
+              name: 'Send email, reports, or other posts',
+              messageForm: 'simulation_entity_post',
+              messageType: MessageType.POST_MESSAGE,
+              kafkaTopic: 'simulation_entity_post',
+              useNamespace: false,
+              iconName: 'attach_file',
+              useCustomGUI: false,
+            },
+            {
+              id: uniqueId(),
+              name: 'Send file',
+              messageForm: 'send_file',
+              messageType: MessageType.SEND_FILE,
+              kafkaTopic: 'send_file',
+              useNamespace: false,
+              iconName: 'attach_file',
+              useCustomGUI: false,
+            },
+            {
+              id: uniqueId(),
+              name: 'Send inject',
+              messageForm: 'simulation_request_startinject',
+              messageType: MessageType.START_INJECT,
+              kafkaTopic: 'simulation_request_startinject',
+              useNamespace: false,
+              iconName: 'attach_file',
+              useCustomGUI: false,
+            },
           ],
           injects: [
             {
@@ -569,10 +621,8 @@ export const appStateMgmt = {
       createAsset: async (asset: IAsset, files?: FileList) => {
         const { assets } = states().app;
         let fd = files ? files2formData(asset, files) : undefined;
-        fd ? fd = stripNamespaces(fd) : undefined;
+        fd ? (fd = stripNamespaces(fd)) : undefined;
         const newAsset = await assetsSvc.create(asset, fd);
-        console.log(fd)
-        console.log(asset)
         if (newAsset && newAsset.filename) {
           newAsset.url = assetsSvc.url + newAsset.id;
         }
@@ -584,7 +634,7 @@ export const appStateMgmt = {
       updateAsset: async (asset: IAsset, files?: FileList) => {
         const { assets } = states().app;
         let fd = files && files2formData(asset, files);
-        fd ? fd = stripNamespaces(fd) : undefined;
+        fd ? (fd = stripNamespaces(fd)) : undefined;
         if (asset.filename) {
           asset.url = assetsSvc.url + asset.id;
         }
@@ -658,7 +708,16 @@ export const appStateMgmt = {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
         trial.selectedMessageTypes = messageTypes.map((msg: string) => {
-          return { id: uniqueId(), name: msg, messageForm: msg, messageType: msg as MessageType, kafkaTopic: '', useNamespace: false, iconName: 'attach_file' };
+          return {
+            id: uniqueId(),
+            name: msg,
+            messageForm: msg,
+            messageType: msg as MessageType,
+            kafkaTopic: '',
+            useNamespace: false,
+            iconName: 'attach_file',
+            useCustomGUI: false,
+          };
         });
         console.log(messageTypes);
         await trialSvc.patch(trial, oldTrial);
@@ -710,7 +769,7 @@ export const appStateMgmt = {
         update({ app: { trial: trial } });
       },
       setPresetRole: (id: string) => {
-        update({ exe: { userId:  id } });
+        update({ exe: { userId: id } });
       },
 
       selectMessage: (msg: IKafkaMessage) => update({ app: { messageId: msg.id } }),
@@ -727,7 +786,18 @@ export const appStateMgmt = {
         // console.table(trial.Users);
         update({ app: { messageId: msg.id, trial } });
       },
-      updateMessage: async (msg: IKafkaMessage) => {
+      updateMessage: async (msg: IKafkaMessage, files?: FileList) => {
+        const asset = msg.asset;
+        if (asset) {
+          let fd = files && files2formData(asset, files);
+          const newAsset = await assetsSvc.create(asset, fd);
+          if (newAsset && newAsset.filename) {
+            newAsset.url = assetsSvc.url + newAsset.id;
+          }
+          console.log(newAsset)
+          newAsset ? msg.asset = newAsset : undefined;
+        }
+
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
         trial.selectedMessageTypes = trial.selectedMessageTypes.map((s) => (s.id === msg.id ? msg : s));
@@ -735,6 +805,9 @@ export const appStateMgmt = {
         update({ app: { messageId: msg.id, trial } });
       },
       deleteMessage: async (msg: IKafkaMessage) => {
+        if(msg.asset) {
+          actions.deleteAsset(msg.asset)
+        }
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
         trial.selectedMessageTypes = trial.selectedMessageTypes.filter((s) => s.id !== msg.id);
