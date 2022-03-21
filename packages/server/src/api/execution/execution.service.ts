@@ -45,7 +45,10 @@ export class ExecutionService implements IExecutionService {
   }
 
   public execute(i: IInject, _state = InjectState.EXECUTED, comment?: string) {
-    const { messageType } = i;
+    let { messageType } = i;
+    if(!messageType && i.selectedMessage && i.selectedMessage.messageType) {
+      messageType = i.selectedMessage.messageType;
+    }
     switch (messageType) {
       case MessageType.SEND_FILE:
         this.sendFile(i);

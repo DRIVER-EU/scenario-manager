@@ -1,11 +1,12 @@
 import m from 'mithril';
-import { IAsset, IGuiTemplate, IInject, IKafkaMessage, InjectType, ITrial, UserRole } from 'trial-manager-models';
-import { ScenarioForm, DefaultMessageForm } from '.';
+import { IAsset, IGuiTemplate, IInject, IKafkaMessage, InjectType, ITrial, MessageType, UserRole } from 'trial-manager-models';
+import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm } from '.';
 import { MessageComponent, restServiceFactory } from '../../services';
 import { getInject, getPath, getUsersByRole } from '../../utils';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
 import { ModalPanel } from 'mithril-materialized';
 import { UploadAsset } from '../ui';
+import { RolePlayerMessageView } from './role-player-message';
 
 export type MessageScope = 'edit' | 'execute';
 
@@ -153,11 +154,17 @@ export const MessageForm: MessageComponent = () => {
       const isExecuting = mode === 'execute';
       const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
       const inject = getInject(trial, injectId || scenarioId);
+      
+      const { editing = true } = options || {};
+
+      if(inject && inject.type === InjectType.INJECT && inject.topic === MessageType.ROLE_PLAYER_MESSAGE) {
+        const sao = { state, actions, options };
+        return  isExecuting && !editing ? m(RolePlayerMessageView, sao) : m(RolePlayerMessageForm, sao);
+      }
 
       if (inject && inject.type === InjectType.INJECT) {
         let kafkaTopicSelect = inject.kafkaTopic === 'send_file' ? JSON.stringify('select') : JSON.stringify('none');
         const { updateInject, createAsset } = actions;
-        const { editing = true } = options || {};
         const disabled = !editing;
         let topic = templates.find((t) => t.topic === inject.topic);
         if (!topic) {

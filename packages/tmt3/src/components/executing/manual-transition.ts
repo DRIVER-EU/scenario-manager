@@ -7,6 +7,7 @@ import {
   MessageType,
   deepCopy,
   TimeState,
+  IKafkaMessage,
 } from 'trial-manager-models';
 import { FlatButton, ModalPanel, Select, TextArea, TextInput } from 'mithril-materialized';
 import { MeiosisComponent } from '../../services';
@@ -26,21 +27,21 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
     inject.condition.type === InjectConditionType.MANUALLY;
 
   return {
-    oninit: ({
-      attrs: {
-        state: {
-          app: { templates },
-        },
-      },
-    }) => {
+    oninit: ({ attrs: { state } }) => {
+      const {
+        app: { templates },
+      } = state;
       getMessageIcon = getMessageIconFromTemplate(templates);
-      msgOptions = templates.map((t) => ({ id: t.topic, label: t.label }));
+      const { trial } = getActiveTrialInfo(state);
+      msgOptions = trial.selectedMessageTypes.filter((t) => !t.useCustomGUI).map((t) => ({ id: t.id, label: t.name }));
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { inject, scenario } = getActiveTrialInfo<IExecutingInject>(state);
-      const { time } = state.exe;
+      const { time, trial } = state.exe;
       const { startTime = 0 } = state.exe;
       const { updateExecutingInject, createInject, transitionInject } = actions;
+      
+      const selectedMessageTypes = trial.selectedMessageTypes;
       if (!inject) return;
 
       const { id, state: from } = inject;
@@ -152,7 +153,11 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
                   options: msgOptions,
                   fixedFooter: true,
                   onchange: (v) => {
-                    newInject.topic = v[0] as MessageType;
+                    const selMsg = selectedMessageTypes.find((msg: IKafkaMessage) => msg.id === v[0]);
+                    newInject!.selectedMessage = selMsg;
+                    newInject!.topic = selMsg?.messageForm as MessageType;
+                    newInject!.topicId = v[0] as string;
+                    newInject!.kafkaTopic = selMsg?.kafkaTopic as string;
                   },
                 }),
                 m(TextInput, {

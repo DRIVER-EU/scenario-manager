@@ -201,9 +201,9 @@ const files2formData = (asset: IAsset, files: FileList) => {
 };
 
 const stripNamespaces = (fd: FormData) => {
+  // @ts-ignore
   let text: string = '';
   const handleFileLoad = (event: any) => {
-    console.log(event);
     text = event.target.result;
   };
 
@@ -214,7 +214,6 @@ const stripNamespaces = (fd: FormData) => {
       fr.readAsText(value);
     }
   });
-  console.log(text);
 
   return fd;
 };
@@ -480,6 +479,16 @@ export const appStateMgmt = {
               iconName: 'attach_file',
               useCustomGUI: false,
             },
+            {
+              id: 'rp_msg',
+              name: 'Roleplayer Message',
+              messageForm: 'ROLE_PLAYER_MESSAGE',
+              messageType: 'ROLE_PLAYER_MESSAGE',
+              kafkaTopic: 'system_tm_role_player',
+              useNamespace: false,
+              iconName: 'person',
+              useCustomGUI: false
+            }
           ],
           injects: [
             {
@@ -719,7 +728,6 @@ export const appStateMgmt = {
             useCustomGUI: false,
           };
         });
-        console.log(messageTypes);
         await trialSvc.patch(trial, oldTrial);
         update({ app: { trial } });
       },
@@ -794,7 +802,6 @@ export const appStateMgmt = {
           if (newAsset && newAsset.filename) {
             newAsset.url = assetsSvc.url + newAsset.id;
           }
-          console.log(newAsset)
           newAsset ? msg.asset = newAsset : undefined;
         }
 
