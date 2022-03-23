@@ -66,10 +66,7 @@ export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
 export const enumToOptions = <E extends { [P in keyof E]: string }>(e: E) =>
   Object.keys(e).map((id) => ({ id, label: id.replace(/_/g, ' ').toUpperCase() }));
 
-/**
- * Convert an item array to a tree. Assumes each item has a parentId.
- * @param items Items
- */
+/** Convert an item array to a tree. Assumes each item has a parentId. */
 export const unflatten = <T extends { id?: string; parentId?: string }>(
   entities: T[] = [],
   parent = { id: undefined } as { id?: string; children?: T[] },
@@ -137,43 +134,11 @@ export const getInjectIcon = (type?: InjectType) => {
 
 /**
  * Represent the message with an icon.
- * @param type message type
  * @param templates message templates
- * @param topic message type
  */
 export const getMessageIconFromTemplate = (templates: IGuiTemplate[]) => (topic?: string) => {
   const found = templates.find((t) => t.topic === topic);
   return found ? found.icon : 'message';
-  // switch (type) {
-  //   case MessageType.GEOJSON_MESSAGE:
-  //     return 'map';
-  //   case MessageType.CAP_MESSAGE:
-  //     return 'add_alert';
-  //   case MessageType.PHASE_MESSAGE:
-  //     return 'flag'; // 'chat';
-  //   case MessageType.ROLE_PLAYER_MESSAGE:
-  //     return 'record_voice_over';
-  //   case MessageType.POST_MESSAGE:
-  //     return 'mail';
-  //   case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
-  //     return 'speaker_notes';
-  //   case MessageType.LCMS_MESSAGE:
-  //     return 'event_seat';
-  //   case MessageType.START_INJECT:
-  //     return 'colorize';
-  //   case MessageType.LARGE_DATA_UPDATE:
-  //     return 'link';
-  //   case MessageType.REQUEST_UNIT_MOVE:
-  //     return 'directions';
-  //   case MessageType.SET_AFFECTED_AREA:
-  //     return 'wallpaper';
-  //   case MessageType.SUMO_CONFIGURATION:
-  //     return 'traffic';
-  //   case MessageType.CHECKPOINT:
-  //     return 'playlist_add_check';
-  //   default:
-  //     return 'message';
-  // }
 };
 
 /**
@@ -203,36 +168,6 @@ export const getRolePlayerMessageIcon = (type?: RolePlayerMessageType) => {
 export const getMessageTitleFromTemplate = (templates: IGuiTemplate[]) => (topic?: string) => {
   const found = templates.find((t) => t.topic === topic);
   return found ? found.label : 'message';
-  // switch (topic) {
-  //   case MessageType.GEOJSON_MESSAGE:
-  //     return 'SEND MAP OVERLAY';
-  //   case MessageType.CAP_MESSAGE:
-  //     return 'SEND COMMON ALERTING PROTOCOL MESSAGE';
-  //   case MessageType.PHASE_MESSAGE:
-  //     return 'SET PHASE';
-  //   case MessageType.POST_MESSAGE:
-  //     return 'POST MESSAGE';
-  //   case MessageType.ROLE_PLAYER_MESSAGE:
-  //     return 'INSTRUCT ROLE PLAYER';
-  //   case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
-  //     return 'CHANGE OBSERVER QUESTIONNAIRES';
-  //   case MessageType.LCMS_MESSAGE:
-  //     return 'LCMS MESSAGE';
-  //   case MessageType.START_INJECT:
-  //     return 'START EVENT';
-  //   case MessageType.LARGE_DATA_UPDATE:
-  //     return 'SEND (DATA) LINK';
-  //   case MessageType.REQUEST_UNIT_MOVE:
-  //     return 'MOVE UNIT';
-  //   case MessageType.SET_AFFECTED_AREA:
-  //     return 'SET AFFECTED AREA';
-  //   case MessageType.SUMO_CONFIGURATION:
-  //     return 'CONFIGURE SUMO';
-  //   case MessageType.CHECKPOINT:
-  //     return 'SET CHECKPOINT';
-  //   default:
-  //     return 'message';
-  // }
 };
 
 /** Get the icon for an inject, either a scenario/storyline/act icon, or a message icon */
@@ -558,15 +493,10 @@ export const injectToTimelineItemFactory =
     } as ITimelineItem & IExecutingInject & { delay: number };
   };
 
-// export const messageOptions = (selectedMessageTypes: string[]) =>
-//   enumToOptions(MessageType)
-//     .filter(({ id }) => !selectedMessageTypes || selectedMessageTypes.indexOf(id) >= 0)
-//     .map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
-
 /**
  * Retreive a value from an object using a dynamic path.
  * If the attribute does not exist, return undefined.
- * @param o: object
+ * @param obj: object
  * @param s: path, e.g. a.b[0].c
  * @see https://stackoverflow.com/a/6491621/319711
  */
