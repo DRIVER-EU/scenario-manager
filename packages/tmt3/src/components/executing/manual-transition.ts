@@ -33,7 +33,7 @@ export const ManualTransition: MeiosisComponent<{ editing?: (v: boolean) => void
       } = state;
       getMessageIcon = getMessageIconFromTemplate(templates);
       const { trial } = getActiveTrialInfo(state);
-      msgOptions = trial.selectedMessageTypes.filter((t) => !t.useCustomGUI).map((t) => ({ id: t.id, label: t.name }));
+      msgOptions = trial.selectedMessageTypes.filter((t) => !t.useCustomGUI).map((t) => ({ id: t.id, label: t.name })).sort((a, b) => a.label.localeCompare(b.label));;
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { inject, scenario } = getActiveTrialInfo<IExecutingInject>(state);

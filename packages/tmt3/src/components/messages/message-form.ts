@@ -1,21 +1,14 @@
 import m from 'mithril';
-import {
-  IAsset,
-  IGuiTemplate,
-  IInject,
-  IKafkaMessage,
-  InjectType,
-  ITrial,
-  MessageType,
-  UserRole,
-} from 'trial-manager-models';
+import { deepCopy, IAsset, IGuiTemplate, IKafkaMessage, InjectType, MessageType, UserRole } from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm } from '.';
 import { MessageComponent, restServiceFactory } from '../../services';
-import { getInject, getPath, getUsersByRole } from '../../utils';
+import { getInject, getPath, getUsersByRole, isJSON, baseLayers } from '../../utils';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
 import { ModalPanel } from 'mithril-materialized';
 import { UploadAsset } from '../ui';
 import { RolePlayerMessageView } from './role-player-message';
+import { geoJSON, LeafletMap, GeoJSON } from 'mithril-leaflet';
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 export type MessageScope = 'edit' | 'execute';
 
@@ -28,16 +21,9 @@ export const MessageForm: MessageComponent = () => {
   let filePreview: string = '';
   let prev_file_id = -1;
   let customTemplates = [] as IGuiTemplate[];
-
-  const updateFilePreview = async (inject: IInject, trial: ITrial) => {
-    if (inject && inject.message && inject.message.SEND_FILE && (inject.message.SEND_FILE as any).file) {
-      if (prev_file_id != (inject.message.SEND_FILE as any).file) {
-        const assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
-        filePreview = JSON.stringify(await assetsSvc.load((inject.message.SEND_FILE as any).file), undefined, 4);
-        prev_file_id = (inject.message.SEND_FILE as any).file;
-      }
-    }
-  };
+  let asset = {} as IAsset;
+  let overlay = undefined as GeoJSON | undefined;
+  let assetId: number;
 
   return {
     oninit: async ({ attrs: { state } }) => {
@@ -53,7 +39,10 @@ export const MessageForm: MessageComponent = () => {
         getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.email, label: rp.name }))
       );
       availableAssets = JSON.stringify(
-        assets.filter((a) => a.alias !== 'gui_form').map((a) => ({ id: a.id, label: a.alias || a.filename }))
+        assets
+          .filter((a) => a.alias !== 'gui_form')
+          .map((a) => ({ id: a.id, label: a.alias || a.filename }))
+          .sort((a, b) => a.label.localeCompare(b.label))
       );
       kafkaTopicOpts = JSON.stringify(
         kafkaTopics
@@ -62,6 +51,7 @@ export const MessageForm: MessageComponent = () => {
             id: topic,
             label: topic.charAt(0).toUpperCase() + topic.replace(/_/g, ' ').slice(1),
           }))
+          .sort((a, b) => a.label.localeCompare(b.label))
       );
       const assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
       const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.asset);
@@ -77,20 +67,6 @@ export const MessageForm: MessageComponent = () => {
         }
       });
     },
-    oncreate: async ({ attrs: { state } }) => {
-      const { mode } = state.app;
-      const isExecuting = mode === 'execute';
-      const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
-      const inject = getInject(trial, injectId || scenarioId);
-      !isExecuting && updateFilePreview(inject as IInject, trial);
-    },
-    onupdate: async ({ attrs: { state } }) => {
-      const { mode } = state.app;
-      const isExecuting = mode === 'execute';
-      const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
-      const inject = getInject(trial, injectId || scenarioId);
-      !isExecuting && updateFilePreview(inject as IInject, trial);
-    },
     view: ({ attrs: { state, actions, options } }) => {
       const { owner, mode, templates, assets } = state.app;
       const isExecuting = mode === 'execute';
@@ -102,6 +78,10 @@ export const MessageForm: MessageComponent = () => {
       if (inject && inject.type === InjectType.INJECT && inject.topic === MessageType.ROLE_PLAYER_MESSAGE) {
         const sao = { state, actions, options };
         return isExecuting && !editing ? m(RolePlayerMessageView, sao) : m(RolePlayerMessageForm, sao);
+      }
+
+      if (inject && inject.message) {
+        assetId = (inject.message.SEND_FILE as any).file;
       }
 
       if (inject && inject.type === InjectType.INJECT) {
@@ -128,6 +108,32 @@ export const MessageForm: MessageComponent = () => {
               .replace(/"&kafkaTopicSet"/g, kafkaTopicSelect)
           ) as UIForm);
         // console.log(JSON.stringify(inject, null, 2));
+
+        const original = assets.filter((a) => a.id === assetId).shift();
+        if (original && (!asset || asset.id !== assetId)) {
+          overlay = undefined;
+          asset = deepCopy(original);
+        }
+        if (!overlay && isJSON(asset.filename) && asset.url) {
+          m.request<FeatureCollection<Geometry, GeoJsonProperties>>(asset.url).then((json) => {
+            const isGeoJSON = json && json.features && json.features.length > 0;
+            if (isGeoJSON) {
+              overlay = geoJSON(json as GeoJSON.FeatureCollection);
+            }
+          });
+        }
+        if (asset.id && prev_file_id != asset?.id && asset.url) {
+          prev_file_id = asset?.id;
+          asset.url.length > 1
+            ? m.request({ url: asset?.url as string, method: 'GET' }).then((json) => {
+                filePreview = JSON.stringify(json, undefined, 4);
+              })
+            : undefined;
+        } else if (!asset.url) {
+          filePreview = '';
+          prev_file_id = asset.id;
+        }
+
         return (
           ui &&
           m('.row.message-form', [
@@ -154,17 +160,48 @@ export const MessageForm: MessageComponent = () => {
                 updateInject(inject);
               },
             }),
-            filePreview !== ''
+            overlay && filePreview !== ''
               ? [
-                  m('div.input-field.col.s12', { style: 'height: 300px' }, [
+                  m(LeafletMap, {
+                    className: 'col s6',
+                    baseLayers,
+                    style: 'height: 300px',
+                    overlays: { [asset.alias || asset.filename]: overlay },
+                    visible: [asset.alias || asset.filename],
+                    showScale: { imperial: false },
+                    onLoaded: (map) => {
+                      overlay && map.fitBounds(overlay?.getBounds());
+                    },
+                  }),
+                  m('div.input-field.col.s6', { style: 'height: 300px; margin: 0px' }, [
                     m('span', 'File Preview'),
                     m(
                       'textarea.materialize-textarea',
-                      { style: 'height: 300px; overflow-y: auto; disabled', disabled: true, id: 'previewArea' },
+                      { style: 'height: 280px; overflow-y: auto;', disabled: true, id: 'previewArea' },
                       filePreview
                     ),
                   ]),
                 ]
+              : overlay
+              ? m(LeafletMap, {
+                  baseLayers,
+                  style: 'width: 100%; height: 300px; margin: 5px;',
+                  overlays: { [asset.alias || asset.filename]: overlay },
+                  visible: [asset.alias || asset.filename],
+                  showScale: { imperial: false },
+                  onLoaded: (map) => {
+                    overlay && map.fitBounds(overlay?.getBounds());
+                  },
+                })
+              : filePreview !== ''
+              ? m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px' }, [
+                  m('span', 'File Preview'),
+                  m(
+                    'textarea.materialize-textarea',
+                    { style: 'height: 300px; overflow-y: auto;', disabled: true, id: 'previewArea' },
+                    filePreview
+                  ),
+                ])
               : undefined,
             m(ModalPanel, {
               disabled,
@@ -175,7 +212,11 @@ export const MessageForm: MessageComponent = () => {
                 placeholder: 'Upload a file.',
                 createAsset,
                 done: () => {
-                  availableAssets = JSON.stringify(assets.map((a) => ({ id: a.id, label: a.alias || a.filename })));
+                  availableAssets = JSON.stringify(
+                    assets
+                      .map((a) => ({ id: a.id, label: a.alias || a.filename }))
+                      .sort((a, b) => a.label.localeCompare(b.label))
+                  );
                   const el = document.getElementById('upload');
                   if (el) {
                     M.Modal.getInstance(el).close();

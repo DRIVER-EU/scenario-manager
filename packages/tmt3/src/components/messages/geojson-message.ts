@@ -35,7 +35,7 @@ export const GeoJsonMessageForm: MessageComponent = () => {
 
       const availableAssets = assets
         .filter((a) => a.url && isJSON(a.filename))
-        .map((a) => ({ id: a.id, label: a.alias || a.filename, url: a.url }));
+        .map((a) => ({ id: a.id, label: a.alias || a.filename, url: a.url })).sort((a, b) => a.label.localeCompare(b.label));
       // console.log('availableAssets', availableAssets);
       const cur = gm.assetId && availableAssets.filter((a) => a.id === gm.assetId).shift();
       if ((!overlays || (gm.alias && !overlays.hasOwnProperty(gm.alias))) && cur && cur.url) {

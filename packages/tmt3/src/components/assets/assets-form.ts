@@ -15,7 +15,6 @@ export const AssetsForm: MeiosisComponent = () => {
   let prev_file_id: number;
 
   return {
-
     view: ({
       attrs: {
         state: {
@@ -93,10 +92,30 @@ export const AssetsForm: MeiosisComponent = () => {
                     placeholder: 'Select or replace the file',
                     onchange: (fl: FileList) => (files = fl),
                   }),
-                  overlay
+                  overlay && filePreview !== ''
+                    ? [m(LeafletMap, {
+                      className: 'col s6',
+                        baseLayers,
+                        style: 'height: 400px',
+                        overlays: { [asset.alias || asset.filename]: overlay },
+                        visible: [asset.alias || asset.filename],
+                        showScale: { imperial: false },
+                        onLoaded: (map) => {
+                          overlay && map.fitBounds(overlay?.getBounds());
+                        },
+                      }),
+                      m('div.input-field.col.s6', { style: 'height: 400px; margin: 0px' }, [
+                        m('span', 'File Preview'),
+                        m(
+                          'textarea.materialize-textarea',
+                          { style: 'height: 380px; overflow-y: auto;', disabled: true, id: 'previewArea' },
+                          filePreview
+                        ),
+                      ])]
+                    : overlay
                     ? m(LeafletMap, {
                         baseLayers,
-                        style: 'width: 100%; height: 200px; margin: 5px;',
+                        style: 'width: 100%; height: 400px; margin: 5px;',
                         overlays: { [asset.alias || asset.filename]: overlay },
                         visible: [asset.alias || asset.filename],
                         showScale: { imperial: false },
@@ -104,6 +123,15 @@ export const AssetsForm: MeiosisComponent = () => {
                           overlay && map.fitBounds(overlay?.getBounds());
                         },
                       })
+                    : filePreview !== ''
+                    ? m('div.input-field.col.s12', { style: 'height: 400px; margin-bottom: 40px' }, [
+                        m('span', 'File Preview'),
+                        m(
+                          'textarea.materialize-textarea',
+                          { style: 'height: 400px; overflow-y: auto;', disabled: true, id: 'previewArea' },
+                          filePreview
+                        ),
+                      ])
                     : undefined,
                   asset.mimetype && asset.mimetype.indexOf('image/') === 0 && asset.url
                     ? m(
@@ -114,16 +142,6 @@ export const AssetsForm: MeiosisComponent = () => {
                           height: 200,
                         })
                       )
-                    : undefined,
-                  filePreview !== ''
-                    ? m('div.input-field.col.s12', { style: 'height: 200px; margin-bottom: 40px' }, [
-                        m('span', 'File Preview'),
-                        m(
-                          'textarea.materialize-textarea',
-                          { style: 'height: 200px; overflow-y: auto;', disabled: true, id: 'previewArea' },
-                          filePreview
-                        ),
-                      ])
                     : undefined,
                 ],
                 m(
@@ -140,7 +158,9 @@ export const AssetsForm: MeiosisComponent = () => {
                       class: `green ${hasChanged ? '' : 'disabled'}`,
                       onclick: async () => {
                         await updateAsset(asset, files);
+                        asset = {} as IAsset;
                         files = undefined;
+                        prev_file_id = -1;
                       },
                     }),
                     ' ',
@@ -160,6 +180,11 @@ export const AssetsForm: MeiosisComponent = () => {
                       label: 'OK',
                       onclick: async () => {
                         await deleteAsset(asset);
+                        asset = {} as IAsset;
+                        files = undefined;
+                        prev_file_id = -1;
+                        overlay = undefined;
+                        filePreview = '';
                       },
                     },
                     {

@@ -5,8 +5,11 @@ import { MeiosisComponent } from '../../services';
 import { getActiveTrialInfo } from '../../utils';
 
 export const MessageConfigForm: MeiosisComponent = () => {
+  let asset = {} as IAsset;
   let message = {} as IKafkaMessage;
   let files = undefined as FileList | undefined;
+  let filePreview: string = '';
+  let prev_file_id: number;
 
   return {
     view: ({ attrs: { state, actions } }) => {
@@ -27,6 +30,13 @@ export const MessageConfigForm: MeiosisComponent = () => {
         message = deepCopy(original);
       }
 
+      if(message.asset) {
+        asset = message.asset
+      } else {
+        asset = {} as IAsset;
+        filePreview = '';
+      }
+
       const onsubmit = (e: UIEvent) => {
         if(message.asset && message.messageForm === '') {
           message.messageForm = message.name
@@ -41,12 +51,24 @@ export const MessageConfigForm: MeiosisComponent = () => {
       const { kafkaTopics } = state.app
       const topicOptionList = kafkaTopics.map((topic: string) => {
         return { id: topic, label: topic.charAt(0).toUpperCase() + topic.replace(/_/g, ' ').slice(1) };
-      });
+      }).sort((a, b) => a.label.localeCompare(b.label));;
 
       const { templates } = state.app
       const formOptionList = templates.map((template: IGuiTemplate) => {
         return { id: template.topic, label: template.label };
       });
+
+      if (asset.id && prev_file_id != asset?.id && asset.url) {
+        prev_file_id = asset?.id;
+        asset.url.length > 1
+          ? m.request({ url: asset?.url as string, method: 'GET' }).then((json) => {
+              filePreview = JSON.stringify(json, undefined, 4);
+            })
+          : undefined;
+      } else if (!asset.url) {
+        filePreview = '';
+        prev_file_id = asset.id;
+      }
 
       return m(
         '.row',
@@ -146,6 +168,16 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       onchange: (v: string) => (message.namespace = v),
                       label: 'Namespace',
                     }) : undefined,
+                    filePreview !== ''
+                    ? m('div.input-field.col.s12', { style: 'height: 200px; margin-bottom: 40px' }, [
+                        m('span', 'File Preview'),
+                        m(
+                          'textarea.materialize-textarea',
+                          { style: 'height: 200px; overflow-y: auto;', disabled: true, id: 'previewArea' },
+                          filePreview
+                        ),
+                      ])
+                    : undefined,
                   ],
                   m('form.col.s12', [
                     m(Button, {

@@ -446,7 +446,7 @@ export const appStateMgmt = {
             },
             {
               id: uniqueId(),
-              name: 'send CAP message',
+              name: 'Send CAP message',
               messageForm: 'standard_cap',
               messageType: MessageType.CAP_MESSAGE,
               kafkaTopic: 'standard_cap',
@@ -486,7 +486,7 @@ export const appStateMgmt = {
             },
             {
               id: 'rp_msg',
-              name: 'Roleplayer Message',
+              name: 'Role Player Message',
               messageForm: 'ROLE_PLAYER_MESSAGE',
               messageType: 'ROLE_PLAYER_MESSAGE',
               kafkaTopic: 'system_tm_role_player',
