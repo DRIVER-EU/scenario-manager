@@ -13,5 +13,4 @@ export * from './trials/trial-form';
 export * from './trials/trial-list';
 export * from './executing/executing-inject-view';
 export * from './status/status-bar';
-export * from './select-message-types';
 export * from './message-config/message-config-list';
