@@ -8,7 +8,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 module.exports = (env) => {
   const isProduction = env.production;
   const outputPath = path.resolve(__dirname, isProduction ? 'dist' : 'dist');
-  const publicPath = isProduction ? '/tmt/': '/tmt';
+  const publicPath = isProduction ? '/tmt/' : '/tmt';
 
   console.log(`Running in ${isProduction ? 'production' : 'development'} mode, output directed to ${outputPath}.`);
 
@@ -89,7 +89,6 @@ module.exports = (env) => {
         {
           test: /\.ts$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
         },
         {
           test: /\.css$/i,

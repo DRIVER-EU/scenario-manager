@@ -17,27 +17,23 @@ import { getInjects } from '../utils';
 // tslint:disable-next-line:no-console
 let socket: Socket;
 
-export const setupSocket = (autoConnect = true) => {
+export const setupSocket = (autoConnect = true): Socket => {
   console.table(location.origin + '/tmt/');
   if (socket && socket.connected) {
     return socket;
   }
-  // https://socket.io/docs/v4/client-options/
-  console.log('origin is ' + location.origin);
-  socket = /*autoConnect ? io() : */io(process.env.SERVER || location.origin , 
-     { 
-	    path: '/tmt/socket.io',
-		transports: ["websocket", "polling"] // use WebSocket first, if available
-	});
+  const url = process.env.SERVER || location.origin;
+  console.log('origin is ' + url);
+  socket = io(url, { path: '/tmt/socket.io/' });
 
   socket.on('connect', () => {
-	console.log("Websocket connected");
+    console.log('Websocket connected');
     socket.emit('test-bed-connect');
   });
   // socket.on('disconnect', () => log('Disconnected'));
   socket.on('connect_error', (err: Error) => {
-	  console.log("Websocket error " + JSON.stringify(err));
-	  console.log(`connect_error due to ${err.message}`);
+    console.log('Websocket error ' + JSON.stringify(err));
+    console.log(`connect_error due to ${err.message}`);
     socket.close();
     if (autoConnect) {
       SocketSvc.socket = setupSocket(false);
@@ -61,9 +57,13 @@ export const setupSocket = (autoConnect = true) => {
     update({ exe: { time } } as Partial<IAppModel>);
   });
   socket.on('is-connected', async (data: IConnectMessage) => {
+    console.log('kafkaTopics');
     const { update } = actions;
     const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
     await actions.updateSession(Object.assign({ tags: undefined }, session));
+    const kafkaTopics = await SocketSvc.getKafkaTopics();
+    actions.updateKafkaTopics(kafkaTopics);
+    console.log(kafkaTopics);
     update({
       exe: {
         sessionControl: {
@@ -118,10 +118,14 @@ socket = setupSocket();
 export const SocketSvc = {
   socket: socket || setupSocket(),
   getKafkaTopics: async () => {
-    return await new Promise(resolve => {
+    return await new Promise((resolve) => {
+      console.log('SOCKET SERVICE');
       SocketSvc.socket.emit('getKafkaTopics', (data: string[]) => {
         resolve(data as string[]);
-      });      
+      });
     });
-  }
+  },
+} as {
+  socket: Socket;
+  getKafkaTopics: () => Promise<string[]>;
 };

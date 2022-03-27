@@ -127,6 +127,8 @@ export interface IAppStateActions {
 
   toggleTreeItem: (id: string) => void;
 
+  updateKafkaTopics: (kafkaTopics: string[]) => void;
+
   loadTrials: () => Promise<void>;
   loadTrial: (trialId: string, mode?: MessageScope) => Promise<void>;
   newTrial: () => void;
@@ -323,10 +325,13 @@ export const appStateMgmt = {
         }
       },
 
+      updateKafkaTopics: (kafkaTopics: string[]) => update({ app: { kafkaTopics } }),
+
       loadTrials: async () => {
         const trials = await trialSvc.loadList();
-        const kafkaTopics = (await SocketSvc.getKafkaTopics()) as string[];
-        update({ app: { trials, kafkaTopics: kafkaTopics } });
+        update({ app: { trials } });
+        // const kafkaTopics = (await SocketSvc.getKafkaTopics()) as string[];
+        // update({ app: { trials, kafkaTopics } });
       },
       loadTrial: async (trialId: string, scope: MessageScope = 'edit') => {
         if (scope === 'edit') {
@@ -487,8 +492,8 @@ export const appStateMgmt = {
               kafkaTopic: 'system_tm_role_player',
               useNamespace: false,
               iconName: 'person',
-              useCustomGUI: false
-            }
+              useCustomGUI: false,
+            },
           ],
           injects: [
             {
@@ -802,7 +807,7 @@ export const appStateMgmt = {
           if (newAsset && newAsset.filename) {
             newAsset.url = assetsSvc.url + newAsset.id;
           }
-          newAsset ? msg.asset = newAsset : undefined;
+          newAsset ? (msg.asset = newAsset) : undefined;
         }
 
         const { trial } = states().app;
@@ -812,8 +817,8 @@ export const appStateMgmt = {
         update({ app: { messageId: msg.id, trial } });
       },
       deleteMessage: async (msg: IKafkaMessage) => {
-        if(msg.asset) {
-          actions.deleteAsset(msg.asset)
+        if (msg.asset) {
+          actions.deleteAsset(msg.asset);
         }
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);

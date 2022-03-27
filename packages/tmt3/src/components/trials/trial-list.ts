@@ -38,7 +38,7 @@ export const TrialList: MeiosisComponent = () => {
         },
       },
     }) => {
-      if((!mdl || !mdl.isOpen) && !ignoreActive && activeSession) {
+      if ((!mdl || !mdl.isOpen) && !ignoreActive && activeSession) {
         mdl.open();
       }
     },
@@ -61,8 +61,8 @@ export const TrialList: MeiosisComponent = () => {
       const query = titleAndDescriptionFilter(filterValue);
       const filteredTrials = trials.filter(query);
       const apiService = (process.env.SERVER || location.origin) + '/tmt';
-      console.table(session);
-      console.table({ isConnected, activeSession });
+      // console.table(session);
+      // console.table({ isConnected, activeSession });
 
       const options =
         trial.users &&
@@ -76,7 +76,8 @@ export const TrialList: MeiosisComponent = () => {
             return { id: u.id, label: u.name };
           });
 
-      return [ m(ModalPanel, {
+      return [
+        m(ModalPanel, {
           //fixedFooter: true,
           options: { opacity: 0.7 },
           onCreate: (modal) => {
@@ -94,7 +95,7 @@ export const TrialList: MeiosisComponent = () => {
                 roleID = v[0] as string;
               },
             }),
-            m('div', {style: 'margin-bottom: 150px'})
+            m('div', { style: 'margin-bottom: 150px' }),
           ]),
           buttons: [
             {
