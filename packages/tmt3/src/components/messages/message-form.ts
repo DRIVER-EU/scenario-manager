@@ -1,5 +1,14 @@
 import m from 'mithril';
-import { IAsset, IGuiTemplate, IInject, IKafkaMessage, InjectType, ITrial, MessageType, UserRole } from 'trial-manager-models';
+import {
+  IAsset,
+  IGuiTemplate,
+  IInject,
+  IKafkaMessage,
+  InjectType,
+  ITrial,
+  MessageType,
+  UserRole,
+} from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm } from '.';
 import { MessageComponent, restServiceFactory } from '../../services';
 import { getInject, getPath, getUsersByRole } from '../../utils';
@@ -9,75 +18,6 @@ import { UploadAsset } from '../ui';
 import { RolePlayerMessageView } from './role-player-message';
 
 export type MessageScope = 'edit' | 'execute';
-
-// export const getMessageForm = (state: IAppModel, actions: IActions, inject: IInject, editing = true) => {
-//   const getPathRegex = /&([\w.]+)/g;
-//   const options = { editing };
-//   const sao = { state, actions, options };
-//   const {
-//     app: { owner, templates },
-//   } = state;
-//   const { updateInject } = actions;
-//   const topic = templates.find((t) => t.topic === inject.topic);
-//   if (!topic) return;
-//   const { update } = topic;
-//   const ui =
-//     typeof topic.ui === 'string' &&
-//     (JSON.parse(topic.ui.replace(/&id/g, inject.id).replace(/&owner/g, owner)) as UIForm);
-//   if (ui)
-//     return m(
-//       '.row',
-//       m(LayoutForm, {
-//         form: ui,
-//         obj: inject,
-//         disabled: !editing,
-//         onchange: () => {
-//           update &&
-//             Object.keys(update).forEach((key) => {
-//               const replacement = update[key];
-//               let matches: RegExpExecArray | null;
-//               while ((matches = getPathRegex.exec(replacement))) {
-//                 if (matches.index === getPathRegex.lastIndex) getPathRegex.lastIndex++;
-//                 matches
-//                   .filter((_, i) => i !== 0)
-//                   .forEach((match) => {
-//                     const value = getPath(inject, match);
-//                     if (typeof value !== 'undefined') {
-//                       (inject as Record<string, any>)[key] = replacement.replace(`&${match}`, value);
-//                     }
-//                   });
-//               }
-//             });
-//           // console.log(`Updating ${JSON.stringify(i)}`);
-//           updateInject(inject);
-//         },
-//       })
-//     );
-//   switch (inject.topic) {
-//     case MessageType.CHECKPOINT:
-//       return m(RolePlayerMessageForm, { state, actions, options: { editing, checkpoint: true } });
-//     case MessageType.ROLE_PLAYER_MESSAGE:
-//       return editing ? m(RolePlayerMessageForm, sao) : m(RolePlayerMessageView, sao);
-//     case MessageType.GEOJSON_MESSAGE:
-//       return m(GeoJsonMessageForm, sao);
-//     case MessageType.CAP_MESSAGE:
-//       return m(CapMessageForm, sao);
-//     case MessageType.LCMS_MESSAGE:
-//       return m(LcmsMessageForm, sao);
-//     case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
-//       return m(OstChangeStageMessageForm, sao);
-//     case MessageType.LARGE_DATA_UPDATE:
-//       return m(LargeDataUpdateMessageForm, sao);
-//     case MessageType.SUMO_CONFIGURATION:
-//       return m(SumoConfigurationForm, sao);
-//     case MessageType.REQUEST_UNIT_MOVE:
-//       return m(RequestUnitMoveForm, sao);
-//     case MessageType.SET_AFFECTED_AREA:
-//       return m(SetAffectedAreaForm, sao);
-//     default:
-//       return inject.topic && m('.row', 'TODO: ' + inject.topic);
-//   }
-// };
 
 export const MessageForm: MessageComponent = () => {
   const getPathRegex = /&([\w.]+)/;
@@ -112,7 +52,9 @@ export const MessageForm: MessageComponent = () => {
       participantEmails = JSON.stringify(
         getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.email, label: rp.name }))
       );
-      availableAssets = JSON.stringify(assets.filter((a) => a.alias !== 'gui_form').map((a) => ({ id: a.id, label: a.alias || a.filename })));
+      availableAssets = JSON.stringify(
+        assets.filter((a) => a.alias !== 'gui_form').map((a) => ({ id: a.id, label: a.alias || a.filename }))
+      );
       kafkaTopicOpts = JSON.stringify(
         kafkaTopics
           .filter((topic: string) => 'send_file'.indexOf(topic) < 0)
@@ -122,18 +64,18 @@ export const MessageForm: MessageComponent = () => {
           }))
       );
       const assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
-      const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.asset)
+      const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.asset);
       customForms.forEach(async (msg: IKafkaMessage) => {
-        if(msg.asset) {
-        const gui = JSON.parse(JSON.stringify(await assetsSvc.load(msg.asset.id)))
-        customTemplates.push({
-          label: msg.name,
-          icon: msg.iconName,
-          topic: msg.name,
-          ui: JSON.stringify(gui.ui),
-        } as IGuiTemplate)
+        if (msg.asset) {
+          const gui = JSON.parse(JSON.stringify(await assetsSvc.load(msg.asset.id)));
+          customTemplates.push({
+            label: msg.name,
+            icon: msg.iconName,
+            topic: msg.name,
+            ui: JSON.stringify(gui.ui),
+          } as IGuiTemplate);
         }
-      })
+      });
     },
     oncreate: async ({ attrs: { state } }) => {
       const { mode } = state.app;
@@ -154,12 +96,12 @@ export const MessageForm: MessageComponent = () => {
       const isExecuting = mode === 'execute';
       const { trial, scenarioId, injectId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
       const inject = getInject(trial, injectId || scenarioId);
-      
+
       const { editing = true } = options || {};
 
-      if(inject && inject.type === InjectType.INJECT && inject.topic === MessageType.ROLE_PLAYER_MESSAGE) {
+      if (inject && inject.type === InjectType.INJECT && inject.topic === MessageType.ROLE_PLAYER_MESSAGE) {
         const sao = { state, actions, options };
-        return  isExecuting && !editing ? m(RolePlayerMessageView, sao) : m(RolePlayerMessageForm, sao);
+        return isExecuting && !editing ? m(RolePlayerMessageView, sao) : m(RolePlayerMessageForm, sao);
       }
 
       if (inject && inject.type === InjectType.INJECT) {
@@ -169,7 +111,7 @@ export const MessageForm: MessageComponent = () => {
         let topic = templates.find((t) => t.topic === inject.topic);
         if (!topic) {
           topic = customTemplates.find((t) => t.topic === inject.topic);
-          if(!topic) return;
+          if (!topic) return;
         }
         const { update } = topic;
         const ui =

@@ -108,7 +108,7 @@ export const InjectConditions: MeiosisComponent = () => {
         inject.condition.injectState = injectStateOptions[0].id as InjectState;
       }
       return m(
-        '.row',
+        '.row.inject-conditions',
         m('.col.s12', [
           // m('h5', 'Start condition'),
           // m(Icon, { iconName: 'playlist_play', class: 'small', style: 'margin: 0 0.5em;' }),
@@ -244,10 +244,10 @@ const StartAt: FactoryComponent<{
   disabled?: boolean;
   updateInject: (inject: IInject) => Promise<void>;
 }> = () => {
-  let latestInject = {} as IInject
+  let latestInject = {} as IInject;
   const getLatestInject = () => {
     return latestInject;
-  }
+  };
   return {
     view: ({ attrs: { trial, condition, inject, disabled = false, updateInject } }) => {
       latestInject = inject;
@@ -263,7 +263,7 @@ const StartAt: FactoryComponent<{
       const delayInSeconds = delay * sec;
       const trialStart = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const atTime = new Date(trialStart.getTime() + delayInSeconds * 1000);
-      inject.condition ? inject.condition.injectId = inject.parentId : undefined;
+      inject.condition ? (inject.condition.injectId = inject.parentId) : undefined;
       return m(TimePicker, {
         key: inject.id,
         disabled,
