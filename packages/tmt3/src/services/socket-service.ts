@@ -24,7 +24,7 @@ export const setupSocket = (autoConnect = true) => {
   }
   // https://socket.io/docs/v4/client-options/
   console.log('origin is ' + location.origin);
-  socket = /*autoConnect ? io() : */io(/*process.env.SERVER || location.origin , */
+  socket = /*autoConnect ? io() : */io(process.env.SERVER || location.origin , 
      { 
 	    path: '/tmt/socket.io',
 		transports: ["websocket", "polling"] // use WebSocket first, if available

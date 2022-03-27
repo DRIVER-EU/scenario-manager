@@ -88,11 +88,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
       } = state;
       getMessageIcon = getMessageIconFromTemplate(templates);
       const { trial } = getActiveTrialInfo(state);
-      //messageOpt = templates.map((t) => ({ id: t.topic, label: t.label }));
-      messageOpt = trial.selectedMessageTypes.map((t) => ({ id: t.id, label: t.name }));
-      // const { trial } = getActiveTrialInfo(state);
-      // const selectedMessageTypes = trial.selectedMessageTypes;
-      // messageOpt = messageOptions(selectedMessageTypes);
+      messageOpt = trial.selectedMessageTypes.map((t) => ({ id: t.id, label: t.name })).sort((a, b) => a.label.localeCompare(b.label));
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { mode } = state.app;
@@ -138,7 +134,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
           }
         } else if (copiedInjects instanceof Array) {
           const isParentChildRelation =
-            (isScenario(inject) && isStoryline(copy)) || (isStoryline(inject) && isInject(copy)) || isInject(copy);
+            (isScenario(inject) && isStoryline(copy)) || (isStoryline(inject) && isInject(copy));
           const isSiblingRelation =
             (isScenario(inject) && isScenario(copy)) || (isStoryline(inject) && isStoryline(copy));
           if (isParentChildRelation) {
