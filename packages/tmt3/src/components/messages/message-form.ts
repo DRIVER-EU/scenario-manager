@@ -1,10 +1,20 @@
 import m from 'mithril';
-import { deepCopy, IAsset, IGuiTemplate, IKafkaMessage, InjectType, ISendFileMessage, ISendMessageMessage, MessageType, UserRole } from 'trial-manager-models';
+import {
+  deepCopy,
+  IAsset,
+  IGuiTemplate,
+  IKafkaMessage,
+  InjectType,
+  ISendFileMessage,
+  ISendMessageMessage,
+  MessageType,
+  UserRole,
+} from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm } from '.';
 import { MessageComponent, restServiceFactory } from '../../services';
 import { getInject, getPath, getUsersByRole, isJSON, baseLayers } from '../../utils';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
-import { ModalPanel } from 'mithril-materialized';
+import { InputCheckbox, ModalPanel } from 'mithril-materialized';
 import { UploadAsset } from '../ui';
 import { RolePlayerMessageView } from './role-player-message';
 import { geoJSON, LeafletMap, GeoJSON } from 'mithril-leaflet';
@@ -24,6 +34,9 @@ export const MessageForm: MessageComponent = () => {
   let asset = {} as IAsset;
   let overlay = undefined as GeoJSON | undefined;
   let assetId: number;
+  let showGUI: boolean = false;
+  let visualizedGUI: UIForm | boolean;
+  let messageIsGUI: boolean = false;
 
   return {
     oninit: async ({ attrs: { state } }) => {
@@ -85,7 +98,8 @@ export const MessageForm: MessageComponent = () => {
       }
 
       if (inject && inject.type === InjectType.INJECT) {
-        let kafkaTopicSelect = inject.kafkaTopic === 'send_file' || 'send_message' ? JSON.stringify('select') : JSON.stringify('none');
+        let kafkaTopicSelect =
+          inject.kafkaTopic === 'send_file' || 'send_message' ? JSON.stringify('select') : JSON.stringify('none');
         const { updateInject, createAsset } = actions;
         const disabled = !editing;
         let topic = templates.find((t) => t.topic === inject.topic);
@@ -118,8 +132,10 @@ export const MessageForm: MessageComponent = () => {
         if (asset.id && asset.url && prev_file_id != asset?.id) {
           // request file
           m.request(asset.url).then((json) => {
-            const isJson = isJSON(asset.filename)
-            const isGeoJSON = isJson ? json && (json as FeatureCollection).features && (json as FeatureCollection).features.length > 0 : false;
+            const isJson = isJSON(asset.filename);
+            const isGeoJSON = isJson
+              ? json && (json as FeatureCollection).features && (json as FeatureCollection).features.length > 0
+              : false;
             // If geojson and there is no overlay, create overlay
             if (isGeoJSON && !overlay) {
               overlay = geoJSON(json as GeoJSON.FeatureCollection);
@@ -128,11 +144,43 @@ export const MessageForm: MessageComponent = () => {
             prev_file_id = asset?.id;
             filePreview = JSON.stringify(json, undefined, 4);
           });
-        } 
+        }
         // Else, if there is no asset url reset filepreview and prev_file_id
         else if (!asset.url) {
           filePreview = '';
           prev_file_id = asset.id;
+        }
+
+        if (
+          inject.message &&
+          inject.message.SEND_MESSAGE &&
+          (inject.message.SEND_MESSAGE as ISendMessageMessage).message &&
+          (inject.message.SEND_MESSAGE as ISendMessageMessage).message.length > 1
+        ) {
+          const vizTopic = JSON.parse((inject.message.SEND_MESSAGE as ISendMessageMessage).message);
+          if (vizTopic.ui) {
+            messageIsGUI = true;
+            const uiString = JSON.stringify(vizTopic.ui);
+            visualizedGUI =
+              typeof uiString === 'string' &&
+              (JSON.parse(
+                uiString
+                  .replace(/&id/g, inject.id)
+                  .replace(/&title/g, inject.title)
+                  .replace(/&owner/g, owner)
+                  .replace(/"&participants"/g, participants)
+                  .replace(/"&participantEmails"/g, participantEmails)
+                  .replace(/"&assets"/g, availableAssets)
+                  .replace(/"&kafkaTopics"/g, kafkaTopicOpts)
+                  .replace(/"&kafkaTopicSet"/g, kafkaTopicSelect)
+              ) as UIForm);
+          } else {
+            messageIsGUI = false;
+            visualizedGUI = false;
+          }
+        } else {
+          messageIsGUI = false;
+          visualizedGUI = false;
         }
 
         return (
@@ -178,7 +226,11 @@ export const MessageForm: MessageComponent = () => {
                     m('span', 'File Preview'),
                     m(
                       'textarea.materialize-textarea',
-                      { style: 'height: 280px; overflow-y: auto; max-height: 280px', disabled: true, id: 'previewArea' },
+                      {
+                        style: 'height: 280px; overflow-y: auto; max-height: 280px',
+                        disabled: true,
+                        id: 'previewArea',
+                      },
                       filePreview
                     ),
                   ]),
@@ -204,19 +256,46 @@ export const MessageForm: MessageComponent = () => {
                   ),
                 ])
               : inject.kafkaTopic === 'send_message'
-              ? m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
-                  m('span', 'JSON message'),
-                  m(
-                    'textarea.materialize-textarea',
-                    { style: 'height: 300px; overflow-y: auto; max-height: 300px', id: 'jsonTextArea', onchange: (e: any) => {
-                      if(inject.message && inject.message.SEND_MESSAGE) {
-                      (inject.message.SEND_MESSAGE as ISendMessageMessage).message = e.target.value
-                      updateInject(inject);
-                      }
-                    },
-                  }, inject.message && inject.message.SEND_MESSAGE && (inject.message.SEND_MESSAGE as ISendMessageMessage).message ? (inject.message.SEND_MESSAGE as ISendMessageMessage).message : undefined
-                  ),
-                ])
+              ? [
+                  messageIsGUI
+                    ? m(InputCheckbox, {
+                        label: 'Render GUIForm?',
+                        className: 'col s6',
+                        checked: showGUI,
+                        onchange: (v) => {
+                          showGUI = v as boolean;
+                        },
+                      })
+                    : undefined,
+                  showGUI && visualizedGUI
+                    ? m(LayoutForm, {
+                        form: visualizedGUI as UIForm,
+                        obj: {},
+                        disabled: true,
+                      })
+                    : undefined,
+                  m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
+                    m('span', 'JSON message'),
+                    m(
+                      'textarea.materialize-textarea',
+                      {
+                        style: 'height: 300px; overflow-y: auto; max-height: 300px',
+                        id: 'jsonTextArea',
+                        onchange: (e: any) => {
+                          if (inject.message && inject.message.SEND_MESSAGE) {
+                            (inject.message.SEND_MESSAGE as ISendMessageMessage).message = e.target.value;
+                            updateInject(inject);
+                          }
+                        },
+                      },
+                      inject.message &&
+                        inject.message.SEND_MESSAGE &&
+                        (inject.message.SEND_MESSAGE as ISendMessageMessage).message
+                        ? (inject.message.SEND_MESSAGE as ISendMessageMessage).message
+                        : undefined
+                    ),
+                  ]),
+                ]
               : undefined,
             m(ModalPanel, {
               disabled,
