@@ -476,6 +476,16 @@ export const appStateMgmt = {
             },
             {
               id: uniqueId(),
+              name: 'Send message',
+              messageForm: 'send_message',
+              messageType: MessageType.SEND_MESSAGE,
+              kafkaTopic: 'send_message',
+              useNamespace: false,
+              iconName: 'attach_file',
+              useCustomGUI: false,
+            },
+            {
+              id: uniqueId(),
               name: 'Send inject',
               messageForm: 'simulation_request_startinject',
               messageType: MessageType.START_INJECT,

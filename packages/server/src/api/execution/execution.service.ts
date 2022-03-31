@@ -25,6 +25,7 @@ import {
   postMessageToTestbed,
   ISendFileMessage,
   IFeatureCollection,
+  ISendMessageMessage,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
@@ -50,6 +51,9 @@ export class ExecutionService implements IExecutionService {
       messageType = i.selectedMessage.messageType;
     }
     switch (messageType) {
+      case MessageType.SEND_MESSAGE:
+        this.sendMessage(i);
+        break;
       case MessageType.SEND_FILE:
         this.sendFile(i);
         break;
@@ -97,6 +101,31 @@ export class ExecutionService implements IExecutionService {
     }
   }
 
+  private async sendMessage(i: IInject) {
+    const message = getMessage<ISendMessageMessage>(i, MessageType.SEND_MESSAGE);
+
+    let topic: string;
+    if(i.kafkaTopic !== 'send_message') {
+      topic = i.kafkaTopic
+    }
+    if (!topic) {
+      topic = message.kafkaTopicId;
+      if(!topic) {
+        return console.warn(`There is no topic set`);
+      }
+    }
+
+    let data = message.message;
+
+    // TODO
+    if(i.selectedMessage && i.selectedMessage.useNamespace) {
+      data = this.prepareGeoJSON(data, i.selectedMessage.namespace)
+    }
+    else {
+      data = JSON.parse(data);
+      this.kafkaService.sendMessage(data, topic)
+    }
+  }
   private async sendFile(i: IInject) {
     const message = getMessage<ISendFileMessage>(i, MessageType.SEND_FILE);
 
@@ -107,7 +136,6 @@ export class ExecutionService implements IExecutionService {
     
     if (!topic) {
       topic = message.kafkaTopicId;
-      //topic = i.kafkaTopic
       if(!topic) {
         return console.warn(`There is no topic set`);
       }

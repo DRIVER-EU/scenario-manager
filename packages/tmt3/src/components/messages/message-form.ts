@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { deepCopy, IAsset, IGuiTemplate, IKafkaMessage, InjectType, MessageType, UserRole } from 'trial-manager-models';
+import { deepCopy, IAsset, IGuiTemplate, IKafkaMessage, InjectType, ISendFileMessage, ISendMessageMessage, MessageType, UserRole } from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm } from '.';
 import { MessageComponent, restServiceFactory } from '../../services';
 import { getInject, getPath, getUsersByRole, isJSON, baseLayers } from '../../utils';
@@ -8,7 +8,7 @@ import { ModalPanel } from 'mithril-materialized';
 import { UploadAsset } from '../ui';
 import { RolePlayerMessageView } from './role-player-message';
 import { geoJSON, LeafletMap, GeoJSON } from 'mithril-leaflet';
-import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import { FeatureCollection } from 'geojson';
 
 export type MessageScope = 'edit' | 'execute';
 
@@ -46,7 +46,7 @@ export const MessageForm: MessageComponent = () => {
       );
       kafkaTopicOpts = JSON.stringify(
         kafkaTopics
-          .filter((topic: string) => 'send_file'.indexOf(topic) < 0)
+          .filter((topic: string) => 'send_file'.indexOf(topic) < 0 || 'send_message'.indexOf(topic) < 0)
           .map((topic: string) => ({
             id: topic,
             label: topic.charAt(0).toUpperCase() + topic.replace(/_/g, ' ').slice(1),
@@ -80,12 +80,12 @@ export const MessageForm: MessageComponent = () => {
         return isExecuting && !editing ? m(RolePlayerMessageView, sao) : m(RolePlayerMessageForm, sao);
       }
 
-      if (inject && inject.message) {
-        assetId = (inject.message.SEND_FILE as any).file;
+      if (inject && inject.message && inject.message.SEND_FILE) {
+        assetId = (inject.message.SEND_FILE as ISendFileMessage).file;
       }
 
       if (inject && inject.type === InjectType.INJECT) {
-        let kafkaTopicSelect = inject.kafkaTopic === 'send_file' ? JSON.stringify('select') : JSON.stringify('none');
+        let kafkaTopicSelect = inject.kafkaTopic === 'send_file' || 'send_message' ? JSON.stringify('select') : JSON.stringify('none');
         const { updateInject, createAsset } = actions;
         const disabled = !editing;
         let topic = templates.find((t) => t.topic === inject.topic);
@@ -114,22 +114,23 @@ export const MessageForm: MessageComponent = () => {
           overlay = undefined;
           asset = deepCopy(original);
         }
-        if (!overlay && isJSON(asset.filename) && asset.url) {
-          m.request<FeatureCollection<Geometry, GeoJsonProperties>>(asset.url).then((json) => {
-            const isGeoJSON = json && json.features && json.features.length > 0;
-            if (isGeoJSON) {
+        // If there is an assetID AND an asset URL && We are not requesting an already requested file
+        if (asset.id && asset.url && prev_file_id != asset?.id) {
+          // request file
+          m.request(asset.url).then((json) => {
+            const isJson = isJSON(asset.filename)
+            const isGeoJSON = isJson ? json && (json as FeatureCollection).features && (json as FeatureCollection).features.length > 0 : false;
+            // If geojson and there is no overlay, create overlay
+            if (isGeoJSON && !overlay) {
               overlay = geoJSON(json as GeoJSON.FeatureCollection);
             }
+            // set prev_file_id (to prevent request loop) and set filePreview text
+            prev_file_id = asset?.id;
+            filePreview = JSON.stringify(json, undefined, 4);
           });
-        }
-        if (asset.id && prev_file_id != asset?.id && asset.url) {
-          prev_file_id = asset?.id;
-          asset.url.length > 1
-            ? m.request({ url: asset?.url as string, method: 'GET' }).then((json) => {
-                filePreview = JSON.stringify(json, undefined, 4);
-              })
-            : undefined;
-        } else if (!asset.url) {
+        } 
+        // Else, if there is no asset url reset filepreview and prev_file_id
+        else if (!asset.url) {
           filePreview = '';
           prev_file_id = asset.id;
         }
@@ -165,7 +166,7 @@ export const MessageForm: MessageComponent = () => {
                   m(LeafletMap, {
                     className: 'col s6',
                     baseLayers,
-                    style: 'height: 300px',
+                    style: 'height: 300px; max-height: 300px',
                     overlays: { [asset.alias || asset.filename]: overlay },
                     visible: [asset.alias || asset.filename],
                     showScale: { imperial: false },
@@ -173,11 +174,11 @@ export const MessageForm: MessageComponent = () => {
                       overlay && map.fitBounds(overlay?.getBounds());
                     },
                   }),
-                  m('div.input-field.col.s6', { style: 'height: 300px; margin: 0px' }, [
+                  m('div.input-field.col.s6', { style: 'height: 300px; margin: 0px; max-height: 300px' }, [
                     m('span', 'File Preview'),
                     m(
                       'textarea.materialize-textarea',
-                      { style: 'height: 280px; overflow-y: auto;', disabled: true, id: 'previewArea' },
+                      { style: 'height: 280px; overflow-y: auto; max-height: 280px', disabled: true, id: 'previewArea' },
                       filePreview
                     ),
                   ]),
@@ -185,7 +186,7 @@ export const MessageForm: MessageComponent = () => {
               : overlay
               ? m(LeafletMap, {
                   baseLayers,
-                  style: 'width: 100%; height: 300px; margin: 5px;',
+                  style: 'width: 100%; height: 300px; margin: 5px; max-height: 300px',
                   overlays: { [asset.alias || asset.filename]: overlay },
                   visible: [asset.alias || asset.filename],
                   showScale: { imperial: false },
@@ -194,12 +195,26 @@ export const MessageForm: MessageComponent = () => {
                   },
                 })
               : filePreview !== ''
-              ? m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px' }, [
+              ? m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
                   m('span', 'File Preview'),
                   m(
                     'textarea.materialize-textarea',
-                    { style: 'height: 300px; overflow-y: auto;', disabled: true, id: 'previewArea' },
+                    { style: 'height: 300px; overflow-y: auto; max-height: 300px', disabled: true, id: 'previewArea' },
                     filePreview
+                  ),
+                ])
+              : inject.kafkaTopic === 'send_message'
+              ? m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
+                  m('span', 'JSON message'),
+                  m(
+                    'textarea.materialize-textarea',
+                    { style: 'height: 300px; overflow-y: auto; max-height: 300px', id: 'jsonTextArea', onchange: (e: any) => {
+                      if(inject.message && inject.message.SEND_MESSAGE) {
+                      (inject.message.SEND_MESSAGE as ISendMessageMessage).message = e.target.value
+                      updateInject(inject);
+                      }
+                    },
+                  }, inject.message && inject.message.SEND_MESSAGE && (inject.message.SEND_MESSAGE as ISendMessageMessage).message ? (inject.message.SEND_MESSAGE as ISendMessageMessage).message : undefined
                   ),
                 ])
               : undefined,
