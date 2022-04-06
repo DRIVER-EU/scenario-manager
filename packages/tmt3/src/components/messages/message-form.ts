@@ -275,9 +275,10 @@ export const MessageForm: MessageComponent = () => {
                       })
                     : undefined,
                   m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
-                    m('span', 'JSON message'),
+                    m('i.material-icons prefix', 'code'),
+                    // m('span', 'JSON message'),
                     m(
-                      'textarea.materialize-textarea',
+                      'textarea.materialize-textarea#send_message_ta',
                       {
                         style: 'height: 300px; overflow-y: auto; max-height: 300px',
                         id: 'jsonTextArea',
@@ -294,6 +295,7 @@ export const MessageForm: MessageComponent = () => {
                         ? (inject.message.SEND_MESSAGE as ISendMessageMessage).message
                         : undefined
                     ),
+                    m('label[for=send_message_ta]', 'JSON message'),
                   ]),
                 ]
               : undefined,

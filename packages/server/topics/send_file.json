@@ -2,10 +2,7 @@
   "label": "Send file",
   "icon": "attach_file",
   "ui": [
-    { "id": "messageType", 
-      "value": "SEND_FILE", 
-      "type": "none" 
-    },
+    { "id": "messageType", "value": "SEND_FILE", "type": "none" },
     {
       "id": "title",
       "label": "Subject",
@@ -21,12 +18,12 @@
     {
       "id": "message",
       "label": " ",
-      "className":"col s12",
+      "className": "col s12",
       "type": [
         {
           "id": "SEND_FILE",
           "label": " ",
-          "className":"col s12",
+          "className": "col s12",
           "type": [
             {
               "id": "file",
@@ -48,6 +45,7 @@
             },
             {
               "id": "kafkaTopicId",
+              "icon": "topic",
               "label": "Select Kafka topic",
               "className": "col s6",
               "placeholder": "Pick one",
