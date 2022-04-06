@@ -17,7 +17,7 @@ import {
   StateTransitionRequest,
   Inject as ScenarioInject,
 } from '../../adapters/models';
-import { SessionState } from 'trial-manager-models';
+import { ITrial, SessionState } from 'trial-manager-models';
 import { Trial } from '../../adapters/models/trial';
 
 @ApiTags('run')
@@ -149,6 +149,21 @@ export class RunController {
   @Put('transition')
   async stateTransitionRequest(@Body() tr: StateTransitionRequest) {
     this.runService.stateTransitionRequest(tr);
+  }
+
+  @ApiOperation({ description: 'Init the execSvc.' })
+  @ApiBody({ type: Trial })
+  @Put('init')
+  async init(@Body() i: ITrial, @Res() response: Response) {
+    this.runService.initExecSvc(i);
+    return response.sendStatus(HttpStatus.OK);
+  }
+
+  @ApiOperation({ description: 'Force an inject push to Kafka.' })
+  @ApiBody({ type: ScenarioInject })
+  @Put('force')
+  async forceInject(@Body() i: ScenarioInject) {
+    this.runService.forceInject(i);
   }
 
   @ApiOperation({

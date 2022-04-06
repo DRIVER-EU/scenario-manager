@@ -354,3 +354,7 @@ tr.active {
 .select-dropdown {
   max-height: 300px !important;
 }
+
+.button-layout {
+  margin-top: 20px;
+}

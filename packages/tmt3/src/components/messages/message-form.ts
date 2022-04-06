@@ -11,7 +11,7 @@ import {
   UserRole,
 } from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm } from '.';
-import { MessageComponent, restServiceFactory } from '../../services';
+import { MessageComponent } from '../../services';
 import { getInject, getPath, getUsersByRole, isJSON, baseLayers } from '../../utils';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
 import { InputCheckbox, ModalPanel } from 'mithril-materialized';
@@ -66,16 +66,15 @@ export const MessageForm: MessageComponent = () => {
           }))
           .sort((a, b) => a.label.localeCompare(b.label))
       );
-      const assetsSvc = restServiceFactory<IAsset>(`trials/${trial.id}/assets`);
-      const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.asset);
-      customForms.forEach(async (msg: IKafkaMessage) => {
-        if (msg.asset) {
-          const gui = JSON.parse(JSON.stringify(await assetsSvc.load(msg.asset.id)));
+      const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.useCustomGUI);
+      customForms.forEach((msg: IKafkaMessage) => {
+        if(msg.customGUI) {
+          const gui = msg.customGUI;
           customTemplates.push({
             label: msg.name,
             icon: msg.iconName,
             topic: msg.name,
-            ui: JSON.stringify(gui.ui),
+            ui: JSON.stringify(JSON.parse(gui).ui),
           } as IGuiTemplate);
         }
       });
@@ -104,7 +103,8 @@ export const MessageForm: MessageComponent = () => {
         const disabled = !editing;
         let topic = templates.find((t) => t.topic === inject.topic);
         if (!topic) {
-          topic = customTemplates.find((t) => t.topic === inject.topic);
+          topic = customTemplates.find((t) => {
+            return t.topic === inject.topic});
           if (!topic) return;
         }
         const { update } = topic;

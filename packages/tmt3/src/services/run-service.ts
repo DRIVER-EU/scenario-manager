@@ -47,6 +47,22 @@ export const runServiceFactory = (apiService: string) => {
       body: st,
     });
 
+  const init = async (i: ITrial) =>
+    await m.request<boolean>({
+      method: 'PUT',
+      url: url + 'init',
+      withCredentials,
+      body: i,
+    });
+
+  const force = async (i: IInject) =>
+    await m.request<boolean>({
+      method: 'PUT',
+      url: url + 'force',
+      withCredentials,
+      body: i,
+    });
+
   const createInject = async (body: IInject) =>
     await m.request<void>({
       method: 'POST',
@@ -71,5 +87,7 @@ export const runServiceFactory = (apiService: string) => {
     transition,
     createInject,
     updateInject,
+    force,
+    init,
   };
 };

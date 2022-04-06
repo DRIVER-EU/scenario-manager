@@ -26,6 +26,7 @@ export interface IKafkaMessage {
   iconName: string;
   useCustomGUI: boolean;
   asset?: IAsset;
+  customGUI?: string;
 }
 
 export interface ITrial extends ITrialOverview {

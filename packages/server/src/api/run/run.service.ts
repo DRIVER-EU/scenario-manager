@@ -166,6 +166,18 @@ export class RunService {
     return true;
   }
 
+  /** force send inject */
+  public forceInject(i: IInject) {
+    this.executionService.execute(i);
+    this.close()
+  }
+
+  /** init execsvc */
+  public initExecSvc(trial: ITrial) {
+    this.executionService.init(trial);
+    return true;
+  }
+
   /** Update or create a new inject */
   public updateOrCreateInject(inject: IInject) {
     this.injectsQueue.push(inject);

@@ -1,5 +1,5 @@
 import m, { FactoryComponent, Attributes } from 'mithril';
-import { Icon, Dropdown, Select, FloatingActionButton } from 'mithril-materialized';
+import { Icon, Dropdown, Select, FloatingActionButton, Button } from 'mithril-materialized';
 import {
   getInjectIcon,
   isScenario,
@@ -11,6 +11,7 @@ import {
   getObjectives,
   getMessageIconFromTemplate,
   getActiveTrialInfo,
+  getInject,
 } from '../../utils';
 import {
   IInject,
@@ -95,7 +96,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
       const isExecuting = mode === 'execute';
       const disabled = isExecuting;
       const { trial, injectId, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
-      const { updateInject, createInject, createInjects, deleteInject } = actions;
+      const { updateInject, createInject, createInjects, deleteInject, forceInject } = actions;
       const selectedMessageTypes = trial.selectedMessageTypes;
 
       const id = injectId || scenarioId;
@@ -214,12 +215,13 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
             m(
               '.row',
               inject.type === InjectType.INJECT
-                ? m(Select, {
+                ? [ m(Select, {
                     disabled,
                     iconName: getMessageIcon(inject.topic),
                     placeholder: 'Select the message type',
                     checkedId: inject.topicId,
                     options: messageOpt,
+                    className: 'col s10',
                     onchange: (v) => {
                       // console.warn('Getting message form');
                       const selMsg = selectedMessageTypes.find((msg: IKafkaMessage) => msg.id === v[0]);
@@ -229,7 +231,15 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
                       inject!.kafkaTopic = selMsg?.kafkaTopic as string;
                       updateInject(inject);
                     },
-                  })
+                  }),
+                  m(Button, {
+                    className: 'col s2 button-layout',
+                    label: 'Send message',
+                    onclick: () => {
+                        forceInject(getInject(trial, injectId) as IInject, trial);
+                    }
+                  }),
+                ]
                 : m('h4', [
                     m(Icon, {
                       iconName: getInjectIcon(inject.type),

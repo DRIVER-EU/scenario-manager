@@ -151,6 +151,7 @@ export interface IAppStateActions {
   moveInject: (source: IInject, target: IInject) => Promise<void>;
   transitionInject: (st: IStateTransitionRequest) => Promise<boolean>;
   updateMessageTopics: (topics: IMessageTopic[]) => Promise<void>;
+  forceInject: (inject: IInject, trial: ITrial) => void;
 
   selectStakeholder: (stakeholder: IStakeholder) => void;
   createStakeholder: (stakeholder: IStakeholder) => Promise<void>;
@@ -639,6 +640,10 @@ export const appStateMgmt = {
         trial.messageTopics = topics;
         await trialSvc.patch(trial, oldTrial);
         update({ app: { trial } });
+      },
+      forceInject: async (inject: IInject, trial: ITrial) => {
+        await runSvc.init(trial)
+        runSvc.force(inject)
       },
 
       selectAsset: (asset: IAsset) => update({ app: { assetId: asset.id } }),

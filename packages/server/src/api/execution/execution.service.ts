@@ -47,7 +47,7 @@ export class ExecutionService implements IExecutionService {
 
   public execute(i: IInject, _state = InjectState.EXECUTED, comment?: string) {
     let { messageType } = i;
-    if(!messageType && i.selectedMessage && i.selectedMessage.messageType) {
+    if (!messageType && i.selectedMessage && i.selectedMessage.messageType) {
       messageType = i.selectedMessage.messageType;
     }
     switch (messageType) {
@@ -95,72 +95,82 @@ export class ExecutionService implements IExecutionService {
         this.sendSumoConfiguration(i, comment);
         break;
       default:
-        console.warn(
-          `${messageType} is not yet supported by the execution service.`,
-        );
+        this.sendDefaultMessage(i);
     }
   }
 
+  private sendDefaultMessage(i: IInject) {
+    const data = i.message[i.messageType]
+    const topic = i.kafkaTopic
+    this.kafkaService.sendMessage(data, topic);
+  }
+
   private async sendMessage(i: IInject) {
-    const message = getMessage<ISendMessageMessage>(i, MessageType.SEND_MESSAGE);
+    const message = getMessage<ISendMessageMessage>(
+      i,
+      MessageType.SEND_MESSAGE,
+    );
 
     let topic: string;
-    if(i.kafkaTopic !== 'send_message') {
-      topic = i.kafkaTopic
+    if (i.kafkaTopic !== 'send_message') {
+      topic = i.kafkaTopic;
     }
     if (!topic) {
       topic = message.kafkaTopicId;
-      if(!topic) {
+      if (!topic) {
         return console.warn(`There is no topic set`);
       }
     }
 
     let data = message.message;
 
-    // TODO
-    if(i.selectedMessage && i.selectedMessage.useNamespace) {
-      data = this.prepareGeoJSON(data, i.selectedMessage.namespace)
-    }
-    else {
+    if (i.selectedMessage && i.selectedMessage.useNamespace) {
+      data = this.prepareGeoJSON(data, i.selectedMessage.namespace);
+    } else {
       data = JSON.parse(data);
-      this.kafkaService.sendMessage(data, topic)
+      this.kafkaService.sendMessage(data, topic);
     }
   }
   private async sendFile(i: IInject) {
     const message = getMessage<ISendFileMessage>(i, MessageType.SEND_FILE);
 
     let topic: string;
-    if(i.kafkaTopic !== 'send_file') {
-      topic = i.kafkaTopic
+    // If the kafkaTopic is not send_file, take the topic from the kafkaTopic
+    if (i.kafkaTopic !== 'send_file') {
+      topic = i.kafkaTopic;
     }
-    
-    if (!topic) {
+    // else, take the kafkaTopic from the message
+    else {
       topic = message.kafkaTopicId;
-      if(!topic) {
+      if (!topic) {
         return console.warn(`There is no topic set`);
       }
     }
     const asset =
       message.file &&
       (await this.trialService.getAsset(this.trial.id, message.file));
+
     if (!asset) {
       return console.warn(`Could not open asset with ID (${message.file})`);
     } else {
       let data = asset.data.toString();
 
-      if(i.selectedMessage && i.selectedMessage.useNamespace) {
-        data = this.prepareGeoJSON(data, i.selectedMessage.namespace)
+      // If the message uses namespaces, add them here
+      if (i.selectedMessage && i.selectedMessage.useNamespace) {
+        data = this.prepareGeoJSON(data, i.selectedMessage.namespace);
       }
 
-      if(topic === 'named_json') {
-      this.kafkaService.sendMessage(
-        { name: asset.filename, json_string: data },
-        topic,
-      );
+      // If the topic is a named_json, make sure to send it accordingly
+      if (topic === 'named_json') {
+        this.kafkaService.sendMessage(
+          { name: asset.filename, json_string: data },
+          topic,
+        );
       }
+      // else simply parse the data and send it to the selected kafka topic
       else {
         data = JSON.parse(data);
-        this.kafkaService.sendMessage(data, topic)
+        this.kafkaService.sendMessage(data, topic);
       }
     }
   }
@@ -350,17 +360,17 @@ export class ExecutionService implements IExecutionService {
 
   private prepareGeoJSON(data: string, namespace: string) {
     const obj = JSON.parse(data);
-    if(obj.type && obj.type === 'FeatureCollection') {
-      obj.features && obj.features.forEach((ft: any) => {
-        const namespaceName = namespace + '.' + ft.geometry.type as string
-        ft.geometry = {[namespaceName]: ft.geometry}
-      })
-    }
-    else if (obj.type && obj.type === 'Feature') {
-      const namespaceName = namespace + '.' + obj.geometry.type as string
-      obj.geometry = {[namespaceName]: obj.geometry}
+    if (obj.type && obj.type === 'FeatureCollection') {
+      obj.features &&
+        obj.features.forEach((ft: any) => {
+          const namespaceName = (namespace + '.' + ft.geometry.type) as string;
+          ft.geometry = { [namespaceName]: ft.geometry };
+        });
+    } else if (obj.type && obj.type === 'Feature') {
+      const namespaceName = (namespace + '.' + obj.geometry.type) as string;
+      obj.geometry = { [namespaceName]: obj.geometry };
     }
 
-    return JSON.stringify(obj)
+    return JSON.stringify(obj);
   }
 }
