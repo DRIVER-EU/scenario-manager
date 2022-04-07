@@ -67,7 +67,7 @@ export const InjectsList: MeiosisComponent = () => {
               const inject = attrs.treeItem as IInject;
               const isValid = inject.isValid || 'valid';
               const className = isValid === 'invalid' ? 'red-text' : isValid === 'childInvalid' ? 'orange-text' : '';
-              return m('div.icon-label', [m(Icon, { iconName: getIcon(inject), className }), inject.title]);
+              return m('div.icon-label', [m(Icon, { iconName: inject.selectedMessage?.iconName ? inject.selectedMessage?.iconName : getIcon(inject), className }), inject.title]);
             },
           } as Component<ITreeItemViewComponent>,
           onSelect: (ti, isSelected) => isSelected && selectInject(ti as IInject),

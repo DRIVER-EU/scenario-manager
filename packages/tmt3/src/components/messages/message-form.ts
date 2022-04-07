@@ -98,7 +98,7 @@ export const MessageForm: MessageComponent = () => {
 
       if (inject && inject.type === InjectType.INJECT) {
         let kafkaTopicSelect =
-          inject.kafkaTopic === 'send_file' || 'send_message' ? JSON.stringify('select') : JSON.stringify('none');
+          inject.kafkaTopic === 'send_file' || inject.kafkaTopic === 'send_message' ? JSON.stringify('select') : JSON.stringify('none');
         const { updateInject, createAsset } = actions;
         const disabled = !editing;
         let topic = templates.find((t) => t.topic === inject.topic);
