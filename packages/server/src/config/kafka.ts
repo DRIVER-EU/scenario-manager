@@ -21,14 +21,17 @@ export default () => ({
     // kafkaHost: 'driver-testbed.eu:3501',
     // schemaRegistry: 'driver-testbed.eu:3502',
     // sslOptions: true // process.env.SSL === 'true'
-    sslOptions: process.env.SSL === 'true'
-      ? {
-        pfx: fs.readFileSync(process.env.SSL_PFX || 'certs/TB-TrialMgmt.p12'),
-        passphrase: process.env.SSL_PASSPHRASE || 'changeit',
-        ca: fs.readFileSync(process.env.SSL_CA || 'certs/test-ca.pem'),
-        rejectUnauthorized: true,
-      }
-      : undefined,
+    sslOptions:
+      process.env.SSL === 'true'
+        ? {
+            pfx: fs.readFileSync(
+              process.env.SSL_PFX || 'certs/TB-TrialMgmt.p12',
+            ),
+            passphrase: process.env.SSL_PASSPHRASE || 'changeit',
+            ca: fs.readFileSync(process.env.SSL_CA || 'certs/test-ca.pem'),
+            rejectUnauthorized: true,
+          }
+        : undefined,
     clientId: process.env.CLIENT_ID || 'TB-TrialMgmt',
     fetchAllSchemas: false,
     fetchAllVersions: false,
@@ -40,28 +43,28 @@ export default () => ({
     produce: process.env.PRODUCE
       ? process.env.PRODUCE.split(',')
       : [
-        RequestChangeOfTrialStage,
-        TrialManagementPhaseMessageTopic,
-        TrialManagementRolePlayerTopic,
-        TrialManagementSessionMgmtTopic,
-        // 'flood_prediction_geojson',
-        'standard_cap',
-        'simulation_entity_post',
-        'send_file',
-        'send_message',
-        'named_json',
-        // 'standard_geojson',
-        // 'large_data_update',
-        'simulation_request_startinject',
-        // 'sumo_SumoConfiguration',
-        // 'sumo_AffectedArea',
-        // 'simulation_request_unittransport',
-        // 'standard_named_geojson',
-        'cbrn_geojson',
-        'chemical_incident',
-        'resource',
-        'simulation_entity_featurecollection'
-      ],
+          RequestChangeOfTrialStage,
+          TrialManagementPhaseMessageTopic,
+          TrialManagementRolePlayerTopic,
+          TrialManagementSessionMgmtTopic,
+          // 'flood_prediction_geojson',
+          'standard_cap',
+          'simulation_entity_post',
+          'send_file',
+          'send_message',
+          'named_json',
+          // 'standard_geojson',
+          // 'large_data_update',
+          'simulation_request_startinject',
+          // 'sumo_SumoConfiguration',
+          // 'sumo_AffectedArea',
+          // 'simulation_request_unittransport',
+          // 'standard_named_geojson',
+          'cbrn_geojson',
+          'chemical_incident',
+          'resource',
+          'simulation_entity_featurecollection',
+        ],
     logging: {
       logToConsole: LogLevel.Debug,
       logToKafka: LogLevel.Warn,
