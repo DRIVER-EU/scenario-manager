@@ -169,7 +169,7 @@ export class RunService {
   /** force send inject */
   public forceInject(i: IInject) {
     this.executionService.execute(i);
-    this.close()
+    this.close();
   }
 
   /** init execsvc */
