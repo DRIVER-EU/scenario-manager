@@ -217,7 +217,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
               inject.type === InjectType.INJECT
                 ? [ m(Select, {
                     disabled,
-                    iconName: getMessageIcon(inject.topic),
+                    iconName: inject.selectedMessage?.iconName ? inject.selectedMessage?.iconName : getMessageIcon(inject.topic),
                     placeholder: 'Select the message type',
                     checkedId: inject.topicId,
                     options: messageOpt,

@@ -36,9 +36,8 @@ export default () => ({
     fetchAllSchemas: false,
     fetchAllVersions: false,
     // autoRegisterSchemas: true,
-    autoRegisterSchemas: true,
+    autoRegisterSchemas: false,
     wrapUnions: 'auto',
-    schemaFolder: './topics/schemas',
     // consume: [],
     produce: process.env.PRODUCE
       ? process.env.PRODUCE.split(',')
