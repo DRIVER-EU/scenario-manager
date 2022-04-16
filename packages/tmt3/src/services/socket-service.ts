@@ -57,7 +57,6 @@ export const setupSocket = (autoConnect = true): Socket => {
     update({ exe: { time } } as Partial<IAppModel>);
   });
   socket.on('is-connected', async (data: IConnectMessage) => {
-    console.log('kafkaTopics');
     const { update } = actions;
     const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
     await actions.updateSession(Object.assign({ tags: undefined }, session));

@@ -41,6 +41,20 @@ export const MessageConfigForm: MeiosisComponent = () => {
           actions.updateMessage(message);
         }
       };
+
+      const updateGUI = (message: IKafkaMessage) => {
+        if (message.customGUI) {
+          try {
+            const val = JSON.parse(message.customGUI);
+            val.label = message.name;
+            val.icon = message.iconName;
+            val.topic = message.kafkaTopic;
+            message.customGUI = JSON.stringify(val, null, 4);
+          } catch (e) {
+            console.log('Invalid JSON');
+          }
+        }
+      };
       const hasChanged = !deepEqual(message, original);
 
       const { kafkaTopics } = state.app;
@@ -99,7 +113,10 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       className: 'col s6',
                       isMandatory: true,
                       initialValue: message.name,
-                      onchange: (v: string) => (message.name = v),
+                      onchange: (v: string) => {
+                        message.name = v;
+                        updateGUI(message);
+                      },
                       label: 'Name',
                     }),
                     m(TextInput, {
@@ -107,7 +124,10 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       className: 'col s2',
                       isMandatory: true,
                       initialValue: message.iconName,
-                      onchange: (v: string) => (message.iconName = v),
+                      onchange: (v: string) => {
+                        message.iconName = v;
+                        updateGUI(message);
+                      },
                       label: 'Material Icon Name',
                     }),
                     m(Icon, {
@@ -138,15 +158,17 @@ export const MessageConfigForm: MeiosisComponent = () => {
                           onchange: (v) => {
                             message ? (message.messageForm = v[0] as string) : undefined;
                           },
-                        }) : undefined,
+                        })
+                      : undefined,
                     m(Select, {
                       label: 'Kafka topic for the message',
                       className: 'col s6',
-                      placeholder: 'Message type',
+                      placeholder: 'Kafka topic',
                       options: topicOptionList,
                       checkedId: message.kafkaTopic,
                       onchange: (v) => {
                         message ? (message.kafkaTopic = v[0] as string) : undefined;
+                        updateGUI(message);
                       },
                     }),
                     m(InputCheckbox, {
@@ -168,26 +190,29 @@ export const MessageConfigForm: MeiosisComponent = () => {
                           label: 'Namespace',
                         })
                       : undefined,
-                    message.useCustomGUI ? [
-                      m(
-                        'div.input-field.col.s12',
-                        { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' },
-                        [
-                          m('span', 'JSON message'),
+                    message.useCustomGUI
+                      ? [
                           m(
-                            'textarea.materialize-textarea',
-                            {
-                              style: 'height: 300px; overflow-y: auto; max-height: 300px',
-                              id: 'jsonTextArea',
-                              onchange: (e: any) => {
-                                message.customGUI = e.target.value;
-                              },
-                            },
-                            message.customGUI ? message.customGUI : undefined
+                            'div.input-field.col.s12',
+                            { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' },
+                            [
+                              m('span', 'JSON message'),
+                              m(
+                                'textarea.materialize-textarea',
+                                {
+                                  style: 'height: 300px; overflow-y: auto; max-height: 300px',
+                                  id: 'jsonTextArea',
+                                  onchange: (e: any) => {
+                                    message.customGUI = e.target.value;
+                                    updateGUI(message);
+                                  },
+                                },
+                                message.customGUI ? message.customGUI : undefined
+                              ),
+                            ]
                           ),
                         ]
-                      ),
-                    ] : undefined,
+                      : undefined,
                     visualizedGUI &&
                       m(
                         '.layout-form.col.s12',

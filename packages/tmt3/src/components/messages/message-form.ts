@@ -157,9 +157,16 @@ export const MessageForm: MessageComponent = () => {
           (inject.message.SEND_MESSAGE as ISendMessageMessage).message &&
           (inject.message.SEND_MESSAGE as ISendMessageMessage).message.length > 1
         ) {
-          const vizTopic = JSON.parse((inject.message.SEND_MESSAGE as ISendMessageMessage).message);
+          let vizTopic = {}
+          try {
+          vizTopic = JSON.parse((inject.message.SEND_MESSAGE as ISendMessageMessage).message);
+          } catch(e) {
+            vizTopic = {}
+          }
+          //@ts-ignore
           if (vizTopic.ui) {
             messageIsGUI = true;
+            //@ts-ignore
             const uiString = JSON.stringify(vizTopic.ui);
             visualizedGUI =
               typeof uiString === 'string' &&
