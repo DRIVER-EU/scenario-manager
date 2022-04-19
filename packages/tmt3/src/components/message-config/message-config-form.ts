@@ -33,8 +33,12 @@ export const MessageConfigForm: MeiosisComponent = () => {
       }
 
       const onsubmit = (e: UIEvent) => {
-        if (message.useCustomGUI && message.messageForm === '') {
-          message.messageForm = message.name;
+        if (message.useCustomGUI) {
+          if(message.messageForm === '') {
+            message.messageForm = message.name;
+          }
+          // @ts-ignore
+          message.messageType = message.name.toUpperCase().replace(/ /g,"_");
         }
         e.preventDefault();
         if (message) {
@@ -45,10 +49,50 @@ export const MessageConfigForm: MeiosisComponent = () => {
       const updateGUI = (message: IKafkaMessage) => {
         if (message.customGUI) {
           try {
-            const val = JSON.parse(message.customGUI);
-            val.label = message.name;
-            val.icon = message.iconName;
-            val.topic = message.kafkaTopic;
+            let val = JSON.parse(message.customGUI);
+            if (val.ui) {
+              val.label = message.name;
+              val.icon = message.iconName;
+              val.topic = message.kafkaTopic;
+            } else if (Array.isArray(val)) {
+              val = {
+                  ui: [
+                    {
+                      id: "messageType",
+                      value: message.name.toUpperCase().replace(/ /g,"_"),
+                      type: "none"
+                    },
+                    {
+                      id: "title",
+                      label: "Subject",
+                      icon: "title",
+                      type: "text"
+                    },
+                    {
+                      id: "description",
+                      label: "Description",
+                      icon: "note",
+                      type: "textarea"
+                    },
+                    {
+                      id: "message",
+                      label: " ",
+                      className: "col s12",
+                      type: [
+                        {
+                          id: message.name.toUpperCase().replace(/ /g,"_"),
+                          label: " ",
+                          className: "col s12",
+                          type: val
+                        }
+                      ]
+                    }
+                  ],
+                  label: message.name,
+                  icon: message.iconName,
+                  topic: message.kafkaTopic
+                }
+            }
             message.customGUI = JSON.stringify(val, null, 4);
           } catch (e) {
             console.log('Invalid JSON');

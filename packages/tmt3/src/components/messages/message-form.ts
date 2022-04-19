@@ -73,7 +73,7 @@ export const MessageForm: MessageComponent = () => {
           customTemplates.push({
             label: msg.name,
             icon: msg.iconName,
-            topic: msg.name,
+            topic: msg.messageForm,
             ui: JSON.stringify(JSON.parse(gui).ui),
           } as IGuiTemplate);
         }
