@@ -33,12 +33,70 @@ export const MessageConfigForm: MeiosisComponent = () => {
       }
 
       const onsubmit = (e: UIEvent) => {
-        if (message.useCustomGUI && message.messageForm === '') {
-          message.messageForm = message.name;
+        if (message.useCustomGUI) {
+          if (message.messageForm === '') {
+            message.messageForm = message.name;
+          }
+          // @ts-ignore
+          message.messageType = message.name.toUpperCase().replace(/ /g, '_');
         }
         e.preventDefault();
         if (message) {
           actions.updateMessage(message);
+        }
+      };
+
+      const updateGUI = (message: IKafkaMessage) => {
+        if (message.customGUI) {
+          try {
+            let val = JSON.parse(message.customGUI);
+            if (val.ui) {
+              val.label = message.name;
+              val.icon = message.iconName;
+              val.topic = message.kafkaTopic;
+            } else if (Array.isArray(val)) {
+              val = {
+                ui: [
+                  {
+                    id: 'messageType',
+                    value: message.name.toUpperCase().replace(/ /g, '_'),
+                    type: 'none',
+                  },
+                  {
+                    id: 'title',
+                    label: 'Subject',
+                    icon: 'title',
+                    type: 'text',
+                  },
+                  {
+                    id: 'description',
+                    label: 'Description',
+                    icon: 'note',
+                    type: 'textarea',
+                  },
+                  {
+                    id: 'message',
+                    label: ' ',
+                    className: 'col s12',
+                    type: [
+                      {
+                        id: message.name.toUpperCase().replace(/ /g, '_'),
+                        label: ' ',
+                        className: 'col s12',
+                        type: val,
+                      },
+                    ],
+                  },
+                ],
+                label: message.name,
+                icon: message.iconName,
+                topic: message.kafkaTopic,
+              };
+            }
+            message.customGUI = JSON.stringify(val, null, 4);
+          } catch (e) {
+            console.log('Invalid JSON');
+          }
         }
       };
       const hasChanged = !deepEqual(message, original);
@@ -99,7 +157,10 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       className: 'col s6',
                       isMandatory: true,
                       initialValue: message.name,
-                      onchange: (v: string) => (message.name = v),
+                      onchange: (v: string) => {
+                        message.name = v;
+                        updateGUI(message);
+                      },
                       label: 'Name',
                     }),
                     m(TextInput, {
@@ -107,7 +168,10 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       className: 'col s2',
                       isMandatory: true,
                       initialValue: message.iconName,
-                      onchange: (v: string) => (message.iconName = v),
+                      onchange: (v: string) => {
+                        message.iconName = v;
+                        updateGUI(message);
+                      },
                       label: 'Material Icon Name',
                     }),
                     m(Icon, {
@@ -143,11 +207,12 @@ export const MessageConfigForm: MeiosisComponent = () => {
                     m(Select, {
                       label: 'Kafka topic for the message',
                       className: 'col s6',
-                      placeholder: 'Message type',
+                      placeholder: 'Kafka topic',
                       options: topicOptionList,
                       checkedId: message.kafkaTopic,
                       onchange: (v) => {
                         message ? (message.kafkaTopic = v[0] as string) : undefined;
+                        updateGUI(message);
                       },
                     }),
                     m(InputCheckbox, {
@@ -183,18 +248,10 @@ export const MessageConfigForm: MeiosisComponent = () => {
                                   id: 'jsonTextArea',
                                   onchange: (e: any) => {
                                     message.customGUI = e.target.value;
-                                  },
-                                  onblur: (e: any) => {
-                                    try {
-                                      const json = JSON.parse(e.target.value);
-                                      const str = JSON.stringify(json, null, 2);
-                                      message.customGUI = str;
-                                    } catch (e) {
-                                      M.toast({ html: `Error parsing JSON: ${e}`, classes: 'red' });
-                                    }
+                                    updateGUI(message);
                                   },
                                 },
-                                message.customGUI
+                                message.customGUI ? message.customGUI : undefined
                               ),
                             ]
                           ),

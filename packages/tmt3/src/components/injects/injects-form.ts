@@ -95,6 +95,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { mode } = state.app;
+      const { sessionControl } = state.exe;
       const isExecuting = mode === 'execute';
       const disabled = isExecuting;
       const { trial, injectId, scenarioId } = isExecuting && state.exe.trial.id ? state.exe : state.app;
@@ -240,6 +241,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
                     m(Button, {
                       className: 'col s2 button-layout',
                       label: 'Send message',
+                      disabled: sessionControl.isConnected ? false : true,
                       onclick: () => {
                         forceInject(getInject(trial, injectId) as IInject, trial);
                       },
