@@ -138,7 +138,8 @@ export const MessageConfigForm: MeiosisComponent = () => {
                           onchange: (v) => {
                             message ? (message.messageForm = v[0] as string) : undefined;
                           },
-                        }) : undefined,
+                        })
+                      : undefined,
                     m(Select, {
                       label: 'Kafka topic for the message',
                       className: 'col s6',
@@ -168,26 +169,37 @@ export const MessageConfigForm: MeiosisComponent = () => {
                           label: 'Namespace',
                         })
                       : undefined,
-                    message.useCustomGUI ? [
-                      m(
-                        'div.input-field.col.s12',
-                        { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' },
-                        [
-                          m('span', 'JSON message'),
+                    message.useCustomGUI
+                      ? [
                           m(
-                            'textarea.materialize-textarea',
-                            {
-                              style: 'height: 300px; overflow-y: auto; max-height: 300px',
-                              id: 'jsonTextArea',
-                              onchange: (e: any) => {
-                                message.customGUI = e.target.value;
-                              },
-                            },
-                            message.customGUI ? message.customGUI : undefined
+                            'div.input-field.col.s12',
+                            { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' },
+                            [
+                              m('span', 'JSON message'),
+                              m(
+                                'textarea.materialize-textarea',
+                                {
+                                  style: 'height: 300px; overflow-y: auto; max-height: 300px',
+                                  id: 'jsonTextArea',
+                                  onchange: (e: any) => {
+                                    message.customGUI = e.target.value;
+                                  },
+                                  onblur: (e: any) => {
+                                    try {
+                                      const json = JSON.parse(e.target.value);
+                                      const str = JSON.stringify(json, null, 2);
+                                      message.customGUI = str;
+                                    } catch (e) {
+                                      M.toast({ html: `Error parsing JSON: ${e}`, classes: 'red' });
+                                    }
+                                  },
+                                },
+                                message.customGUI
+                              ),
+                            ]
                           ),
                         ]
-                      ),
-                    ] : undefined,
+                      : undefined,
                     visualizedGUI &&
                       m(
                         '.layout-form.col.s12',

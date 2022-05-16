@@ -26,7 +26,7 @@ async function bootstrap() {
   app.use(urlencoded({ limit: '10mb' }));
   app.use('/tmt', express.static(path.join(process.cwd(), 'public')));
 
-  app.setGlobalPrefix('tmt')
+  app.setGlobalPrefix('tmt');
 
   const options = new DocumentBuilder()
     .setTitle('Trial manager service')

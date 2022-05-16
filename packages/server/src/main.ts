@@ -35,7 +35,7 @@ async function bootstrap() {
     }),
   );
 
-  app.setGlobalPrefix('tmt')
+  app.setGlobalPrefix('tmt');
 
   const options = new DocumentBuilder()
     .setTitle('Trial manager service')

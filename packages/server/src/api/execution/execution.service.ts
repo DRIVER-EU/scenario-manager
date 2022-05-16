@@ -100,8 +100,8 @@ export class ExecutionService implements IExecutionService {
   }
 
   private sendDefaultMessage(i: IInject) {
-    const data = i.message[i.messageType]
-    const topic = i.kafkaTopic
+    const data = i.message[i.messageType];
+    const topic = i.kafkaTopic;
     this.kafkaService.sendMessage(data, topic);
   }
 
@@ -123,6 +123,7 @@ export class ExecutionService implements IExecutionService {
     }
 
     let data = message.message;
+    console.log(JSON.stringify(i, null, 2));
 
     if (i.selectedMessage && i.selectedMessage.useNamespace) {
       data = this.prepareGeoJSON(data, i.selectedMessage.namespace);
@@ -131,6 +132,7 @@ export class ExecutionService implements IExecutionService {
       this.kafkaService.sendMessage(data, topic);
     }
   }
+
   private async sendFile(i: IInject) {
     const message = getMessage<ISendFileMessage>(i, MessageType.SEND_FILE);
 

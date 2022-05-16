@@ -63,6 +63,10 @@ export default () => ({
           'chemical_incident',
           'resource',
           'simulation_entity_featurecollection',
+          // 'traffic_light_rlv',
+          // 'traffic_light_intensity',
+          // 'p2000',
+          // 'parking',
         ],
     logging: {
       logToConsole: LogLevel.Debug,
