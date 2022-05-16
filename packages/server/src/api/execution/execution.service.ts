@@ -123,7 +123,6 @@ export class ExecutionService implements IExecutionService {
     }
 
     let data = message.message;
-    console.log(JSON.stringify(i, null, 2));
 
     if (i.selectedMessage && i.selectedMessage.useNamespace) {
       data = this.prepareGeoJSON(data, i.selectedMessage.namespace);
