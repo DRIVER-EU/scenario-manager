@@ -68,7 +68,7 @@ export const MessageForm: MessageComponent = () => {
       );
       const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.useCustomGUI);
       customForms.forEach((msg: IKafkaMessage) => {
-        if(msg.customGUI) {
+        if (msg.customGUI) {
           const gui = msg.customGUI;
           customTemplates.push({
             label: msg.name,
@@ -98,13 +98,16 @@ export const MessageForm: MessageComponent = () => {
 
       if (inject && inject.type === InjectType.INJECT) {
         let kafkaTopicSelect =
-          inject.kafkaTopic === 'send_file' || inject.kafkaTopic === 'send_message' ? JSON.stringify('select') : JSON.stringify('none');
+          inject.kafkaTopic === 'send_file' || inject.kafkaTopic === 'send_message'
+            ? JSON.stringify('select')
+            : JSON.stringify('none');
         const { updateInject, createAsset } = actions;
         const disabled = !editing;
         let topic = templates.find((t) => t.topic === inject.topic);
         if (!topic) {
           topic = customTemplates.find((t) => {
-            return t.topic === inject.topic});
+            return t.topic === inject.topic;
+          });
           if (!topic) return;
         }
         const { update } = topic;
@@ -157,11 +160,11 @@ export const MessageForm: MessageComponent = () => {
           (inject.message.SEND_MESSAGE as ISendMessageMessage).message &&
           (inject.message.SEND_MESSAGE as ISendMessageMessage).message.length > 1
         ) {
-          let vizTopic = {}
+          let vizTopic = {};
           try {
-          vizTopic = JSON.parse((inject.message.SEND_MESSAGE as ISendMessageMessage).message);
-          } catch(e) {
-            vizTopic = {}
+            vizTopic = JSON.parse((inject.message.SEND_MESSAGE as ISendMessageMessage).message);
+          } catch (e) {
+            vizTopic = {};
           }
           //@ts-ignore
           if (vizTopic.ui) {
@@ -302,7 +305,7 @@ export const MessageForm: MessageComponent = () => {
                         ? (inject.message.SEND_MESSAGE as ISendMessageMessage).message
                         : undefined
                     ),
-                    m('label[for=send_message_ta]', 'JSON message'),
+                    m('label.active[for=send_message_ta]', 'JSON message'),
                   ]),
                 ]
               : undefined,
