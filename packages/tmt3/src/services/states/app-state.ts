@@ -33,7 +33,8 @@ import { ISessionControl } from '../../models';
 const trialSvc = restServiceFactory<ITrial>('trials');
 let assetsSvc: IRestService<IAsset>;
 
-const runSvc = runServiceFactory((process.env.SERVER || location.origin) + '/tmt');
+const runSvc = runServiceFactory(location.origin + '/tmt');
+// const runSvc = runServiceFactory((process.env.SERVER || location.origin) + '/tmt');
 
 export interface IActiveTrial {
   trial: ITrial;
@@ -225,7 +226,8 @@ export const appStateMgmt = {
   initial: {
     app: {
       /** During development, use this URL to access the server. */
-      apiService: process.env.SERVER || location.origin,
+      apiService: location.origin,
+      // apiService: process.env.SERVER || location.origin,
       mode: 'edit',
       trials: [],
       trial: {} as ITrial,
@@ -642,8 +644,8 @@ export const appStateMgmt = {
         update({ app: { trial } });
       },
       forceInject: async (inject: IInject, trial: ITrial) => {
-        await runSvc.init(trial)
-        runSvc.force(inject)
+        await runSvc.init(trial);
+        runSvc.force(inject);
       },
 
       selectAsset: (asset: IAsset) => update({ app: { assetId: asset.id } }),

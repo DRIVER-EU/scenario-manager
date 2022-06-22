@@ -4,7 +4,8 @@ import { IGuiTemplate } from 'trial-manager-models';
 import { IActions, IAppModel } from '../meiosis';
 
 export const LoadGuiTemplates = (_actions: IActions) => {
-  const server = (process.env.SERVER || location.origin) + '/tmt';
+  const server = location.origin + '/tmt';
+  // const server = (process.env.SERVER || location.origin) + '/tmt';
   let dataLoaded = false;
 
   return async (state: IAppModel) => {

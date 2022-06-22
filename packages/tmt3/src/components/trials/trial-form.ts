@@ -31,7 +31,8 @@ export const TrialForm: MeiosisComponent = () => {
 
     m.request({
       method: 'POST',
-      url: `${process.env.SERVER || location.origin}/tmt/repo/upload`,
+      url: `${location.origin}/tmt/repo/upload`,
+      // url: `${process.env.SERVER || location.origin}/tmt/repo/upload`,
       body,
     }).then(() => setTimeout(() => m.route.set(dashboardSvc.defaultRoute), 500));
   };

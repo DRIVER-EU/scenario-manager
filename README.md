@@ -34,8 +34,8 @@ The application is a mono repository split into 3 packages:
 
 To run it locally, it assumes you have [nodejs](http://nodejs.org/en/download) installed. Next, install the package manager using `npm i -g pnpm`. Use git to clone this repository with `git clone https://github.com/DRIVER-EU/scenario-manager.git`. Enter the new folder (`cd scenario-manager`) and install all dependencies with:
 
-```console
-pnpm m i
+```bash
+pnpm m i # alternatively, use `npm` instead of `pnpm`
 ```
 
 To run the application, enter:
