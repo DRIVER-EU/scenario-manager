@@ -55,11 +55,6 @@ export type InjectValidationState = 'valid' | 'invalid' | 'childInvalid';
 export type InjectKeys = keyof IScenario | Array<keyof IScenario>;
 
 export interface IInject extends IContent {
-  /** Who performs the action */
-  actorId?: string;
-  /** Who is the recipient/receiver of the action/message */
-  recipientId?: string;
-  // TODO Convert to array
   /** Conditions that will start this inject */
   condition?: IInjectCondition;
   /** Is it a storyline, act or inject */

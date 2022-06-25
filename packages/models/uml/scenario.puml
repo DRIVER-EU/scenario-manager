@@ -1,0 +1,90 @@
+@startuml "TMT Scenario object"
+entity Scenario {
+  /** Unique identifier */
+  +id: string;
+  /** Title or name of the scenario or inject */
+  +title: string;
+  /** Optional parent ID for injects and storylines */
+  +parentId?: string;
+  /** Description of the scenario */
+  +description?: string;
+---
+  Properties only used for a Scenario
+  /** When does the scenario start, UTC date string */
+  +startDate?: string;
+  /** When does the scenario end, UTC date string */
+  +endDate?: string;
+  /** Checklist: items to do before the scenario has started */
+  +todoBefore?: ITodo[];
+  /** Checklist: items to do after the scenario has finished */
+  +todoAfter?: ITodo[];
+---
+  /** Conditions that will start this inject */
+  +condition?: IInjectCondition;
+  /** Is it a scenario, storyline or inject. Only injects are sent. */
+  +type: InjectType;
+  /** Topic for the inject */
+  +topic?: string;
+  /** Type of message: is used to extract the relevant message content */
+  +messageType?: string;
+  /** Inject message */
+  +message?: {
+  \t/** Value is the actual JSON message that is sent. */
+  \t[messageType: string]: unknown;
+  };
+  /** Inject validation state */
+  +isValid?: "valid" | "invalid" | "childInvalid"
+}
+
+interface IInjectCondition {
+  /** Type of delay that rules this condition */
+  +type?: InjectConditionType;
+  /** Amount of delay */
+  +delay?: number;
+  /** Unit of delay */
+  +delayUnitType?: "seconds" | "minutes" | "hours";
+  /** ID of the inject you depend upon */
+  +injectId?: string;
+  /** For manual conditions, set the responsible role player. */
+  +rolePlayerId?: string;
+  /** State of the inject you depend upon */
+  -injectState?: InjectState;
+}
+
+interface ITodo {
+  id: string;
+  title: string;
+  done?: boolean;
+}
+
+enum InjectType {
+  SCENARIO = 'SCENARIO'
+  STORYLINE = 'STORYLINE'
+  INJECT = 'INJECT'
+}
+
+enum InjectConditionType {
+  UNKNOWN = 'UNKNOWN'
+  /** Delay for a certain amount of time */
+  DELAY = 'DELAY'
+  /** Delay for 0 seconds */
+  IMMEDIATELY = 'IMMEDIATELY'
+  /** Delay based on the scenario start time */
+  AT_TIME = 'AT_TIME'
+  /** Wait for manual confirmation to start */
+  MANUALLY = 'MANUALLY'
+}
+
+enum InjectState {
+  /** Waiting to be scheduled for execution */
+  ON_HOLD = 'ON_HOLD'
+  /** Scheduled for execution */
+  SCHEDULED = 'SCHEDULED'
+  /** Being executed, e.g. a role player has started his act, but did not finish yet. */
+  IN_PROGRESS = 'IN_PROGRESS'
+  /** Inject has finished, is completed */
+  EXECUTED = 'EXECUTED'
+  /** Do not execute it anymore */
+  CANCELLED = 'CANCELLED'
+}
+@enduml
