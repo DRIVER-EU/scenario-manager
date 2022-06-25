@@ -4,15 +4,24 @@ Created using the Mithril framework.
 
 When using PNPM, install dependencies using `pnpm --shamefully-hoist`!
 
-## Adding a new message, e.g. CAP
+## Creating your own injects
+This version of the scenario manager supports the creation of your own injects. This guide explains how:
+1. Click on an existing scenario, or create a new one
+2. Click on the gear icon in the top right corner
+3. Click on the `Message Config` tab
+4. Click on the green `+` icon
+5. Fill in the form
+    - `name` - The name of the new inject
+    - `Material Icon Name` - The name of the icon used for this inject []()
+    - `Upload GUI` - Selecting this checkbox allows you to upload your own message form []()
+    - `Form for the message` - You can also select an existing message form
+    - `Kafka topic for the message` - The kafka topic that the inject will be send to
+    - `GeoJSON?` - If the new inject sends GeoJSON files, the scenario manager needs a namespace to ensure the data can be send on Kafka and be shown on a map.
+6. Click the green save icon
+7. Click on the pencil symbol in the top right corner
+8. Test out your new inject!
 
-1. Extend the current `MessageType` enumeration.
-2. In `utils.ts`, add an icon for `MessageType.CAP_MESSAGE` in `getMessageIcon`.
-3. In `utils.ts`, add a name for `MessageType.CAP_MESSAGE` in `getMessageTitle`.
-4. In `MessageForm`, add a new component for the `CAP` message.
-5. In the `execution.service`, `execute` method, add an entry for `CAP` message and create a method to send them.
-6. In the `executing-message-view`, `getMessafeForm` method, add an entry for `CAP` message and return the component you wish to use for rendering a CAP message.
-7. In case you are using new schemes or topics, make sure to register them (publish) in `kafka.ts`.
+If a kafka topic is missing, you should add this to the docker compose that you used to run this scenario-manager, and it will automatically show up in the GUI.
 
 TODO
 

@@ -10,15 +10,29 @@ In a Trial, experiment or exercise, there is a need to control the crisis manage
   - Locations and objects that play a part in the scenario
 - In a scenario, the events are grouped into:
   - Storylines, e.g. the main storyline
-  - Acts, e.g. a set of related events
   - Injects, single messages for a simulator, participant or task for a role player
 - Run a Scenario
   - The events are sent to remote simulators and solutions, e.g. to start a flooding or other incident.
   - Tasks are offered to role players, which need to execute them and indicate when they are done.
 
-## Sending a GeoJSON message
+## Creating your own injects
+This version of the scenario manager supports the creation of your own injects. This guide explains how:
+1. Click on an existing scenario, or create a new one
+2. Click on the gear icon in the top right corner
+3. Click on the `Message Config` tab
+4. Click on the green `+` icon
+5. Fill in the form
+    - `name` - The name of the new inject
+    - `Material Icon Name` - The name of the icon used for this inject []()
+    - `Upload GUI` - Selecting this checkbox allows you to upload your own message form []()
+    - `Form for the message` - You can also select an existing message form
+    - `Kafka topic for the message` - The kafka topic that the inject will be send to
+    - `GeoJSON?` - If the new inject sends GeoJSON files, the scenario manager needs a namespace to ensure the data can be send on Kafka and be shown on a map.
+6. Click the green save icon
+7. Click on the pencil symbol in the top right corner
+8. Test out your new inject!
 
-![Sending a GeoJSON message](img/send_geojson_msg.png)
+If a kafka topic is missing, you should add this to the docker compose that you used to run this scenario-manager, and it will automatically show up in the GUI.
 
 ## Executing a scenario
 
@@ -44,7 +58,8 @@ To run the application, enter:
 npm start
 ```
 
-This will run a [local server on port 8081](http://localhost:8081).
+This will run a [server at 3210](http://localhost:3210)
+and a [GUI at 3388/tmt](http://localhost:3388/tmt).
 
 ## State management
 
@@ -57,6 +72,7 @@ During execution, all messages (a.k.a. injects) are pass through 5 states:
 - An inject message IN_PROGRESS will be executed, which will make it transition to EXECUTED.
 - A group (act, storyline) message will transition to EXECUTED when all of its children are EXECUTED too.
 - There is a fifth state, CANCELLED, but that hasn't been implemented yet.
+
 
 ## TODO
 
