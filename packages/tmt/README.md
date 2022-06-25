@@ -12,8 +12,8 @@ This version of the scenario manager supports the creation of your own injects. 
 4. Click on the green `+` icon
 5. Fill in the form
     - `name` - The name of the new inject
-    - `Material Icon Name` - The name of the icon used for this inject []()
-    - `Upload GUI` - Selecting this checkbox allows you to upload your own message form []()
+    - `Material Icon Name` - The name of the icon used for this inject [Material Icons](https://materializecss.com/icons.html)
+    - `Upload GUI` - Selecting this checkbox allows you to upload your own message form [Message Form](https://github.com/erikvullings/mithril-ui-form)
     - `Form for the message` - You can also select an existing message form
     - `Kafka topic for the message` - The kafka topic that the inject will be send to
     - `GeoJSON?` - If the new inject sends GeoJSON files, the scenario manager needs a namespace to ensure the data can be send on Kafka and be shown on a map.
