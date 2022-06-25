@@ -1,42 +1,41 @@
 import m from 'mithril';
 import { TextInput, TextArea, Select, Button, Icon, Collapsible } from 'mithril-materialized';
-import { ITrial, IObjective, deepCopy, deepEqual, IInjectGroup } from '../../../../models';
-import { TopicNames, objectiveChannel } from '../../models';
-import { TrialSvc } from '../../services';
-import { isInjectGroup, getInjectIcon } from '../../utils';
+import { IObjective, deepCopy, deepEqual } from 'trial-manager-models';
+import { MeiosisComponent } from '../../services';
+import { getInjectIcon, getInjects, getObjectives, getStakeholders, isInjectGroup } from '../../utils';
 
-const log = console.log;
-
-export const ObjectiveForm = () => {
-  const state = {
-    trial: undefined as ITrial | undefined,
-    parent: undefined as IObjective | undefined,
-    objective: undefined as IObjective | undefined,
-    original: undefined as IObjective | undefined,
-    injectGroups: undefined as IInjectGroup[] | undefined,
-    subscription: objectiveChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
-      state.objective = cur && cur.id ? deepCopy(cur) : undefined;
-      state.original = cur && cur.id ? deepCopy(cur) : undefined;
-      state.parent = cur.parentId ? getParent(cur.parentId) : undefined;
-    }),
-  };
-
-  const getParent = (id: string) => (TrialSvc.getObjectives() || []).filter(o => o.id === id).shift();
+export const ObjectiveForm: MeiosisComponent = () => {
+  let objective = {} as IObjective;
 
   return {
-    oninit: () => {
-      state.trial = TrialSvc.getCurrent();
-      state.injectGroups = (TrialSvc.getInjects() || []).filter(isInjectGroup);
-    },
-    onbeforeremove: () => {
-      state.subscription.unsubscribe();
-    },
-    view: () => {
-      const { objective, injectGroups } = state;
-      const hasChanged = !deepEqual(objective, state.original);
-      const stakeholders = TrialSvc.getStakeholders();
+    view: ({
+      attrs: {
+        state: {
+          app: { trial, objectiveId },
+        },
+        actions: { updateObjective, deleteObjective },
+      },
+    }) => {
+      const objectives = getObjectives(trial);
+      if (!objectiveId) {
+        return m(
+          'p',
+          m(
+            'i',
+            `Please, create an objective using the + button${
+              objectives.length > 0 ? ', or select one in the tree' : ''
+            }.`
+          )
+        );
+      }
+      const original = objectives.filter((s) => s.id === objectiveId).shift() || ({} as IObjective);
+      if (!objective || original.id !== objective.id) {
+        objective = deepCopy(original);
+      }
+      const hasChanged = !deepEqual(objective, original);
+      const stakeholders = getStakeholders(trial);
       const options = stakeholders
-        ? stakeholders.map(u => ({
+        ? stakeholders.map((u) => ({
             id: u.id,
             label: u.name || 'unknown',
           }))
@@ -44,22 +43,23 @@ export const ObjectiveForm = () => {
 
       const onsubmit = (e: UIEvent) => {
         e.preventDefault();
-        log('submitting...');
         if (objective) {
-          objectiveChannel.publish(TopicNames.ITEM_UPDATE, { cur: objective });
-          TrialSvc.updateObjective(objective);
+          updateObjective(objective);
         }
       };
 
+      const injectGroups = getInjects(trial).filter(isInjectGroup);
+
       const mainInjectsGroups =
-        injectGroups && objective && injectGroups.filter(g => g.mainObjectiveId === objective.id);
+        injectGroups && objective && injectGroups.filter((g) => g.mainObjectiveId === objectiveId);
       const secInjectsGroups =
-        injectGroups && objective && injectGroups.filter(g => g.secondaryObjectiveId === objective.id);
+        injectGroups && objective && injectGroups.filter((g) => g.secondaryObjectiveId === objectiveId);
 
       return m(
         '.row',
         { style: 'color: black' },
-        m('.col.s12', { key: objective ? objective.id : undefined }, [
+        // m('.col.s12', { key: objective ? objectiveId : undefined }, [
+        m('.col.s12', [
           objective
             ? [
                 m('h4', [
@@ -85,20 +85,23 @@ export const ObjectiveForm = () => {
                     iconName: 'description',
                   }),
                   options
-                    ? m(Select, {
-                        placeholder: 'Select stakeholders',
-                        multiple: true,
-                        iconName: 'group',
-                        label: 'Stakeholders',
-                        checkedId: objective.stakeholderIds,
-                        isMandatory: true,
-                        options,
-                        onchange: (values?: unknown) => {
-                          if (values && values instanceof Array) {
-                            objective.stakeholderIds = values;
-                          }
-                        },
-                      })
+                    ? [
+                        m(Select, {
+                          key: objective.id,
+                          placeholder: 'Select stakeholders',
+                          multiple: true,
+                          iconName: 'group',
+                          label: 'Stakeholders',
+                          checkedId: objective.stakeholderIds,
+                          isMandatory: true,
+                          options,
+                          onchange: (values?: unknown) => {
+                            if (values && values instanceof Array) {
+                              objective.stakeholderIds = values;
+                            }
+                          },
+                        }),
+                      ]
                     : undefined,
                 ],
                 mainInjectsGroups
@@ -107,7 +110,7 @@ export const ObjectiveForm = () => {
                       m(
                         '.col.s12',
                         m(Collapsible, {
-                          items: mainInjectsGroups.map(i => ({
+                          items: mainInjectsGroups.map((i) => ({
                             header: i.title,
                             body: i.description || 'No description provided',
                             iconName: getInjectIcon(i.type),
@@ -122,7 +125,7 @@ export const ObjectiveForm = () => {
                       m(
                         '.col.s12',
                         m(Collapsible, {
-                          items: secInjectsGroups.map(i => ({
+                          items: secInjectsGroups.map((i) => ({
                             header: i.title,
                             body: i.description || 'No description provided',
                             iconName: getInjectIcon(i.type),
@@ -135,7 +138,7 @@ export const ObjectiveForm = () => {
                   m(Button, {
                     iconName: 'undo',
                     class: `green ${hasChanged ? '' : 'disabled'}`,
-                    onclick: () => (state.objective = deepCopy(state.original)),
+                    onclick: () => (objective = deepCopy(original)),
                   }),
                   ' ',
                   m(Button, {
@@ -147,7 +150,7 @@ export const ObjectiveForm = () => {
                   m(Button, {
                     iconName: 'delete',
                     class: 'red',
-                    onclick: () => TrialSvc.deleteObjective(objective),
+                    onclick: () => deleteObjective(objective),
                   }),
                 ]),
               ]

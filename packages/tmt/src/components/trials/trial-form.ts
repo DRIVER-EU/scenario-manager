@@ -1,31 +1,27 @@
 import m from 'mithril';
 import { Button, TextArea, TextInput, FileInput, ModalPanel } from 'mithril-materialized';
-import { TrialSvc, dashboardSvc } from '../../services';
-import { ITrial, deepCopy, deepEqual } from '../../../../models';
-import { AppState } from '../../models';
+import { deepCopy, deepEqual, ITrial } from 'trial-manager-models';
+import { Dashboards } from '../../models';
+import { dashboardSvc, MeiosisComponent } from '../../services';
 
-const log = console.log;
 const close = async (e?: UIEvent) => {
-  log('closing...');
-  await TrialSvc.unload();
-  m.route.set('/');
+  // await TrialSvc.unload();
+  dashboardSvc.switchTo(Dashboards.HOME);
   if (e) {
     e.preventDefault();
   }
 };
 
-export const TrialForm = () => {
-  const state = {
-    trial: {} as ITrial,
-  };
-  const onsubmit = async (e: MouseEvent) => {
-    log('submitting...');
-    e.preventDefault();
-    if (state.trial) {
-      await TrialSvc.saveTrial(state.trial);
-      state.trial = deepCopy(TrialSvc.getCurrent());
-    }
-  };
+export const TrialForm: MeiosisComponent = () => {
+  let trial: ITrial;
+  // const onsubmit = async (e: MouseEvent) => {
+  //   log('submitting...');
+  //   e.preventDefault();
+  //   if (state.trial) {
+  //     await TrialSvc.saveTrial(state.trial);
+  //     state.trial = deepCopy(TrialSvc.getCurrent());
+  //   }
+  // };
   const upload = (file: FileList) => {
     if (!file || file.length < 1) {
       return console.warn('File is undefined');
@@ -35,21 +31,32 @@ export const TrialForm = () => {
 
     m.request({
       method: 'POST',
-      url: `${AppState.apiService()}/repo/upload`,
+      url: `${location.origin}/tmt/repo/upload`,
+      // url: `${process.env.SERVER || location.origin}/tmt/repo/upload`,
       body,
     }).then(() => setTimeout(() => m.route.set(dashboardSvc.defaultRoute), 500));
   };
 
   return {
-    oninit: () => {
-      log('On INIT');
-      log(state);
-      const trial = TrialSvc.getCurrent();
-      state.trial = deepCopy(trial);
+    oninit: ({
+      attrs: {
+        state: {
+          app: { trial: curTrial },
+        },
+      },
+    }) => {
+      trial = deepCopy(curTrial);
     },
-    view: () => {
-      const { trial } = state;
-      const hasChanged = !deepEqual(trial, TrialSvc.getCurrent());
+    view: ({
+      attrs: {
+        state: {
+          app: { trial: curTrial },
+        },
+        actions: { saveTrial, deleteTrial },
+      },
+    }) => {
+      trial.id = curTrial.id;
+      const hasChanged = !deepEqual(trial, curTrial);
       return m('.row', [
         m('.col.s12', [
           m('h5', trial.id ? 'Trial' : 'Create new Trial'),
@@ -104,14 +111,16 @@ export const TrialForm = () => {
                 label: 'Undo',
                 iconName: 'undo',
                 class: `green ${hasChanged ? '' : 'disabled'}`,
-                onclick: () => (state.trial = deepCopy(TrialSvc.getCurrent())),
+                onclick: () => (trial = deepCopy(curTrial)),
               }),
               ' ',
               m(Button, {
                 label: 'Save',
                 iconName: 'save',
                 class: `green ${hasChanged ? '' : 'disabled'}`,
-                onclick: onsubmit,
+                onclick: async () => {
+                  await saveTrial(trial);
+                },
               }),
               ' ',
               m(Button, {
@@ -138,7 +147,7 @@ export const TrialForm = () => {
             {
               label: 'Delete',
               onclick: async () => {
-                await TrialSvc.delete(trial.id);
+                await deleteTrial(trial.id);
                 close();
               },
             },

@@ -2,8 +2,4 @@
   "spellright.language": ["en", "nl"],
   "spellright.documentTypes": ["markdown", "latex", "plaintext"],
   "typescript.tsdk": "./packages/tmt/node_modules/typescript/lib",
-  "files.exclude": {
-    "packages/tmt/**": true,
-    "packages/tmt2/**": true
-  }
 }

@@ -1,45 +1,39 @@
 import m, { FactoryComponent, Attributes } from 'mithril';
 import { TextInput, FileInput } from 'mithril-materialized';
-import { eatSpaces } from '../../utils';
-import { IAsset } from '../../../../models';
-import { TrialSvc } from '../../services';
+import { IAsset } from 'trial-manager-models';
 
 export interface IUploadAsset extends Attributes {
   /** Text to show as placeholder of the FileInput */
   placeholder?: string;
   /** What kind of files are accepted, e.g. ['.json', '.geojson'] */
   accept: string[];
-  /** Callback function: When a file is uploaded, call this method to inform the user of the component. */
-  assetUploaded: (a: IAsset) => void;
+  /** Service to save a new asset */
+  createAsset: (a: IAsset, files: FileList) => Promise<void>;
+  /** Callback */
+  done?: () => void;
 }
 
 export const UploadAsset: FactoryComponent<IUploadAsset> = () => {
-  const uploadAsset = async (files: FileList, assetUploaded: (a: IAsset) => void) => {
-    const { alias } = state;
-    if (!files || files.length === 0 || !alias) {
-      return;
-    }
-    const asset = { alias } as IAsset;
-    const result = await TrialSvc.saveAsset(asset, files);
-    if (result) {
-      assetUploaded(result);
-    }
-  };
-
-  const state = {
-    alias: '',
-  };
+  let alias = '';
 
   return {
-    view: ({ attrs: { assetUploaded, accept, placeholder } }) => {
-      const { alias } = state;
+    view: ({ attrs: { createAsset, accept, placeholder, done } }) => {
+      const uploadAsset = async (files: FileList) => {
+        if (!files || files.length === 0 || !alias) {
+          return;
+        }
+        const asset = { alias } as IAsset;
+        await createAsset(asset, files);
+        alias = '';
+        done && done();
+      };
 
       return [
         m(TextInput, {
           id: 'alias',
           initialValue: alias,
           onchange: (v: string) => {
-            state.alias = v.replace(/\s/g, '');
+            alias = v.replace(/\s/g, '');
           },
           label: 'Alias',
           placeholder: 'No spaces allowed',
@@ -48,9 +42,9 @@ export const UploadAsset: FactoryComponent<IUploadAsset> = () => {
         }),
         m(FileInput, {
           disabled: !alias,
-          placeholder,
+          placeholder: !alias ? 'Please, first provide an alias!' : placeholder,
           accept,
-          onchange: (files: FileList) => uploadAsset(files, assetUploaded),
+          onchange: (files: FileList) => uploadAsset(files),
           class: 'col s12 m6',
         }),
       ];

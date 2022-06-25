@@ -1,14 +1,11 @@
-import m, { FactoryComponent } from 'mithril';
-import { IScenario, ITodo, InjectKeys, IInject } from '../../../../models';
+import m from 'mithril';
+import { IScenario, ITodo } from 'trial-manager-models';
 import { FlatButton, Kanban, IModelField, IKanban } from 'mithril-materialized';
+import { MeiosisComponent } from '../../services';
+import { getInject } from '../../utils';
 
-export const Checklist: FactoryComponent<{
-  scenario: IScenario;
-  disabled?: boolean;
-  onChange?: (i: IInject, prop: InjectKeys) => void;
-}> = () => {
-  const state = { key: 0 } as { key: number; onChange?: (i: IInject, prop: InjectKeys) => void };
-
+export const Checklist: MeiosisComponent = () => {
+  // let key = 0;
   const model = [
     {
       id: 'title',
@@ -39,36 +36,30 @@ export const Checklist: FactoryComponent<{
     },
   ] as IModelField[];
 
-  const onchange = (scenario: IScenario, type: 'before' | 'after') => (items: ITodo[]) => {
-    const { onChange = () => undefined } = state;
-    if (type === 'before') {
-      scenario.todoBefore = items as ITodo[];
-      onChange(scenario, 'todoBefore');
-    } else {
-      scenario.todoAfter = items;
-      onChange(scenario, 'todoAfter');
-    }
-  };
-
   return {
-    oninit: ({ attrs: { onChange } }) => {
-      state.onChange = onChange;
-    },
-    view: ({ attrs: { scenario, disabled = false } }) => {
-      const { key } = state;
+    view: ({ attrs: { state, actions } }) => {
+      const { mode } = state.app;
+      const isEditing = mode === 'edit';
+      const { trial, scenarioId } = isEditing ? state.app : state.exe;
+      const { updateInject } = actions;
+      const disabled = !isEditing;
+      const scenario = getInject(trial, scenarioId) as IScenario;
       const { todoBefore, todoAfter } = scenario;
+
       return disabled === false || todoBefore || todoAfter
         ? m('.row', [
             m('.col.s6', [
               disabled ? m('h6', 'BEFORE') : undefined,
               [
                 m(Kanban, {
-                  key: `before${key}`,
                   disabled,
                   label: 'todo (BEFORE)',
                   canDrag: true,
                   model: disabled ? disabledModel : model,
-                  onchange: onchange(scenario, 'before'),
+                  onchange: (items) => {
+                    scenario.todoBefore = items;
+                    updateInject(scenario);
+                  },
                   items: todoBefore,
                   editableIds: disabled ? ['done'] : undefined,
                 } as IKanban<ITodo>),
@@ -78,12 +69,15 @@ export const Checklist: FactoryComponent<{
               disabled ? m('h6', 'AFTER') : undefined,
               [
                 m(Kanban, {
-                  key: `after${key}`,
                   disabled,
                   label: 'todo (AFTER)',
                   canDrag: true,
                   model: disabled ? disabledModel : model,
-                  onchange: onchange(scenario, 'after'),
+                  onchange: (items) => {
+                    scenario.todoAfter = items;
+                    updateInject(scenario);
+                  },
+                  // onchange: onchange(scenario, 'after'),
                   items: todoAfter,
                   editableIds: disabled ? ['done'] : undefined,
                 } as IKanban<ITodo>),
@@ -99,14 +93,15 @@ export const Checklist: FactoryComponent<{
                     iconName: 'clear_all',
                     onclick: () => {
                       if (todoBefore) {
-                        scenario.todoBefore = todoBefore.map(todo => ({ ...todo, done: false }));
-                        onchange(scenario, 'before');
+                        scenario.todoBefore = todoBefore.map((todo) => ({ ...todo, done: false }));
+                        updateInject(scenario);
+                        // onchange(scenario, 'before');
                       }
                       if (todoAfter) {
-                        scenario.todoAfter = todoAfter.map(todo => ({ ...todo, done: false }));
-                        onchange(scenario, 'after');
+                        scenario.todoAfter = todoAfter.map((todo) => ({ ...todo, done: false }));
+                        updateInject(scenario);
+                        // onchange(scenario, 'after');
                       }
-                      state.key++;
                     },
                   })
                 )

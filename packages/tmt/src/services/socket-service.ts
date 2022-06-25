@@ -1,55 +1,112 @@
-import io from 'socket.io-client';
-import { TimeState, SimulationState, ITimeManagement } from '../../../models';
-import { AppState } from '../models';
+import m from 'mithril';
+import io, { Socket } from 'socket.io-client';
+import { actions, IAppModel, states } from '.';
+import {
+  TimeState,
+  ITimeManagement,
+  deepEqual,
+  IInjectSimStates,
+  IInject,
+  uniqueId,
+  IConnectMessage,
+  ISessionManagement,
+  SessionState,
+} from 'trial-manager-models';
+import { getInjects } from '../utils';
 
 // tslint:disable-next-line:no-console
-const log = console.log;
-let socket: SocketIOClient.Socket;
+let socket: Socket;
 
-const setupSocket = (autoConnect = true) => {
+export const setupSocket = (autoConnect = true): Socket => {
+  console.table(location.origin + '/tmt/');
   if (socket && socket.connected) {
     return socket;
   }
-  socket = autoConnect ? io() : io(AppState.apiService());
+  const url = location.origin;
+  // const url = process.env.SERVER || location.origin;
+  console.log('origin is ' + url);
+  socket = io(url, { path: '/tmt/socket.io/' });
 
   socket.on('connect', () => {
-    log('Connected');
+    console.log('Websocket connected');
+    socket.emit('test-bed-connect');
   });
-  socket.on('time-events', (data: unknown) => {
-    console.log('time-events: ', data);
-  });
-  socket.on('connect_error', (data: unknown) => {
+  // socket.on('disconnect', () => log('Disconnected'));
+  socket.on('connect_error', (err: Error) => {
+    console.log('Websocket error ' + JSON.stringify(err));
+    console.log(`connect_error due to ${err.message}`);
     socket.close();
     if (autoConnect) {
       SocketSvc.socket = setupSocket(false);
     } else {
-      console.error('event', data);
+      console.error('connect_error: ' + JSON.stringify(err, null, 2));
     }
   });
-  socket.on('disconnect', () => log('Disconnected'));
+  socket.on('exception', (data: any) => {
+    console.warn('exception', data);
+  });
+  // socket.on('time-events', (data: unknown) => {
+  //   console.log('time-events: ', data);
+  // });
   socket.on('stateUpdated', (state: TimeState) => {
-    SimulationState.state = state;
+    const { update } = actions;
+    // SimulationState.state = state;
+    update({ exe: { time: { state } } } as Partial<IAppModel>);
   });
-  let handler = -1;
   socket.on('time', (time: ITimeManagement) => {
-    // log(`Time message received: ${time.trialTime}`);
-    SimulationState.simulationTime = time.simulationTime || new Date().setHours(12, 0, 0).valueOf();
-    SimulationState.simulationSpeed = time.simulationSpeed;
-    if (time.tags?.timeElapsed) {
-      console.log(time);
-      SimulationState.tags = { timeElapsed: time.tags.timeElapsed };
-    }
-    window.clearInterval(handler);
-    if (time.simulationSpeed && time.simulationSpeed > 0) {
-      const secDuration = 1000;
-      handler = window.setInterval(() => {
-        if (!SimulationState.simulationTime) {
-          SimulationState.simulationTime = 0;
-        }
-        SimulationState.simulationTime += secDuration;
-      }, secDuration / time.simulationSpeed);
-    }
+    const { update } = actions;
+    update({ exe: { time } } as Partial<IAppModel>);
   });
+  socket.on('is-connected', async (data: IConnectMessage) => {
+    const { update } = actions;
+    const { session = {} as Partial<ISessionManagement>, isConnected, time, host } = data;
+    await actions.updateSession(Object.assign({ tags: undefined }, session));
+    const kafkaTopics = await SocketSvc.getKafkaTopics();
+    actions.updateKafkaTopics(kafkaTopics);
+    console.log(kafkaTopics);
+    update({
+      exe: {
+        sessionControl: {
+          activeSession: session.state === SessionState.Started || session.state === SessionState.Initializing,
+          isConnected,
+          host,
+          realtime: time?.simulationTime ? Math.abs(time?.simulationTime - Date.now()) < 10000 : true,
+        },
+        time,
+      },
+    } as Partial<IAppModel>);
+  });
+  socket.on('injectStates', (injectStates: IInjectSimStates) => {
+    const { update } = actions;
+    const { exe } = states();
+    const { injectStates: curInjectStates, trial } = exe;
+    if (deepEqual(curInjectStates, injectStates)) {
+      return;
+    }
+    if (injectStates) {
+      trial.injects = trial.injects.map((i) => ({ ...i, ...injectStates[i.id] }));
+    }
+    update({ exe: { trial, injectStates } } as Partial<IAppModel>);
+    m.redraw();
+  });
+  socket.on('updatedInject', (i: IInject) => {
+    const { update } = actions;
+    const {
+      exe: { trial },
+    } = states();
+    trial.injects = getInjects(trial).map((s) => (s.id === i.id ? i : s));
+    update({ exe: { trial } } as Partial<IAppModel>);
+  });
+  socket.on('createdInject', (i: IInject) => {
+    const { update } = actions;
+    const {
+      exe: { trial },
+    } = states();
+    i.id = i.id || uniqueId();
+    trial.injects && trial.injects.push(i);
+    update({ exe: { trial } } as Partial<IAppModel>);
+  });
+
   return socket;
 };
 socket = setupSocket();
@@ -60,4 +117,15 @@ socket = setupSocket();
  */
 export const SocketSvc = {
   socket: socket || setupSocket(),
+  getKafkaTopics: async () => {
+    return await new Promise((resolve) => {
+      console.log('SOCKET SERVICE');
+      SocketSvc.socket.emit('getKafkaTopics', (data: string[]) => {
+        resolve(data as string[]);
+      });
+    });
+  },
+} as {
+  socket: Socket;
+  getKafkaTopics: () => Promise<string[]>;
 };

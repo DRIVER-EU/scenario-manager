@@ -2,43 +2,32 @@ import m, { FactoryComponent } from 'mithril';
 import { Collection, CollectionMode } from 'mithril-materialized';
 import {
   getMessage,
-  IInject,
   MessageType,
   RolePlayerMessageType,
   IPerson,
   IRolePlayerMsg,
   rolePlayerMessageToTestbed,
-} from '../../../../models';
-import { userIcon } from '../../utils';
-import { TrialSvc } from '../../services';
-import { injectsChannel, TopicNames } from './../../models';
+} from 'trial-manager-models';
+import { MeiosisComponent } from '../../services';
+import { getActiveTrialInfo, getUsers, userIcon } from '../../utils';
 
-export const RolePlayerExeMessageForm: FactoryComponent = () => {
-  const state = {
-    subscription: injectsChannel.subscribe(TopicNames.ITEM_SELECT, ({ cur }) => {
-      state.inject = cur;
-      m.redraw();
-    }),
-    inject: {} as IInject,
-  };
-
+export const RolePlayerExeMessageForm: MeiosisComponent = () => {
   return {
-    onremove: () => state.subscription.unsubscribe(),
-    view: () => {
-      const { inject } = state;
+    view: ({ attrs: { state } }) => {
+      const { inject, trial } = getActiveTrialInfo(state);
+      if (!inject) return;
       const rpm = getMessage(inject, MessageType.ROLE_PLAYER_MESSAGE) as IRolePlayerMsg;
-      const rolePlayer = (TrialSvc.getUsers() || []).filter(u => u.id === rpm.rolePlayerId).shift();
-      const participants = (TrialSvc.getUsers() || []).filter(
-        u => rpm.participantIds && rpm.participantIds.indexOf(u.id) >= 0
-      );
+      const rolePlayer = getUsers(trial)
+        .filter((u) => u.id === rpm.rolePlayerId)
+        .shift();
+      const participants = getUsers(trial).filter((u) => rpm.participantIds && rpm.participantIds.indexOf(u.id) >= 0);
       const msg = rolePlayerMessageToTestbed(
         rpm,
         rolePlayer ? rolePlayer.name : 'UNKNOWN',
-        participants.map(p => p.name)
+        participants.map((p) => p.name)
       );
       return [
         rpm.type === RolePlayerMessageType.CALL ? m(CallMessage, { rolePlayer, msg, participants }) : undefined,
-        // m(TextArea, { initialValue: inject.})
       ];
     },
   };
@@ -57,7 +46,7 @@ const CallMessage: FactoryComponent<{
       m(Collection, {
         header: 'Call',
         mode: CollectionMode.AVATAR,
-        items: participants.map(p => ({
+        items: participants.map((p) => ({
           title: p.name,
           content: `${p.mobile ? `MOBILE: ${p.mobile}<br/>` : ''}${p.phone ? `PHONE: ${p.phone}` : ''}`,
           avatar: userIcon(p),

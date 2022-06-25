@@ -1,17 +1,23 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IOstStageChangeMessage, InjectKeys } from '../../../../models';
+import { getMessage, MessageType, IOstStageChangeMessage } from 'trial-manager-models';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
 /** Request the Observer Support Tool to change the list of questions for the observers */
-export const OstChangeStageMessageForm: FactoryComponent<{
-  inject: IInject;
-  onChange?: (i: IInject, prop: InjectKeys) => void;
-  disabled?: boolean;
-}> = () => {
+export const OstChangeStageMessageForm: MessageComponent = () => {
   return {
-    view: ({ attrs: { inject, disabled, onChange } }) => {
-      const pm = getMessage(inject, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES) as IOstStageChangeMessage;
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
+    view: ({
+      attrs: {
+        state,
+        actions: { updateInject },
+        options: { editing } = { editing: true },
+      },
+    }) => {
+      const { inject } = getActiveTrialInfo(state);
+      if (!inject) return;
+      const disabled = !editing;
+      const pm = getMessage<IOstStageChangeMessage>(inject, MessageType.CHANGE_OBSERVER_QUESTIONNAIRES);
 
       return m('.row', [
         m(
@@ -22,7 +28,7 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             initialValue: inject.title,
             onchange: (v: string) => {
               inject.title = v;
-              update('title');
+              updateInject(inject);
             },
             label: 'Title',
             iconName: 'title',
@@ -36,7 +42,7 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             initialValue: inject.description,
             onchange: (v: string) => {
               inject.description = v;
-              update('description');
+              updateInject(inject);
             },
             label: 'Description',
             iconName: 'note',
@@ -50,7 +56,7 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             initialValue: pm.ostTrialSessionId,
             onchange: (v: number) => {
               pm.ostTrialSessionId = v;
-              update();
+              updateInject(inject);
             },
             label: 'OST trial session ID',
             iconName: 'filter_1',
@@ -64,7 +70,7 @@ export const OstChangeStageMessageForm: FactoryComponent<{
             initialValue: pm.ostTrialStageId,
             onchange: (v: number) => {
               pm.ostTrialStageId = v;
-              update();
+              updateInject(inject);
             },
             label: 'OST trial stage ID',
             iconName: 'filter_2',

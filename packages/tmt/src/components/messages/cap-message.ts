@@ -1,8 +1,6 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput, Select, MapEditor, IInputOption } from 'mithril-materialized';
-import { EditableTable, IEditableTable } from 'mithril-table';
 import {
-  IInject,
   getMessage,
   MessageType,
   UserRole,
@@ -17,16 +15,11 @@ import {
   Severity,
   Certainty,
   IValueNamePair,
-  InjectKeys,
-} from '../../../../models';
-import { TrialSvc } from '../../services';
-import { enumToOptions } from '../../utils';
+} from 'trial-manager-models';
+import { MessageComponent } from '../../services';
+import { enumToOptions, getActiveTrialInfo, getUsersByRole } from '../../utils';
 
-export const CapMessageForm: FactoryComponent<{
-  inject: IInject;
-  onChange?: (i: IInject, prop: InjectKeys) => void;
-  disabled?: boolean;
-}> = () => {
+export const CapMessageForm: MessageComponent = () => {
   const state = {} as {
     alert: IAlert;
     alertInfo: IInfo;
@@ -43,10 +36,14 @@ export const CapMessageForm: FactoryComponent<{
   };
 
   return {
-    oninit: ({ attrs: { inject } }) => {
+    oninit: ({ attrs: { state: appState } }) => {
+      const { inject, trial } = getActiveTrialInfo(appState);
+      if (!inject) {
+        return;
+      }
       const alert = getMessage<IAlert>(inject, MessageType.CAP_MESSAGE);
-      const participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT) || [];
-      alert.identifier = inject.id as string;
+      const participants = getUsersByRole(trial, UserRole.PARTICIPANT) || [];
+      alert.identifier = inject.id;
       alert.status = alert.status || Status.Exercise;
       alert.msgType = alert.msgType || MsgType.Alert;
       alert.scope = alert.scope || Scope.Public;
@@ -57,7 +54,6 @@ export const CapMessageForm: FactoryComponent<{
         state.alertInfo = alertInfo;
       } else {
         if (alert.info instanceof Array) {
-          // console.log('Converting array')
           alert.info = alert.info[0];
         }
         state.alertInfo = alert.info instanceof Array ? alert.info[0] : alert.info;
@@ -80,7 +76,13 @@ export const CapMessageForm: FactoryComponent<{
       // const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
       // state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
     },
-    view: ({ attrs: { inject, disabled, onChange } }) => {
+    view: ({
+      attrs: {
+        state: appState,
+        actions: { updateInject },
+        options: { editing } = { editing: true },
+      },
+    }) => {
       const {
         alert,
         alertInfo,
@@ -95,7 +97,11 @@ export const CapMessageForm: FactoryComponent<{
         certaintyOptions,
       } = state;
       // console.table(statusOptions);
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
+      // const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
+      const { inject } = getActiveTrialInfo(appState);
+      if (!inject) return;
+
+      const disabled = !editing;
 
       return [
         m(TextInput, {
@@ -105,7 +111,7 @@ export const CapMessageForm: FactoryComponent<{
           initialValue: inject.title,
           onchange: (v: string) => {
             inject.title = alertInfo.headline = v;
-            update(['title', 'message']);
+            updateInject(inject);
           },
           label: 'Headline',
           iconName: 'title',
@@ -124,7 +130,7 @@ export const CapMessageForm: FactoryComponent<{
           onchange: (v) => {
             alert.sender = v[0] as string;
             alertInfo.senderName = (participants.filter((p) => p.id === v[0]).shift() || ({} as IPerson)).name;
-            update();
+            updateInject(inject);
           },
         }),
         m(TextArea, {
@@ -133,7 +139,7 @@ export const CapMessageForm: FactoryComponent<{
           initialValue: inject.description,
           onchange: (v: string) => {
             inject.description = alertInfo.description = v;
-            update(['description', 'message']);
+            updateInject(inject);
           },
           label: 'Description',
           iconName: 'note',
@@ -148,7 +154,7 @@ export const CapMessageForm: FactoryComponent<{
           checkedId: alert.status,
           onchange: (v) => {
             alert.status = v[0] as Status;
-            update();
+            updateInject(inject);
           },
         }),
         m(Select, {
@@ -161,7 +167,7 @@ export const CapMessageForm: FactoryComponent<{
           checkedId: alert.msgType,
           onchange: (v) => {
             alert.msgType = v[0] as MsgType;
-            update();
+            updateInject(inject);
           },
         }),
         m(Select, {
@@ -174,7 +180,7 @@ export const CapMessageForm: FactoryComponent<{
           checkedId: alert.scope,
           onchange: (v) => {
             alert.scope = v[0] as Scope;
-            update();
+            updateInject(inject);
           },
         }),
         m(Select, {
@@ -187,7 +193,7 @@ export const CapMessageForm: FactoryComponent<{
           checkedId: alertInfo.urgency,
           onchange: (v) => {
             alertInfo.urgency = v[0] as Urgency;
-            update();
+            updateInject(inject);
           },
         }),
         m(Select, {
@@ -200,7 +206,7 @@ export const CapMessageForm: FactoryComponent<{
           checkedId: alertInfo.severity,
           onchange: (v) => {
             alertInfo.severity = v[0] as Severity;
-            update();
+            updateInject(inject);
           },
         }),
         m(Select, {
@@ -213,7 +219,7 @@ export const CapMessageForm: FactoryComponent<{
           checkedId: alertInfo.certainty,
           onchange: (v) => {
             alertInfo.certainty = v[0] as Certainty;
-            update();
+            updateInject(inject);
           },
         }),
         m(Select, {
@@ -227,7 +233,7 @@ export const CapMessageForm: FactoryComponent<{
           checkedId: alertInfo.category,
           onchange: (v) => {
             alertInfo.category = v as Category | Category[];
-            update();
+            updateInject(inject);
           },
         }),
         // m(EditableTable, {
@@ -268,7 +274,7 @@ export const CapMessageForm: FactoryComponent<{
             alertInfo.parameter = state.parameters = Object.keys(props).map(
               (p) => ({ valueName: p, value: props[p] } as IValueNamePair)
             );
-            update();
+            updateInject(inject);
           },
         }),
       ];

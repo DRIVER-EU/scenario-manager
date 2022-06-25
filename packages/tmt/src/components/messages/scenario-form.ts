@@ -1,70 +1,58 @@
-import m, { FactoryComponent } from 'mithril';
-import { IInject, IScenario, InjectKeys } from '../../../../models';
+import m from 'mithril';
 import { DateTimeControl } from '../ui/date-time-control';
 import { DefaultMessageForm } from '.';
 import { Checklist } from '../ui/checklist';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
 const DEFAULT_TRIAL_DURATION = 2;
 
 /**
  * Default message form with a title and description.
  */
-export const ScenarioForm: FactoryComponent<{
-  inject: IInject;
-  disabled?: boolean;
-  onChange?: (i: IInject, prop: InjectKeys) => void;
-}> = () => {
-  const state = {} as {
-    scenario: IScenario;
-  };
-
+export const ScenarioForm: MessageComponent = () => {
   return {
-    view: ({ attrs }) => {
-      const { onChange, disabled = false } = attrs;
-      const scenario = attrs.inject as IScenario;
-      state.scenario = scenario;
+    view: ({ attrs: { state, actions, options = { editing: true } } }) => {
+      const { scenario } = getActiveTrialInfo(state);
+      const { updateInject } = actions;
+      if (!scenario) return;
+      const disabled = !options.editing;
+
       const startDate = scenario.startDate ? new Date(scenario.startDate) : new Date();
       const endDate = scenario.endDate
         ? new Date(scenario.endDate)
         : new Date(startDate.valueOf() + DEFAULT_TRIAL_DURATION * 3600000);
-
       if (endDate < startDate) {
         M.toast({ html: 'End time must be later than start time!', classes: 'orange' });
       }
       return [
-        m(DefaultMessageForm, { inject: scenario, disabled, onChange }),
-        disabled
-          ? undefined
-          : [
-              m(DateTimeControl, {
-                className: 'col s12 m6',
-                prefix: 'Start',
-                dt: startDate,
-                onchange: (d: Date) => {
-                  state.scenario.startDate = d.toISOString();
-                  if (onChange) {
-                    onChange(state.scenario, 'startDate');
-                  }
-                },
-              }),
-              m(DateTimeControl, {
-                className: 'col s12 m6',
-                prefix: 'End',
-                icon: 'timer_off',
-                dt: endDate,
-                onchange: (d: Date) => {
-                  state.scenario.endDate = d.toISOString();
-                  if (onChange) {
-                    onChange(state.scenario, 'endDate');
-                  }
-                },
-              }),
-            ],
-        m(Checklist, {
-          disabled,
-          scenario,
-          onChange,
-        }),
+        m(DefaultMessageForm, { state, actions, options }),
+        [
+          m(DateTimeControl, {
+            key: Date.now(),
+            className: 'col s12 m6',
+            prefix: 'Start',
+            disabled,
+            dt: startDate,
+            onchange: (d: Date) => {
+              scenario.startDate = d.toISOString();
+              updateInject(scenario);
+            },
+          }),
+          m(DateTimeControl, {
+            key: Date.now(),
+            className: 'col s12 m6',
+            prefix: 'End',
+            disabled,
+            icon: 'timer_off',
+            dt: endDate,
+            onchange: (d: Date) => {
+              scenario.endDate = d.toISOString();
+              updateInject(scenario);
+            },
+          }),
+        ],
+        m(Checklist, { state, actions }),
       ];
     },
   };

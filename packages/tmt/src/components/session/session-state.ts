@@ -1,16 +1,14 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { SessionTimelineView } from './session-timeline';
 import { ExecutingInjectView } from '../executing/executing-inject-view';
-import { RunSvc } from '../../services';
+import { MeiosisComponent } from '../../services';
 
-export const SessionState: FactoryComponent = () => {
+export const SessionState: MeiosisComponent = () => {
   return {
-    oninit: () => {
-      RunSvc.activeTrial();
-    },
-    view: () => m('.row', [
-      m('.col.s12.m6.sb.large.sb-hor', m(SessionTimelineView)),
-      m('.col.s12.m6.sb.large', m(ExecutingInjectView)),
-    ]),
+    view: ({ attrs: { state, actions } }) =>
+      m('.row', [
+        m('.col.s12.m6.sb.large.sb-hor', m(SessionTimelineView, { state, actions })),
+        m('.col.s12.m6.sb.large', m(ExecutingInjectView, { state, actions })),
+      ]),
   };
 };
