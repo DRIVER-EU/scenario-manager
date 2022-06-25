@@ -1,35 +1,32 @@
-import m, { RouteDefs, ComponentTypes } from 'mithril';
-import { IDashboard } from '../models/dashboard';
-import { ISubscriptionDefinition } from './message-bus-service';
-import { TopicNames, scenarioChannel as trialChannel } from '../models/channels';
-import { ObjectivesView } from '../components/objectives/objective-view';
-import { TrialForm } from '../components/trials/trial-form';
-import { TrialList } from '../components/trials/trial-list';
-import { Layout } from '../components/layout';
-import { InjectsView } from '../components/injects/injects-view';
-import { Dashboards } from '../models/dashboards';
-import { UsersView } from '../components/users/users-list';
-import { StakeholdersView } from '../components/stakeholders/stakeholders-list';
-import { AssetsView } from '../components/assets';
-import { SessionState } from '../components/session/session-state';
-import { TrialSettings } from '../components/configuration/trial-settings';
-// import { SimulationView } from '../components/simulation';
-import { SessionView } from '../components/session/session-view';
-import { OverviewMap } from '../components/map/overview-map';
-import { SelectMessageTypesForm } from '../components/select-message-types';
-import { SessionTable } from '../components/session/session-table';
+import m, { RouteDefs } from 'mithril';
+import { IDashboard, Dashboards } from '../models';
+import { actions, states } from './meiosis';
+import {
+  Layout,
+  AssetsView,
+  TrialForm,
+  TrialList,
+  InjectsView,
+  ObjectivesView,
+  OverviewMap,
+  SessionView,
+  SessionState,
+  StakeholdersView,
+  TrialSettings,
+  UsersView,
+  SessionTable,
+  MessageConfigView,
+} from '../components';
 
 class DashboardService {
-  private subscription!: ISubscriptionDefinition<any>;
   private dashboards!: ReadonlyArray<IDashboard>;
 
-  constructor(private layout: ComponentTypes, dashboards: IDashboard[]) {
+  constructor(dashboards: IDashboard[]) {
     this.setList(dashboards);
-    this.subscribe();
   }
 
   public getList(level?: string) {
-    return this.dashboards.filter(d => d.level === level);
+    return this.dashboards.filter((d) => d.level === level);
   }
 
   public setList(list: IDashboard[]) {
@@ -37,60 +34,55 @@ class DashboardService {
   }
 
   public getCurrent(route: string) {
-    return this.dashboards.filter(d => route.indexOf(d.route) >= 0).shift();
+    return this.dashboards.filter((d) => route.indexOf(d.route) >= 0).shift();
   }
 
   public get defaultRoute() {
-    const dashboard = this.dashboards.filter(d => d.default).shift();
+    const dashboard = this.dashboards.filter((d) => d.default).shift();
     return dashboard ? dashboard.route : this.dashboards[0].route;
   }
 
-  public get routingTable() {
-    return this.dashboards.reduce(
-      (p, c) => {
-        p[c.route] = { render: () => m(this.layout, m(c.component)) };
-        return p;
-      },
-      {} as RouteDefs
-    );
+  public route(dashboardId: Dashboards) {
+    const dashboard = this.dashboards.filter((d) => d.id === dashboardId).shift();
+    return dashboard ? dashboard.route : this.defaultRoute;
   }
 
-  public switchTo(dashboardId: Dashboards) {
-    const dashboard = this.dashboards.filter(d => d.id === dashboardId).shift();
+  public switchTo(
+    dashboardId: Dashboards,
+    params?: { [key: string]: string | number | undefined },
+    query?: { [key: string]: string | number | undefined }
+  ) {
+    const dashboard = this.dashboards.filter((d) => d.id === dashboardId).shift();
     if (dashboard) {
-      m.route.set(dashboard.route);
+      const url = dashboard.route + (query ? '?' + m.buildQueryString(query) : '');
+      m.route.set(url, params);
     }
   }
 
-  private subscribe() {
-    this.subscription = trialChannel.subscribe(TopicNames.ITEM_UPDATE, ({ cur }) => {
-      if (cur) {
-        this.setList(
-          this.dashboards.map(d => {
-            d.visible = true;
-            return d;
-          })
-        );
-        this.switchTo(Dashboards.TRIAL);
-      } else {
-        this.setList(
-          this.dashboards.map(d => {
-            d.visible = d.id === Dashboards.HOME;
-            return d;
-          })
-        );
-        this.switchTo(Dashboards.HOME);
-      }
-    });
+  public routingTable() {
+    return this.dashboards.reduce((p, c) => {
+      p[c.route] =
+        c.hasNavBar === false
+          ? {
+              render: () => m(c.component, { state: states(), actions }),
+            }
+          : {
+              render: () => {
+                const state = states();
+                return m(Layout, { state, actions }, m(c.component, { state, actions }));
+              },
+            };
+      return p;
+    }, {} as RouteDefs);
   }
 }
 
-export const dashboardSvc: DashboardService = new DashboardService(Layout, [
+export const dashboardSvc: DashboardService = new DashboardService([
   {
     id: Dashboards.HOME,
     default: true,
     title: 'Home',
-    iconName: 'home',
+    icon: 'home',
     route: '/home',
     visible: true,
     component: TrialList,
@@ -98,7 +90,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.TRIAL,
     title: 'Edit',
-    iconName: 'edit',
+    icon: 'edit',
     route: '/edit/scenarios',
     visible: false,
     component: InjectsView,
@@ -106,7 +98,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.EXECUTE,
     title: 'Run',
-    iconName: 'directions_run',
+    icon: 'directions_run',
     route: '/execute/session',
     visible: false,
     component: SessionView,
@@ -114,7 +106,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.SETTINGS,
     title: 'Settings',
-    iconName: 'settings',
+    icon: 'settings',
     route: '/settings/users',
     visible: false,
     component: TrialSettings,
@@ -135,14 +127,14 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     component: UsersView,
     level: Dashboards.SETTINGS,
   },
-  {
+  /*{
     id: Dashboards.TRIAL_SETTINGS,
     title: 'Topics',
     route: '/settings/topics',
     visible: false,
     component: TrialSettings,
     level: Dashboards.SETTINGS,
-  },
+  },*/
   {
     id: Dashboards.ASSETS,
     title: 'Assets',
@@ -151,12 +143,20 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
     component: AssetsView,
     level: Dashboards.SETTINGS,
   },
-  {
+  /*{
     id: Dashboards.MESSAGES,
     title: 'Messages',
     route: '/settings/messages',
     visible: false,
     component: SelectMessageTypesForm,
+    level: Dashboards.SETTINGS,
+  },*/
+  {
+    id: Dashboards.MESSAGE_CONFIG,
+    title: 'Message Config',
+    route: '/settings/message_config',
+    visible: false,
+    component: MessageConfigView,
     level: Dashboards.SETTINGS,
   },
   {
@@ -210,7 +210,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.SESSION_TIMELINE,
     title: 'Timeline',
-    iconName: 'timelapse',
+    icon: 'timelapse',
     route: '/execute/timeline',
     visible: false,
     level: Dashboards.EXECUTE,
@@ -219,7 +219,7 @@ export const dashboardSvc: DashboardService = new DashboardService(Layout, [
   {
     id: Dashboards.SESSION_TABLE,
     title: 'Table',
-    iconName: 'toc',
+    icon: 'format_align_justify',
     iconClass: 'flip',
     route: '/execute/table',
     visible: false,

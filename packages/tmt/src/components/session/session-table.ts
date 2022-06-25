@@ -1,44 +1,39 @@
-import m, { FactoryComponent } from 'mithril';
-import { RunSvc, SocketSvc } from '../../services';
+import m from 'mithril';
+import { MeiosisComponent } from '../../services';
 import {
-  IInjectSimStates,
-  deepEqual,
   IExecutingInject,
   IInjectSimState,
   InjectType,
-  IScenario,
-  IInject,
-  ITimeManagement,
   InjectState,
   UserRole,
-} from '../../../../models';
+  ITrial,
+  IScenario,
+} from 'trial-manager-models';
 import { ITimelineItem } from 'mithril-scenario-timeline';
-import { AppState } from '../../models';
-import { injectToTimelineItemFactory, padLeft, getMessageIcon } from '../../utils';
+import {
+  injectToTimelineItemFactory,
+  padLeft,
+  getMessageIconFromTemplate,
+  getUsersByRole,
+  getActiveTrialInfo,
+  getInjects,
+  getInject,
+  calcStartEndTimes,
+} from '../../utils';
 
-export const SessionTable: FactoryComponent = () => {
-  const state = {
-    time: undefined as number | undefined,
-    lastTimeUpdate: undefined as number | undefined,
-    timeInterval: undefined as number | undefined,
-    executingInjects: [] as Array<IExecutingInject & IInjectSimState>,
-    selected: undefined as IInject | undefined,
-    socket: SocketSvc.socket,
-  };
-
-  const updateTime = (t: ITimeManagement) => {
-    state.lastTimeUpdate = Date.now();
-    state.time = t.simulationTime || 0;
-    m.redraw();
-  };
-
-  const toTime = (delayInSec = 0) => new Date(AppState.scenarioStartTime.valueOf() + delayInSec * 1000);
+export const SessionTable: MeiosisComponent = () => {
+  let updater: number;
+  let trial: ITrial;
+  let scenarioStartTime: Date;
+  let executingInjects = [] as Array<ITimelineItem & IExecutingInject>;
+  let getMessageIcon: (topic?: string) => string;
+  let serverTime: Date;
 
   const formatTime = (d: Date) => `${padLeft(d.getHours())}:${padLeft(d.getMinutes())}:${padLeft(d.getSeconds())}`;
 
-  const getRole = (roleId: string) => {
-    const r = RunSvc.getUsersByRole(UserRole.ROLE_PLAYER)
-      .filter(role => role.id === roleId)
+  const getRole = (trial: ITrial, roleId: string) => {
+    const r = getUsersByRole(trial, UserRole.ROLE_PLAYER)
+      .filter((role) => role.id === roleId)
       .shift();
     return r ? r.name : '';
   };
@@ -48,18 +43,18 @@ export const SessionTable: FactoryComponent = () => {
   };
 
   const toTableRow = (ei: ITimelineItem & IExecutingInject, i: number, arr: ITimelineItem[]) => {
-    const trialTime = AppState.time && AppState.time.simulationTime ? AppState.time.simulationTime : state.time || 0;
-    const time = toTime(ei.delay);
-    const next = i < arr.length - 1 ? toTime(arr[i + 1].delay) : new Date(time.valueOf() + 365 * 24 * 3600000);
+    const st = new Date((scenarioStartTime.getTime() / 1000 + ei.startTime) * 1000) || 0;
+    const next =
+      i < arr.length - 1 ? new Date((scenarioStartTime.getTime() / 1000 + arr[i + 1].startTime) * 1000) || 0 : Infinity;
     const isDone = ei.state === InjectState.EXECUTED;
-    const role = ei.condition && ei.condition.rolePlayerId ? getRole(ei.condition.rolePlayerId) : '−';
-    const isActive = time.valueOf() <= trialTime && trialTime <= next.valueOf();
-    const isStarting = i === 0 && !isActive && trialTime <= next.valueOf();
+    const role = ei.condition && ei.condition.rolePlayerId ? getRole(trial, ei.condition.rolePlayerId) : '−';
+    const isActive = st <= serverTime && serverTime <= next;
+    const isStarting = i === 0 && !isActive && serverTime <= next;
     return [
       isStarting && m(curTime),
       m(`tr${isActive ? '.active' : ''}${isDone ? '.done' : ''}`, [
-        m('td', formatTime(time)),
-        m('td', m('i.material-icons', getMessageIcon(ei.messageType))),
+        m('td', formatTime(st)),
+        m('td', m('i.material-icons', getMessageIcon(ei.topic))),
         m('td', role),
         m('td', ei.title),
         m('td', ei.description),
@@ -74,65 +69,54 @@ export const SessionTable: FactoryComponent = () => {
   };
 
   const sortByTime = (a: ITimelineItem, b: ITimelineItem) => {
-    const delayA = a.delay || 0;
-    const delayB = b.delay || 0;
-    return delayA > delayB ? 1 : -1;
+    const stA = a.startTime || 0;
+    const stB = b.startTime || 0;
+    return stA < stB ? -1 : 1;
   };
 
-  const updatedInjectReceived = (i: IInject) => RunSvc.updatedInjectReceived(i);
-  const newInjectReceived = (i: IInject) => RunSvc.newInjectReceived(i);
-
   return {
-    oninit: () => {
-      RunSvc.activeTrial();
-      const { socket } = state;
-      socket.on('injectStates', (injectStates: IInjectSimStates) => {
-        if (deepEqual(AppState.injectStates, injectStates)) {
-          return;
-        }
-        AppState.injectStates = injectStates;
-        m.redraw();
-      });
-      socket.on('time', updateTime);
-      socket.on('updatedInject', updatedInjectReceived);
-      socket.on('createdInject', newInjectReceived);
+    oninit: async ({
+      attrs: {
+        state: {
+          app: { templates },
+          exe: { trial: tr, scenarioId, scenarioStartTime: sst },
+        },
+      },
+    }) => {
+      getMessageIcon = getMessageIconFromTemplate(templates);
+      updater = window.setInterval(() => m.redraw(), 1000);
+      trial = tr;
+      const scenario = getInject(trial, scenarioId) as IScenario;
+      scenarioStartTime =
+        scenario && scenario.startDate
+          ? new Date(scenario.startDate)
+          : Object.prototype.toString.call(sst) === '[object Date]'
+          ? sst
+          : new Date();
     },
-    onremove: () => {
-      const { socket } = state;
-      socket.off('injectStates');
-      socket.off('time', updateTime);
-      socket.off('updatedInject', updatedInjectReceived);
-      socket.off('createdInject', newInjectReceived);
-      window.clearInterval(state.timeInterval);
-    },
-    view: () => {
-      const injects = RunSvc.getInjects() || [];
-      const { injectStates } = AppState;
-      // console.log(injects);
-      const executingInjects = injects
-        .filter(i => injectStates.hasOwnProperty(i.id))
-        .map(
-          i =>
-            ({
-              ...i,
-              ...injectStates[i.id],
-            } as IExecutingInject & IInjectSimState)
-        );
+    onbeforeremove: () => window.clearInterval(updater),
+    view: ({ attrs: { state } }) => {
+      const { treeState, trial } = getActiveTrialInfo(state);
+      const { injectStates, time } = state.exe;
+      const injects = getInjects(trial);
 
-      state.executingInjects = executingInjects;
-      const activeScenario = executingInjects
-        ? executingInjects.filter(i => i.type === InjectType.SCENARIO).shift()
-        : undefined;
+      const injectToTimelineItem = injectToTimelineItemFactory(injectStates, treeState);
+      executingInjects = calcStartEndTimes(
+        injects
+          .filter((i) => injectStates.hasOwnProperty(i.id))
+          .map(
+            (i) =>
+              ({
+                ...i,
+                ...injectStates[i.id],
+              } as IExecutingInject & IInjectSimState)
+          )
+          .map(injectToTimelineItem)
+      );
 
-      const scenario = activeScenario as IScenario;
-      const scenarioStartTime =
-        activeScenario && scenario.startDate ? new Date(scenario.startDate) : AppState.scenarioStartTime;
-      AppState.scenarioStartTime = scenarioStartTime;
-      const injectToTimelineItem = injectToTimelineItemFactory(AppState.injectStates);
-      const tli = executingInjects
-        .filter(ei => ei.type === InjectType.INJECT)
-        .map(injectToTimelineItem)
-        .sort(sortByTime);
+      serverTime = time && time.simulationTime ? new Date(time.simulationTime) : new Date();
+
+      const tli = executingInjects.filter((i) => i.type === InjectType.INJECT).sort(sortByTime);
 
       return m(
         '.row',

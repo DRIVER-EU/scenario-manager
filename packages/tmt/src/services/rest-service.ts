@@ -1,237 +1,132 @@
 import m from 'mithril';
-import { IChannelDefinition, messageBus } from './message-bus-service';
-import { TopicNames } from '../models/channels';
-import { AppState } from '../models';
-import { createPatch, Operation } from 'rfc6902';
-import { deepCopy } from '../../../models';
-import { SocketSvc } from './socket-service';
+import { createPatch } from 'rfc6902';
+import { SocketSvc } from '.';
+import { IAsset, IContent } from 'trial-manager-models';
 
-const log = console.log;
-const error = console.error;
-const withCredentials = false;
+export interface IRestService<T extends IContent | IAsset> {
+  url: string;
+  create: (item: Partial<T>, fd?: FormData | undefined) => Promise<void | T>;
+  update: (item: Partial<T>, fd?: FormData | undefined) => Promise<void | T>;
+  patch: (current: T, old: T) => Promise<void>;
+  save: (item: Partial<T>, fd?: FormData | undefined) => Promise<void | T>;
+  del: (id: string | number) => Promise<void>;
+  load: (id: string | number) => Promise<T>;
+  loadList: (props?: string[]) => Promise<T[]>;
+  loadFilteredList: (props?: string[]) => Promise<T[]>;
+}
 
-// export class RestService<T extends IBaseModel> {
-export class RestService<T extends { id?: string | number }> {
-  protected current: T = {} as T;
-  protected previous: T = {} as T;
-  protected list: T[] = [];
-  protected baseUrl: string;
-  protected channel: IChannelDefinition<{ list: T[] } | { cur: T; old: T }>;
+const createRestServiceFactory = (apiService: string) => {
+  return <T extends IContent | IAsset>(urlFragment: string) => {
+    console.log(`API server: ${apiService}`);
+    const url = `${apiService}/${urlFragment}/`;
+    const withCredentials = false;
 
-  constructor(protected urlFragment: string, protected channelName?: string) {
-    this.baseUrl = this.createBaseUrl();
-    this.channel = messageBus.channel(channelName || urlFragment);
-  }
-
-  public getList() {
-    return this.list;
-  }
-
-  public getCurrent() {
-    return this.current;
-  }
-
-  public save(item: T, fd?: FormData) {
-    return item.id ? this.update(item, fd) : this.create(item, fd);
-  }
-
-  public async create(item: T, fd?: FormData) {
-    try {
-      const result = await m.request<T>({
-        method: 'POST',
-        url: this.baseUrl,
-        body: fd || item,
-        withCredentials,
-      });
-      this.setCurrent(result);
-      this.addItemToList(this.current);
-      return this.current;
-    } catch (err) {
-      return error(err.message);
-    }
-  }
-
-  public async update(item: T, fd?: FormData) {
-    try {
-      console.log('Update at ' + new Date());
-      await m
-        .request({
-          method: 'PUT',
-          url: this.baseUrl + item.id,
+    const create = async (item: Partial<T>, fd?: FormData) => {
+      try {
+        return await m.request<T>({
+          method: 'POST',
+          url,
           body: fd || item,
           withCredentials,
-        })
-        .catch((e) => console.error(e));
-      // this.setCurrent(data);
-      this.setCurrent(item);
-      this.updateItemInList(item);
-      return this.current;
-    } catch (err) {
-      return error(err.message);
-    }
-  }
-
-  public async patch(filter: (op: Operation) => boolean = () => true) {
-    const id = SocketSvc.socket.id;
-    try {
-      // console.log('Patch at ' + new Date());
-      const patch = createPatch(this.previous, this.current).filter(filter);
-      if (patch.length === 0) {
-        return this.current;
+        });
+      } catch (err) {
+        return console.error((err as { message: string }).message);
       }
-      console.log(JSON.stringify(patch, null, 2));
-      const item = await m
-        .request<T>({
+    };
+
+    const update = async (item: Partial<T>, fd?: FormData) => {
+      try {
+        return await m
+          .request<T>({
+            method: 'PUT',
+            url: url + item.id,
+            body: fd || item,
+            withCredentials,
+          })
+          .catch((e) => console.error(e));
+      } catch (err) {
+        return console.error((err as { message: string }).message);
+      }
+    };
+
+    const save = (item: Partial<T>, fd?: FormData) => (item.id ? update(item, fd) : create(item, fd));
+
+    const patch = (current: T, old: T) => {
+      try {
+        const patch = createPatch(old, current);
+        // console.log(JSON.stringify(patch, null, 2));
+        if (patch.length === 0) {
+          // console.warn('Nothing to patch');
+          return;
+        }
+        m.request<T>({
           method: 'PATCH',
-          url: this.baseUrl + this.current.id,
-          body: { id, patch },
+          url: url + current.id,
+          body: { id: SocketSvc.socket.id, patch },
           withCredentials,
-        })
-        .catch((e) => console.error(e));
-      if (item) {
-        this.setCurrent(item);
-        this.updateItemInList(item);
-        return this.current;
+        }).catch((e) => console.error(e));
+      } catch (err) {
+        console.error((err as { message: string }).message);
       }
-    } catch (err) {
-      return error(err.message);
-    }
-  }
+    };
 
-  public async delete(id = this.current.id) {
-    try {
-      await m.request<T>({
-        method: 'DELETE',
-        url: this.baseUrl + id,
+    const del = async (id: string | number) => {
+      try {
+        await m.request<T>({
+          method: 'DELETE',
+          url: url + id,
+          withCredentials,
+        });
+      } catch (err) {
+        return console.error((err as { message: string }).message);
+      }
+    };
+
+    const load = (id?: string | number) =>
+      m.request<T>({
+        method: 'GET',
+        url: url + id,
         withCredentials,
       });
-      log(`Deleted with id: ${id}.`);
-      this.removeItemFromList(id);
-    } catch (err) {
-      return error(err.message);
-    }
-  }
 
-  /*
-    There must be a generic file upload function: when uploading a file, it will allow you to set an alias (no spaces).
-    This alias can be used as a link, e.g. you could create an alias image1, and use it in a markdown file as follows:
-    ![My image]({{image1}}).
-   */
-
-  // public uploadFiles(
-  //   fl: FileList | undefined,
-  //   cb: (item: { filename: string; size: number; mimetype: string; data: Blob }) => void
-  // ) {
-  //   if (!fl || fl.length === 0) {
-  //     return;
-  //   }
-  //   log(`Uploading files...`);
-  //   // tslint:disable-next-line:prefer-for-of
-  //   for (let i = 0; i < fl.length; i++) {
-  //     const file = fl[i];
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       const data = reader.result as ArrayBuffer;
-  //       const item = { filename: file.name, size: file.size, mimetype: file.type, data: new Blob([data]) };
-  //       cb(item);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
-
-  public unload() {
-    if (this.current) {
-      this.new();
-    }
-  }
-
-  public async load(id?: string) {
-    const result = await m.request<T>({
-      method: 'GET',
-      url: this.baseUrl + id,
-      withCredentials,
-    });
-    // log(result);
-    this.setCurrent(result);
-    this.updateItemInList(this.current);
-    return this.current;
-  }
-
-  public async loadList(): Promise<T[] | undefined> {
-    try {
+    const loadList = async () => {
       const result = await m.request<T[]>({
         method: 'GET',
-        url: this.baseUrl,
+        url,
         withCredentials,
       });
-      this.setList(result);
-      return this.list;
-    } catch {
-      this.baseUrl = this.createBaseUrl(true);
-      return this.loadList();
-    }
-  }
+      if (!result) {
+        console.warn(`No result found at ${url}`);
+      }
+      return result;
+    };
 
-  public async loadListInScenario(id: string) {
-    const result = await m.request<T[]>({
-      method: 'GET',
-      url: this.baseUrl + `scenario/${id}`,
-      withCredentials,
-    });
-    // log(JSON.stringify(result, null, 2));
-    log('loadListInScenario...');
-    this.setList(result);
-    return this.list;
-  }
+    const loadFilteredList = async (props: string[] = ['id', 'title', 'author', 'desc', 'img']) => {
+      const filter = 'view?props=' + props.join(',');
+      const result = await m.request<T[]>({
+        method: 'GET',
+        url: url + filter,
+        withCredentials,
+      });
+      if (!result) {
+        console.warn(`No result found at ${url}`);
+      }
+      return result;
+    };
 
-  public new(item?: T) {
-    this.setCurrent(item || ({} as T));
-    return this.current;
-  }
+    return {
+      url,
+      create,
+      update,
+      patch,
+      save,
+      del,
+      load,
+      loadList,
+      loadFilteredList,
+    } as IRestService<T>;
+  };
+};
 
-  // protected async getAssets(id = this.current.id) {
-  //   return m
-  //     .request<IAsset[]>({
-  //       method: 'GET',
-  //       url: this.baseUrl + id + '/assets',
-  //       withCredentials,
-  //     })
-  //     .then(result => {
-  //       log(`Got assets.`);
-  //       return result;
-  //     })
-  //     .catch(err => error(err));
-  // }
-
-  protected setCurrent(item: T) {
-    // const old = this.current;
-    this.previous = deepCopy(item);
-    this.current = item;
-    // this.channel.publish(TopicNames.ITEM_UPDATE, { old, cur: this.current });
-  }
-
-  private setList(value: T[]) {
-    this.list = value;
-    this.channel.publish(TopicNames.LIST_UPDATE, { list: this.list });
-  }
-
-  private addItemToList(item: T) {
-    this.setList([...this.list, item]);
-  }
-
-  private updateItemInList(item: T) {
-    this.setList(this.list.map((i) => (i.id === item.id ? item : i)));
-  }
-
-  private removeItemFromList(id?: string | number) {
-    this.setList([...this.list.filter((i) => i.id !== id)]);
-  }
-
-  /** Create the base URL, either using the apiService or the apiDevService */
-  private createBaseUrl(switchToDev = false): string {
-    if (switchToDev) {
-      AppState.useDevServer();
-    }
-    return `${AppState.apiService()}/${this.urlFragment}/`;
-  }
-}
+//export const restServiceFactory = createRestServiceFactory(location.origin + '/tmt');
+export const restServiceFactory = createRestServiceFactory((process.env.SERVER || location.origin) + '/tmt');

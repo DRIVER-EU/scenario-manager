@@ -1,6 +1,6 @@
 import m, { FactoryComponent } from 'mithril';
 import { ScenarioTimeline, ITimelineItem } from 'mithril-scenario-timeline';
-import { TrialSvc } from '../../services';
+import { IAppModel, MeiosisComponent } from '../../services';
 import {
   InjectType,
   IInjectGroup,
@@ -9,12 +9,15 @@ import {
   IScenario,
   InjectState,
   InjectConditionType,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { Icon } from 'mithril-materialized';
-import { getIcon, isScenario } from '../../utils';
-import { AppState } from '../../models';
+import { getIconFromTemplate, getInjects, isScenario } from '../../utils';
+import 'mithril-scenario-timeline/dist/mithril-scenario-timeline.css';
 
-export const InjectsTimeline: FactoryComponent = () => {
+export const InjectsTimeline: MeiosisComponent = () => {
+  let iid: string;
+  let getIcon: (inject: IInject) => string;
+
   const titleView: FactoryComponent<{ item: ITimelineItem }> = () => {
     return {
       view: ({ attrs: { item } }) => {
@@ -40,52 +43,72 @@ export const InjectsTimeline: FactoryComponent = () => {
     };
   };
 
-  const injectToTimelineItem = (i: IInject | IInjectGroup) => {
-    const { condition } = i;
-    return {
-      ...i,
-      delay: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
-      dependsOn:
-        condition && condition.injectId
-          ? [
-              {
-                id: condition.injectId,
-                condition: condition.injectState === InjectState.EXECUTED ? 'finished' : 'started',
-              },
-            ]
-          : undefined,
-    } as ITimelineItem;
-  };
-
-  const scenarioToTimelineItems = (scenario: IInjectGroup, items: Array<IInjectGroup | IInject>) => {
-    const getChildren = (id: string): Array<IInjectGroup | IInject> => {
-      const children = items.filter((i) => i.parentId === id);
-      return children.reduce((acc, c) => [...acc, ...getChildren(c.id as string)], children);
-    };
-    const ti = [scenario, ...getChildren(scenario.id as string)].map(injectToTimelineItem);
-    // console.log(JSON.stringify(ti, null, 2));
-    return ti;
-  };
-
   return {
-    view: () => {
-      const injects = TrialSvc.getInjects() || [];
-      const onClick = (item: ITimelineItem) => {
-        const inject = injects.filter((i) => i.id === item.id).shift();
-        if (inject && inject.type !== InjectType.INJECT) {
-          inject.isOpen = !inject.isOpen;
-          m.redraw();
+    oninit: ({
+      attrs: {
+        state: {
+          app: { templates },
+        },
+      },
+    }) => {
+      getIcon = getIconFromTemplate(templates);
+    },
+    view: ({
+      attrs: {
+        state: {
+          app: { trial, scenarioId, injectId, treeState },
+        },
+        actions: { update },
+      },
+    }) => {
+      const injects = getInjects(trial) || [];
+      iid = injectId;
+
+      const selectTimelineItem = (ti: ITimelineItem) => {
+        const { id } = ti;
+        const inject = injects.filter((i) => i.id === ti.id).shift();
+        if (inject && inject.type !== InjectType.INJECT && iid === id) {
+          treeState[id] = !treeState[id];
         }
+        update({ app: { injectId: id } } as IAppModel);
+        m.redraw();
+      };
+
+      const injectToTimelineItem = (i: IInject | IInjectGroup) => {
+        const { condition } = i;
+        return {
+          ...i,
+          isOpen: treeState[i.id],
+          delay: condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0,
+          dependsOn:
+            condition && condition.injectId
+              ? [
+                  {
+                    id: condition.injectId,
+                    condition: condition.injectState === InjectState.EXECUTED ? 'finished' : 'started',
+                  },
+                ]
+              : undefined,
+        } as ITimelineItem;
+      };
+
+      const scenarioToTimelineItems = (scenario: IInjectGroup, items: Array<IInjectGroup | IInject>) => {
+        const getChildren = (id: string | number): Array<IInjectGroup | IInject> => {
+          const children = items.filter((i) => i.parentId === id);
+          return children.reduce((acc, c) => [...acc, ...getChildren(c.id)], children);
+        };
+        const ti = [scenario, ...getChildren(scenario.id)].map(injectToTimelineItem);
+        return ti;
       };
 
       const scenarios: IScenario[] = injects ? injects.filter(isScenario) : [];
-      const { scenarioId } = AppState;
       const scenario = scenarios.filter((s) => s.id === scenarioId).shift() || scenarios[0];
       if (injects.length === 0 || !scenario) {
         return;
       }
       const scenarioStart = new Date(scenario.startDate || new Date());
       const timelineStart = new Date(Math.floor(scenarioStart.valueOf() / 60000) * 60000);
+      const timeline = scenarioToTimelineItems(scenario, injects);
       return m(
         '.row.timeline.sb.large',
         scenario
@@ -93,9 +116,9 @@ export const InjectsTimeline: FactoryComponent = () => {
               '.col.s12',
               m(ScenarioTimeline, {
                 titleView,
-                lineHeight: 32,
-                timeline: scenarioToTimelineItems(scenario, injects),
-                onClick,
+                lineHeight: 31,
+                timeline,
+                onClick: selectTimelineItem,
                 timelineStart,
                 scenarioStart,
               })

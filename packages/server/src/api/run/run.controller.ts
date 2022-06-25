@@ -17,7 +17,7 @@ import {
   StateTransitionRequest,
   Inject as ScenarioInject,
 } from '../../adapters/models';
-import { SessionState } from '../../../../models';
+import { ITrial, SessionState } from 'trial-manager-models';
 import { Trial } from '../../adapters/models/trial';
 
 @ApiTags('run')
@@ -151,6 +151,21 @@ export class RunController {
     this.runService.stateTransitionRequest(tr);
   }
 
+  @ApiOperation({ description: 'Init the execSvc.' })
+  @ApiBody({ type: Trial })
+  @Put('init')
+  async init(@Body() i: ITrial, @Res() response: Response) {
+    this.runService.initExecSvc(i);
+    return response.sendStatus(HttpStatus.OK);
+  }
+
+  @ApiOperation({ description: 'Force an inject push to Kafka.' })
+  @ApiBody({ type: ScenarioInject })
+  @Put('force')
+  async forceInject(@Body() i: ScenarioInject) {
+    this.runService.forceInject(i);
+  }
+
   @ApiOperation({
     description:
       'Get a list of all registered message topics. Ignores system_logging, system_heartbeat, simulation_time_control, and simulation_session_mgmt',
@@ -168,8 +183,15 @@ export class RunController {
             'system_heartbeat',
             'simulation_time_control',
             'simulation_session_mgmt',
+            'named_json',
+            'system_tm_role_player',
+            'cbrn_geojson',
+            'chemical_incident',
+            'resource',
+            'simulation_entity_featurecollection',
           ].indexOf(t) < 0,
-      );
+      )
+      topics.push('send_file', 'send_message');
     return response.send(topics);
   }
 

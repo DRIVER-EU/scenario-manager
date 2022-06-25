@@ -1,10 +1,8 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput, Select, Label, FlatButton } from 'mithril-materialized';
-import { EditableTable, IEditableTable } from 'mithril-table';
 import { MarkdownEditor, IMarkdownEditor } from 'mithril-markdown';
 import { render } from 'slimdown-js';
 import {
-  IInject,
   getMessage,
   MessageType,
   UserRole,
@@ -20,24 +18,13 @@ import {
   Certainty,
   IValueNamePair,
   ResponseType,
-  InjectKeys,
-} from '../../../../models';
-import { TrialSvc } from '../../services';
-import { debounce } from '../../utils';
+} from 'trial-manager-models';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo, getUsersByRole } from '../../utils';
 
 /** LCMS message, currently a wrapped CAP message */
-export const LcmsMessageForm: FactoryComponent<{
-  inject: IInject;
-  onChange?: (i: IInject, prop: InjectKeys) => void;
-  disabled?: boolean;
-}> = () => {
-  const state = {} as {
-    alert: IAlert;
-    alertInfo: IInfo;
-    parameters: IValueNamePair[];
-    participants: IPerson[];
-    // actionList: IActionList[];
-  };
+export const LcmsMessageForm: MessageComponent = () => {
+  let participants: IPerson[];
 
   // const validateActionList = debounce((al: IActionList[]) => {
   //   const errors: string[] = [];
@@ -58,49 +45,54 @@ export const LcmsMessageForm: FactoryComponent<{
   // }, 500);
 
   return {
-    oninit: ({ attrs: { inject } }) => {
-      state.participants = TrialSvc.getUsersByRole(UserRole.PARTICIPANT) || [];
-      console.log(state.participants);
+    oninit: ({
+      attrs: {
+        state: {
+          app: { trial },
+        },
+      },
+    }) => {
+      participants = getUsersByRole(trial, UserRole.PARTICIPANT) || [];
+    },
+    view: ({
+      attrs: {
+        state,
+        actions: { updateInject },
+        options: { editing } = { editing: true },
+      },
+    }) => {
+      const { inject } = getActiveTrialInfo(state);
+      if (!inject) return;
+      const disabled = !editing;
+      const mdChanged = (p: IValueNamePair, md: string) => {
+        p.value = md;
+        updateInject(inject);
+      };
+
       const alert = getMessage<IAlert>(inject, MessageType.CAP_MESSAGE);
-      alert.identifier = inject.id as string;
+      alert.identifier = inject.id;
       alert.msgType = alert.msgType || MsgType.Alert;
       alert.scope = alert.scope || Scope.Public;
       alert.status = alert.status || Status.Exercise;
       // alert.
       if (!alert.info) {
-        const alertInfo = {} as IInfo;
-        alert.info = alertInfo;
-        alertInfo.event = 'Monitor';
-        alertInfo.category = Category.Other;
-        alertInfo.certainty = Certainty.Unknown;
-        alertInfo.responseType = ResponseType.None;
-        alertInfo.severity = Severity.Unknown;
-        alertInfo.urgency = Urgency.Unknown;
+        alert.info = {} as IInfo;
+        alert.info.event = 'Monitor';
+        alert.info.category = Category.Other;
+        alert.info.certainty = Certainty.Unknown;
+        alert.info.responseType = ResponseType.None;
+        alert.info.severity = Severity.Unknown;
+        alert.info.urgency = Urgency.Unknown;
         // alertInfo.area = IArea
-        state.alertInfo = alertInfo;
-      } else {
-        if (alert.info instanceof Array) {
-          console.log('Converting array');
-          alert.info = alert.info[0];
-        }
-        state.alertInfo = alert.info instanceof Array ? alert.info[0] : alert.info;
+      } else if (alert.info instanceof Array) {
+        alert.info = alert.info[0];
       }
-      if (!state.alertInfo.parameter) {
-        state.alertInfo.parameter = [] as IValueNamePair[];
+      if (!alert.info.parameter) {
+        alert.info.parameter = [] as IValueNamePair[];
       }
-      state.parameters = state.alertInfo.parameter as IValueNamePair[];
-      state.alertInfo.headline = inject.title = inject.title || 'New LCMS message';
-      state.alert = alert;
-
-      // const actionParameter = state.parameters.filter(p => p.valueName === ActionListParameter).shift();
-      // state.actionList = actionParameter ? JSON.parse(actionParameter.value) : [];
-    },
-    view: ({ attrs: { inject, disabled, onChange } }) => {
-      const { alert, alertInfo, parameters, participants } = state;
-      // const { alert, alertInfo, actionList, parameters, participants } = state;
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
-      // console.table(statusOptions);
-
+      const parameters = alert.info.parameter as IValueNamePair[];
+      alert.info.headline = inject.title = inject.title || 'New LCMS message';
+      const alertInfo = alert.info;
       return [
         m(TextInput, {
           disabled,
@@ -109,7 +101,7 @@ export const LcmsMessageForm: FactoryComponent<{
           initialValue: inject.title,
           onchange: (v: string) => {
             inject.title = alertInfo.headline = v;
-            update(['title', 'message']);
+            updateInject(inject);
           },
           label: 'Headline',
           iconName: 'title',
@@ -119,8 +111,10 @@ export const LcmsMessageForm: FactoryComponent<{
           label: 'Participant sending the message',
           iconName: 'person',
           className: 'col s12 m6',
-          placeholder: 'Sender',
-          options: participants.map((p) => ({ id: p.email || '', label: `${p.name} (${p.email})` })),
+          placeholder: 'Sender (requires email)',
+          options: participants
+            .filter((p) => p.email)
+            .map((p) => ({ id: p.email || '', label: `${p.name} (${p.email})` })),
           checkedId: participants
             .filter((p) => p.email === alert.sender)
             .map((p) => p.email)
@@ -128,7 +122,7 @@ export const LcmsMessageForm: FactoryComponent<{
           onchange: (v) => {
             alert.sender = v[0] as string;
             alertInfo.senderName = (participants.filter((p) => p.id === v[0]).shift() || ({} as IPerson)).name;
-            update();
+            updateInject(inject);
           },
         }),
         m(TextArea, {
@@ -137,7 +131,7 @@ export const LcmsMessageForm: FactoryComponent<{
           initialValue: inject.description,
           onchange: (v: string) => {
             inject.description = alertInfo.description = v;
-            update(['description', 'message']);
+            updateInject(inject);
           },
           label: 'Description',
           iconName: 'note',
@@ -150,7 +144,9 @@ export const LcmsMessageForm: FactoryComponent<{
               iconName: 'add',
               disabled: disabled || parameters.filter((p) => p.valueName === 'New section').length > 0,
               onclick: () => {
-                state.parameters.push({ valueName: 'New section', value: 'Click me to change' });
+                alertInfo.parameter instanceof Array &&
+                  alertInfo.parameter.push({ valueName: 'New section', value: 'Click me to change' });
+                updateInject(inject);
               },
             }),
           ]),
@@ -166,7 +162,7 @@ export const LcmsMessageForm: FactoryComponent<{
                     initialValue: p.valueName,
                     onchange: (t) => {
                       p.valueName = t;
-                      update();
+                      updateInject(inject);
                     },
                   }),
                   m('.col.s12', [
@@ -176,19 +172,20 @@ export const LcmsMessageForm: FactoryComponent<{
                         disabled,
                         iconName: 'delete',
                         onclick: () => {
-                          state.parameters = parameters.filter((c) => c.valueName === p.valueName);
-                          update();
+                          if (alertInfo.parameter instanceof Array)
+                            alertInfo.parameter = parameters.filter((_, index) => index !== i);
+                          else if (alertInfo.parameter) {
+                            alertInfo.parameter = undefined;
+                          }
+                          updateInject(inject);
                         },
                       }),
                     ]),
                     m(MarkdownEditor, {
                       parse: render,
                       disabled,
-                      markdown: p.value,
-                      onchange: (md) => {
-                        p.value = md;
-                        update();
-                      },
+                      markdown: p.value || 'Click here to start editing',
+                      onchange: (md: string) => mdChanged(p, md),
                     } as IMarkdownEditor),
                   ]),
                 ];

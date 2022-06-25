@@ -25,15 +25,17 @@ async function bootstrap() {
   app.use(compression());
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ limit: '10mb', extended: true }));
-  app.use(expressStatic(path.join(process.cwd(), 'public')));
+  app.use('/tmt', expressStatic(path.join(process.cwd(), 'public')));
   app.use(
-    '/topics',
+    '/tmt/topics',
     expressStatic(path.join(process.cwd(), 'topics'), {
       setHeaders: (res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
       },
     }),
   );
+
+  app.setGlobalPrefix('tmt');
 
   const options = new DocumentBuilder()
     .setTitle('Trial manager service')
@@ -42,7 +44,7 @@ async function bootstrap() {
     .addTag('Trial manager service')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('/tmt/api', app, document);
 
   const port = process.env.TRIAL_MANAGER_SERVER_PORT || 3210;
   await app.listen(port, () => {

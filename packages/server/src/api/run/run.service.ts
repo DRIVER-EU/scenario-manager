@@ -17,7 +17,7 @@ import {
   SessionState,
   transitionInjects,
   TimeState,
-} from '../../../../models';
+} from 'trial-manager-models';
 import { Server } from 'socket.io';
 import { KafkaService } from '../../adapters/kafka';
 import { StateTransitionRequest } from '../../adapters/models';
@@ -163,6 +163,18 @@ export class RunService {
     if (this.states.hasOwnProperty(tr.id)) {
       this.transitionQueue.push(tr);
     }
+    return true;
+  }
+
+  /** force send inject */
+  public forceInject(i: IInject) {
+    this.executionService.execute(i);
+    this.close();
+  }
+
+  /** init execsvc */
+  public initExecSvc(trial: ITrial) {
+    this.executionService.init(trial);
     return true;
   }
 

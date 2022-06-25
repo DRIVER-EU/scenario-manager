@@ -1,4 +1,5 @@
-import { IMessageTopic, IObjective, IStakeholder, IInjectGroup, IInject, IPerson } from '.';
+import { IMessageTopic, IObjective, IStakeholder, IInjectGroup, IInject, IPerson, MessageType } from '.';
+import { IAsset } from './asset';
 
 export interface ITrialOverview {
   /** Refers to the filename on disk */
@@ -12,6 +13,20 @@ export interface ITrialOverview {
   /** When the scenario was edited */
   lastEdit?: Date;
   // boundingBox: number[];
+}
+
+export interface IKafkaMessage {
+  id: string;
+  name: string;
+  messageForm: string;
+  messageType: MessageType;
+  kafkaTopic: string;
+  useNamespace: boolean;
+  namespace?: string;
+  iconName: string;
+  useCustomGUI: boolean;
+  asset?: IAsset;
+  customGUI?: string;
 }
 
 export interface ITrial extends ITrialOverview {
@@ -32,5 +47,5 @@ export interface ITrial extends ITrialOverview {
   /** The actual messages that encompass the scenario */
   injects: Array<IInject | IInjectGroup>;
   /** The actual message types that will be used */
-  selectedMessageTypes: string[];
+  selectedMessageTypes: IKafkaMessage[];
 }

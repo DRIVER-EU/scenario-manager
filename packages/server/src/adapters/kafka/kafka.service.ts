@@ -24,7 +24,7 @@ import {
 } from 'node-test-bed-adapter';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { debounce } from '../../../../models';
+import { debounce } from 'trial-manager-models';
 export { ITimeControl } from 'node-test-bed-adapter';
 
 export interface TimeService {

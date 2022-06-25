@@ -1,49 +1,51 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
-import { getMessage, IAsset, IInject, MessageType, InjectKeys, IGeoJsonMessage } from '../../../../models';
-import { getMessageSubjects, centerArea } from '../../utils';
-import { TrialSvc } from '../../services';
+import { getMessage, MessageType, IGeoJsonMessage } from 'trial-manager-models';
+import { isJSON, getActiveTrialInfo, baseLayers } from '../../utils';
 import { UploadAsset } from '../ui';
-import { LeafletMap } from 'mithril-leaflet';
+import { ILeafletMap, LeafletMap } from 'mithril-leaflet';
 import { geoJSON, GeoJSON } from 'leaflet';
+import { MessageComponent } from '../../services';
+import { FeatureCollection, Geometry, GeoJsonProperties } from 'geojson';
 
-export const GeoJsonMessageForm: FactoryComponent<{
-  inject: IInject;
-  onChange?: (i: IInject, prop: InjectKeys) => void;
-  disabled?: boolean;
-}> = () => {
-  const state = {
-    overlay: undefined,
-  } as {
-    assets?: IAsset[];
-    overlay?: GeoJSON;
-  };
+export const GeoJsonMessageForm: MessageComponent = () => {
+  let overlays: { [key: string]: GeoJSON | undefined };
 
   return {
-    oninit: async () => {
-      state.assets = await TrialSvc.mapOverlays();
-    },
-    view: ({ attrs: { inject, disabled, onChange } }) => {
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
-      const { overlay, assets = [] } = state;
-      const pm = getMessage<IGeoJsonMessage>(inject, MessageType.GEOJSON_MESSAGE);
-      const subjects = getMessageSubjects(MessageType.GEOJSON_MESSAGE);
-      if (!pm.subjectId && subjects.length === 1) {
-        pm.subjectId = subjects[0].id;
+    view: ({
+      attrs: {
+        state,
+        actions: { updateInject, createAsset },
+        options: { editing } = { editing: true },
+      },
+    }) => {
+      const { assetId, assets } = state.app;
+      const { inject } = getActiveTrialInfo(state);
+      if (!inject) return;
+      const disabled = !editing;
+      const gm = getMessage<IGeoJsonMessage>(inject, MessageType.GEOJSON_MESSAGE);
+      if (!gm.assetId && assetId) {
+        gm.assetId = assetId;
+        updateInject(inject);
+      }
+      const subjects = [] as Array<{ id: string; label: string }>; // getMessageSubjects(trial, MessageType.GEOJSON_MESSAGE);
+      if (!gm.subjectId && subjects.length === 1) {
+        gm.subjectId = subjects[0].id;
       }
 
-      const availableAssets = assets.map(a => ({ id: a.id, label: a.alias || a.filename, url: a.url }));
-      const cur = pm.assetId && availableAssets.filter(a => a.id === pm.assetId).shift();
-      if (!overlay && cur && cur.id) {
-        TrialSvc.loadMapOverlay(cur.id).then(r => {
+      const availableAssets = assets
+        .filter((a) => a.url && isJSON(a.filename))
+        .map((a) => ({ id: a.id, label: a.alias || a.filename, url: a.url })).sort((a, b) => a.label.localeCompare(b.label));
+      // console.log('availableAssets', availableAssets);
+      const cur = gm.assetId && availableAssets.filter((a) => a.id === gm.assetId).shift();
+      if ((!overlays || (gm.alias && !overlays.hasOwnProperty(gm.alias))) && cur && cur.url) {
+        m.request<FeatureCollection<Geometry, GeoJsonProperties>>(cur.url as string).then((r) => {
           const isGeoJSON = r && r.features && r.features.length > 0;
           if (isGeoJSON) {
-            state.overlay = geoJSON(r);
+            overlays = { [cur.label]: geoJSON(r) };
           }
         });
       }
-
-      const { view, zoom } = overlay ? centerArea(overlay) : { view: undefined, zoom: undefined };
 
       return [
         m('.row', [
@@ -56,23 +58,23 @@ export const GeoJsonMessageForm: FactoryComponent<{
               initialValue: inject.title,
               onchange: (v: string) => {
                 inject.title = v;
-                update('title');
+                updateInject(inject);
               },
               label: 'Title',
               iconName: 'title',
             })
           ),
           m(Select, {
-            disabled,
+            disabled: disabled || subjects.length === 0,
             placeholder: subjects.length === 0 ? 'First create a subject' : 'Select a subject',
             className: 'col s6 m3',
             label: 'Subject',
             isMandatory: true,
             options: subjects,
-            checkedId: pm.subjectId,
-            onchange: v => {
-              pm.subjectId = v[0] as string;
-              update();
+            checkedId: gm.subjectId,
+            onchange: (v) => {
+              gm.subjectId = v[0] as string;
+              updateInject(inject);
             },
           }),
           m(Select, {
@@ -81,14 +83,14 @@ export const GeoJsonMessageForm: FactoryComponent<{
             isMandatory: true,
             placeholder: 'Select a geojson file',
             className: 'col s6 m4',
-            checkedId: pm.assetId,
+            checkedId: gm.assetId,
             options: availableAssets,
-            onchange: v => {
+            onchange: (v) => {
               const assetId = +(v[0] as number);
-              pm.assetId = assetId;
-              const asset = assets.filter(a => a.id === assetId).shift();
-              pm.alias = asset ? asset.alias : undefined;
-              update();
+              gm.assetId = assetId;
+              const asset = assets.filter((a) => a.id === assetId).shift();
+              gm.alias = asset ? asset.alias : undefined;
+              updateInject(inject);
             },
           }),
           m(FlatButton, {
@@ -106,7 +108,7 @@ export const GeoJsonMessageForm: FactoryComponent<{
             initialValue: inject.description,
             onchange: (v: string) => {
               inject.description = v;
-              update('description');
+              updateInject(inject);
             },
             label: 'Description',
             iconName: 'short_text',
@@ -114,58 +116,59 @@ export const GeoJsonMessageForm: FactoryComponent<{
           m(FlatButton, {
             disabled,
             className: 'input-field col s2 m1',
-            iconName: pm.properties ? 'delete' : 'add',
+            iconName: gm.properties ? 'delete' : 'add',
             onclick: () => {
-              if (pm.properties) {
-                delete pm.properties;
+              if (gm.properties) {
+                delete gm.properties;
               } else {
-                pm.properties = {};
+                gm.properties = {};
               }
-              update();
+              updateInject(inject);
             },
           }),
         ]),
-        pm.properties
+        gm.properties
           ? m(MapEditor, {
               disabled,
               label: 'Properties',
               iconName: 'dns',
               disallowArrays: true,
-              properties: pm.properties,
+              properties: gm.properties,
             })
           : undefined,
-        overlay
-          ? m(LeafletMap, {
-              style: 'width: 100%; height: 400px; margin: 10px;',
-              view,
-              zoom,
-              overlays: { overlay },
-              visible: ['overlay'],
-              // editable: ['overlay'],
-              // onMapClicked: console.log,
-              showScale: { imperial: false },
-              // onLayerEdited: (f: FeatureGroup) => {
-              //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
-              //   const r = geoJSONtoRoute(geojson);
-              //   if (r) {
-              //     ut.route = r;
-              //     if (onChange) {
-              //       onChange();
-              //     }
-              //   }
-              // },
-            })
-          : undefined,
+        [
+          overlays
+            ? m(LeafletMap, {
+                key: inject.id,
+                baseLayers,
+                style: 'width: 100%; height: 400px; margin: 10px;',
+                autoFit: true,
+                overlays,
+                visible: gm && gm.alias ? [gm.alias] : undefined,
+                // editable: ['overlay'],
+                showScale: { imperial: false },
+                // onLayerEdited: (f: FeatureGroup) => {
+                //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
+                //   const r = geoJSONtoRoute(geojson);
+                //   if (r) {
+                //     ut.route = r;
+                //     if (onChange) {
+                //       onChange();
+                //     }
+                //   }
+                // },
+              } as ILeafletMap)
+            : undefined,
+        ],
         m(ModalPanel, {
           disabled,
           id: 'upload',
           title: 'Upload a new GeoJSON file',
           description: m(UploadAsset, {
             accept: ['.json', '.geojson'],
-            placeholder: '',
-            assetUploaded: async (a: IAsset) => {
-              state.assets = await TrialSvc.mapOverlays();
-              pm.assetId = a.id;
+            placeholder: 'Upload a (geo-)json file.',
+            createAsset,
+            done: () => {
               const el = document.getElementById('upload');
               if (el) {
                 M.Modal.getInstance(el).close();

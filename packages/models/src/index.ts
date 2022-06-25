@@ -26,6 +26,8 @@ export * from './trial';
 export * from './user-role';
 export * from './utils';
 export * from './gui-template';
+export * from './send_file-message';
+export * from './send_message-message';
 export {
   ILargeDataUpdate,
   DataType,

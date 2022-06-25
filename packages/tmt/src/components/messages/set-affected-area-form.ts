@@ -1,41 +1,69 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput, NumberInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IAffectedArea, InjectKeys } from '../../../../models';
+import { getMessage, MessageType, IAffectedArea, IareaPoly } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
-import { Polygon, FeatureCollection } from 'geojson';
-import { FeatureGroup, GeoJSON } from 'leaflet';
-import { affectedAreaToGeoJSON, geoJSONtoAffectedArea, centerArea } from '../../utils';
-import { TrialSvc } from '../../services';
+import { Polygon, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import { FeatureGroup, geoJSON, GeoJSON } from 'leaflet';
+import {
+  affectedAreaToGeoJSON,
+  geoJSONtoAffectedArea,
+  getActiveTrialInfo,
+  getInject,
+  isJSON,
+  baseLayers,
+} from '../../utils';
+import { MessageComponent } from '../../services';
 
-export const SetAffectedAreaForm: FactoryComponent<{
-  inject: IInject;
-  disabled?: boolean;
-  onChange?: (i: IInject, prop: InjectKeys) => void;
-}> = () => {
-  const state = {} as {
-    overlays?: { [key: string]: GeoJSON };
-  };
+export const SetAffectedAreaForm: MessageComponent = () => {
+  let overlays: { [key: string]: GeoJSON } = {};
 
   const convertToSec = (n: number) => (n === -1 ? -1 : n / 1000);
   const convertToMSec = (n: number) => (n === -1 ? -1 : n * 1000);
+  const areaLayer = 'Area layer';
 
   return {
-    oninit: async () => {
-      state.overlays = await TrialSvc.overlays();
-      m.redraw();
-    },
-    view: ({ attrs: { inject, disabled, onChange } }) => {
-      const { overlays } = state;
+    oninit: async ({
+      attrs: {
+        state: {
+          app: { trial, injectId, assets },
+        },
+      },
+    }) => {
+      const inject = getInject(trial, injectId);
+      if (!inject) return;
       const aa = getMessage<IAffectedArea>(inject, MessageType.SET_AFFECTED_AREA);
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
-      aa.id = inject.id as string;
+      aa.id = inject.id;
       aa.begin = aa.begin || -1;
       aa.end = aa.end || -1;
       aa.restriction = aa.restriction || 'all';
-
-      const area = affectedAreaToGeoJSON(aa.area);
-      const { view, zoom } = centerArea(area);
-
+      overlays[areaLayer] = affectedAreaToGeoJSON(aa.area);
+      const jsonAssets = assets.filter((a) => a.url && isJSON(a.filename));
+      for (const asset of jsonAssets) {
+        const result = await m.request<FeatureCollection<Geometry, GeoJsonProperties>>(asset.url as string);
+        if (result) {
+          overlays[asset.alias || asset.filename] = geoJSON(result);
+        }
+      }
+    },
+    view: ({
+      attrs: {
+        state,
+        actions: { updateInject },
+        options: { editing } = { editing: true },
+      },
+    }) => {
+      const { inject } = getActiveTrialInfo(state);
+      if (!inject) return;
+      const disabled = !editing;
+      const aa = getMessage<IAffectedArea>(inject, MessageType.SET_AFFECTED_AREA);
+      const addArea = (area: IareaPoly) => {
+        const { inject: inj } = getActiveTrialInfo(state);
+        if (inj) {
+          const m = getMessage<IAffectedArea>(inj, MessageType.SET_AFFECTED_AREA);
+          m.area = area;
+          updateInject(inj);
+        }
+      };
       return [
         m(TextInput, {
           disabled,
@@ -45,10 +73,8 @@ export const SetAffectedAreaForm: FactoryComponent<{
           isMandatory: true,
           initialValue: inject.title,
           onchange: async (v) => {
-            TrialSvc.overlayRename(inject.title, v);
-            state.overlays = await TrialSvc.overlays();
             inject.title = v;
-            update(['title', 'message']);
+            updateInject(inject);
           },
         }),
         m(TextInput, {
@@ -61,7 +87,7 @@ export const SetAffectedAreaForm: FactoryComponent<{
           initialValue: aa.restriction,
           onchange: (v) => {
             aa.restriction = v;
-            update();
+            updateInject(inject);
           },
         }),
         m(TextArea, {
@@ -70,7 +96,7 @@ export const SetAffectedAreaForm: FactoryComponent<{
           initialValue: inject.description,
           onchange: (v: string) => {
             inject.description = v;
-            update('description');
+            updateInject(inject);
           },
           label: 'Description',
           iconName: 'description',
@@ -85,7 +111,7 @@ export const SetAffectedAreaForm: FactoryComponent<{
           initialValue: convertToSec(aa.begin),
           onchange: (v) => {
             aa.begin = convertToMSec(v);
-            update();
+            updateInject(inject);
           },
         }),
         m(NumberInput, {
@@ -98,25 +124,23 @@ export const SetAffectedAreaForm: FactoryComponent<{
           initialValue: convertToSec(aa.begin),
           onchange: (v) => {
             aa.begin = convertToMSec(v);
-            update();
+            updateInject(inject);
           },
         }),
         m(LeafletMap, {
+          baseLayers,
           style: 'width: 100%; height: 400px; margin-top: 10px;',
           // view,
           // zoom,
           autoFit: true,
           overlays,
-          visible: [inject.title],
-          editable: [inject.title],
+          visible: [areaLayer],
+          editable: [areaLayer],
           showScale: { imperial: false },
           onLayerEdited: (f: FeatureGroup) => {
             const geojson = f.toGeoJSON() as FeatureCollection<Polygon>;
             const a = geoJSONtoAffectedArea(geojson);
-            if (a) {
-              aa.area = a;
-              update();
-            }
+            a && addArea(a);
           },
         }),
       ];

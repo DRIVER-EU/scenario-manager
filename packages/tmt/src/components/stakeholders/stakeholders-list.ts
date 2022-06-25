@@ -1,51 +1,45 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { StakeholdersForm } from './stakeholders-form';
-import { TrialSvc } from '../../services';
-import { IStakeholder, uniqueId } from '../../../../models';
-import { stakeholdersChannel, TopicNames } from '../../models';
+import { IStakeholder, uniqueId } from 'trial-manager-models';
 import { RoundIconButton, TextInput, Collection, CollectionMode } from 'mithril-materialized';
+import { MeiosisComponent } from '../../services';
+import { getStakeholders, getUserById } from '../../utils';
 
-const StakeholdersList: FactoryComponent<IStakeholder> = () => {
-  const state = {
-    filterValue: '' as string | undefined,
-    curStakeholderId: undefined as string | undefined,
-    subscription: stakeholdersChannel.subscribe(TopicNames.ITEM, ({ cur }) => {
-      state.curStakeholderId = cur.id;
-    }),
-  };
-  const selectStakeholder = (cur: IStakeholder) => () => {
-    stakeholdersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-    state.curStakeholderId = cur.id;
-  };
+const StakeholdersList: MeiosisComponent = () => {
+  let filterValue = '' as string | undefined;
+  let curStakeholderId = undefined as string | undefined;
 
   return {
-    onremove: () => state.subscription.unsubscribe(),
-    view: () => {
-      const stakeholders = TrialSvc.getStakeholders(state.filterValue);
-      if (!state.curStakeholderId && stakeholders && stakeholders.length > 0) {
-        setTimeout(() => {
-          selectStakeholder(stakeholders[0])();
-          m.redraw();
-        }, 0);
-      }
+    view: ({
+      attrs: {
+        state: {
+          app: { trial, stakeholderId },
+        },
+        actions: { selectStakeholder, createStakeholder },
+      },
+    }) => {
+      const stakeholders = getStakeholders(trial, filterValue);
+      curStakeholderId = stakeholderId;
       const items = stakeholders
-        ? stakeholders.map(cur => ({
+        ? stakeholders.map((cur) => ({
             title: cur.name || '?',
             avatar: 'attach_money',
             iconName: 'create',
             className: 'yellow black-text',
-            active: state.curStakeholderId === cur.id,
+            active: curStakeholderId === cur.id,
             content: cur.notes
-              ? cur.notes +
-                '<br>' +
+              ? '<em>' +
+                cur.notes +
+                '</em>' +
+                '<br><b>Contacts: </b>' +
                 (cur.contactIds
                   ? cur.contactIds
-                      .map(id => TrialSvc.getUserById(id))
-                      .map(c => c && c.name)
+                      .map((id) => getUserById(trial, id))
+                      .map((c) => c && c.name)
                       .join(', ')
                   : '')
               : '',
-            onclick: selectStakeholder(cur),
+            onclick: () => selectStakeholder(cur),
           }))
         : undefined;
 
@@ -62,15 +56,15 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
                   id: uniqueId(),
                   name: 'New stakeholder',
                 } as IStakeholder;
-                state.curStakeholderId = sh.id;
-                await TrialSvc.createStakeholder(sh);
+                curStakeholderId = sh.id;
+                await createStakeholder(sh);
               },
             }),
             m(TextInput, {
               label: 'Filter',
               id: 'filter',
               iconName: 'filter_list',
-              onkeyup: (_: KeyboardEvent, v?: string) => (state.filterValue = v),
+              onkeyup: (_: KeyboardEvent, v?: string) => (filterValue = v),
               className: 'right',
             }),
           ])
@@ -92,8 +86,12 @@ const StakeholdersList: FactoryComponent<IStakeholder> = () => {
   };
 };
 
-export const StakeholdersView = () => {
+export const StakeholdersView: MeiosisComponent = () => {
   return {
-    view: () => m('.row', [m('.col.s12.m5.l4', m(StakeholdersList)), m('.col.s12.m7.l8', m(StakeholdersForm))]),
+    view: ({ attrs: { state, actions } }) =>
+      m('.row', [
+        m('.col.s12.m5.l4', m(StakeholdersList, { state, actions })),
+        m('.col.s12.m7.l8', m(StakeholdersForm, { state, actions })),
+      ]),
   };
 };

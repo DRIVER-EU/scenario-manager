@@ -1,35 +1,33 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput, Select, Collection, CollectionMode, Icon, FlatButton } from 'mithril-materialized';
+import { getMessage, MessageType, UserRole, IRolePlayerMsg, RolePlayerMessageType, IPerson } from 'trial-manager-models';
+import { MessageComponent } from '../../services';
 import {
-  getMessage,
-  IInject,
-  MessageType,
-  UserRole,
-  IRolePlayerMsg,
-  RolePlayerMessageType,
-  IPerson,
-  IExecutingInject,
-  InjectKeys,
-} from '../../../../models';
-import { TrialSvc, RunSvc } from '../../services';
-import { createEmailLink, createPhoneLink, getRolePlayerMessageIcon } from '../../utils';
-import { MessageScope } from '.';
+  createEmailLink,
+  createPhoneLink,
+  getActiveTrialInfo,
+  getRolePlayerMessageIcon,
+  getUsers,
+  getUsersByRole,
+} from '../../utils';
 
-export const RolePlayerMessageForm: FactoryComponent<{
-  inject: IInject;
-  onChange?: (i: IInject, prop: InjectKeys) => void;
-  disabled?: boolean;
-  checkpoint?: boolean;
-  scope: MessageScope;
-}> = () => {
+export const RolePlayerMessageForm: MessageComponent<{ checkpoint?: boolean }> = () => {
   return {
-    view: ({ attrs: { inject, disabled, checkpoint = false, onChange, scope } }) => {
-      const update = (prop: keyof IInject | Array<keyof IInject>) => onChange && onChange(inject, prop);
-      const svc = scope === 'edit' ? TrialSvc : RunSvc;
+    view: ({
+      attrs: {
+        state,
+        options: { editing = true, checkpoint = false } = { editing: true },
+        actions: { updateInject },
+      },
+    }) => {
+      const { inject, trial } = getActiveTrialInfo(state);
+      if (!inject) return;
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
-      const rolePlayers = svc.getUsersByRole(UserRole.ROLE_PLAYER).map(rp => ({ id: rp.id, label: rp.name }));
-      const participants = svc.getUsersByRole(UserRole.PARTICIPANT).map(rp => ({ id: rp.id, label: rp.name }));
-      const types = Object.keys(RolePlayerMessageType).map(t => ({ id: t, label: t }));
+      const rolePlayers = getUsersByRole(trial, UserRole.ROLE_PLAYER).map((rp) => ({ id: rp.id, label: rp.name }));
+      const participants = getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.id, label: rp.name }));
+      const types = Object.keys(RolePlayerMessageType).map((t) => ({ id: t, label: t }));
+      const disabled = !editing;
+
       if (checkpoint) {
         rpm.type = RolePlayerMessageType.ACTION;
       }
@@ -47,9 +45,10 @@ export const RolePlayerMessageForm: FactoryComponent<{
           placeholder: 'Pick role player',
           options: rolePlayers,
           checkedId: rpm.rolePlayerId,
-          onchange: v => {
+          onchange: (v) => {
             rpm.rolePlayerId = v[0] as string;
-            update('message');
+            updateInject(inject);
+            // update('message');
           },
         }),
         checkpoint
@@ -62,9 +61,9 @@ export const RolePlayerMessageForm: FactoryComponent<{
               placeholder: 'Select type',
               options: types,
               checkedId: rpm.type,
-              onchange: v => {
+              onchange: (v) => {
                 rpm.type = v[0] as RolePlayerMessageType;
-                update('message');
+                updateInject(inject);
               },
             }),
         isAction
@@ -79,9 +78,9 @@ export const RolePlayerMessageForm: FactoryComponent<{
               multiple: true,
               options: participants,
               initialValue: rpm.participantIds,
-              onchange: v => {
+              onchange: (v) => {
                 rpm.participantIds = v as string[];
-                update('message');
+                updateInject(inject);
               },
             }),
         m(TextInput, {
@@ -90,7 +89,7 @@ export const RolePlayerMessageForm: FactoryComponent<{
           initialValue: rpm.headline || rpm.title,
           onchange: (v: string) => {
             inject.title = rpm.headline = v;
-            update(['title', 'message']);
+            updateInject(inject);
           },
           label: checkpoint ? 'Check' : isAction ? 'Headline' : 'Subject',
           iconName: checkpoint ? getRolePlayerMessageIcon(rpm.type) : 'title',
@@ -102,7 +101,7 @@ export const RolePlayerMessageForm: FactoryComponent<{
           initialValue: rpm.description as string,
           onchange: (v: string) => {
             inject.description = rpm.description = v;
-            update(['description', 'message']);
+            updateInject(inject);
           },
           label: 'Description',
           iconName: 'note',
@@ -113,11 +112,8 @@ export const RolePlayerMessageForm: FactoryComponent<{
 };
 
 /** A static view on a role player message, i.e. without the possibility to change it */
-export const RolePlayerMessageView: FactoryComponent<{
-  inject: IExecutingInject;
-  disabled?: boolean;
-}> = () => {
-  const msgDetails = (rpm: IRolePlayerMsg, rolePlayer: IPerson, participants?: IPerson[]) => {
+export const RolePlayerMessageView: MessageComponent = () => {
+  const msgDetails = (rpm: IRolePlayerMsg, _rolePlayer: IPerson, participants?: IPerson[]) => {
     switch (rpm.type) {
       case RolePlayerMessageType.ACTION:
         return m('.action');
@@ -128,7 +124,7 @@ export const RolePlayerMessageView: FactoryComponent<{
           participants
             ? m(Collection, {
                 mode: CollectionMode.BASIC,
-                items: participants.map(p => ({
+                items: participants.map((p) => ({
                   title: m('ul.list-inline', [
                     m('li', m('b', `${p.name}: `)),
                     m('li', p.mobile ? m('a', { href: createPhoneLink(p.mobile) }, p.mobile) : ''),
@@ -142,7 +138,7 @@ export const RolePlayerMessageView: FactoryComponent<{
             : undefined,
         ]);
       case RolePlayerMessageType.MAIL:
-        const emails = participants ? participants.filter(p => p.email).map(p => p.email) : undefined;
+        const emails = participants ? participants.filter((p) => p.email).map((p) => p.email) : undefined;
         return m('.mail', [
           emails
             ? m(FlatButton, {
@@ -154,7 +150,7 @@ export const RolePlayerMessageView: FactoryComponent<{
           participants
             ? m(Collection, {
                 mode: CollectionMode.BASIC,
-                items: participants.map(p => ({
+                items: participants.map((p) => ({
                   title: `${p.name}: ${p.email ? p.email : ''}`,
                 })),
               })
@@ -168,13 +164,16 @@ export const RolePlayerMessageView: FactoryComponent<{
   };
 
   return {
-    view: ({ attrs: { inject } }) => {
+    view: ({ attrs: { state } }) => {
+      const { trial, inject } = getActiveTrialInfo(state);
+      if (!inject) return;
+
       const rpm = getMessage<IRolePlayerMsg>(inject, MessageType.ROLE_PLAYER_MESSAGE);
       const rolePlayer =
-        RunSvc.getUsers()
-          .filter(u => u.id === rpm.rolePlayerId)
+        getUsers(trial)
+          .filter((u) => u.id === rpm.rolePlayerId)
           .shift() || ({} as IPerson);
-      const participants = RunSvc.getUsers().filter(u =>
+      const participants = getUsers(trial).filter((u) =>
         rpm.participantIds && rpm.participantIds.indexOf(u.id) >= 0 ? true : false
       );
       return [

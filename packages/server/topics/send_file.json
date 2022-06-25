@@ -1,0 +1,62 @@
+{
+  "label": "Send file",
+  "icon": "attach_file",
+  "ui": [
+    { "id": "messageType", "value": "SEND_FILE", "type": "none" },
+    {
+      "id": "title",
+      "label": "Subject",
+      "icon": "title",
+      "type": "text"
+    },
+    {
+      "id": "description",
+      "label": "Description",
+      "icon": "note",
+      "type": "textarea"
+    },
+    {
+      "id": "message",
+      "label": " ",
+      "className": "col s12",
+      "type": [
+        {
+          "id": "SEND_FILE",
+          "label": " ",
+          "className": "col s12",
+          "type": [
+            {
+              "id": "file",
+              "label": "File",
+              "icon": "attach_file",
+              "className": "col s5",
+              "placeholder": "Select file",
+              "multiple": false,
+              "required": true,
+              "type": "select",
+              "options": "&assets"
+            },
+            {
+              "id": "file_upload_button",
+              "icon": "file_upload",
+              "className": "input-field col s1",
+              "type": "modal",
+              "modalId": "upload"
+            },
+            {
+              "id": "kafkaTopicId",
+              "icon": "topic",
+              "label": "Select Kafka topic",
+              "className": "col s6",
+              "placeholder": "Pick one",
+              "multiple": false,
+              "required": true,
+              "type": "&kafkaTopicSet",
+              "options": "&kafkaTopics"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

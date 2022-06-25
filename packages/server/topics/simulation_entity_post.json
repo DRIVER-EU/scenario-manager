@@ -6,10 +6,12 @@
     {
       "id": "message",
       "label": " ",
+      "className":"col s12",
       "type": [
         {
           "id": "POST_MESSAGE",
           "label": " ",
+          "className":"col s12",
           "type": [
             {
               "id": "type",

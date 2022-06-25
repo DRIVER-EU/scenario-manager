@@ -1,39 +1,46 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestStartInject, InjectKeys } from '../../../../models';
-import { AppState } from '../../models';
+import { getMessage, IInject, MessageType, IRequestStartInject } from 'trial-manager-models';
+import { MessageComponent } from '../../services';
+import { getActiveTrialInfo } from '../../utils';
 
-export const StartInjectForm: FactoryComponent<{
-  inject: IInject;
-  disabled?: boolean;
-  onChange?: (inject: IInject, prop: InjectKeys) => void;
-}> = () => {
+export const StartInjectForm: MessageComponent = () => {
   const setTitle = (inject: IInject, si: IRequestStartInject) => {
-    inject.title = `Run inject ${si.inject}`;
+    inject.title = `Start event: ${si.inject}`;
   };
 
   return {
-    oninit: ({ attrs: { inject } }) => {
+    view: ({
+      attrs: {
+        state,
+        actions: { updateInject },
+        options: { editing } = { editing: true },
+      },
+    }) => {
+      const { inject } = getActiveTrialInfo(state);
+      if (!inject) return;
+      const disabled = !editing;
       const si = getMessage(inject, MessageType.START_INJECT) as IRequestStartInject;
-      si.id = inject.id as string;
-      si.applicant = AppState.owner;
-    },
-    view: ({ attrs: { inject, disabled, onChange } }) => {
-      const si = getMessage(inject, MessageType.START_INJECT) as IRequestStartInject;
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
+      si.id = inject.id;
+      si.applicant = state.app.owner;
+      if (!si.inject && inject.title) {
+        si.inject = inject.title;
+        setTitle(inject, si);
+        updateInject(inject);
+      }
 
       return [
         m(TextInput, {
           disabled,
-          label: 'Inject',
+          label: 'Event name',
           iconName: 'colorize',
           isMandatory: true,
-          helperText: 'Name of the inject you want to run.',
+          helperText: 'Name of the event / inject you want to run.',
           initialValue: si.inject,
           onchange: (v) => {
             si.inject = v;
             setTitle(inject, si);
-            update(['title', 'message']);
+            updateInject(inject);
           },
         }),
         m(TextArea, {
@@ -42,7 +49,7 @@ export const StartInjectForm: FactoryComponent<{
           initialValue: inject.description,
           onchange: (v: string) => {
             inject.description = v;
-            update('description');
+            updateInject(inject);
           },
           label: 'Description',
           iconName: 'note',

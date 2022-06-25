@@ -25,6 +25,7 @@ import { Response } from 'express';
 import { TrialOverview, IUploadedFile } from '../../models';
 import { TrialService } from './trial.service';
 import { ApiFile } from '../../adapters/models/api-file';
+import { FeatureCollectionType, IFeature, IFeatureCollection } from 'node-test-bed-adapter';
 
 @ApiTags('trials')
 @Controller('trials')
@@ -103,6 +104,7 @@ export class TrialController {
     @Body('alias') alias: string,
     @UploadedFile() file: IUploadedFile,
   ) {
+    (file && file.mimetype && file.mimetype === 'application/json') ? file = this.namespacePipe(file) : undefined;
     return this.trialService.createAsset(id, file, alias);
   }
 
@@ -117,6 +119,7 @@ export class TrialController {
     @Body('alias') alias: string,
     @UploadedFile() file: IUploadedFile,
   ) {
+    (file && file.mimetype && file.mimetype === 'application/json') ? file = this.namespacePipe(file) : undefined;
     return this.trialService.updateAsset(id, assetId, file, alias);
   }
 
@@ -149,5 +152,34 @@ export class TrialController {
   @Delete(':id/assets/:asset')
   async removeAsset(@Param('id') id: string, @Param('asset') assetId: string) {
     this.trialService.removeAsset(id, assetId);
+  }
+
+  namespacePipe(file: IUploadedFile): IUploadedFile {
+    let obj = JSON.parse(file.buffer.toString())
+
+    if(obj.type && obj.type === 'FeatureCollection') {
+      obj.features.forEach((ft: any) => {
+        ft = this.checkForNamespaces(ft) as IFeature
+      })
+      file.buffer = Buffer.from(JSON.stringify(obj), "utf-8")
+    }
+    else if (obj.type && obj.type === 'Feature') {
+      obj = this.checkForNamespaces(obj) as IFeature
+      file.buffer = Buffer.from(JSON.stringify(obj), "utf-8")
+    }
+    
+    return file
+  }
+
+  checkForNamespaces(ft: any) {
+    let geometry = ft.geometry as Object;
+    const keys = Object.keys(geometry)
+    // If we have a namespace, remove it
+    // else do nothing and return the original feature.
+    if(!keys.includes('type')) {
+      geometry = geometry[keys[0]]
+      ft.geometry = geometry
+    }
+    return ft
   }
 }

@@ -1,41 +1,36 @@
-import m, { FactoryComponent } from 'mithril';
-import { AppState } from '../../models';
-import { SocketSvc } from '../../services';
-import { ITimeManagement, TimeState, deepCopy } from '../../../../models';
+import m from 'mithril';
+import { MeiosisComponent, states } from '../../services';
+import { ITimeManagement, TimeState } from 'trial-manager-models';
 import { formatTime, formatMsec } from '../../utils';
+import { ISessionControl } from '../../models';
 
-export const StatusBar: FactoryComponent<null> = () => {
-  const socket = SocketSvc.socket;
-  const sbState = {
-    receivedTime: Date.now(),
-    progressTimeHandler: -1,
-  };
-  const updateTime = (time: ITimeManagement) => {
-    // console.log(`Status-bar updateTime: ` + JSON.stringify(time));
-    sbState.receivedTime = Date.now();
-    AppState.time = deepCopy(time);
-  };
+export const StatusBar: MeiosisComponent<null> = () => {
+  let receivedTime = Date.now();
+  let progressTimeHandler = -1;
+
   const progressTime = (dom: Element) => () => {
     const now = Date.now();
-    const delta = now - sbState.receivedTime;
-    if (!AppState.time) {
+    const delta = now - receivedTime;
+    const state = states();
+    const { time, sessionControl } = state.exe;
+    if (!time) {
       return;
     }
-    if (!AppState.time.tags) {
-      AppState.time.tags = { timeElapsed: '0' };
+    if (!time.tags) {
+      time.tags = { timeElapsed: '0' };
     }
-    AppState.time.tags.timeElapsed = (+AppState.time.tags.timeElapsed + delta).toString();
-    if (AppState.time.simulationTime && AppState.time.simulationSpeed) {
-      AppState.time.simulationTime += delta * AppState.time.simulationSpeed;
+    time.tags.timeElapsed = (+time.tags.timeElapsed + delta).toString();
+    if (time.simulationTime && time.simulationSpeed) {
+      time.simulationTime += delta * time.simulationSpeed;
     }
-    sbState.receivedTime = now;
-    m.render(dom, render());
+    receivedTime = now;
+    m.render(dom, render(time, sessionControl));
   };
 
-  const render = () => {
-    const { simulationTime = 0, simulationSpeed = 0, tags, state } = AppState.time;
+  const render = (time: ITimeManagement, sessionControl: ISessionControl) => {
+    const { simulationTime = 0, simulationSpeed = 0, tags, state } = time;
     const timeElapsed = tags && tags.timeElapsed ? +tags.timeElapsed : 0;
-    const { host, isConnected } = AppState.sessionControl;
+    const { host, isConnected } = sessionControl;
     if (typeof state === 'undefined') {
       return undefined;
     }
@@ -43,7 +38,7 @@ export const StatusBar: FactoryComponent<null> = () => {
 
     const dt = new Date(simulationTime || 0);
     return m('.statusbar.center-align', [
-      host && isConnected ? [m('span', `Connected to ${AppState.sessionControl.host}`), m('span', '|')] : undefined,
+      host && isConnected ? [m('span', `Connected to ${sessionControl.host}`), m('span', '|')] : undefined,
       m('span', state),
       m('span', '|'),
       m('span', hasTimeInfo ? `${simulationSpeed}x` : ''),
@@ -55,14 +50,12 @@ export const StatusBar: FactoryComponent<null> = () => {
   };
 
   return {
-    oninit: () => socket.on('time', updateTime),
     onremove: () => {
-      socket.off('time', updateTime);
-      clearInterval(sbState.progressTimeHandler);
+      clearInterval(progressTimeHandler);
     },
     oncreate: ({ dom }) => {
       const timer = progressTime(dom);
-      sbState.progressTimeHandler = (setInterval(timer, 500) as unknown) as number;
+      progressTimeHandler = (setInterval(timer, 500) as unknown) as number;
     },
     view: () => m('div'),
   };

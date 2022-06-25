@@ -1,50 +1,46 @@
 import m from 'mithril';
 import { TextInput, TextArea, EmailInput, Button, Icon, Select, ModalPanel } from 'mithril-materialized';
-import { ITrial, IPerson, UserRole, deepCopy, deepEqual } from '../../../../models';
-import { TopicNames, usersChannel } from '../../models';
-import { TrialSvc } from '../../services';
-import { iterEnum, userIcon, userRoleToString } from '../../utils';
+import { IPerson, UserRole, deepCopy, deepEqual } from 'trial-manager-models';
+import { MeiosisComponent } from '../../services';
+import { getActiveTrialInfo, getUsers, iterEnum, userIcon, userRoleToString } from '../../utils';
 
-const log = console.log;
+export const UsersForm: MeiosisComponent = () => {
+  let user = {} as IPerson;
 
-export const UsersForm = () => {
-  const state = {
-    trial: undefined as ITrial | undefined,
-    user: undefined as IPerson | undefined,
-    original: undefined as IPerson | undefined,
-    subscription: usersChannel.subscribe(TopicNames.ITEM, ({ cur }, envelope) => {
-      if (envelope.topic === TopicNames.ITEM_DELETE) {
-        state.user = undefined;
-        state.original = undefined;
-      } else {
-        state.user = cur && cur.id ? deepCopy(cur) : undefined;
-        state.original = cur && cur.id ? deepCopy(cur) : undefined;
-        m.redraw();
-      }
-    }),
-  };
-  const options = iterEnum(UserRole).map(r => ({
+  const options = iterEnum(UserRole).map((r) => ({
     id: +r,
     label: userRoleToString(+r),
   }));
-  const onsubmit = (e: UIEvent) => {
-    e.preventDefault();
-    log('submitting...');
-    if (state.user) {
-      TrialSvc.updateUser(state.user);
-    }
-  };
 
   return {
-    oninit: () => {
-      state.trial = TrialSvc.getCurrent();
-    },
-    onbeforeremove: () => {
-      state.subscription.unsubscribe();
-    },
-    view: () => {
-      const { user } = state;
-      const hasChanged = !deepEqual(user, state.original);
+    view: ({
+      attrs: {
+        state,
+        actions: { selectUser, updateUser, deleteUser },
+      },
+    }) => {
+      const { trial } = getActiveTrialInfo(state);
+
+      const users = getUsers(trial);
+      const { userId } = state.app;
+      if (!userId) {
+        return m(
+          'p',
+          m('i', `Please, create a user using the + button${users.length > 0 ? ', or select one in the list' : ''}.`)
+        );
+      }
+      const original = users.filter((s) => s.id === userId).shift() || ({} as IPerson);
+      if (!user || original.id !== user.id) {
+        user = deepCopy(original);
+      }
+
+      const onsubmit = (e: UIEvent) => {
+        e.preventDefault();
+        if (user) {
+          updateUser(user);
+        }
+      };
+      const hasChanged = !deepEqual(user, original);
 
       return m(
         '.row',
@@ -79,7 +75,7 @@ export const UsersForm = () => {
                       isMandatory: true,
                       multiple: true,
                       options,
-                      onchange: v => (state.user ? (state.user.roles = v as UserRole[]) : undefined),
+                      onchange: (v) => (user ? (user.roles = v as UserRole[]) : undefined),
                     }),
                     m(EmailInput, {
                       id: 'email',
@@ -114,7 +110,7 @@ export const UsersForm = () => {
                     m(Button, {
                       iconName: 'undo',
                       class: `green ${hasChanged ? '' : 'disabled'}`,
-                      onclick: () => (state.user = deepCopy(state.original)),
+                      onclick: () => (user = deepCopy(original)),
                     }),
                     ' ',
                     m(Button, {
@@ -137,14 +133,10 @@ export const UsersForm = () => {
                       {
                         label: 'OK',
                         onclick: async () => {
-                          await TrialSvc.deleteUser(user);
-                          const contacts = TrialSvc.getUsers();
+                          await deleteUser(user);
+                          const contacts = getUsers(trial);
                           const cur = contacts && contacts.length > 0 ? contacts[0] : undefined;
-                          if (cur) {
-                            usersChannel.publish(TopicNames.ITEM_SELECT, { cur });
-                          } else {
-                            usersChannel.publish(TopicNames.ITEM_DELETE, { cur: user });
-                          }
+                          cur && selectUser(cur);
                         },
                       },
                       {

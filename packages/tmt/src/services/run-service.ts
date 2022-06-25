@@ -1,149 +1,93 @@
 import m from 'mithril';
-import { AppState } from '../models';
-import { IStateTransitionRequest, ISessionManagement, IInject, ITrial, uniqueId, UserRole } from '../../../models';
-import { messageBus } from '.';
-import { userRolesFilter } from '../utils';
+import { IStateTransitionRequest, ISessionManagement, IInject, ITrial } from 'trial-manager-models';
 
 const withCredentials = false;
 
-/**
- * The RunService is responsible for starting,
- * stopping, loading and unloading a Trial.
- */
-class RunService {
-  protected baseUrl!: string;
-  private trial = {} as ITrial;
-  private urlFragment = 'run';
+export const runServiceFactory = (apiService: string) => {
+  const url = `${apiService}/run/`;
 
-  constructor() {
-    this.updateBaseUrl(AppState.apiService());
-    messageBus.channel<string>('apiServer').subscribe('update', apiService => {
-      // console.warn('RunService: ' + apiService);
-      this.updateBaseUrl(apiService);
-      this.activeSession();
-    });
-    // this.activeSession();
-  }
-
-  public getInjects() {
-    return this.trial.injects || [];
-  }
-
-  /** Get the active session */
-  public async activeSession() {
-    return m
+  const activeSession = async () =>
+    await m
       .request<ISessionManagement>({
         method: 'GET',
-        url: this.baseUrl + 'active',
+        url: url + 'active',
         withCredentials,
       })
-      .catch(console.error);
-  }
+      .catch(console.warn);
 
-  /** Get the active, executing, scenario */
-  public async activeTrial() {
-    const result = await m
+  const activeTrial = async () =>
+    await m
       .request<ITrial>({
         method: 'GET',
-        url: this.baseUrl + 'trial',
+        url: url + 'trial',
         withCredentials,
       })
-      .catch(console.error);
-    this.trial = result || ({} as ITrial);
-    return this.trial;
-  }
+      .catch(console.warn);
 
-  public newInjectReceived(i: IInject) {
-    const injects = this.getInjects();
-    if (injects) {
-      i.id = i.id || uniqueId();
-      injects.push(i);
-    }
-    return i;
-  }
+  const load = async (body: ISessionManagement) =>
+    await m.request<void>({
+      method: 'POST',
+      url: url + 'load',
+      withCredentials,
+      body,
+    });
 
-  /** Get all contacts (or filter by name) */
-  public getUsers(filter?: string) {
-    if (!this.trial) {
-      return [];
-    }
-    if (!this.trial.users) {
-      this.trial.users = [];
-    }
-    return filter
-      ? this.trial.users.filter(u => u.name && u.name.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
-      : this.trial.users;
-  }
-
-  public getUsersByRole(role: UserRole) {
-    return this.getUsers().filter(u => userRolesFilter(u, role));
-  }
-
-  /** Update an existing inject and save it */
-  public async updatedInjectReceived(i: IInject) {
-    if (!i.id) {
-      return this.createInject(i);
-    }
-    if (this.trial) {
-      this.trial.injects = this.getInjects().map(s => (s.id === i.id ? i : s));
-    }
-    // await this.saveTrial();
-    // injectsChannel.publish(TopicNames.ITEM_UPDATE, { cur: i });
-  }
-
-  /** Unload the active scenario */
-  public async unload() {
-    return m.request<void>({
+  const unload = async () =>
+    await m.request<void>({
       method: 'DELETE',
-      url: this.baseUrl + 'unload',
+      url: url + 'unload',
       withCredentials,
     });
-  }
 
-  /** Load a new scenario: can only be done when no other scenario is loaded. */
-  public async load(body: ISessionManagement) {
-    return m.request<void>({
-      method: 'POST',
-      url: this.baseUrl + 'load',
-      withCredentials,
-      body,
-    });
-  }
-
-  /** Update an inject */
-  public async updateInject(body: IInject) {
-    return m.request<void>({
+  const transition = async (st: IStateTransitionRequest) =>
+    await m.request<boolean>({
       method: 'PUT',
-      url: this.baseUrl + 'update',
-      withCredentials,
-      body,
-    });
-  }
-
-  /** Update an inject */
-  public async createInject(body: IInject) {
-    return m.request<void>({
-      method: 'POST',
-      url: this.baseUrl + 'create',
-      withCredentials,
-      body,
-    });
-  }
-
-  /** Request a state transition. */
-  public async transition(st: IStateTransitionRequest) {
-    return m.request<boolean>({
-      method: 'PUT',
-      url: this.baseUrl + 'transition',
+      url: url + 'transition',
       withCredentials,
       body: st,
     });
-  }
 
-  /** Create the base URL, either using the apiService or the apiDevService */
-  private updateBaseUrl(apiService: string) {
-    this.baseUrl = `${apiService}/${this.urlFragment}/`;
-  }
-}
+  const init = async (i: ITrial) =>
+    await m.request<boolean>({
+      method: 'PUT',
+      url: url + 'init',
+      withCredentials,
+      body: i,
+    });
 
-export const RunSvc = new RunService();
+  const force = async (i: IInject) =>
+    await m.request<boolean>({
+      method: 'PUT',
+      url: url + 'force',
+      withCredentials,
+      body: i,
+    });
+
+  const createInject = async (body: IInject) =>
+    await m.request<void>({
+      method: 'POST',
+      url: url + 'create',
+      withCredentials,
+      body,
+    });
+
+  const updateInject = async (body: IInject) =>
+    await m.request<void>({
+      method: 'PUT',
+      url: url + 'update',
+      withCredentials,
+      body,
+    });
+
+  return {
+    activeSession,
+    activeTrial,
+    load,
+    unload,
+    transition,
+    createInject,
+    updateInject,
+    force,
+    init,
+  };
+};

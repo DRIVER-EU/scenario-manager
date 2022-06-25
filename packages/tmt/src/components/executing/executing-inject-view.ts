@@ -1,27 +1,32 @@
-import m, { FactoryComponent } from 'mithril';
-import { deepCopy, InjectType, IExecutingInject } from '../../../../models';
-import { executingChannel, TopicNames } from '../../models';
+import m from 'mithril';
+import { InjectType } from 'trial-manager-models';
 import { Icon } from 'mithril-materialized';
-import { getMessageIcon, getMessageTitle, getInjectIcon } from '../../utils';
-import { ExecutingMessageView } from './executing-message-view';
+import { getMessageIconFromTemplate, getInjectIcon, getInject, getMessageTitleFromTemplate } from '../../utils';
 import { ManualTransition } from './manual-transition';
 import { MessageForm } from '../messages/message-form';
+import { MeiosisComponent } from '../../services';
+import { ExecutingMessageView } from './executing-message-view';
 
-export const ExecutingInjectView: FactoryComponent = () => {
-  const state = {
-    editing: false,
-    inject: undefined as IExecutingInject | undefined,
-    subscription: executingChannel.subscribe(TopicNames.ITEM_SELECT, ({ cur }) => {
-      state.inject = cur ? deepCopy(cur) : undefined;
-    }),
-  };
+export const ExecutingInjectView: MeiosisComponent = () => {
+  let editing = false;
+  let getMessageIcon: (topic?: string) => string;
+  let getMessageTitle: (topic?: string) => string;
 
   return {
-    onremove: () => {
-      state.subscription.unsubscribe();
+    oninit: ({
+      attrs: {
+        state: {
+          app: { templates },
+        },
+      },
+    }) => {
+      getMessageIcon = getMessageIconFromTemplate(templates);
+      getMessageTitle = getMessageTitleFromTemplate(templates);
     },
-    view: () => {
-      const { inject, editing } = state;
+    view: ({ attrs: { state, actions } }) => {
+      const { scenarioId, injectId, trial } = state.exe;
+      const inject = getInject(trial, injectId || scenarioId);
+      if (!inject) return;
       const isGroupInject = inject && inject.type !== InjectType.INJECT;
 
       return m('.injects-form', [
@@ -29,33 +34,31 @@ export const ExecutingInjectView: FactoryComponent = () => {
           '.row',
           m(
             '.col.s12',
-            inject
-              ? isGroupInject
-                ? [
-                    m(ManualTransition, { inject, key: inject.id }),
-                    m('h4', { key: -1 }, [
-                      m(Icon, {
-                        iconName: getInjectIcon(inject.type),
-                        style: 'margin-right: 12px;',
-                      }),
-                      inject.title,
-                    ]),
-                    m(MessageForm, { inject, disabled: true, key: inject.id }),
-                  ]
-                : [
-                    m(ManualTransition, { inject, key: inject.id, editing: b => (state.editing = b) }),
-                    m('h4', { key: -1 }, [
-                      m(Icon, {
-                        iconName: getMessageIcon(inject.messageType),
-                        style: 'margin-right: 12px;',
-                      }),
-                      getMessageTitle(inject.messageType),
-                    ]),
-                    editing
-                      ? m(MessageForm, { inject, key: inject.id })
-                      : m(ExecutingMessageView, { inject, key: inject.id, scope: 'execute' }),
-                  ]
-              : undefined
+            isGroupInject
+              ? [
+                  m(ManualTransition, { state, actions, options: { editing: (b) => (editing = b) } }),
+                  m('h4', [
+                    m(Icon, {
+                      iconName: getInjectIcon(inject.type),
+                      style: 'margin-right: 12px;',
+                    }),
+                    inject.title,
+                  ]),
+                  m(MessageForm, { state, actions, options: { editing } }),
+                ]
+              : inject && [
+                  m(ManualTransition, { state, actions, options: { editing: (b) => (editing = b) } }), // TODO can set editing to true
+                  m('h4', [
+                    m(Icon, {
+                      iconName: getMessageIcon(inject.topic),
+                      style: 'margin-right: 12px;',
+                    }),
+                    getMessageTitle(inject.topic),
+                  ]),
+                  editing
+                    ? m(MessageForm, { state, actions, options: { editing } })
+                    : m(ExecutingMessageView, { state, actions, options: { editing } }),
+                ]
           )
         ),
       ]);

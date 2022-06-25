@@ -1,23 +1,24 @@
-import m, { FactoryComponent } from 'mithril';
+import m from 'mithril';
 import { TextArea, TextInput, UrlInput, Select } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, ILargeDataUpdate, DataType, InjectKeys } from '../../../../models';
-import { enumToOptions } from '../../utils';
+import { getMessage, MessageType, ILargeDataUpdate, DataType } from 'trial-manager-models';
+import { MessageComponent } from '../../services';
+import { enumToOptions, getActiveTrialInfo } from '../../utils';
 
 /** Inform others about a large data message: note that it only sends a link, not the actual data! */
-export const LargeDataUpdateMessageForm: FactoryComponent<{
-  inject: IInject;
-  onChange?: (inject: IInject, prop: InjectKeys) => void;
-  disabled?: boolean;
-}> = () => {
-  const state = {
-    options: enumToOptions(DataType).map(o => ({ id: o.id, label: o.label.replace('_', ' ').toUpperCase() })),
-  };
+export const LargeDataUpdateMessageForm: MessageComponent = () => {
+  const options = enumToOptions(DataType).map((o) => ({ id: o.id, label: o.label.replace('_', ' ').toUpperCase() }));
 
   return {
-    view: ({ attrs: { inject, disabled, onChange } }) => {
-      const update = (prop: keyof IInject | Array<keyof IInject> = 'message') => onChange && onChange(inject, prop);
-
-      const { options } = state;
+    view: ({
+      attrs: {
+        state,
+        actions: { updateInject },
+        options: { editing } = { editing: true },
+      },
+    }) => {
+      const { inject } = getActiveTrialInfo(state);
+      if (!inject) return;
+      const disabled = !editing;
       const pm = getMessage(inject, MessageType.LARGE_DATA_UPDATE) as ILargeDataUpdate;
 
       return m('.row', [
@@ -29,7 +30,7 @@ export const LargeDataUpdateMessageForm: FactoryComponent<{
             initialValue: pm.title || inject.title,
             onchange: (v: string) => {
               pm.title = inject.title = v;
-              update(['title', 'message']);
+              updateInject(inject);
             },
             label: 'Title',
             iconName: 'title',
@@ -43,7 +44,7 @@ export const LargeDataUpdateMessageForm: FactoryComponent<{
             initialValue: pm.description || inject.description,
             onchange: (v: string) => {
               pm.description = inject.description = v;
-              update(['description', 'message']);
+              updateInject(inject);
             },
             label: 'Description',
             iconName: 'note',
@@ -57,7 +58,7 @@ export const LargeDataUpdateMessageForm: FactoryComponent<{
             initialValue: pm.url,
             onchange: (v: string) => {
               pm.url = v;
-              update();
+              updateInject(inject);
             },
             label: 'URL of the data source',
             placeholder: 'http(s)://...',
@@ -73,7 +74,7 @@ export const LargeDataUpdateMessageForm: FactoryComponent<{
             checkedId: pm.dataType,
             onchange: (v: Array<string | number>) => {
               pm.dataType = (v instanceof Array ? (v.length > 0 ? v[0] : undefined) : v) as DataType;
-              update();
+              updateInject(inject);
             },
             label: 'Data type',
             options,

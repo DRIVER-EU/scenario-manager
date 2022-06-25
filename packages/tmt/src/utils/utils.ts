@@ -1,7 +1,6 @@
 import { ITimelineItem } from 'mithril-scenario-timeline';
 import { geoJSON, LatLngExpression } from 'leaflet';
 import {
-  getParent,
   IareaPoly,
   IAsset,
   IContent,
@@ -14,37 +13,70 @@ import {
   InjectType,
   IPerson,
   IScenario,
-  MessageType,
   RolePlayerMessageType,
   UserRole,
   toMsec,
   IInjectSimStates,
-} from '../../../models';
-import { TrialSvc } from '../services';
+  IGuiTemplate,
+} from 'trial-manager-models';
 import { LineString, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+
+export const baseLayers = {
+  OSM: {
+    url: 'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+    options: {
+      minZoom: 3,
+      maxZoom: 20,
+      attribution: '©OpenStreetMap Contributors. Tiles courtesy of Humanitarian OpenStreetMap Team',
+    },
+  },
+  'NL lucht': {
+    url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/2019_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg',
+    options: {
+      minZoom: 3,
+      maxZoom: 19,
+      attribution: 'Map data: <a href="http://www.pdok.nl">PDOK</a>',
+    },
+  },
+  'NL grijs': {
+    url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaartgrijs/EPSG:3857/{z}/{x}/{y}.png',
+    options: {
+      minZoom: 3,
+      maxZoom: 20,
+      attribution: 'Map data: <a href="http://www.kadaster.nl">Kadaster</a>',
+    },
+  },
+  'NL kleur': {
+    url: 'https://geodata.nationaalgeoregister.nl/tiles/service/wmts/brtachtergrondkaart/EPSG:3857/{z}/{x}/{y}.png',
+    options: {
+      minZoom: 3,
+      maxZoom: 20,
+      attribution: 'Map data: <a href="http://www.kadaster.nl">Kadaster</a>',
+    },
+  },
+};
 
 /** Iterate over an enum: note that for non-string enums, first the number and then the values are iterated */
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
   Object.keys(e)
-    .filter((v, i, arr) => i < arr.length / 2)
+    .filter((_, i, arr) => i < arr.length / 2)
     .map((k) => +k);
 
 /** Map a string enum to a list of options */
 export const enumToOptions = <E extends { [P in keyof E]: string }>(e: E) =>
   Object.keys(e).map((id) => ({ id, label: id.replace(/_/g, ' ').toUpperCase() }));
 
-/**
- * Convert an item array to a tree. Assumes each item has a parentId.
- * @param items Items
- */
+/** Convert an item array to a tree. Assumes each item has a parentId. */
 export const unflatten = <T extends { id?: string; parentId?: string }>(
   entities: T[] = [],
   parent = { id: undefined } as { id?: string; children?: T[] },
   tree = [] as Array<T & { children: T[] }>
 ) => {
-  const children = (parent.id
-    ? entities.filter((entity) => entity.parentId === parent.id)
-    : entities.filter((entity) => !entity.parentId)) as Array<T & { children: T[] }>;
+  const children = (
+    parent.id
+      ? entities.filter((entity) => entity.parentId === parent.id)
+      : entities.filter((entity) => !entity.parentId)
+  ) as Array<T & { children: T[] }>;
 
   if (children.length > 0) {
     if (!parent.id) {
@@ -85,12 +117,6 @@ export const titleAndDescriptionFilter = (filterValue?: string) => {
         (content.description && content.description.toLowerCase().indexOf(filterValue as string) >= 0);
 };
 
-// let i = 0;
-// console.log(`${++i}: ${deepEqual([1, 2, 3], [1, 2, 3])}`);
-// console.log(`${++i}: ${deepEqual([1, 2, 3], [1, 2, 3, 4])}`);
-// console.log(`${++i}: ${deepEqual({ a: 'foo', b: 'bar' }, { a: 'foo', b: 'bar' })}`);
-// console.log(`${++i}: ${deepEqual({ a: 'foo', b: 'bar' }, { b: 'bar', a: 'foo' })}`);
-
 /**
  * Represent the inject with an icon.
  * @param type inject type
@@ -99,8 +125,6 @@ export const getInjectIcon = (type?: InjectType) => {
   switch (type) {
     case InjectType.INJECT:
       return 'message';
-    case InjectType.ACT:
-      return 'call_to_action'; // 'chat';
     case InjectType.STORYLINE:
       return 'art_track';
     default:
@@ -110,39 +134,11 @@ export const getInjectIcon = (type?: InjectType) => {
 
 /**
  * Represent the message with an icon.
- * @param type message type
+ * @param templates message templates
  */
-export const getMessageIcon = (type?: string) => {
-  switch (type) {
-    case MessageType.GEOJSON_MESSAGE:
-      return 'map';
-    case MessageType.CAP_MESSAGE:
-      return 'add_alert';
-    case MessageType.PHASE_MESSAGE:
-      return 'flag'; // 'chat';
-    case MessageType.ROLE_PLAYER_MESSAGE:
-      return 'record_voice_over';
-    case MessageType.POST_MESSAGE:
-      return 'mail';
-    case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
-      return 'speaker_notes';
-    case MessageType.LCMS_MESSAGE:
-      return 'event_seat';
-    case MessageType.START_INJECT:
-      return 'colorize';
-    case MessageType.LARGE_DATA_UPDATE:
-      return 'link';
-    case MessageType.REQUEST_UNIT_MOVE:
-      return 'directions';
-    case MessageType.SET_AFFECTED_AREA:
-      return 'wallpaper';
-    case MessageType.SUMO_CONFIGURATION:
-      return 'traffic';
-    case MessageType.CHECKPOINT:
-      return 'playlist_add_check';
-    default:
-      return 'message';
-  }
+export const getMessageIconFromTemplate = (templates: IGuiTemplate[]) => (topic?: string) => {
+  const found = templates.find((t) => t.topic === topic);
+  return found ? found.icon : 'message';
 };
 
 /**
@@ -166,44 +162,17 @@ export const getRolePlayerMessageIcon = (type?: RolePlayerMessageType) => {
 
 /**
  * Represent the message with a title.
- * @param type message type
+ * @param templates message templates
+ * @param topic message type
  */
-export const getMessageTitle = (type?: string) => {
-  switch (type) {
-    case MessageType.GEOJSON_MESSAGE:
-      return 'SEND MAP OVERLAY';
-    case MessageType.CAP_MESSAGE:
-      return 'SEND COMMON ALERTING PROTOCOL MESSAGE';
-    case MessageType.PHASE_MESSAGE:
-      return 'SET PHASE';
-    case MessageType.POST_MESSAGE:
-      return 'POST MESSAGE';
-    case MessageType.ROLE_PLAYER_MESSAGE:
-      return 'INSTRUCT ROLE PLAYER';
-    case MessageType.CHANGE_OBSERVER_QUESTIONNAIRES:
-      return 'CHANGE OBSERVER QUESTIONNAIRES';
-    case MessageType.LCMS_MESSAGE:
-      return 'LCMS MESSAGE';
-    case MessageType.START_INJECT:
-      return 'SEND EVENT / INJECT';
-    case MessageType.LARGE_DATA_UPDATE:
-      return 'SEND (DATA) LINK';
-    case MessageType.REQUEST_UNIT_MOVE:
-      return 'MOVE UNIT';
-    case MessageType.SET_AFFECTED_AREA:
-      return 'SET AFFECTED AREA';
-    case MessageType.SUMO_CONFIGURATION:
-      return 'CONFIGURE SUMO';
-    case MessageType.CHECKPOINT:
-      return 'SET CHECKPOINT';
-    default:
-      return 'message';
-  }
+export const getMessageTitleFromTemplate = (templates: IGuiTemplate[]) => (topic?: string) => {
+  const found = templates.find((t) => t.topic === topic);
+  return found ? found.label : 'message';
 };
 
 /** Get the icon for an inject, either a scenario/storyline/act icon, or a message icon */
-export const getIcon = (inject: IInject) =>
-  inject.type === InjectType.INJECT ? getMessageIcon(inject.messageType) : getInjectIcon(inject.type);
+export const getIconFromTemplate = (templates: IGuiTemplate[]) => (inject: IInject) =>
+  inject.type === InjectType.INJECT ? getMessageIconFromTemplate(templates)(inject.topic) : getInjectIcon(inject.type);
 
 /** Get the icon representing the execution state */
 export const executionIcon = (inject: IExecutingInject) => {
@@ -236,16 +205,14 @@ export const userIcon = (user: IPerson) => {
   switch (user.roles[0]) {
     default:
       return 'person';
-    case UserRole.EDITOR:
-      return 'edit';
     case UserRole.PARTICIPANT:
       return 'face';
     case UserRole.ROLE_PLAYER:
       return 'record_voice_over';
     case UserRole.STAKEHOLDER:
       return 'attach_money';
-    case UserRole.ADMIN:
-      return 'supervisor_account';
+    case UserRole.EXCON:
+      return 'volume_up';
   }
 };
 
@@ -264,15 +231,9 @@ export const userRolesToString = (user: IPerson) => {
 };
 
 /** Returns true if the user's roles contains the requested role */
-export const userRolesFilter = (user: IPerson, role: UserRole) => {
+export const hasUserRole = (user: IPerson, role: UserRole) => {
   const { roles } = user;
   return roles.filter((r) => r === role).length > 0;
-};
-
-export const eatSpaces = (ev: KeyboardEvent) => {
-  if (ev.which === 32) {
-    return false;
-  }
 };
 
 const formatHHmm = (t: Date) => `${padLeft(t.getHours())}:${padLeft(t.getMinutes())}`;
@@ -301,49 +262,6 @@ export const formatMsec = (t: number) => {
   t -= min * msecPerMinute;
   const sec = Math.floor(t / 1000);
   return `${days > 0 ? `${days}d ` : ''}${padLeft(hours)}:${padLeft(min)}:${padLeft(sec)}`;
-};
-
-/**
- * For injects, find injects in the same act that have been executed earlier, including the parent act itself.
- * For acts, find other acts in the same storyline that have been executed earlier, including the parent storyline.
- * For storylines, find other storylines in the same scenario that have been executed earlier, including the scenario.
- */
-export const findPreviousInjects = (inject?: IInject, injects?: IInject[]) => {
-  if (!injects || !inject) {
-    return [];
-  }
-  const olderSiblings = (id: string) => {
-    let found = false;
-    return injects
-      .filter((i) => i.parentId === id)
-      .filter((i) => {
-        found = i.id === inject.id;
-        return !found;
-      });
-  };
-  const type =
-    inject.type === InjectType.INJECT
-      ? InjectType.ACT
-      : inject.type === InjectType.ACT
-      ? InjectType.STORYLINE
-      : InjectType.SCENARIO;
-  const parent = getParent(injects, inject.id || inject.parentId, type);
-  if (!parent) {
-    return [];
-  }
-  return [parent, ...olderSiblings(parent.id as string)];
-};
-
-/**
- * Most messages must be published to Kafka, perhaps in different topics.
- * A direct relationship from message to topic is restrictive, and difficult to manage.
- * Therefore, we publish to a subject, which is linked to a topic.
- */
-export const getMessageSubjects = (mt: MessageType) => {
-  const trial = TrialSvc.getCurrent();
-  const messageTopics = trial.messageTopics || [];
-  const messageTopic = messageTopics.filter((t) => t.messageType === mt).shift();
-  return messageTopic ? messageTopic.topics.map((t) => ({ id: t.id, label: t.subject })) : [];
 };
 
 /** Create an email link */
@@ -414,27 +332,24 @@ export const isScenario = (i: IInject): i is IScenario => i.type === InjectType.
 /** Type guard check if we are dealing with a storyline  */
 export const isStoryline = (i: IInject): i is IScenario => i.type === InjectType.STORYLINE;
 
-/** Type guard check if we are dealing with an act  */
-export const isAct = (i: IInject): i is IScenario => i.type === InjectType.ACT;
-
 /** Type guard check if we are dealing with a pure inject  */
 export const isInject = (i: IInject): i is IScenario => i.type === InjectType.INJECT;
 
-/** Filter for selecting all injects that represent a GeoJSON message */
-export const isGeoJSONMessage = (i: IInject) => i.messageType === MessageType.GEOJSON_MESSAGE;
+// /** Filter for selecting all injects that represent a GeoJSON message */
+// export const isGeoJSONMessage = (i: IInject) => i.topic === MessageType.GEOJSON_MESSAGE;
 
-/** Filter for selecting all injects that represent an affected area */
-export const isAffectedArea = (i: IInject) => i.messageType === MessageType.SET_AFFECTED_AREA;
+// /** Filter for selecting all injects that represent an affected area */
+// export const isAffectedArea = (i: IInject) => i.topic === MessageType.SET_AFFECTED_AREA;
 
-/** Filter for selecting all injects that represent a transport request */
-export const isTransportRequest = (i: IInject) => i.messageType === MessageType.REQUEST_UNIT_MOVE;
+// /** Filter for selecting all injects that represent a transport request */
+// export const isTransportRequest = (i: IInject) => i.topic === MessageType.REQUEST_UNIT_MOVE;
 
-/** Filter for selecting all injects that have a map */
-export const containsMapOverlay = (i: IInject) =>
-  i.messageType === MessageType.GEOJSON_MESSAGE ||
-  i.messageType === MessageType.SET_AFFECTED_AREA ||
-  i.messageType === MessageType.REQUEST_UNIT_MOVE ||
-  i.messageType === MessageType.CAP_MESSAGE;
+// /** Filter for selecting all injects that have a map */
+// export const containsMapOverlay = (i: IInject) =>
+//   i.topic === MessageType.GEOJSON_MESSAGE ||
+//   i.topic === MessageType.SET_AFFECTED_AREA ||
+//   i.topic === MessageType.REQUEST_UNIT_MOVE ||
+//   i.topic === MessageType.CAP_MESSAGE;
 
 // export const getAsset = async (assetId?: number) => {
 //   const assets = TrialSvc.assets;
@@ -461,7 +376,7 @@ export const containsMapOverlay = (i: IInject) =>
 //   return scenarioInjects && scenarioInjects
 //     .filter(containsMapOverlay)
 //     .map(async i => {
-//       switch (i.messageType) {
+//       switch (i.topic) {
 //         case MessageType.GEOJSON_MESSAGE:
 //           const geojsonMsg = getMessage<IGeoJsonMessage>(i, MessageType.GEOJSON_MESSAGE);
 //           return await getAsset(geojsonMsg.assetId);
@@ -554,29 +469,59 @@ export const arrayMove = <T>(arr: Array<T | undefined>, oldIndex: number, newInd
 const waitingForManualConfirmation = (i: IExecutingInject) =>
   i.state === InjectState.SCHEDULED && i.condition && i.condition.type === InjectConditionType.MANUALLY;
 
-export const injectToTimelineItemFactory = (injectStates: IInjectSimStates) => (i: IExecutingInject) => {
-  const { condition, id } = i;
-  const isCompleted = i.state === InjectState.EXECUTED;
-  const delay = injectStates && injectStates.hasOwnProperty(id) ? injectStates[id].delayInSeconds || 0 : 0;
-  const condDelay = condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0;
-  return {
-    ...i,
-    completed: isCompleted ? 1 : 0,
-    highlight: waitingForManualConfirmation(i),
-    delay: delay + condDelay,
-    dependsOn:
-      condition && condition.injectId
-        ? [
-            {
-              id: condition.injectId,
-              condition: condition.injectState === InjectState.EXECUTED ? 'finished' : 'started',
-            },
-          ]
-        : undefined,
-  } as ITimelineItem & IExecutingInject;
-};
+export const injectToTimelineItemFactory =
+  (injectStates: IInjectSimStates, treeState: { [key: string]: boolean }) => (i: IExecutingInject) => {
+    const { condition, id } = i;
+    const isCompleted = i.state === InjectState.EXECUTED;
+    const delay = injectStates && injectStates.hasOwnProperty(id) ? injectStates[id].delayInSeconds || 0 : 0;
+    const condDelay = condition && condition.delay ? toMsec(condition.delay, condition.delayUnitType) / 1000 : 0;
+    return {
+      ...i,
+      isOpen: treeState[i.id],
+      completed: isCompleted ? 1 : 0,
+      highlight: waitingForManualConfirmation(i),
+      delay: delay + condDelay,
+      dependsOn:
+        condition && condition.injectId
+          ? [
+              {
+                id: condition.injectId,
+                condition: condition.injectState === InjectState.EXECUTED ? 'finished' : 'started',
+              },
+            ]
+          : undefined,
+    } as ITimelineItem & IExecutingInject & { delay: number };
+  };
 
-export const messageOptions = (selectedMessageTypes: string[]) =>
-  enumToOptions(MessageType)
-    .filter(({ id }) => !selectedMessageTypes || selectedMessageTypes.indexOf(id) >= 0)
-    .map(({ id }) => ({ id, label: getMessageTitle(id as MessageType) }));
+/**
+ * Retreive a value from an object using a dynamic path.
+ * If the attribute does not exist, return undefined.
+ * @param obj: object
+ * @param s: path, e.g. a.b[0].c
+ * @see https://stackoverflow.com/a/6491621/319711
+ */
+export const getPath = (obj: Record<string, any>, s: string) => {
+  s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+  s = s.replace(/^\./, ''); // strip a leading dot
+  const a = s.split('.');
+  let o = { ...obj };
+  for (let i = 0, n = a.length; i < n; ++i) {
+    const k = a[i];
+    if (k in o) {
+      o = o[k];
+    } else if (o instanceof Array) {
+      const id = obj[k] || k;
+      const m = /([A-Z]\w+)/.exec(k); // categoryId => match Id, myNameLabel => NameLabel
+      const key = (m && m[0][0].toLowerCase() + m[0].substr(1)) || k; // key = id or nameLabel
+      const found = o.filter((i) => i[key] === id).shift();
+      if (found) {
+        o = found;
+      } else {
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+  }
+  return o as any;
+};
