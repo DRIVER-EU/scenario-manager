@@ -60,8 +60,8 @@ export const TrialList: MeiosisComponent = () => {
       const trialId = tags ? tags.trialId || (session as any).trialId : undefined;
       const query = titleAndDescriptionFilter(filterValue);
       const filteredTrials = trials.filter(query);
-      const apiService = location.origin + '/tmt';
-      // const apiService = (process.env.SERVER || location.origin) + '/tmt';
+      //const apiService = location.origin + '/tmt';
+      const apiService = (process.env.SERVER || location.origin) + '/tmt';
       // console.table(session);
       // console.table({ isConnected, activeSession });
 

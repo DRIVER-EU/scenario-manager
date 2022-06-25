@@ -184,9 +184,14 @@ export class RunController {
             'simulation_time_control',
             'simulation_session_mgmt',
             'named_json',
-            'system_tm_role_player'
+            'system_tm_role_player',
+            'cbrn_geojson',
+            'chemical_incident',
+            'resource',
+            'simulation_entity_featurecollection',
           ].indexOf(t) < 0,
-      );
+      )
+      topics.push('send_file', 'send_message');
     return response.send(topics);
   }
 

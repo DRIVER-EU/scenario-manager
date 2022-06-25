@@ -5,15 +5,17 @@
 # To start it stand-alone:
 #   docker run -it -p 8888:3210 trial-management-tool
 
-# FROM node:alpine AS builder
-# RUN apk add --no-cache --virtual .gyp python3 make g++ git vips-dev && \
-#   npm i -g yalc
-# ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+FROM node:alpine AS builder
+RUN apk add --no-cache --virtual .gyp python3 make g++ git vips-dev && \
+  npm i -g yalc
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+
 # optionally if you want to run npm global bin without specifying path
 # ENV PATH=$PATH:/home/node/.npm-global/bin
-FROM nikolaik/python-nodejs as builder
-RUN npm i -g yalc
-ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+#FROM nikolaik/python-nodejs as builder
+#RUN npm i -g yalc
+#ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+
 RUN mkdir /packages && \
   mkdir /packages/models && \
   mkdir /packages/tmt && \
@@ -28,14 +30,14 @@ WORKDIR /packages/server
 RUN yalc add trial-manager-models && \
   npm install && \
   npm run build
-COPY ./packages/tmt3 /packages/tmt
+COPY ./packages/tmt /packages/tmt
 WORKDIR /packages/tmt
 RUN rm -fr node_modules && \
   yalc add trial-manager-models && \
   npm install && \
   npm run build
 
-FROM node:16-alpine
+FROM node:alpine
 RUN mkdir -p /app
 RUN mkdir -p /app/trials
 COPY --from=builder /packages/server/package.json /app/package.json

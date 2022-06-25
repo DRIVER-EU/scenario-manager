@@ -22,8 +22,8 @@ export const setupSocket = (autoConnect = true): Socket => {
   if (socket && socket.connected) {
     return socket;
   }
-  const url = location.origin;
-  // const url = process.env.SERVER || location.origin;
+  //const url = location.origin;
+  const url = process.env.SERVER || location.origin;
   console.log('origin is ' + url);
   socket = io(url, { path: '/tmt/socket.io/' });
 

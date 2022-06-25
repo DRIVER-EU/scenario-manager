@@ -4,8 +4,8 @@ import { IGuiTemplate } from 'trial-manager-models';
 import { IActions, IAppModel } from '../meiosis';
 
 export const LoadGuiTemplates = (_actions: IActions) => {
-  const server = location.origin + '/tmt';
-  // const server = (process.env.SERVER || location.origin) + '/tmt';
+  //const server = location.origin + '/tmt';
+  const server = (process.env.SERVER || location.origin) + '/tmt';
   let dataLoaded = false;
 
   return async (state: IAppModel) => {
@@ -23,16 +23,12 @@ export const LoadGuiTemplates = (_actions: IActions) => {
       });
       const loadedTemplates = [] as IGuiTemplate[];
       for (const topic of topics) {
-        let template: IGuiTemplate;
-        try {
+        let template: void | IGuiTemplate;
           template = await m.request<IGuiTemplate>({
             method: 'GET',
             url: `${server}/topics/${topic.toLowerCase()}.json`,
-          });
+          }).catch((_e) => console.warn(`No GUI template found for topic ${topic}.`))
           if (template) loadedTemplates.push({ ...template, ui: JSON.stringify(template.ui), topic });
-        } catch {
-          console.warn(`No GUI template found for topic ${topic}.`);
-        }
       }
       actions.update({ app: { templates: loadedTemplates } });
     }

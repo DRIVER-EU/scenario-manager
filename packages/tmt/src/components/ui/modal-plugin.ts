@@ -4,6 +4,7 @@ import { PluginType } from 'mithril-ui-form';
 
 export const modalPlugin: PluginType = () => {
   return {
+    //@ts-ignore
     view: ({ attrs: { props, field } }) => {
       const { disabled, iconName = 'file_upload', className = 'input-field col s1' } = props;
       const { id, modalId } = field;

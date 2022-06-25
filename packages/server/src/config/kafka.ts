@@ -49,8 +49,6 @@ export default () => ({
           // 'flood_prediction_geojson',
           'standard_cap',
           'simulation_entity_post',
-          'send_file',
-          'send_message',
           'named_json',
           // 'standard_geojson',
           // 'large_data_update',
