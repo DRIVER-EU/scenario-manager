@@ -36,7 +36,7 @@ export const MediaControls: FactoryComponent<{
           : m(FlatButton, {
               iconName: 'fast_rewind',
               disabled: !canChangeSpeed,
-              onclick: () => updateSpeed(socket, (time.simulationSpeed || 0) / 2),
+              onclick: () => updateSpeed(socket, (time.simulationSpeed || 0) / 6),
             }),
         canStop
           ? m(FlatButton, {
@@ -61,7 +61,7 @@ export const MediaControls: FactoryComponent<{
           : m(FlatButton, {
               iconName: 'fast_forward',
               disabled: !canChangeSpeed,
-              onclick: () => updateSpeed(socket, (time.simulationSpeed || 0) * 2),
+              onclick: () => updateSpeed(socket, (time.simulationSpeed || 0) * 6),
             }),
       ]);
     },
