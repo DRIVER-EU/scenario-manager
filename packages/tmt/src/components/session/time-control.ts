@@ -5,6 +5,9 @@ import { TimeState, IScenario, ITimeManagement, ITimeControl, TimeCommand, UserR
 import { SocketSvc, MeiosisComponent } from '../../services';
 import { formatTime, getActiveTrialInfo, getUserById, hasUserRole, isSessionInfoValid, padLeft } from '../../utils';
 
+const timeArray = [['1 second', 1], ['30 seconds', 30], ['1 minute', 60], ['5 minutes', 300], ['30 minutes', 1800], ['1 hour', 3600], ['12 hours', 43200], ['1 day', 86400], ['30 days', 2592000], ['180 days', 15552000], ['1 year', 31536000]] as Array<[string, number]>;
+let timeArrayIndexer = 0 as number;
+
 const sendCmd = (socket: Socket, msg: ITimeControl) => {
   socket.emit('time-control', msg);
   setTimeout(() => m.redraw(), 1000);
@@ -36,8 +39,13 @@ export const MediaControls: FactoryComponent<{
           : m(FlatButton, {
               iconName: 'fast_rewind',
               disabled: !canChangeSpeed,
-              onclick: () => updateSpeed(socket, (time.simulationSpeed || 0) / 6),
-            }),
+              onclick: () => {
+                if(timeArrayIndexer > 0){
+                  timeArrayIndexer -= 1;
+                  updateSpeed(socket, timeArray[timeArrayIndexer][1])
+              }
+            }
+          }),
         canStop
           ? m(FlatButton, {
               modalId: 'stopPanel',
@@ -61,7 +69,12 @@ export const MediaControls: FactoryComponent<{
           : m(FlatButton, {
               iconName: 'fast_forward',
               disabled: !canChangeSpeed,
-              onclick: () => updateSpeed(socket, (time.simulationSpeed || 0) * 6),
+              onclick: () => {
+                if(timeArrayIndexer < timeArray.length){
+                  timeArrayIndexer += 1;
+                  updateSpeed(socket, timeArray[timeArrayIndexer][1])
+              }
+            }
             }),
       ]);
     },
@@ -217,9 +230,12 @@ const MediaStateControl: MeiosisComponent = () => {
         case TimeState.Started:
           return m('.col.s12', [
             m(MediaControls, { socket, isPaused: false, canChangeSpeed: !disabled, time, realtime, stopDisabled: false }),
-            m('em', `Speed: ${time.simulationSpeed}x`),
+            m('em', `Speed: ${timeArray[timeArrayIndexer][0]}`),
             time.simulationSpeed !== 1
-              ? m(FlatButton, { iconName: 'restore', disabled, onclick: () => updateSpeed(socket, 1) })
+              ? m(FlatButton, { iconName: 'restore', disabled, onclick: () => {
+                timeArrayIndexer = 0;
+                updateSpeed(socket, timeArray[timeArrayIndexer][1]) }
+              })
               : undefined,
           ]);
         case TimeState.Stopped:
