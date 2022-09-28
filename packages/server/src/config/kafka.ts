@@ -10,7 +10,7 @@ import {
 
 export default () => ({
   kafka: {
-    kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
+    kafkaHost: process.env.KAFKA_HOST || 'localhost:9092',
     schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
     // kafkaHost: process.env.KAFKA_HOST || 'tb3.driver-testbed.eu:3531',
     // schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb3.driver-testbed.eu:3532',
@@ -32,13 +32,14 @@ export default () => ({
             rejectUnauthorized: true,
           }
         : undefined,
+    groupId: process.env.CLIENT_ID || 'TB-TrialMgmt',
     clientId: process.env.CLIENT_ID || 'TB-TrialMgmt',
     fetchAllSchemas: false,
     fetchAllVersions: false,
     // autoRegisterSchemas: true,
     autoRegisterSchemas: false,
     wrapUnions: 'auto',
-    // consume: [],
+    consume: [{topic: 'system_logging', offset: 0}],
     produce: process.env.PRODUCE
       ? process.env.PRODUCE.split(',')
       : [

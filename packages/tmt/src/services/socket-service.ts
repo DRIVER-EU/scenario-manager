@@ -11,6 +11,7 @@ import {
   IConnectMessage,
   ISessionManagement,
   SessionState,
+  ISystemLog,
 } from 'trial-manager-models';
 import { getInjects } from '../utils';
 
@@ -106,6 +107,10 @@ export const setupSocket = (autoConnect = true): Socket => {
     trial.injects && trial.injects.push(i);
     update({ exe: { trial } } as Partial<IAppModel>);
   });
+  socket.on('system-log', (message: Array<ISystemLog>) => {
+    const { update } = actions;
+    update({app: { logs: message}})
+  })
 
   return socket;
 };

@@ -24,6 +24,7 @@ import {
   TimeCommand,
   uniqueId,
   UserRole,
+  ISystemLog,
 } from 'trial-manager-models';
 import { MessageScope } from '../../components/messages';
 import { arrayMove, getInjects, getInject, isScenario, validateInjects } from '../../utils';
@@ -86,6 +87,8 @@ export interface IApp extends IActiveTrial {
   kafkaTopics: string[];
   /** Currently selected message in config menu */
   messageId: string;
+  /** all logs that were received through kafka */
+  logs: Array<ISystemLog>;
 }
 
 export interface IExe extends IActiveTrial {
@@ -245,6 +248,7 @@ export const appStateMgmt = {
       templates: [],
       kafkaTopics: [],
       messageId: '',
+      logs: [] as Array<ISystemLog>,
     },
     exe: {
       trial: {} as ITrial,

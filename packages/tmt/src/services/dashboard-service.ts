@@ -16,6 +16,7 @@ import {
   UsersView,
   SessionTable,
   MessageConfigView,
+  KafkaLogs,
 } from '../components';
 
 class DashboardService {
@@ -110,6 +111,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     route: '/settings/users',
     visible: false,
     component: TrialSettings,
+  },
+  {
+    id: Dashboards.LOGS,
+    title: 'Logs',
+    icon: 'comment',
+    route: '/logs',
+    visible: true,
+    component: KafkaLogs,
   },
   {
     id: Dashboards.TRIAL_INFO,

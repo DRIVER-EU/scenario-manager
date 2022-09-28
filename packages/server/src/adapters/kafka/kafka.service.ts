@@ -24,7 +24,7 @@ import {
 } from 'node-test-bed-adapter';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { debounce } from 'trial-manager-models';
+import { debounce, ISystemLog } from 'trial-manager-models';
 export { ITimeControl } from 'node-test-bed-adapter';
 
 export interface TimeService {
@@ -41,6 +41,7 @@ export interface KafkaService {
     event: 'session-update',
     listener: (message: ISessionManagement) => void,
   ): this;
+  on(event: 'system-log', listener: (message: ISystemLog) => void): this;
 }
 
 @Injectable()
@@ -213,6 +214,9 @@ export class KafkaService extends EventEmitter implements TimeService {
         // this.debouncer = setTimeout(() => console.table(this.session), 1000);
         // debounce(() => console.table(this.session), 1000);
         this.debouncedEmit('session-update', this.session);
+        break;
+      case 'system_logging':
+        this.emit('system-log', message.value)
         break;
       default:
         console.warn('Unhandled message: ' + message.value);

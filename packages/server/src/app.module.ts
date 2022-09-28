@@ -8,6 +8,7 @@ import {
   RepoModule,
   TimeEventsModule,
   RunModule,
+  LogsEventsModule
 } from './api';
 
 // console.log('DIR: ' + __dirname);
@@ -22,6 +23,7 @@ import {
     TrialModule,
     RepoModule,
     TimeEventsModule,
+    LogsEventsModule,
     ExecutionModule,
     RunModule,
   ],

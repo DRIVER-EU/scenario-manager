@@ -39,7 +39,7 @@ export const Layout: MeiosisComponent = () => {
       const { session, time, userId } = state.exe;
       const curRoute = m.route.get();
       const curDashboard = dashboardSvc.getCurrent(curRoute);
-      if (trial && !trial.id && curRoute !== dashboardSvc.defaultRoute && curDashboard?.id !== Dashboards.TRIAL_INFO) {
+      if (trial && !trial.id && curRoute !== dashboardSvc.defaultRoute && curDashboard?.id !== Dashboards.TRIAL_INFO && curDashboard?.id !== Dashboards.LOGS) {
         return dashboardSvc.switchTo(Dashboards.HOME);
       }
       const mainPath = (path: string) => {

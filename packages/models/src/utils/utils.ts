@@ -133,6 +133,7 @@ export const deepCopy = <T>(target: T): T => {
     });
     return cp.map((n: any) => deepCopy<any>(n)) as any;
   }
+  // @ts-ignore
   if (typeof target === 'object' && target !== {}) {
     const cp = { ...(target as { [key: string]: any }) } as {
       [key: string]: any;
