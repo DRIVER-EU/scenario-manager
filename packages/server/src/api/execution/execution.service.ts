@@ -24,13 +24,11 @@ import {
   IPostMsg,
   postMessageToTestbed,
   ISendFileMessage,
-  IFeatureCollection,
   ISendMessageMessage,
 } from 'trial-manager-models';
 import { KafkaService } from '../../adapters/kafka';
 import { TrialService } from '../trials/trial.service';
 import { parse } from '../../utils';
-import { IFeature } from 'node-test-bed-adapter';
 
 @Injectable()
 export class ExecutionService implements IExecutionService {

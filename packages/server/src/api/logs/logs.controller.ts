@@ -10,7 +10,7 @@ import { KafkaService } from '../../adapters/kafka';
   },
 })
 export class LogEventsGateway {
-  @WebSocketServer() server: Server;
+  @WebSocketServer() private server: Server;
 
   private logs = [] as Array<ISystemLog>;
 

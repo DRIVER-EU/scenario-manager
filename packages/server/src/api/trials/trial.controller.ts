@@ -25,7 +25,7 @@ import { Response } from 'express';
 import { TrialOverview, IUploadedFile } from '../../models';
 import { TrialService } from './trial.service';
 import { ApiFile } from '../../adapters/models/api-file';
-import { FeatureCollectionType, IFeature, IFeatureCollection } from 'node-test-bed-adapter';
+import { IFeature } from 'node-test-bed-adapter';
 
 @ApiTags('trials')
 @Controller('trials')
