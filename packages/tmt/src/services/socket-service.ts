@@ -64,7 +64,6 @@ export const setupSocket = (autoConnect = true): Socket => {
     await actions.updateSession(Object.assign({ tags: undefined }, session));
     const kafkaTopics = await SocketSvc.getKafkaTopics();
     actions.updateKafkaTopics(kafkaTopics);
-    console.log(kafkaTopics);
     update({
       exe: {
         sessionControl: {
@@ -110,6 +109,10 @@ export const setupSocket = (autoConnect = true): Socket => {
   socket.on('system-log', (message: Array<ISystemLog>) => {
     const { update } = actions;
     update({app: { logs: message}})
+    // Force redraw when we are looking at logs page
+    if(window.location.href.includes("/logs")){
+      m.redraw();
+    }
   })
 
   return socket;
@@ -124,7 +127,6 @@ export const SocketSvc = {
   socket: socket || setupSocket(),
   getKafkaTopics: async () => {
     return await new Promise((resolve) => {
-      console.log('SOCKET SERVICE');
       SocketSvc.socket.emit('getKafkaTopics', (data: string[]) => {
         resolve(data as string[]);
       });
