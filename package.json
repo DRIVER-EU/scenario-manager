@@ -16,7 +16,7 @@
     "docker:sh": "docker run -it trial-management-tool sh"
   },
   "devDependencies": {
-    "pnpm": "^6.32.3"
+    "pnpm": "^7.12.2"
   },
   "name": "trial-management-tool"
 }
