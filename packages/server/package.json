@@ -37,7 +37,7 @@
     "rfc6902": "^5.0.1",
     "rxjs": "^7.5.7",
     "socket.io": "^4.5.2",
-    "sqlite3": "^5.1.1",
+    "sqlite3": "^5.1.5",
     "swagger-ui-express": "^4.5.0",
     "trial-manager-models": "file:../models"
   },
