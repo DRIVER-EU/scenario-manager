@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { RunController } from './run.controller';
-import { RunService } from './run.service';
-import { KafkaModule } from '../../adapters/kafka';
-import { TrialModule } from '../trials/trial.module';
-import { ExecutionModule } from '../execution/execution.module';
+import { RunController } from './run.controller.js';
+import { RunService } from './run.service.js';
+import { KafkaModule } from '../../adapters/kafka/index.js';
+import { TrialModule } from '../trials/trial.module.js';
+import { ExecutionModule } from '../execution/execution.module.js';
 
 @Module({
   imports: [KafkaModule, TrialModule, ExecutionModule],

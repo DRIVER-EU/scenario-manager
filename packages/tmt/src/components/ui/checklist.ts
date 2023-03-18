@@ -1,40 +1,41 @@
 import m from 'mithril';
 import { IScenario, ITodo } from 'trial-manager-models';
-import { FlatButton, Kanban, IModelField, IKanban } from 'mithril-materialized';
+import { FlatButton } from 'mithril-materialized';
 import { MeiosisComponent } from '../../services';
 import { getInject } from '../../utils';
+import { UIForm } from 'mithril-ui-form';
+import { IKanban, Kanban } from './kanban';
 
 export const Checklist: MeiosisComponent = () => {
-  // let key = 0;
   const model = [
+    {
+      id: 'id',
+      type: 'autogenerate',
+      autogenerate: 'guid',
+    },
     {
       id: 'title',
       label: 'Todo',
-      component: 'text',
+      type: 'text',
       className: 'col s12',
       required: true,
     },
-    {
-      id: 'id',
-      autogenerate: 'guid',
-    },
-  ] as IModelField[];
+  ] as UIForm<ITodo>;
 
   const disabledModel = [
     {
       id: 'title',
       label: 'Todo',
-      component: 'text',
+      type: 'text',
       className: 'col s9',
-      required: true,
     },
     {
       id: 'done',
       label: 'Done',
-      component: 'checkbox',
+      type: 'checkbox',
       className: 'col s3',
     },
-  ] as IModelField[];
+  ] as UIForm<ITodo>;
 
   return {
     view: ({ attrs: { state, actions } }) => {
@@ -52,9 +53,15 @@ export const Checklist: MeiosisComponent = () => {
               disabled ? m('h6', 'BEFORE') : undefined,
               [
                 m(Kanban, {
+                  i18n: {
+                    newItem: 'Add todo (Before)',
+                    modalCreateNewItem: 'Create todo',
+                    modalDeleteItem: 'Delete todo',
+                    modalEditNewItem: 'Edit todo',
+                  },
                   disabled,
-                  label: 'todo (BEFORE)',
                   canDrag: true,
+                  fixedFooter: true,
                   model: disabled ? disabledModel : model,
                   onchange: (items) => {
                     scenario.todoBefore = items;
@@ -69,9 +76,15 @@ export const Checklist: MeiosisComponent = () => {
               disabled ? m('h6', 'AFTER') : undefined,
               [
                 m(Kanban, {
+                  i18n: {
+                    newItem: 'Add todo (After)',
+                    modalCreateNewItem: 'Create todo',
+                    modalDeleteItem: 'Delete todo',
+                    modalEditNewItem: 'Edit todo',
+                  },
                   disabled,
-                  label: 'todo (AFTER)',
                   canDrag: true,
+                  fixedFooter: true,
                   model: disabled ? disabledModel : model,
                   onchange: (items) => {
                     scenario.todoAfter = items;

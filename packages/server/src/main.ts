@@ -1,15 +1,17 @@
 import * as path from 'path';
-import * as compression from 'compression';
+import compression from 'compression';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { urlencoded, json, static as expressStatic } from 'express';
-import { SocketAdapter } from './adapters';
+import { SocketAdapter } from './adapters/index.js';
 
 async function bootstrap() {
+  console.log(`Working directory: ${process.cwd()}`);
   process.on('uncaughtException', (err) => {
     console.error('Caught exception: ' + err);
+    console.error('Stack trace: ' + err.stack);
   });
   process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection:', reason);
@@ -22,6 +24,7 @@ async function bootstrap() {
     cors: true,
   });
   app.useWebSocketAdapter(new SocketAdapter(app));
+  console.log(compression);
   app.use(compression());
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ limit: '10mb', extended: true }));

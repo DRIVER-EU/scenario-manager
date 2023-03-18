@@ -8,10 +8,10 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { TrialService } from '../trials/trial.service';
 import { Response } from 'express';
-import { ApiFile } from '../../adapters/models/api-file';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { TrialService } from '../trials/trial.service.js';
+import { ApiFile } from '../../adapters/models/api-file.js';
 
 /** Users should be able to download the sqlite3 database */
 @ApiTags('repo')

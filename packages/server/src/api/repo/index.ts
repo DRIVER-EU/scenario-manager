@@ -1,2 +1,2 @@
-export * from './repo.controller';
-export * from './repo.module';
+export * from './repo.controller.js';
+export * from './repo.module.js';

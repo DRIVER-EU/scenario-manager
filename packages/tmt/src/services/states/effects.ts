@@ -21,16 +21,18 @@ export const LoadGuiTemplates = (_actions: IActions) => {
         method: 'GET',
         url: `${server}/run/topics`,
       });
-      const loadedTemplates = [] as IGuiTemplate[];
+      const templates = [] as IGuiTemplate[];
       for (const topic of topics) {
         let template: void | IGuiTemplate;
-          template = await m.request<IGuiTemplate>({
+        template = await m
+          .request<IGuiTemplate>({
             method: 'GET',
             url: `${server}/topics/${topic.toLowerCase()}.json`,
-          }).catch((_e) => console.warn(`No GUI template found for topic ${topic}.`))
-          if (template) loadedTemplates.push({ ...template, ui: JSON.stringify(template.ui), topic });
+          })
+          .catch((_e) => console.warn(`No GUI template found for topic ${topic}.`));
+        if (template) templates.push({ ...template, ui: JSON.stringify(template.ui), topic });
       }
-      actions.update({ app: { templates: loadedTemplates } });
+      actions.update({ app: { templates } });
     }
   };
 };

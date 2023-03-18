@@ -19,11 +19,11 @@ import {
   TimeState,
 } from 'trial-manager-models';
 import { Server } from 'socket.io';
-import { KafkaService } from '../../adapters/kafka';
-import { StateTransitionRequest } from '../../adapters/models';
-import { Trial } from '../../adapters/models/trial';
-import { TrialService } from '../trials/trial.service';
-import { ExecutionService } from '../execution/execution.service';
+import { KafkaService } from '../../adapters/kafka/index.js';
+import { StateTransitionRequest } from '../../adapters/models/index.js';
+import { Trial } from '../../adapters/models/trial.js';
+import { TrialService } from '../trials/trial.service.js';
+import { ExecutionService } from '../execution/execution.service.js';
 
 @Injectable()
 @WebSocketGateway({

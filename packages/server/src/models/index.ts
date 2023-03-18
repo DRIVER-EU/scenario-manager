@@ -1,2 +1,2 @@
-export * from './trial-overview';
-export * from './uploaded-file';
+export * from './trial-overview.js';
+export * from './uploaded-file.js';

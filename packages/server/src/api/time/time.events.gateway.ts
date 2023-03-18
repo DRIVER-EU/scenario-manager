@@ -4,8 +4,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { KafkaService, ITimeControl } from '../../adapters/kafka';
+import { KafkaService } from '../../adapters/kafka/index.js';
 import { IConnectMessage } from 'trial-manager-models';
+import type { ITimeControl } from 'node-test-bed-adapter' assert { 'resolution-mode': 'import' };
 
 @WebSocketGateway({
   cors: {
@@ -67,6 +68,6 @@ export class TimeEventsGateway {
   @SubscribeMessage('getKafkaTopics')
   async returnKafkaTopics() {
     const topics = this.kafkaService.getProduceTopics();
-    return topics
+    return topics;
   }
 }

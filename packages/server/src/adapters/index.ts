@@ -1,3 +1,3 @@
-export * from './kafka';
-export * from './models';
-export * from './socket.io/socket-adapter';
+export * from './kafka/index.js';
+export * from './models/index.js';
+export * from './socket.io/socket-adapter.js';

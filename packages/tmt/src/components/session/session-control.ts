@@ -54,7 +54,7 @@ const SessionSettings: MeiosisComponent = () => {
                 selectScenario(id as string);
                 selectInject(id as string);
               },
-            } as ISelectOptions)
+            } as ISelectOptions<string>)
           ),
         ]),
         !isConnected

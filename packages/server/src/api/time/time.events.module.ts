@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TimeEventsGateway } from '.';
-import { KafkaModule } from '../../adapters/kafka';
+import { TimeEventsGateway } from './index.js';
+import { KafkaModule } from '../../adapters/kafka/index.js';
 
 @Module({
   imports: [KafkaModule],

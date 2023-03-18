@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { KafkaService } from './kafka.service';
+import { KafkaService } from './kafka.service.js';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

@@ -68,8 +68,9 @@ export const MessageForm: MessageComponent = () => {
       );
       const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.useCustomGUI);
       customForms.forEach((msg: IKafkaMessage) => {
-        if (msg.customGUI) {
+        if (msg.useCustomGUI && msg.customGUI) {
           const gui = msg.customGUI;
+          console.log(gui);
           customTemplates.push({
             label: msg.name,
             icon: msg.iconName,
@@ -160,13 +161,12 @@ export const MessageForm: MessageComponent = () => {
           (inject.message.SEND_MESSAGE as ISendMessageMessage).message &&
           (inject.message.SEND_MESSAGE as ISendMessageMessage).message.length > 1
         ) {
-          let vizTopic = {};
+          let vizTopic: IGuiTemplate;
           try {
             vizTopic = JSON.parse((inject.message.SEND_MESSAGE as ISendMessageMessage).message);
           } catch (e) {
-            vizTopic = {};
+            vizTopic = {} as IGuiTemplate;
           }
-          //@ts-ignore
           if (vizTopic.ui) {
             messageIsGUI = true;
             //@ts-ignore

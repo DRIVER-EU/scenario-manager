@@ -25,13 +25,13 @@ export const CapMessageForm: MessageComponent = () => {
     alertInfo: IInfo;
     parameters: IValueNamePair[];
     participants: IPerson[];
-    statusOptions: IInputOption[];
-    msgTypeOptions: IInputOption[];
-    scopeOptions: IInputOption[];
-    categoryOptions: IInputOption[];
-    urgencyOptions: IInputOption[];
-    severityOptions: IInputOption[];
-    certaintyOptions: IInputOption[];
+    statusOptions: IInputOption<string>[];
+    msgTypeOptions: IInputOption<string>[];
+    scopeOptions: IInputOption<string>[];
+    categoryOptions: IInputOption<string>[];
+    urgencyOptions: IInputOption<string>[];
+    severityOptions: IInputOption<string>[];
+    certaintyOptions: IInputOption<string>[];
     // actionList: IActionList[];
   };
 

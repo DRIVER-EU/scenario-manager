@@ -1,16 +1,10 @@
 import * as fs from 'fs';
-import {
-  LogLevel,
-  ITestBedOptions,
-  RequestChangeOfTrialStage,
-  TrialManagementPhaseMessageTopic,
-  TrialManagementRolePlayerTopic,
-  TrialManagementSessionMgmtTopic,
-} from 'node-test-bed-adapter';
+const adapter = await import('node-test-bed-adapter');
+import type { ITestBedOptions } from 'node-test-bed-adapter' assert { 'resolution-mode': 'import' };
 
 export default () => ({
   kafka: {
-    kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
+    kafkaHost: process.env.KAFKA_HOST || 'localhost:9092',
     schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
     // kafkaHost: process.env.KAFKA_HOST || 'tb3.driver-testbed.eu:3531',
     // schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb3.driver-testbed.eu:3532',
@@ -42,16 +36,16 @@ export default () => ({
     produce: process.env.PRODUCE
       ? process.env.PRODUCE.split(',')
       : [
-          RequestChangeOfTrialStage,
-          TrialManagementPhaseMessageTopic,
-          TrialManagementRolePlayerTopic,
-          TrialManagementSessionMgmtTopic,
+          adapter.RequestChangeOfTrialStage,
+          adapter.TrialManagementPhaseMessageTopic,
+          adapter.TrialManagementRolePlayerTopic,
+          adapter.TrialManagementSessionMgmtTopic,
           // 'flood_prediction_geojson',
           'standard_cap',
           'simulation_entity_post',
           'named_json',
-          // 'standard_geojson',
-          // 'large_data_update',
+          'standard_geojson',
+          // 'system_large_data_update',
           'simulation_request_startinject',
           // 'sumo_SumoConfiguration',
           // 'sumo_AffectedArea',
@@ -67,8 +61,8 @@ export default () => ({
           // 'parking',
         ],
     logging: {
-      logToConsole: LogLevel.Debug,
-      logToKafka: LogLevel.Warn,
+      logToConsole: adapter.LogLevel.Debug,
+      logToKafka: adapter.LogLevel.Warn,
     },
   } as ITestBedOptions,
 });

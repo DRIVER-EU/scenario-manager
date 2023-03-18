@@ -1,2 +1,2 @@
-export * from './kafka.module';
-export * from './kafka.service';
+export * from './kafka.module.js';
+export * from './kafka.service.js';

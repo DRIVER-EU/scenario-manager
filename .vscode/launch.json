@@ -7,13 +7,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch proxy",
-      "program": "${workspaceFolder}/packages/proxy/start.js"
-    },
-
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Launch Server",
       "cwd": "${workspaceFolder}/packages/server/",
       "sourceMaps": true,

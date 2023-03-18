@@ -94,7 +94,7 @@ export const InjectConditions: MeiosisComponent = () => {
       // console.table(condition);
       const dependency = getInject(trial, injectId);
       const previousInjectOptions = previousInjects.map((i) => ({ id: i.id, label: i.title }));
-      const injectStateOptions: IInputOption[] =
+      const injectStateOptions: IInputOption<string>[] =
         dependency && !isAncestor(injects, inject, dependency) ? [{ id: InjectState.EXECUTED, label: 'ended' }] : [];
       injectStateOptions.push({
         id: InjectState.IN_PROGRESS,

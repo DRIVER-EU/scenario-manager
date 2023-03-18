@@ -501,7 +501,7 @@ export const appStateMgmt = {
               id: 'rp_msg',
               name: 'Role Player Message',
               messageForm: 'ROLE_PLAYER_MESSAGE',
-              messageType: 'ROLE_PLAYER_MESSAGE',
+              messageType: MessageType.ROLE_PLAYER_MESSAGE,
               kafkaTopic: 'system_tm_role_player',
               useNamespace: false,
               iconName: 'person',

@@ -11,14 +11,14 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { RunService } from './run.service';
-import { SessionMessage } from '../../adapters/models';
+import { RunService } from './run.service.js';
 import {
+  SessionMessage,
+  Trial,
   StateTransitionRequest,
   Inject as ScenarioInject,
-} from '../../adapters/models';
+} from '../../adapters/models/index.js';
 import { ITrial, SessionState } from 'trial-manager-models';
-import { Trial } from '../../adapters/models/trial';
 
 @ApiTags('run')
 @Controller('run')
@@ -190,8 +190,8 @@ export class RunController {
             'resource',
             'simulation_entity_featurecollection',
           ].indexOf(t) < 0,
-      )
-      topics.push('send_file', 'send_message');
+      );
+    topics.push('send_file', 'send_message');
     return response.send(topics);
   }
 

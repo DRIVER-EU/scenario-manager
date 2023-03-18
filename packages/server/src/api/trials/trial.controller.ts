@@ -22,10 +22,10 @@ import {
 import { Operation } from 'rfc6902';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import { TrialOverview, IUploadedFile } from '../../models';
-import { TrialService } from './trial.service';
-import { ApiFile } from '../../adapters/models/api-file';
-import { FeatureCollectionType, IFeature, IFeatureCollection } from 'node-test-bed-adapter';
+import { TrialOverview, IUploadedFile } from '../../models/index.js';
+import { TrialService } from './trial.service.js';
+import { ApiFile } from '../../adapters/models/api-file.js';
+import type { IFeature } from 'node-test-bed-adapter' assert { 'resolution-mode': 'import' };
 
 @ApiTags('trials')
 @Controller('trials')
@@ -104,7 +104,9 @@ export class TrialController {
     @Body('alias') alias: string,
     @UploadedFile() file: IUploadedFile,
   ) {
-    (file && file.mimetype && file.mimetype === 'application/json') ? file = this.namespacePipe(file) : undefined;
+    file && file.mimetype && file.mimetype === 'application/json'
+      ? (file = this.namespacePipe(file))
+      : undefined;
     return this.trialService.createAsset(id, file, alias);
   }
 
@@ -119,7 +121,9 @@ export class TrialController {
     @Body('alias') alias: string,
     @UploadedFile() file: IUploadedFile,
   ) {
-    (file && file.mimetype && file.mimetype === 'application/json') ? file = this.namespacePipe(file) : undefined;
+    file && file.mimetype && file.mimetype === 'application/json'
+      ? (file = this.namespacePipe(file))
+      : undefined;
     return this.trialService.updateAsset(id, assetId, file, alias);
   }
 
@@ -155,31 +159,30 @@ export class TrialController {
   }
 
   namespacePipe(file: IUploadedFile): IUploadedFile {
-    let obj = JSON.parse(file.buffer.toString())
+    let obj = JSON.parse(file.buffer.toString());
 
-    if(obj.type && obj.type === 'FeatureCollection') {
+    if (obj.type && obj.type === 'FeatureCollection') {
       obj.features.forEach((ft: any) => {
-        ft = this.checkForNamespaces(ft) as IFeature
-      })
-      file.buffer = Buffer.from(JSON.stringify(obj), "utf-8")
+        ft = this.checkForNamespaces(ft) as IFeature;
+      });
+      file.buffer = Buffer.from(JSON.stringify(obj), 'utf-8');
+    } else if (obj.type && obj.type === 'Feature') {
+      obj = this.checkForNamespaces(obj) as IFeature;
+      file.buffer = Buffer.from(JSON.stringify(obj), 'utf-8');
     }
-    else if (obj.type && obj.type === 'Feature') {
-      obj = this.checkForNamespaces(obj) as IFeature
-      file.buffer = Buffer.from(JSON.stringify(obj), "utf-8")
-    }
-    
-    return file
+
+    return file;
   }
 
   checkForNamespaces(ft: any) {
     let geometry = ft.geometry as Object;
-    const keys = Object.keys(geometry)
+    const keys = Object.keys(geometry);
     // If we have a namespace, remove it
     // else do nothing and return the original feature.
-    if(!keys.includes('type')) {
-      geometry = geometry[keys[0]]
-      ft.geometry = geometry
+    if (!keys.includes('type')) {
+      geometry = geometry[keys[0]];
+      ft.geometry = geometry;
     }
-    return ft
+    return ft;
   }
 }

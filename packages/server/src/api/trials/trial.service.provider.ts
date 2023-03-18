@@ -1,4 +1,4 @@
-import { TrialService } from './trial.service';
+import { TrialService } from './trial.service.js';
 
 const trialService = () => {
   const ss = new TrialService();

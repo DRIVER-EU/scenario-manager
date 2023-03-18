@@ -92,6 +92,7 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
       messageOpt = trial.selectedMessageTypes
         .map((t) => ({ id: t.id, label: t.name }))
         .sort((a, b) => a.label.localeCompare(b.label));
+      console.log(messageOpt);
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { mode } = state.app;

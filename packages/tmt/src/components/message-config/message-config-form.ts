@@ -1,7 +1,7 @@
 import m from 'mithril';
 import { Button, Icon, InputCheckbox, ModalPanel, Select, TextInput } from 'mithril-materialized';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
-import { deepCopy, deepEqual, IAsset, IGuiTemplate, IKafkaMessage } from 'trial-manager-models';
+import { deepCopy, deepEqual, IAsset, IGuiTemplate, IKafkaMessage, MessageType } from 'trial-manager-models';
 import { MeiosisComponent } from '../../services';
 import { getActiveTrialInfo } from '../../utils';
 
@@ -13,7 +13,7 @@ export const MessageConfigForm: MeiosisComponent = () => {
     view: ({ attrs: { state, actions } }) => {
       const { trial } = getActiveTrialInfo(state);
       const messages = trial.selectedMessageTypes;
-      const { messageId } = state.app;
+      const { messageId, kafkaTopics, templates } = state.app;
       if (!messageId) {
         return m(
           'p',
@@ -37,8 +37,7 @@ export const MessageConfigForm: MeiosisComponent = () => {
           if (message.messageForm === '') {
             message.messageForm = message.name;
           }
-          // @ts-ignore
-          message.messageType = message.name.toUpperCase().replace(/ /g, '_');
+          message.messageType = message.name.toUpperCase().replace(/ /g, '_') as MessageType;
         }
         e.preventDefault();
         if (message) {
@@ -46,16 +45,21 @@ export const MessageConfigForm: MeiosisComponent = () => {
         }
       };
 
+      const isGuiTemplate = (obj: any): obj is IGuiTemplate => obj.ui !== 'undefined';
+
       const updateGUI = (message: IKafkaMessage) => {
         if (message.customGUI) {
           try {
-            let val = JSON.parse(message.customGUI);
-            if (val.ui) {
+            let val = JSON.parse(message.customGUI) as IGuiTemplate | UIForm<any>;
+            if (isGuiTemplate(val)) {
               val.label = message.name;
               val.icon = message.iconName;
               val.topic = message.kafkaTopic;
             } else if (Array.isArray(val)) {
               val = {
+                label: message.name,
+                icon: message.iconName,
+                topic: message.kafkaTopic,
                 ui: [
                   {
                     id: 'messageType',
@@ -88,12 +92,9 @@ export const MessageConfigForm: MeiosisComponent = () => {
                     ],
                   },
                 ],
-                label: message.name,
-                icon: message.iconName,
-                topic: message.kafkaTopic,
-              };
+              } as IGuiTemplate;
             }
-            message.customGUI = JSON.stringify(val, null, 4);
+            message.customGUI = JSON.stringify(val, null, 2);
           } catch (e) {
             console.log('Invalid JSON');
           }
@@ -101,17 +102,13 @@ export const MessageConfigForm: MeiosisComponent = () => {
       };
       const hasChanged = !deepEqual(message, original);
 
-      const { kafkaTopics } = state.app;
       const topicOptionList = kafkaTopics
         .map((topic: string) => {
           return { id: topic, label: topic.charAt(0).toUpperCase() + topic.replace(/_/g, ' ').slice(1) };
         })
         .sort((a, b) => a.label.localeCompare(b.label));
 
-      const { templates } = state.app;
-      const formOptionList = templates.map((template: IGuiTemplate) => {
-        return { id: template.topic, label: template.label };
-      });
+      const formOptionList = templates.map((template) => ({ id: template.topic, label: template.label }));
 
       if (message.useCustomGUI && message.customGUI) {
         const vizTopic = JSON.parse(message.customGUI) as IGuiTemplate;

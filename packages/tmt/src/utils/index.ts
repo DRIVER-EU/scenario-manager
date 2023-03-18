@@ -1,6 +1,6 @@
 export * from './utils';
 export * from './trial-helpers';
-import { UIForm, IInputField, padLeft } from 'mithril-ui-form';
+import { padLeft } from 'mithril-ui-form';
 
 /**
  * Create a GUID
@@ -139,100 +139,100 @@ export const formatTimestamp = (time?: Date | string, showSeconds = true) => {
   return `${padLeft(t.getHours())}:${padLeft(t.getMinutes())}${showSeconds ? `:${padLeft(t.getSeconds())}` : ''}`;
 };
 
-/**
- * Create a resolver that translates an ID and value (or values) to a human readable representation
- * by replacing the keys with their form labels, making it easier to render the object into a human
- * readable form.
- */
-export const labelResolver = (form: UIForm) => {
-  const createDict = (ff: IInputField[], label = '') => {
-    const d = ff
-      .filter((f) => f.type !== 'section' && f.type !== 'md')
-      .reduce((acc, cur) => {
-        const fieldId = (label ? `${label}.` : '') + cur.id;
-        const type = cur.type || (cur.options && cur.options.length > 0 ? 'select' : 'text');
-        if (typeof type === 'string') {
-          acc[fieldId] = cur;
-        } else {
-          acc = { ...acc, ...createDict(type, fieldId) };
-        }
-        return acc;
-      }, {} as { [key: string]: IInputField });
-    return d;
-  };
+// /**
+//  * Create a resolver that translates an ID and value (or values) to a human readable representation
+//  * by replacing the keys with their form labels, making it easier to render the object into a human
+//  * readable form.
+//  */
+// export const labelResolver = (form: UIForm<Record<string, any>>) => {
+//   const createDict = (ff: IInputField[], label = '') => {
+//     const d = ff
+//       .filter((f) => f.type !== 'section' && f.type !== 'md')
+//       .reduce((acc, cur) => {
+//         const fieldId = (label ? `${label}.` : '') + cur.id;
+//         const type = cur.type || (cur.options && cur.options.length > 0 ? 'select' : 'text');
+//         if (typeof type === 'string') {
+//           acc[fieldId] = cur;
+//         } else {
+//           acc = { ...acc, ...createDict(type, fieldId) };
+//         }
+//         return acc;
+//       }, {} as { [key: string]: IInputField });
+//     return d;
+//   };
 
-  const dict = createDict(form);
+//   const dict = createDict(form);
 
-  const resolver = (id: string, value?: number | string | string[]) => {
-    if (!dict.hasOwnProperty(id) || typeof value === 'undefined') {
-      return value;
-    }
-    const ff = dict[id];
-    const values = value instanceof Array ? value.filter((v) => v !== null && v !== undefined) : [value];
-    const type = ff.type || (ff.options ? 'options' : 'none');
-    switch (type) {
-      default:
-        return value;
-      case 'radio':
-      case 'select':
-      case 'options':
-        return values
-          .map((v) =>
-            (
-              ff.options! as {
-                id: string;
-                label?: string | undefined;
-                disabled?: boolean | undefined;
-                icon?: string | undefined;
-                show?: string | string[] | undefined;
-              }[]
-            )
-              .filter((o) => o.id === v)
-              .map((o) => o.label || capitalizeFirstLetter(o.id))
-              .shift()
-          )
-          .filter((v) => typeof v !== 'undefined');
-    }
-  };
+//   const resolver = (id: string, value?: number | string | string[]) => {
+//     if (!dict.hasOwnProperty(id) || typeof value === 'undefined') {
+//       return value;
+//     }
+//     const ff = dict[id];
+//     const values = value instanceof Array ? value.filter((v) => v !== null && v !== undefined) : [value];
+//     const type = ff.type || (ff.options ? 'options' : 'none');
+//     switch (type) {
+//       default:
+//         return value;
+//       case 'radio':
+//       case 'select':
+//       case 'options':
+//         return values
+//           .map((v) =>
+//             (
+//               ff.options! as {
+//                 id: string;
+//                 label?: string | undefined;
+//                 disabled?: boolean | undefined;
+//                 icon?: string | undefined;
+//                 show?: string | string[] | undefined;
+//               }[]
+//             )
+//               .filter((o) => o.id === v)
+//               .map((o) => o.label || capitalizeFirstLetter(o.id))
+//               .shift()
+//           )
+//           .filter((v) => typeof v !== 'undefined');
+//     }
+//   };
 
-  /** Resolve an object by replacing all keys with their label counterpart. */
-  const resolveObj = <T>(obj: any, parent = ''): T | undefined => {
-    if (!obj || (typeof obj === 'object' && Object.keys(obj).length === 0)) {
-      return undefined;
-    }
-    if (obj instanceof Array) {
-      return obj.map((o) => resolveObj(o, parent)) as any;
-    } else {
-      const resolved = {} as { [key: string]: any };
-      Object.keys(obj).forEach((key) => {
-        const fullKey = parent ? `${parent}.${key}` : key;
-        const value = obj[key as keyof T];
-        if (typeof value === 'boolean') {
-          resolved[key] = value;
-        } else if (typeof value === 'number' || typeof value === 'string') {
-          const r = resolver(fullKey, value);
-          if (r) {
-            resolved[key] = r instanceof Array && r.length === 1 ? r[0] : r;
-          }
-        } else if (value instanceof Array) {
-          if (typeof value[0] === 'string' || value[0] === null) {
-            const r = resolver(fullKey, value);
-            if (r) {
-              resolved[key] = r;
-            }
-          } else {
-            resolved[key] = resolveObj(value, key);
-          }
-        } else if (typeof value === 'object') {
-          resolved[key] = value;
-        }
-      });
-      return resolved as T;
-    }
-  };
+//   /** Resolve an object by replacing all keys with their label counterpart. */
+//   const resolveObj = <T>(obj: any, parent = ''): T | undefined => {
+//     if (!obj || (typeof obj === 'object' && Object.keys(obj).length === 0)) {
+//       return undefined;
+//     }
+//     if (obj instanceof Array) {
+//       return obj.map((o) => resolveObj(o, parent)) as any;
+//     } else {
+//       const resolved = {} as { [key: string]: any };
+//       Object.keys(obj).forEach((key) => {
+//         const fullKey = parent ? `${parent}.${key}` : key;
+//         const value = obj[key as keyof T];
+//         if (typeof value === 'boolean') {
+//           resolved[key] = value;
+//         } else if (typeof value === 'number' || typeof value === 'string') {
+//           const r = resolver(fullKey, value);
+//           if (r) {
+//             resolved[key] = r instanceof Array && r.length === 1 ? r[0] : r;
+//           }
+//         } else if (value instanceof Array) {
+//           if (typeof value[0] === 'string' || value[0] === null) {
+//             const r = resolver(fullKey, value);
+//             if (r) {
+//               resolved[key] = r;
+//             }
+//           } else {
+//             resolved[key] = resolveObj(value, key);
+//           }
+//         } else if (typeof value === 'object') {
+//           resolved[key] = value;
+//         }
+//       });
+//       return resolved as T;
+//     }
+//   };
 
-  return resolveObj;
-};
+//   return resolveObj;
+// };
 
 /** Print a list, removing empty items: a, b and c */
 export const l = (val: undefined | string | Array<string | boolean | undefined>, and = 'en') => {

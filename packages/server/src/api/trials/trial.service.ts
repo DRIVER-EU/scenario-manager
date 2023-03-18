@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Injectable, Scope } from '@nestjs/common';
-import { TrialOverview, IUploadedFile } from '../../models';
-import { TrialRepository } from './trial.repository';
+import { TrialOverview, IUploadedFile } from '../../models/index.js';
+import { TrialRepository } from './trial.repository.js';
 import { Operation } from 'rfc6902';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';

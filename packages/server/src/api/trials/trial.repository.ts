@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Database } from 'sqlite3';
-import { TrialOverview, IUploadedFile } from '../../models';
-import { ITrial, uniqueId, ITrialOverview } from '../../../../models';
-import { logError, dbCallbackWrapper } from '../../utils';
+import sqlite from 'sqlite3';
+import { TrialOverview, IUploadedFile } from '../../models/index.js';
+import { logError, dbCallbackWrapper } from '../../utils/index.js';
 import { Operation, applyPatch } from 'rfc6902';
 import { Server } from 'socket.io';
+import { ITrialOverview, ITrial, uniqueId } from 'trial-manager-models';
 
 const TRIAL = 'trial';
 const EXT = '.sqlite3';
@@ -15,7 +15,9 @@ const sortTrialsByLastEdit = (a: TrialOverview, b: TrialOverview) =>
   a.lastEdit > b.lastEdit ? -1 : 1;
 
 export class TrialRepository {
-  private databases: { [id: string]: { db: Database; filename: string } } = {};
+  private databases: {
+    [id: string]: { db: sqlite.Database; filename: string };
+  } = {};
   private overview: TrialOverview[] = [];
 
   constructor(private folder: string) {
@@ -68,7 +70,7 @@ export class TrialRepository {
             console.error(msg);
             return reject(msg);
           }
-          const db = new Database(newFilename, async (errDb) => {
+          const db = new sqlite.Database(newFilename, async (errDb) => {
             if (errDb) {
               const msg = `Error opening database ${newFilename}:`;
               console.error(msg);
@@ -380,7 +382,7 @@ export class TrialRepository {
     return path.resolve(this.folder, `${TRIAL}_${id}${EXT}`);
   }
 
-  private async getTrial(id: string | Database) {
+  private async getTrial(id: string | sqlite.Database) {
     return new Promise<ITrial>((resolve, reject) => {
       const db =
         typeof id === 'string'
@@ -413,7 +415,7 @@ export class TrialRepository {
       .map((f) => path.resolve(this.folder, f))
       .reduce(
         (acc, f) => [...acc, this.openDatabase(f)],
-        [] as Array<Promise<{ db: Database; filename: string }>>,
+        [] as Array<Promise<{ db: sqlite.Database; filename: string }>>,
       );
     return await Promise.all(dbs);
     // .reduce(
@@ -426,9 +428,9 @@ export class TrialRepository {
   }
 
   private openDatabase(filename: string) {
-    return new Promise<{ filename: string; db: Database }>(
+    return new Promise<{ filename: string; db: sqlite.Database }>(
       (resolve, reject) => {
-        const db = new Database(filename, (err) => {
+        const db = new sqlite.Database(filename, (err) => {
           if (err) {
             reject(err);
           } else {
@@ -439,7 +441,9 @@ export class TrialRepository {
     );
   }
 
-  private async createOverview(dbs: Array<{ db: Database; filename: string }>) {
+  private async createOverview(
+    dbs: Array<{ db: sqlite.Database; filename: string }>,
+  ) {
     const trials = await Promise.all<TrialOverview>(
       dbs.reduce((acc, db) => {
         const trial = this.getTrial(db.db);
@@ -482,7 +486,7 @@ export class TrialRepository {
       if (fs.existsSync(filename)) {
         return reject(`Cannot create DB: ${filename} already exists!`);
       }
-      const db = new Database(filename, logError);
+      const db = new sqlite.Database(filename, logError);
       this.databases[id] = { db, filename };
       db.serialize(() => {
         db.run(`CREATE TABLE ${TRIAL} (data TEXT)`, logError);

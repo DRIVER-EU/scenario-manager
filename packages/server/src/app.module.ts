@@ -1,14 +1,14 @@
-import configuration from './config/kafka';
+import configuration from './config/kafka.js';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { KafkaModule } from './adapters/kafka';
+import { KafkaModule } from './adapters/kafka/index.js';
 import {
   ExecutionModule,
   TrialModule,
   RepoModule,
   TimeEventsModule,
   RunModule,
-} from './api';
+} from './api/index.js';
 
 // console.log('DIR: ' + __dirname);
 
