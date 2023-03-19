@@ -1,17 +1,17 @@
 {
   "label": "Send CAP message",
-  "icon": "add_alert",
+  "icon": "crisis_alert",
   "ui": [
     { "id": "messageType", "value": "CAP_MESSAGE", "type": "none" },
     {
       "id": "message",
       "label": " ",
-      "className":"col s12",
+      "className": "col s12",
       "type": [
         {
           "id": "CAP_MESSAGE",
           "label": " ",
-          "className":"col s12",
+          "className": "col s12",
           "type": [
             {
               "id": "identifier",

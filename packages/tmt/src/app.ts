@@ -18,5 +18,5 @@ L.Icon.Default.mergeOptions({
 });
 
 registerPlugin('modal', modalPlugin);
-
+m.route.prefix = '/tmt/#!';
 m.route(document.body, dashboardSvc.defaultRoute, dashboardSvc.routingTable());

@@ -6,24 +6,18 @@
     {
       "id": "message",
       "label": " ",
-      "className":"col s12",
+      "className": "col s12",
       "type": [
         {
           "id": "PHASE_MESSAGE",
           "label": " ",
-          "className":"col s12",
+          "className": "col s12",
           "type": [
-            {
-              "id": "isStarting",
-              "label": "Start event",
-              "className": "col s12 m4",
-              "type": "switch"
-            },
             {
               "id": "phase",
               "label": "Scenario phase",
               "icon": "message",
-              "className": "col s12 m4",
+              "className": "col s12 m8",
               "placeholder": "Select the phase type",
               "required": true,
               "type": "select",
@@ -37,9 +31,15 @@
               ]
             },
             {
+              "id": "isStarting",
+              "label": "Start phase",
+              "className": "col s12 m4 checkbox",
+              "type": "checkbox"
+            },
+            {
               "id": "alternativeName",
               "label": "Title",
-              "className": "col s12 m4",
+              "className": "col s12",
               "icon": "title",
               "type": "text",
               "show": "phase=PROPER_NAME"

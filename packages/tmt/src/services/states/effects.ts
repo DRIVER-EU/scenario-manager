@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { actions } from '..';
+import { actions, selectedMessageTypes } from '..';
 import { IGuiTemplate } from 'trial-manager-models';
 import { IActions, IAppModel } from '../meiosis';
 
@@ -22,6 +22,11 @@ export const LoadGuiTemplates = (_actions: IActions) => {
         url: `${server}/run/topics`,
       });
       const templates = [] as IGuiTemplate[];
+      selectedMessageTypes
+        .map((m) => m.messageForm)
+        .forEach((t) => {
+          if (topics.indexOf(t) < 0) topics.push(t);
+        });
       for (const topic of topics) {
         let template: void | IGuiTemplate;
         template = await m

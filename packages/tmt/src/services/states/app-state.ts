@@ -29,6 +29,7 @@ import { MessageScope } from '../../components/messages';
 import { arrayMove, getInjects, getInject, isScenario, validateInjects } from '../../utils';
 import { IAppModel, UpdateStream } from '../meiosis';
 import { ISessionControl } from '../../models';
+import { selectedMessageTypes } from '../message-types';
 
 const trialSvc = restServiceFactory<ITrial>('trials');
 let assetsSvc: IRestService<IAsset>;
@@ -394,6 +395,7 @@ export const appStateMgmt = {
         const hostId = uniqueId();
         const probId = uniqueId();
         const scenId = uniqueId();
+
         const trial = {
           id: '',
           title: 'New trial',
@@ -426,88 +428,7 @@ export const appStateMgmt = {
           ],
           objectives: [{ id: uniqueId(), title: 'Fix gap 1' }],
           messageTopics: [],
-          selectedMessageTypes: [
-            {
-              id: uniqueId(),
-              name: 'Change observer questionnaire',
-              messageForm: 'system_request_change_of_trial_stage',
-              messageType: MessageType.CHANGE_OBSERVER_QUESTIONNAIRES,
-              kafkaTopic: 'system_request_change_of_trial_stage',
-              useNamespace: false,
-              iconName: 'attach_file',
-              useCustomGUI: false,
-            },
-            {
-              id: uniqueId(),
-              name: 'Change exercise phase',
-              messageForm: 'system_tm_phase_message',
-              messageType: MessageType.PHASE_MESSAGE,
-              kafkaTopic: 'system_tm_phase_message',
-              useNamespace: false,
-              iconName: 'attach_file',
-              useCustomGUI: false,
-            },
-            {
-              id: uniqueId(),
-              name: 'Send CAP message',
-              messageForm: 'standard_cap',
-              messageType: MessageType.CAP_MESSAGE,
-              kafkaTopic: 'standard_cap',
-              useNamespace: false,
-              iconName: 'attach_file',
-              useCustomGUI: false,
-            },
-            {
-              id: uniqueId(),
-              name: 'Send email, reports, or other posts',
-              messageForm: 'simulation_entity_post',
-              messageType: MessageType.POST_MESSAGE,
-              kafkaTopic: 'simulation_entity_post',
-              useNamespace: false,
-              iconName: 'attach_file',
-              useCustomGUI: false,
-            },
-            {
-              id: uniqueId(),
-              name: 'Send file',
-              messageForm: 'send_file',
-              messageType: MessageType.SEND_FILE,
-              kafkaTopic: 'send_file',
-              useNamespace: false,
-              iconName: 'attach_file',
-              useCustomGUI: false,
-            },
-            {
-              id: uniqueId(),
-              name: 'Send message',
-              messageForm: 'send_message',
-              messageType: MessageType.SEND_MESSAGE,
-              kafkaTopic: 'send_message',
-              useNamespace: false,
-              iconName: 'attach_file',
-              useCustomGUI: false,
-            },
-            {
-              id: uniqueId(),
-              name: 'Send inject',
-              messageForm: 'simulation_request_startinject',
-              messageType: MessageType.START_INJECT,
-              kafkaTopic: 'simulation_request_startinject',
-              useNamespace: false,
-              iconName: 'attach_file',
-              useCustomGUI: false,
-            },
-            {
-              id: 'rp_msg',
-              name: 'Role Player Message',
-              messageForm: 'ROLE_PLAYER_MESSAGE',
-              messageType: MessageType.ROLE_PLAYER_MESSAGE,
-              kafkaTopic: 'system_tm_role_player',
-              useNamespace: false,
-              iconName: 'person',
-              useCustomGUI: false,
-            },
-          ],
+          selectedMessageTypes,
           injects: [
             {
               id: scenId,

@@ -38,6 +38,19 @@ export const MessageForm: MessageComponent = () => {
   let visualizedGUI: UIForm | boolean;
   let messageIsGUI: boolean = false;
 
+  const ignoredTopics = new Set([
+    'send_file',
+    'send_message',
+    'system_logging',
+    'system_heartbeat',
+    'system_tm_phase_message',
+    'system_tm_role_player',
+    'simulation_time_control',
+    'simulation_time_mgmt',
+    'simulation_session_mgmt',
+    'simulation_request_startinject',
+  ]);
+
   return {
     oninit: async ({ attrs: { state } }) => {
       const {
@@ -59,7 +72,7 @@ export const MessageForm: MessageComponent = () => {
       );
       kafkaTopicOpts = JSON.stringify(
         kafkaTopics
-          .filter((topic: string) => 'send_file'.indexOf(topic) < 0 || 'send_message'.indexOf(topic) < 0)
+          .filter((topic: string) => !ignoredTopics.has(topic))
           .map((topic: string) => ({
             id: topic,
             label: topic.charAt(0).toUpperCase() + topic.replace(/_/g, ' ').slice(1),
@@ -98,7 +111,7 @@ export const MessageForm: MessageComponent = () => {
       }
 
       if (inject && inject.type === InjectType.INJECT) {
-        let kafkaTopicSelect =
+        const kafkaTopicSelect =
           inject.kafkaTopic === 'send_file' || inject.kafkaTopic === 'send_message'
             ? JSON.stringify('select')
             : JSON.stringify('none');
@@ -211,7 +224,10 @@ export const MessageForm: MessageComponent = () => {
                         .filter((_, i) => i !== 0)
                         .forEach((match) => {
                           const value = getPath(inject, match);
-                          replacement = replacement.replace(new RegExp(`&${match}`, 'g'), value || '');
+                          replacement = replacement.replace(
+                            new RegExp(`&${match}`, 'g'),
+                            typeof value === 'undefined' ? '' : value.toString()
+                          );
                         });
                     }
                     (inject as Record<string, any>)[key] = eval(`\`${replacement}\``);

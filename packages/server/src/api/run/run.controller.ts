@@ -168,29 +168,27 @@ export class RunController {
 
   @ApiOperation({
     description:
-      'Get a list of all registered message topics. Ignores system_logging, system_heartbeat, simulation_time_control, and simulation_session_mgmt',
+      'Get a list of all registered message topics. Ignores system_logging, system_heartbeat, simulation_time_mgmt, and simulation_session_mgmt',
   })
   @ApiResponse({ status: 200, type: String, isArray: true })
   @Get('topics')
   getTopics(@Res() response: Response) {
+    const ignoredTopics = [
+      'system_logging',
+      'system_heartbeat',
+      'simulation_time_mgmt',
+      'simulation_session_mgmt',
+      // 'named_json',
+      // 'system_tm_role_player',
+      // 'cbrn_geojson',
+      // 'chemical_incident',
+      // 'resource',
+      // 'simulation_entity_featurecollection',
+    ];
     const topics = this.runService
       .getProduceTopics()
       .map((t) => t.toLowerCase())
-      .filter(
-        (t) =>
-          [
-            'system_logging',
-            'system_heartbeat',
-            'simulation_time_control',
-            'simulation_session_mgmt',
-            'named_json',
-            'system_tm_role_player',
-            'cbrn_geojson',
-            'chemical_incident',
-            'resource',
-            'simulation_entity_featurecollection',
-          ].indexOf(t) < 0,
-      );
+      .filter((t) => ignoredTopics.indexOf(t) < 0);
     topics.push('send_file', 'send_message');
     return response.send(topics);
   }

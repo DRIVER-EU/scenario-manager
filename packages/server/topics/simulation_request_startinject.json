@@ -6,12 +6,12 @@
     {
       "id": "message",
       "label": " ",
-      "className":"col s12",
+      "className": "col s12",
       "type": [
         {
           "id": "START_INJECT",
           "label": " ",
-          "className":"col s12",
+          "className": "col s12",
           "type": [
             {
               "id": "id",
@@ -27,7 +27,7 @@
               "id": "inject",
               "label": "Event name",
               "type": "text",
-              "placeholder": "Name of the event / inject you want to run."
+              "placeholder": "Name of the inject you want to send."
             }
           ]
         }
@@ -40,6 +40,6 @@
     }
   ],
   "update": {
-    "title": "Start event: &message.START_INJECT.inject"
+    "title": "Send inject: &message.START_INJECT.inject"
   }
 }

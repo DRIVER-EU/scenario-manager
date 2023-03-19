@@ -46,7 +46,7 @@
             {
               "id": "kafkaTopicId",
               "icon": "topic",
-              "label": "Select Kafka topic",
+              "label": "Select topic",
               "className": "col s6",
               "placeholder": "Pick one",
               "multiple": false,

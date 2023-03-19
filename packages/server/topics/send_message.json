@@ -1,5 +1,5 @@
 {
-  "label": "Send message",
+  "label": "Send message (JSON)",
   "icon": "attach_file",
   "ui": [
     { "id": "messageType", "value": "SEND_MESSAGE", "type": "none" },
@@ -23,7 +23,7 @@
             {
               "id": "kafkaTopicId",
               "icon": "topic",
-              "label": "Select Kafka topic",
+              "label": "Select topic",
               "className": "col s12",
               "placeholder": "Pick one",
               "multiple": false,

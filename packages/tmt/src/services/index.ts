@@ -5,5 +5,6 @@ export * from './rest-service';
 // export * from './asset-service';
 export * from './socket-service';
 export * from './run-service';
+export * from './message-types';
 export * from './meiosis';
 export * from './states';

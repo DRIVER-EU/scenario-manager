@@ -347,6 +347,10 @@ tr.active {
   margin-bottom: 16px;
 }
 
+.checkbox {
+  margin-top: 1.6rem;
+}
+
 .checkbox-margin-large {
   margin-top: 16px;
   margin-bottom: 45px;
