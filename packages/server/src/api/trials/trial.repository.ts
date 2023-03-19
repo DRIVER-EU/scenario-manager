@@ -393,7 +393,7 @@ export class TrialRepository {
       if (!db) {
         reject(`Database with id ${id} does not exist!`);
       }
-      db.get(`SELECT data FROM ${TRIAL}`, (err, row) => {
+      db.get(`SELECT data FROM ${TRIAL}`, (err, row: { data: string }) => {
         if (err) {
           console.error(err);
           return reject(err);

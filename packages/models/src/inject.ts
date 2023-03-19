@@ -1,5 +1,5 @@
-import { IContent, ITodo } from '.';
-import { IKafkaMessage } from './trial';
+import { IContent, ITodo } from './index.js';
+import { IKafkaMessage } from './trial.js';
 
 /** The inject state communicates the state of an inject during execution of a scenario. */
 export enum InjectState {
@@ -73,7 +73,7 @@ export interface IInject extends IContent {
   /** Optional kafka topic that overwrites other kafka topics */
   kafkaTopic?: string;
   topicId?: string;
-  selectedMessage?: IKafkaMessage
+  selectedMessage?: IKafkaMessage;
 }
 
 export interface IInjectGroup extends IInject {

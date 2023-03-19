@@ -25,7 +25,7 @@ import { Response } from 'express';
 import { TrialOverview, IUploadedFile } from '../../models/index.js';
 import { TrialService } from './trial.service.js';
 import { ApiFile } from '../../adapters/models/api-file.js';
-import type { IFeature } from 'node-test-bed-adapter' assert { 'resolution-mode': 'import' };
+import type { IFeature } from 'node-test-bed-adapter';
 
 @ApiTags('trials')
 @Controller('trials')

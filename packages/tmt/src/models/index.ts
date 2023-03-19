@@ -1,3 +1,3 @@
-export * from './dashboard';
-export * from './dashboards';
-export * from './session-control';
+export * from './dashboard.js';
+export * from './dashboards.js';
+export * from './session-control.js';

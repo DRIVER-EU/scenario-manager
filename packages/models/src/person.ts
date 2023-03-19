@@ -1,4 +1,4 @@
-import { UserRole } from './user-role';
+import { UserRole } from './user-role.js';
 
 /** A real person involved in creating the scenario, e.g. a role player, writer, contact person. */
 export interface IPerson {

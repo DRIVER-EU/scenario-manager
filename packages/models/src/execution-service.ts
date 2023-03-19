@@ -1,4 +1,4 @@
-import { ITrial, IInject } from '.';
+import { ITrial, IInject } from './index.js';
 
 export interface IExecutionService {
   init(trial: ITrial): void;

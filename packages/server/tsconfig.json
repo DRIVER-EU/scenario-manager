@@ -19,20 +19,3 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
-
-// {
-//   "compilerOptions": {
-//     "esModuleInterop": true,
-//     "lib": ["es2020"],
-//     "module": "es2022",
-//     "preserveConstEnums": true,
-//     "moduleResolution": "node",
-//     "strict": true,
-//     "sourceMap": true,
-//     "target": "es2022",
-//     "types": ["node"],
-//     "outDir": "dist"
-//   },
-//   "include": ["src/**/*"],
-//   "exclude": ["node_modules"]
-// }

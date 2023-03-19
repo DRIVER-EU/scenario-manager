@@ -1,3 +1,5 @@
+// import tbs from 'test-bed-schemas';
+// const tbs = import('test-bed-schemas');
 import { Type as RolePlayerMessageType, IRolePlayerMessage } from 'test-bed-schemas';
 
 export interface IRolePlayerMsg {

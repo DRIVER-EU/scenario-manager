@@ -3,6 +3,7 @@
   "version": "2.2.0",
   "description": "Scenario manager interface for performing Concept Development & Experimentations.",
   "main": "app.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DRIVER-EU/scenario-manager.git"
@@ -34,12 +35,12 @@
     "mithril-ui-form": "^1.7.2",
     "rfc6902": "^5.0.1",
     "slimdown-js": "^0.7.1",
-    "socket.io-client": "4.5.3",
+    "socket.io-client": "4.6.1",
     "trial-manager-models": "workspace:*"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.10",
-    "@types/leaflet": "^1.9.2",
+    "@types/leaflet": "^1.9.3",
     "@types/leaflet-draw": "^1.0.6",
     "@types/materialize-css": "^1.0.11",
     "@types/mithril": "^2.0.12",
@@ -49,14 +50,14 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "html-webpack-tags-plugin": "^3.0.2",
-    "mini-css-extract-plugin": "^2.7.3",
+    "mini-css-extract-plugin": "^2.7.5",
     "mithril-ui-form-plugin": "^0.5.1",
-    "rimraf": "^3.0.2",
-    "style-loader": "^3.3.1",
+    "rimraf": "^4.4.0",
+    "style-loader": "^3.3.2",
     "ts-loader": "^9.4.2",
-    "typescript": "^4.9.5",
-    "webpack": "^5.76.1",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.1"
+    "typescript": "^5.0.2",
+    "webpack": "^5.76.2",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.13.1"
   }
 }

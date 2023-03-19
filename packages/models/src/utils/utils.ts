@@ -1,5 +1,5 @@
 import { FeatureCollection } from 'geojson';
-import { IInject, InjectType, MessageType, UnitType, IInjectGroup, IAlert } from '..';
+import { IInject, InjectType, MessageType, UnitType, IInjectGroup, IAlert } from '../index.js';
 
 /**
  * Create a unique ID

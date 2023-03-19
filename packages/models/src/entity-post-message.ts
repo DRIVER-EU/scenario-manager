@@ -1,5 +1,5 @@
 import { IPost } from 'test-bed-schemas';
-import { render } from './utils/slimdown';
+import { render } from './utils/slimdown.js';
 
 export interface IPostMsg {
   /** Should be the same ID as the inject.id */

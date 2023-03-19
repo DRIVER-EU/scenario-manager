@@ -3,6 +3,7 @@
   "private": true,
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
+  "type": "module",
   "version": "0.0.1",
   "description": "Trial manager interfaces.",
   "scripts": {
@@ -20,10 +21,11 @@
   },
   "dependencies": {
     "@types/geojson": "^7946.0.10",
-    "test-bed-schemas": "^0.4.0"
+    "@types/node": "18.15.3",
+    "test-bed-schemas": "^1.0.0"
   },
   "devDependencies": {
-    "rimraf": "^3.0.2",
-    "typescript": "^4.9.5"
+    "rimraf": "^4.4.0",
+    "typescript": "^5.0.2"
   }
 }

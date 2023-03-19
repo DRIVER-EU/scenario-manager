@@ -1,13 +1,13 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
-const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
+import { resolve } from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import Dotenv from 'dotenv-webpack';
+import HtmlWebpackTagsPlugin from 'html-webpack-tags-plugin';
 // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 
-module.exports = (env) => {
+export default (env) => {
   const isProduction = env.production;
-  const outputPath = path.resolve(__dirname, isProduction ? 'dist' : 'dist');
+  const outputPath = resolve(process.cwd(), isProduction ? 'dist' : 'dist');
   const publicPath = isProduction ? '/tmt/' : '/tmt';
 
   console.log(`Running in ${isProduction ? 'production' : 'development'} mode, output directed to ${outputPath}.`);

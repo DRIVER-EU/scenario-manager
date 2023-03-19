@@ -1,4 +1,4 @@
-import { InjectState } from '.';
+import { InjectState } from './index.js';
 
 export interface IInjectSimStates {
   [id: string]: IInjectSimState;

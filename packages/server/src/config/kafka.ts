@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 const adapter = await import('node-test-bed-adapter');
-import type { ITestBedOptions } from 'node-test-bed-adapter' assert { 'resolution-mode': 'import' };
+import type { ITestBedOptions } from 'node-test-bed-adapter';
 
 export default () => ({
   kafka: {

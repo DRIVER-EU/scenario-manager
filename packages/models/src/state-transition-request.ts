@@ -1,4 +1,4 @@
-import { InjectState } from './inject';
+import { InjectState } from './inject.js';
 
 export interface IStateTransitionRequest {
   id: string;

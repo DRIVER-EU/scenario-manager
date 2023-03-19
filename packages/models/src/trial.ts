@@ -1,5 +1,13 @@
-import { IMessageTopic, IObjective, IStakeholder, IInjectGroup, IInject, IPerson, MessageType } from '.';
-import { IAsset } from './asset';
+import {
+  IAsset,
+  IMessageTopic,
+  IObjective,
+  IStakeholder,
+  IInjectGroup,
+  IInject,
+  IPerson,
+  MessageType,
+} from './index.js';
 
 export interface ITrialOverview {
   /** Refers to the filename on disk */

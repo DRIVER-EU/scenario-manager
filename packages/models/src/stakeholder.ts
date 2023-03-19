@@ -1,4 +1,4 @@
-import { IPerson } from '.';
+import { IPerson } from './person.js';
 
 /**
  * A stakeholder, in D+ context, is a Solution. However, it may also be a department or organization that is

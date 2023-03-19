@@ -1,4 +1,4 @@
-import { IObjectOfInterest, ILocationAddress } from '.';
+import { IObjectOfInterest, ILocationAddress } from './index.js';
 
 export interface IInterest {
   name: string;

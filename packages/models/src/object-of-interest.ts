@@ -1,4 +1,4 @@
-import { IPersonOfInterest, IInterest } from '.';
+import { IPersonOfInterest, IInterest } from './index.js';
 
 /**
  * An object of interest is a very generic term to denote something relevant for the scenario.

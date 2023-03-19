@@ -43,7 +43,7 @@ import type {
   ILargeDataUpdate,
   AdapterMessage,
   AdapterProducerRecord,
-} from 'node-test-bed-adapter' assert { 'resolution-mode': 'import' };
+} from 'node-test-bed-adapter';
 
 // let a = tba;
 // type ITimeManagement = await import('node-test-bed-adapter');

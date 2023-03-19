@@ -24,7 +24,6 @@ async function bootstrap() {
     cors: true,
   });
   app.useWebSocketAdapter(new SocketAdapter(app));
-  console.log(compression);
   app.use(compression());
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ limit: '10mb', extended: true }));

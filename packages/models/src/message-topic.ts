@@ -1,4 +1,4 @@
-import { MessageType } from '.';
+import { MessageType } from './index.js';
 
 /** A Kafka topic name can easily change. Therefore, publish messages to a subject, and map the subject to a topic. */
 export interface ITopicSubject {

@@ -6,7 +6,7 @@ import {
 import { Server } from 'socket.io';
 import { KafkaService } from '../../adapters/kafka/index.js';
 import { IConnectMessage } from 'trial-manager-models';
-import type { ITimeControl } from 'node-test-bed-adapter' assert { 'resolution-mode': 'import' };
+import type { ITimeControl } from 'node-test-bed-adapter';
 
 @WebSocketGateway({
   cors: {
