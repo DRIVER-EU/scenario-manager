@@ -5,7 +5,7 @@
 # To start it stand-alone:
 #   docker run -it -p 8888:3210 trial-management-tool
 
-FROM node:alpine AS builder
+FROM node:18-alpine AS builder
 RUN apk add --no-cache --virtual .gyp python3 make g++ git vips-dev && \
   npm i -g yalc
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
@@ -37,7 +37,7 @@ RUN rm -fr node_modules && \
   npm install && \
   npm run build
 
-FROM node:alpine
+FROM node:18-alpine
 RUN mkdir -p /app
 RUN mkdir -p /app/trials
 COPY --from=builder /packages/server/package.json /app/package.json
