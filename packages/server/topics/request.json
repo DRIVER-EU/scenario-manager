@@ -1,0 +1,38 @@
+{
+  "label": "Send request",
+  "topic": "request",
+  "ui": [
+    {
+      "id": "messageType",
+      "value": "SEND_REQUEST",
+      "type": "none"
+    },
+    {
+      "id": "title",
+      "label": "Subject",
+      "icon": "title",
+      "type": "text"
+    },
+    {
+      "id": "description",
+      "label": "Description",
+      "icon": "note",
+      "type": "textarea"
+    },
+    {
+      "id": "message",
+      "label": " ",
+      "className": "col s12",
+      "type": [
+        {
+          "id": "SEND_REQUEST",
+          "label": "Request (JSON)",
+          "icon": "code",
+          "className": "col s12",
+          "type": "textarea"
+        }
+      ]
+    }
+  ],
+  "icon": "list_alt"
+}

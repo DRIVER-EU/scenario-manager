@@ -1,0 +1,38 @@
+{
+  "label": "Send resource message",
+  "topic": "resource",
+  "ui": [
+    {
+      "id": "messageType",
+      "value": "SEND_RESOURCE",
+      "type": "none"
+    },
+    {
+      "id": "title",
+      "label": "Subject",
+      "icon": "title",
+      "type": "text"
+    },
+    {
+      "id": "description",
+      "label": "Description",
+      "icon": "note",
+      "type": "textarea"
+    },
+    {
+      "id": "message",
+      "label": " ",
+      "className": "col s12",
+      "type": [
+        {
+          "id": "SEND_RESOURCE",
+          "label": "Resource (JSON)",
+          "icon": "code",
+          "className": "col s12",
+          "type": "textarea"
+        }
+      ]
+    }
+  ],
+  "icon": "direction_bus"
+}
