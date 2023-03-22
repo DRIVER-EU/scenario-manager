@@ -117,13 +117,8 @@ export const MessageForm: MessageComponent = () => {
             : JSON.stringify('none');
         const { updateInject, createAsset } = actions;
         const disabled = !editing;
-        let topic = templates.find((t) => t.topic === inject.topic);
-        if (!topic) {
-          topic = customTemplates.find((t) => {
-            return t.topic === inject.topic;
-          });
-          if (!topic) return;
-        }
+        const topic = [...customTemplates, ...templates].find((t) => t.topic === inject.topic);
+        if (!topic) return;
         const { update } = topic;
         const ui =
           typeof topic.ui === 'string' &&
@@ -138,7 +133,7 @@ export const MessageForm: MessageComponent = () => {
               .replace(/"&kafkaTopics"/g, kafkaTopicOpts)
               .replace(/"&kafkaTopicSet"/g, kafkaTopicSelect)
           ) as UIForm);
-        // console.log(JSON.stringify(inject, null, 2));
+        console.log(JSON.stringify(inject, null, 2));
 
         const original = assets.filter((a) => a.id === assetId).shift();
         if (original && (!asset || asset.id !== assetId)) {
