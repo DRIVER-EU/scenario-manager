@@ -442,8 +442,17 @@ export const appStateMgmt = {
               parentId: scenId,
             } as IScenario,
           ],
-        } as Partial<ITrial>;
-        update({ app: { trial: () => trial } } as any);
+        } as ITrial;
+
+        const scenario = getInjects(trial).filter(isScenario).shift();
+        const treeState = getInjects(trial)
+          .filter((i) => i.type !== InjectType.INJECT)
+          .reduce((acc, i) => {
+            acc[i.id] = true;
+            return acc;
+          }, {} as { [key: string]: boolean });
+
+        update({ app: { trial, scenarioId: scenario?.id, mode: 'edit', treeState } });
       },
       saveTrial: async (t: ITrial) => {
         // const {
