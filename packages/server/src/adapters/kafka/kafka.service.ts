@@ -82,8 +82,18 @@ export class KafkaService extends EventEmitter implements TimeService {
         : this.options.produce
         ? [this.options.produce]
         : [];
+    this.options.consume =
+      this.options.consume instanceof Array
+        ? this.options.consume
+        : this.options.consume
+        ? [this.options.consume]
+        : [];
     if (this.options.produce.indexOf(tba.TimeControlTopic) < 0)
       this.options.produce.push(tba.TimeControlTopic);
+    if (this.options.produce.indexOf(tba.TrialManagementSessionMgmtTopic) < 0)
+      this.options.produce.push(tba.TrialManagementSessionMgmtTopic);
+    if (this.options.consume.indexOf(tba.TrialManagementSessionMgmtTopic) < 0)
+      this.options.consume.push(tba.TrialManagementSessionMgmtTopic);
 
     console.table({
       kafkaHost: this.options.kafkaHost,
@@ -109,8 +119,6 @@ export class KafkaService extends EventEmitter implements TimeService {
       this.log.info(
         `Consumer is connected to broker running at ${this.options.kafkaHost}.`,
       );
-      // See if we are running a session that was not initialized by this trial.
-      await this.adapter.addConsumerTopics(tba.TrialManagementSessionMgmtTopic);
     });
     return this.adapter.connect();
   }
@@ -204,6 +212,13 @@ export class KafkaService extends EventEmitter implements TimeService {
   }
 
   public sendMessage<T>(m: T, topic: string) {
+    try {
+      if (typeof m === 'string') m = JSON.parse(m);
+    } catch {}
+    // topic !== tba.TrialManagementSessionMgmtTopic &&
+    //   console.log(
+    //     `Sending message to topic ${topic}: ${JSON.stringify(m, null, 2)}`,
+    //   );
     return new Promise<boolean>((resolve, reject) => {
       // console.table(m);
       const payload: AdapterProducerRecord = {
