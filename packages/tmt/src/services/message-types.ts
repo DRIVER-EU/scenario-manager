@@ -1,4 +1,4 @@
-import { MessageType, uniqueId } from 'trial-manager-models';
+import { MessageType } from 'trial-manager-models';
 
 export const selectedMessageTypes = [
   // {
@@ -12,7 +12,7 @@ export const selectedMessageTypes = [
   //   useCustomGUI: false,
   // },
   {
-    id: uniqueId(),
+    id: MessageType.PHASE_MESSAGE,
     name: 'Change exercise phase',
     messageForm: 'system_tm_phase_message',
     messageType: MessageType.PHASE_MESSAGE,
@@ -22,7 +22,7 @@ export const selectedMessageTypes = [
     useCustomGUI: false,
   },
   {
-    id: uniqueId(),
+    id: MessageType.CAP_MESSAGE,
     name: 'Send CAP message',
     messageForm: 'standard_cap',
     messageType: MessageType.CAP_MESSAGE,
@@ -32,7 +32,7 @@ export const selectedMessageTypes = [
     useCustomGUI: false,
   },
   {
-    id: uniqueId(),
+    id: MessageType.POST_MESSAGE,
     name: 'Send email, reports, or other posts',
     messageForm: 'simulation_entity_post',
     messageType: MessageType.POST_MESSAGE,
@@ -42,7 +42,7 @@ export const selectedMessageTypes = [
     useCustomGUI: false,
   },
   {
-    id: uniqueId(),
+    id: MessageType.SEND_FILE,
     name: 'Send file',
     messageForm: 'send_file',
     messageType: MessageType.SEND_FILE,
@@ -52,7 +52,7 @@ export const selectedMessageTypes = [
     useCustomGUI: false,
   },
   {
-    id: uniqueId(),
+    id: MessageType.SEND_MESSAGE,
     name: 'Send message (JSON)',
     messageForm: 'send_message',
     messageType: MessageType.SEND_MESSAGE,
@@ -62,7 +62,7 @@ export const selectedMessageTypes = [
     useCustomGUI: false,
   },
   {
-    id: uniqueId(),
+    id: MessageType.START_INJECT,
     name: 'Send inject',
     messageForm: 'simulation_request_startinject',
     messageType: MessageType.START_INJECT,
@@ -72,7 +72,7 @@ export const selectedMessageTypes = [
     useCustomGUI: false,
   },
   {
-    id: 'rp_msg',
+    id: MessageType.ROLE_PLAYER_MESSAGE,
     name: 'Role Player Message',
     messageForm: 'ROLE_PLAYER_MESSAGE',
     messageType: MessageType.ROLE_PLAYER_MESSAGE,
