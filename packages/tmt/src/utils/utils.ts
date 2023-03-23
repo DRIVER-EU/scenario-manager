@@ -201,8 +201,10 @@ export const assetIcon = (asset: IAsset) =>
     ? 'map'
     : 'short_text';
 
-export const userIcon = (user: IPerson) => {
-  switch (user.roles[0]) {
+export const userIcon = (user?: IPerson) => {
+  if (!user) return;
+  const role = user.roles && user.roles.length > 0 ? user.roles[0] : 'person';
+  switch (role) {
     default:
       return 'person';
     case UserRole.PARTICIPANT:
