@@ -1,0 +1,64 @@
+{
+  "label": "Send informative billboard or video message",
+  "icon": "videocam",
+  "ui": [
+    { "id": "messageType", "value": "INFO_MESSAGE", "type": "none" },
+    {
+      "id": "message",
+      "label": " ",
+      "className": "col s12",
+      "type": [
+        {
+          "id": "INFO_MESSAGE",
+          "label": " ",
+          "className": "col s12",
+          "type": [
+            {
+              "id": "type",
+              "label": "Message type",
+              "icon": "message",
+              "className": "col s12 m3",
+              "placeholder": "Pick one",
+              "required": true,
+              "value": "BILLBOARD",
+              "type": "select",
+              "options": [
+                { "id": "BILLBOARD", "label": "BILLBOARD" },
+                { "id": "TV_BROADCAST", "label": "TV BROADCAST" },
+                { "id": "RADIO_BROADCAST", "label": "RADIO BROADCAST" },
+                { "id": "VIDEO", "label": "VIDEO FILE" },
+                { "id": "AUDIO", "label": "AUDIO FILE" }
+              ]
+            },
+            {
+              "id": "title",
+              "label": "Billboard headline",
+              "required": true,
+              "icon": "title",
+              "className": "col s12 m6",
+              "type": "text"
+            },
+            {
+              "id": "filename",
+              "label": "Filename",
+              "description": "Filename of video or audio file, including extension",
+              "icon": "video_file",
+              "className": "col s12 m3",
+              "type": "text"
+            },
+            {
+              "id": "description",
+              "label": "Billboard message",
+              "icon": "note",
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "update": {
+    "description": "&message.POST_MESSAGE.description",
+    "title": "&message.POST_MESSAGE.title"
+  }
+}

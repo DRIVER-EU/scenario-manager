@@ -1,10 +1,10 @@
 {
-  "label": "Send request",
+  "label": "Send inventory request",
   "topic": "request",
   "ui": [
     {
       "id": "messageType",
-      "value": "SEND_REQUEST",
+      "value": "SEND_INVENTORY_REQUEST",
       "type": "none"
     },
     {
@@ -25,8 +25,8 @@
       "className": "col s12",
       "type": [
         {
-          "id": "SEND_REQUEST",
-          "label": "Request (JSON)",
+          "id": "SEND_INVENTORY_REQUEST",
+          "label": "Inventory request (JSON)",
           "icon": "code",
           "className": "col s12",
           "type": "textarea"

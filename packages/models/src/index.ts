@@ -28,6 +28,7 @@ export * from './utils/index.js';
 export * from './gui-template.js';
 export * from './send_file-message.js';
 export * from './send_message-message.js';
+export * from './info-message.js';
 export {
   ILargeDataUpdate,
   DataType,

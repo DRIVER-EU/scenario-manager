@@ -4,16 +4,9 @@ import { marked } from 'marked';
 marked.setOptions({
   renderer: new marked.Renderer(),
   // highlight: (code) => require('highlight.js').highlightAuto(code).value,
-  headerIds: true,
-  headerPrefix: 'header',
-  langPrefix: 'ts',
   pedantic: false,
   gfm: true,
   breaks: true,
-  sanitize: false,
-  smartLists: true,
-  smartypants: true,
-  xhtml: false,
 });
 
 export const logError = (err?: Error) => {

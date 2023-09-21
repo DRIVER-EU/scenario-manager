@@ -4,7 +4,7 @@ import type { ITestBedOptions } from 'node-test-bed-adapter';
 
 export default () => ({
   kafka: {
-    kafkaHost: process.env.KAFKA_HOST || 'localhost:9092',
+    kafkaHost: process.env.KAFKA_HOST || 'localhost:3501',
     schemaRegistry: process.env.SCHEMA_REGISTRY || 'localhost:3502',
     // kafkaHost: process.env.KAFKA_HOST || 'tb3.driver-testbed.eu:3531',
     // schemaRegistry: process.env.SCHEMA_REGISTRY || 'tb3.driver-testbed.eu:3532',
@@ -45,6 +45,7 @@ export default () => ({
           'simulation_entity_post',
           'named_json',
           'standard_geojson',
+          'system_tm_info_msg',
           // 'system_large_data_update',
           'simulation_request_startinject',
           // 'sumo_SumoConfiguration',

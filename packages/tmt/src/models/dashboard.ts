@@ -1,5 +1,5 @@
 import { ComponentTypes } from 'mithril';
-import { Dashboards } from '../models';
+import { Dashboards } from '../models/dashboards.js';
 
 export type IconType = () => string | string;
 

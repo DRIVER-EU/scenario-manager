@@ -148,11 +148,16 @@ services:
     ports:
       - '3210:3210'
     environment:
-      CLIENT_ID: TB-TrialMgmt
+      CLIENT_ID: TrialManager
       KAFKA_HOST: broker:9092
       SCHEMA_REGISTRY: schema_registry:8081
       TRIAL_MANAGER_SERVER_PORT: 3210
-      PRODUCE: simulation_session_mgmt,system_tm_role_player,standard_cap,standard_geojson
+      PRODUCE: >
+        simulation_session_mgmt,
+        system_tm_role_player,
+        standard_cap,
+        standard_geojson,
+        system_tm_info_msg
       SSL: 'false'
       SSL_PFX: certs/TB-TrialMgmt.p12
       SSL_PASSPHRASE: changeit
