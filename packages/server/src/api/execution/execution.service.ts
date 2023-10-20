@@ -100,6 +100,9 @@ export class ExecutionService implements IExecutionService {
   private sendDefaultMessage(i: IInject) {
     const data = i.message[i.messageType];
     const topic = i.kafkaTopic;
+    if (!data['id']) data['id'] = i.id;
+    console.log(`Sending message to topic ${topic}:`);
+    console.table(data);
     this.kafkaService.sendMessage(data, topic);
   }
 
