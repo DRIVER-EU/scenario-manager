@@ -4,7 +4,7 @@
     "run-proxy": "pnpm --parallel run run-proxy",
     "start": "pnpm --parallel run dev",
     "build": "pnpm --parallel run build",
-    "docker:build": "docker build -t trial-management-tool .",
+    "docker:build": "docker buildx build -t trial-management-tool .",
     "docker:tag": "docker tag trial-management-tool strategyeu/trial-management-tool:pairs",
     "docker:tag:latest": "docker tag trial-management-tool strategyeu/trial-management-tool:latest",
     "docker:publish": "docker push strategyeu/trial-management-tool:pairs",
@@ -16,8 +16,8 @@
     "docker:sh": "docker run -it trial-management-tool sh"
   },
   "devDependencies": {
-    "@rspack/cli": "^0.3.4",
-    "pnpm": "^8.7.6"
+    "@rspack/cli": "^0.3.7",
+    "pnpm": "^8.9.2"
   },
   "name": "trial-management-tool"
 }
