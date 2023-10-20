@@ -4,6 +4,14 @@
   "ui": [
     { "id": "messageType", "value": "INFO_MESSAGE", "type": "none" },
     {
+      "id": "title",
+      "label": "Title",
+      "required": true,
+      "icon": "title",
+      "className": "col s12",
+      "type": "text"
+    },
+    {
       "id": "message",
       "label": " ",
       "className": "col s12",
@@ -14,15 +22,23 @@
           "className": "col s12",
           "type": [
             {
+              "id": "headline",
+              "label": "Billboard headline",
+              "icon": "title",
+              "className": "col s12 m8",
+              "type": "text"
+            },
+            {
               "id": "type",
               "label": "Message type",
               "icon": "message",
-              "className": "col s12 m3",
+              "className": "col s12 m4",
               "placeholder": "Pick one",
               "required": true,
               "value": "BILLBOARD",
               "type": "select",
               "options": [
+                { "id": "CLEAR", "label": "CLEAR" },
                 { "id": "BILLBOARD", "label": "BILLBOARD" },
                 { "id": "TV_BROADCAST", "label": "TV BROADCAST" },
                 { "id": "RADIO_BROADCAST", "label": "RADIO BROADCAST" },
@@ -31,26 +47,17 @@
               ]
             },
             {
-              "id": "title",
-              "label": "Billboard headline",
-              "required": true,
-              "icon": "title",
-              "className": "col s12 m6",
-              "type": "text"
+              "id": "description",
+              "label": "Billboard message",
+              "icon": "note",
+              "type": "textarea"
             },
             {
               "id": "filename",
               "label": "Filename",
               "description": "Filename of video or audio file, including extension",
               "icon": "video_file",
-              "className": "col s12 m3",
               "type": "text"
-            },
-            {
-              "id": "description",
-              "label": "Billboard message",
-              "icon": "note",
-              "type": "textarea"
             }
           ]
         }
@@ -58,7 +65,6 @@
     }
   ],
   "update": {
-    "description": "&message.POST_MESSAGE.description",
-    "title": "&message.POST_MESSAGE.title"
+    "description": "&message.INFO_MESSAGE.description"
   }
 }
