@@ -26,7 +26,7 @@ export default () => ({
             rejectUnauthorized: true,
           }
         : undefined,
-    clientId: process.env.CLIENT_ID || 'TB-TrialMgmt',
+    clientId: process.env.CLIENT_ID || 'TrialManager',
     fetchAllSchemas: false,
     fetchAllVersions: false,
     // autoRegisterSchemas: true,
@@ -34,7 +34,7 @@ export default () => ({
     wrapUnions: 'auto',
     // consume: [],
     produce: process.env.PRODUCE
-      ? process.env.PRODUCE.split(',')
+      ? process.env.PRODUCE.split(',').map((p) => p.trim())
       : [
           adapter.RequestChangeOfTrialStage,
           adapter.TrialManagementPhaseMessageTopic,
