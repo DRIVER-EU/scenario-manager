@@ -16,7 +16,9 @@ In a Trial, experiment or exercise, there is a need to control the crisis manage
   - Tasks are offered to role players, which need to execute them and indicate when they are done.
 
 ## Creating your own injects
+
 This version of the scenario manager supports the creation of your own injects. This guide explains how:
+
 1. Click on an existing scenario, or create a new one
 2. Click on the gear icon in the top right corner
 3. Click on the `Message Config` tab
@@ -72,7 +74,6 @@ During execution, all messages (a.k.a. injects) are pass through 5 states:
 - An inject message IN_PROGRESS will be executed, which will make it transition to EXECUTED.
 - A group (act, storyline) message will transition to EXECUTED when all of its children are EXECUTED too.
 - There is a fifth state, CANCELLED, but that hasn't been implemented yet.
-
 
 ## TODO
 
