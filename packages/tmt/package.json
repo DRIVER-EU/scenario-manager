@@ -32,14 +32,14 @@
     "mithril-scenario-timeline": "^0.2.2",
     "mithril-table": "^0.2.2",
     "mithril-tree-component": "^0.7.1",
-    "mithril-ui-form": "^1.9.2",
+    "mithril-ui-form": "^1.9.3",
     "rfc6902": "^5.0.1",
     "slimdown-js": "^0.7.2",
     "socket.io-client": "4.7.2",
     "trial-manager-models": "workspace:*"
   },
   "devDependencies": {
-    "@rspack/cli": "^0.3.7",
+    "@rspack/cli": "^0.3.8",
     "@types/geojson": "^7946.0.12",
     "@types/leaflet": "^1.9.7",
     "@types/leaflet-draw": "^1.0.9",
