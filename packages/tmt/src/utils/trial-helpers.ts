@@ -46,6 +46,16 @@ export const getUsersByRole = (trial: ITrial, role: UserRole) => {
   return getUsers(trial).filter((u) => hasUserRole(u, role));
 };
 
+/** Get all resources (or filter by name) */
+export const getResources = (trial: ITrial, filter?: string) => {
+  if (!trial || !trial.resources) {
+    return [];
+  }
+  return (
+    filter ? trial.resources.filter((r) => r.name && r.name.toLowerCase().indexOf(filter.toLowerCase()) >= 0) : trial.resources
+  ).map((a) => a);
+};
+
 /** Get all stakeholders (or filter by name) */
 export const getStakeholders = (trial?: ITrial, filter?: string) => {
   if (!trial || !trial.stakeholders) {

@@ -20,6 +20,7 @@ import {
   ITimeManagement,
   ITrial,
   MessageType,
+  Resource,
   SessionState,
   TimeCommand,
   uniqueId,
@@ -70,6 +71,8 @@ export interface IApp extends IActiveTrial {
   objectiveId: string;
   /** Currently selected user ID */
   userId: string;
+  /** Currently selected resource ID */
+  resourceId: string;
   /** Currently selected user ID */
   assetId: number;
   /** List of all the available assets */
@@ -98,6 +101,8 @@ export interface IExe extends IActiveTrial {
   scenarioId: string;
   /** ID of the currently active user */
   userId: string;
+  /** ID of the currently active resource */
+  resourceId: string;
   /** Currently selected inject ID */
   injectId: string;
   injectStates: IInjectSimStates;
@@ -172,6 +177,11 @@ export interface IAppStateActions {
   updateUser: (user: IPerson) => Promise<void>;
   deleteUser: (user: IPerson) => Promise<void>;
 
+  selectResource: (resource: Resource) => void;
+  createResource: (resource: Resource) => Promise<void>;
+  updateResource: (resource: Resource) => Promise<void>;
+  deleteResource: (resource: Resource) => Promise<void>;
+
   saveNewKafkaMessage: (fn: string, tn: string) => void;
   deleteKafkaMessage: (entr: IKafkaMessage) => void;
 
@@ -236,6 +246,7 @@ export const appStateMgmt = {
       injectId: '',
       objectiveId: '',
       userId: '',
+      resourceId: '',
       assetId: -1,
       assets: [],
       treeState: {},
@@ -252,6 +263,7 @@ export const appStateMgmt = {
       trialId: '',
       scenarioId: '',
       userId: '',
+      resourceId: '',
       injectId: '',
       treeState: {},
       injectStates: {} as IInjectSimStates,
@@ -409,6 +421,7 @@ export const appStateMgmt = {
             { id: uniqueId(), name: 'Role player 2', roles: [UserRole.ROLE_PLAYER] },
             { id: uniqueId(), name: 'Spectator', roles: [UserRole.VIEWER] },
           ],
+          resources: [],
           stakeholders: [
             {
               id: uniqueId(),
@@ -712,6 +725,39 @@ export const appStateMgmt = {
         await trialSvc.patch(trial, oldTrial);
         update({ app: { userId: '', trial } });
       },
+
+      selectResource: (resource) => update({ app: { resourceId: resource.id } }),
+      createResource: async (resource) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        if (!trial.users) {
+          trial.users = [];
+        }
+        // console.table(trial.Users);
+        if (!trial.resources) trial.resources = [];
+        trial.resources.push(resource);
+        // console.table(trial.Users);
+        await trialSvc.patch(trial, oldTrial);
+        // console.table(trial.Users);
+        update({ app: { resourceId: resource.id, trial } });
+      },
+      updateResource: async (resource) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        if (!trial.resources) trial.resources = [];
+        trial.resources = trial.resources.map((s) => (s.id === resource.id ? resource : s));
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { resourceId: resource.id, trial } });
+      },
+      deleteResource: async (resource) => {
+        const { trial } = states().app;
+        const oldTrial = deepCopy(trial);
+        if (!trial.resources) trial.resources = [];
+        trial.resources = trial.resources.filter((s) => s.id !== resource.id);
+        await trialSvc.patch(trial, oldTrial);
+        update({ app: { resourceId: '', trial } });
+      },
+
       saveNewKafkaMessage: async (fn: string, tn: string) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);

@@ -16,6 +16,7 @@ export * from './objective.js';
 export * from './ost-stage-change-message.js';
 export * from './person-of-interest.js';
 export * from './person.js';
+export * from './resource.js';
 export * from './role-player-message.js';
 export * from './session-message.js';
 export * from './sim-state.js';

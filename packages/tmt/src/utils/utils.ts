@@ -18,6 +18,8 @@ import {
   toMsec,
   IInjectSimStates,
   IGuiTemplate,
+  Resource,
+  ResourceType,
 } from 'trial-manager-models';
 import { LineString, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 
@@ -60,7 +62,7 @@ export const baseLayers = {
 export const iterEnum = <E extends { [P in keyof E]: number | string }>(e: E) =>
   Object.keys(e)
     .filter((_, i, arr) => i < arr.length / 2)
-    .map((k) => +k);
+    .map((k) => isNaN(+k) ? k : +k);
 
 /** Map a string enum to a list of options */
 export const enumToOptions = <E extends { [P in keyof E]: string }>(e: E) =>
@@ -215,6 +217,23 @@ export const userIcon = (user?: IPerson) => {
       return 'attach_money';
     case UserRole.EXCON:
       return 'volume_up';
+  }
+};
+
+export const resourceIcon = (resource?: Resource) => {
+  if (!resource) return 'backpack';
+  const { type = 'backpack' } = resource;
+  switch (type) {
+    default:
+      return 'backpack';
+    case ResourceType.VEHICLE:
+      return 'fire_truck';
+    case ResourceType.BOAT:
+      return 'directions_boat';
+    case ResourceType.PLANE:
+      return 'airplanemode_active';
+    case ResourceType.GENERATOR:
+      return 'electric_meter';
   }
 };
 

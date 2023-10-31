@@ -7,6 +7,7 @@ import {
   IInject,
   IPerson,
   MessageType,
+  Resource,
 } from './index.js';
 
 export interface ITrialOverview {
@@ -48,6 +49,8 @@ export interface ITrial extends ITrialOverview {
   // locations: ILocationAddress[];
   /** Persons that can login, and play one of more roles, such as editors, stakeholders, role players */
   users: IPerson[];
+  /** Resources that play a role in one of the scenarios */
+  resources?: Resource[];
   /** Solutions, departments, organisations that have an interest in the scenario */
   stakeholders: IStakeholder[];
   /** Objectives that need to be satisfied by the scenario */

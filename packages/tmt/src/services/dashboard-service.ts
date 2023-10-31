@@ -17,6 +17,7 @@ import {
   SessionTable,
   MessageConfigView,
 } from '../components';
+import { ResourcesView } from '../components/resources/resources-list';
 
 class DashboardService {
   private dashboards!: ReadonlyArray<IDashboard>;
@@ -125,6 +126,14 @@ export const dashboardSvc: DashboardService = new DashboardService([
     route: '/settings/users',
     visible: false,
     component: UsersView,
+    level: Dashboards.SETTINGS,
+  },
+  {
+    id: Dashboards.RESOURCES,
+    title: 'Resources',
+    route: '/settings/resources',
+    visible: false,
+    component: ResourcesView,
     level: Dashboards.SETTINGS,
   },
   /*{
