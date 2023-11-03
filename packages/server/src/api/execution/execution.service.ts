@@ -37,7 +37,7 @@ export class ExecutionService implements IExecutionService {
   constructor(
     private readonly kafkaService: KafkaService,
     private readonly trialService: TrialService,
-  ) {}
+  ) { }
 
   public init(trial: ITrial) {
     this.trial = trial;
@@ -213,10 +213,10 @@ export class ExecutionService implements IExecutionService {
         info.parameter instanceof Array ? info.parameter : [info.parameter];
       info.parameter = parameters.map(
         (p) =>
-          ({
-            valueName: p.valueName,
-            value: p.valueName[0] !== '_' ? parse(p.value) : p.value,
-          } as IValueNamePair),
+        ({
+          valueName: p.valueName,
+          value: p.valueName[0] !== '_' ? parse(p.value) : p.value,
+        } as IValueNamePair),
       );
       message.info = info;
     }
@@ -239,8 +239,21 @@ export class ExecutionService implements IExecutionService {
 
   private async sendPostMessage(i: IInject) {
     const post = getMessage<IPostMsg>(i, MessageType.POST_MESSAGE);
-    post.id = i.id;
     const topic = 'simulation_entity_post';
+    if (post.id === "RESET_SCENARIO_REMOVE_ALL") {
+      post.title = "";
+      post.description = "";
+      const postMsg = postMessageToTestbed(
+        post,
+        "sender",
+        ["recipients"],
+        this.kafkaService.simulationTime,
+      );
+      console.info('RESET EMAIL MSG SEND');
+      this.kafkaService.sendMessage(postMsg, topic);
+      return;
+    }
+    post.id = i.id;
     const sender = this.trial.users
       .filter((u) => u.id === post.senderId)
       .shift();
@@ -250,8 +263,8 @@ export class ExecutionService implements IExecutionService {
     }
     const recipients = post.recipientIds
       ? this.trial.users
-          .filter((u) => u.email && post.recipientIds.indexOf(u.id) >= 0)
-          .map((u) => `${u.name}<${u.email}>`)
+        .filter((u) => u.email && post.recipientIds.indexOf(u.id) >= 0)
+        .map((u) => `${u.name}<${u.email}>`)
       : [];
 
     const assets =
@@ -288,8 +301,8 @@ export class ExecutionService implements IExecutionService {
     const rolePlayerName = rolePlayer ? rolePlayer.name : 'Unknown';
     const participants = rpm.participantIds
       ? this.trial.users
-          .filter((u) => rpm.participantIds.indexOf(u.id) >= 0)
-          .map((u) => u.name)
+        .filter((u) => rpm.participantIds.indexOf(u.id) >= 0)
+        .map((u) => u.name)
       : [];
     const msg = rolePlayerMessageToTestbed(
       rpm,
