@@ -108,8 +108,8 @@ export const deepEqual = <T extends { [key: string]: any }>(x?: T, y?: T): boole
   return x instanceof Date && y instanceof Date
     ? x.getTime() === y.getTime()
     : x && y && tx === 'object' && tx === ty
-    ? Object.keys(x).length === Object.keys(y).length && Object.keys(x).every((key) => deepEqual(x[key], y[key]))
-    : x === y;
+      ? Object.keys(x).length === Object.keys(y).length && Object.keys(x).every((key) => deepEqual(x[key], y[key]))
+      : x === y;
 };
 
 /**

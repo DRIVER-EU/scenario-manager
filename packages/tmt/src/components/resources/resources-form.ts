@@ -51,78 +51,78 @@ export const ResourcesForm: MeiosisComponent = () => {
             { key: resource ? resource.id : undefined },
             resource
               ? [
-                  m('h4', [
-                    m(Icon, {
-                      iconName: resourceIcon(),
-                      style: 'margin-right: 12px;',
-                    }),
-                    'Resource details',
-                  ]),
-                  [
-                    m(TextInput, {
-                      id: 'name',
-                      isMandatory: true,
-                      initialValue: resource.name,
-                      onchange: (v: string) => (resource.name = v),
-                      label: 'Name',
-                      iconName: 'edit',
-                    }),
-                    m(Select, {
-                      iconName: resourceIcon(resource),
-                      label: 'Type',
-                      placeholder: 'Select the resource type',
-                      checkedId: resource.type,
-                      isMandatory: true,
-                      options,
-                      onchange: (v) => resource.type = +v[0] as ResourceType,
-                    } as ISelectOptions<number>),
-                    m(TextArea, {
-                      id: 'desc',
-                      initialValue: resource.desc,
-                      onchange: (v: string) => (resource.desc = v),
-                      label: 'Description',
-                      iconName: 'description',
-                    }),
-                  ],
-                  m('row', [
-                    m(Button, {
-                      iconName: 'undo',
-                      class: `green ${hasChanged ? '' : 'disabled'}`,
-                      onclick: () => (resource = deepCopy(original)),
-                    }),
-                    ' ',
-                    m(Button, {
-                      iconName: 'save',
-                      class: `green ${hasChanged ? '' : 'disabled'}`,
-                      onclick: onsubmit,
-                    }),
-                    ' ',
-                    m(Button, {
-                      modalId: 'delete',
-                      iconName: 'delete',
-                      class: 'red',
-                    }),
-                  ]),
-                  m(ModalPanel, {
-                    id: 'delete',
-                    title: `Do you really want to delete "${resource.name}?"`,
-                    options: { opacity: 0.7 },
-                    buttons: [
-                      {
-                        label: 'OK',
-                        onclick: async () => {
-                          await deleteResource(resource);
-                          const resources = getResources(trial);
-                          const cur = resources && resources.length > 0 ? resources[0] : undefined;
-                          cur && selectResource(cur);
-                        },
-                      },
-                      {
-                        label: 'Cancel',
-                      },
-                    ],
+                m('h4', [
+                  m(Icon, {
+                    iconName: resourceIcon(),
+                    style: 'margin-right: 12px;',
                   }),
-                ]
+                  'Resource details',
+                ]),
+                [
+                  m(TextInput, {
+                    id: 'name',
+                    isMandatory: true,
+                    initialValue: resource.name,
+                    onchange: (v: string) => (resource.name = v),
+                    label: 'Name',
+                    iconName: 'edit',
+                  }),
+                  m(Select, {
+                    iconName: resourceIcon(resource),
+                    label: 'Type',
+                    placeholder: 'Select the resource type',
+                    checkedId: resource.type,
+                    isMandatory: true,
+                    options,
+                    onchange: (v) => resource.type = +v[0] as ResourceType,
+                  } as ISelectOptions<number>),
+                  m(TextArea, {
+                    id: 'desc',
+                    initialValue: resource.desc,
+                    onchange: (v: string) => (resource.desc = v),
+                    label: 'Description',
+                    iconName: 'description',
+                  }),
+                ],
+                m('row', [
+                  m(Button, {
+                    iconName: 'undo',
+                    class: `green ${hasChanged ? '' : 'disabled'}`,
+                    onclick: () => (resource = deepCopy(original)),
+                  }),
+                  ' ',
+                  m(Button, {
+                    iconName: 'save',
+                    class: `green ${hasChanged ? '' : 'disabled'}`,
+                    onclick: onsubmit,
+                  }),
+                  ' ',
+                  m(Button, {
+                    modalId: 'delete',
+                    iconName: 'delete',
+                    class: 'red',
+                  }),
+                ]),
+                m(ModalPanel, {
+                  id: 'delete',
+                  title: `Do you really want to delete "${resource.name}?"`,
+                  options: { opacity: 0.7 },
+                  buttons: [
+                    {
+                      label: 'OK',
+                      onclick: async () => {
+                        await deleteResource(resource);
+                        const resources = getResources(trial);
+                        const cur = resources && resources.length > 0 ? resources[0] : undefined;
+                        cur && selectResource(cur);
+                      },
+                    },
+                    {
+                      label: 'Cancel',
+                    },
+                  ],
+                }),
+              ]
               : []
           ),
         ])

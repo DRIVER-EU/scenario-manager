@@ -1,8 +1,14 @@
 {
+  "id": "send_file",
   "label": "Send file",
   "icon": "attach_file",
+  "default": true,
   "ui": [
-    { "id": "messageType", "value": "SEND_FILE", "type": "none" },
+    {
+      "id": "messageType",
+      "value": "SEND_FILE",
+      "type": "none"
+    },
     {
       "id": "title",
       "label": "Subject",
@@ -51,7 +57,7 @@
               "placeholder": "Pick one",
               "multiple": false,
               "required": true,
-              "type": "&kafkaTopicSet",
+              "type": "select",
               "options": "&kafkaTopics"
             }
           ]

@@ -63,7 +63,6 @@ export const setupSocket = (autoConnect = true): Socket => {
     await actions.updateSession(Object.assign({ tags: undefined }, session));
     const kafkaTopics = await SocketSvc.getKafkaTopics();
     actions.updateKafkaTopics(kafkaTopics);
-    console.log(kafkaTopics);
     update({
       exe: {
         sessionControl: {
@@ -119,7 +118,6 @@ export const SocketSvc = {
   socket: socket || setupSocket(),
   getKafkaTopics: async () => {
     return await new Promise((resolve) => {
-      console.log('SOCKET SERVICE');
       SocketSvc.socket.emit('getKafkaTopics', (data: string[]) => {
         resolve(data as string[]);
       });

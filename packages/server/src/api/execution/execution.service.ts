@@ -179,12 +179,12 @@ export class ExecutionService implements IExecutionService {
 
   private async sendGeoJSON(i: IInject) {
     const message = getMessage<IGeoJsonMessage>(i, MessageType.GEOJSON_MESSAGE);
-    const { topic } = i;
+    const { kafkaTopic } = i;
     // const topic = this.findTopic(
     //   MessageType.GEOJSON_MESSAGE,
     //   message.subjectId,
     // );
-    if (!topic) {
+    if (!kafkaTopic) {
       return console.warn(
         `Could not send message (${i.title}) - no topic configured`,
       );
@@ -200,7 +200,7 @@ export class ExecutionService implements IExecutionService {
     const msg = message.properties
       ? { geojson, properties: mapToAvro(message.properties) }
       : geojson;
-    this.kafkaService.sendMessage(msg, topic);
+    this.kafkaService.sendMessage(msg, kafkaTopic);
   }
 
   private async sendLCMS(i: IInject) {

@@ -36,29 +36,29 @@ export const ExecutingInjectView: MeiosisComponent = () => {
             '.col.s12',
             isGroupInject
               ? [
-                  m(ManualTransition, { state, actions, options: { editing: (b) => (editing = b) } }),
-                  m('h4', [
-                    m(Icon, {
-                      iconName: getInjectIcon(inject.type),
-                      style: 'margin-right: 12px;',
-                    }),
-                    inject.title,
-                  ]),
-                  m(MessageForm, { state, actions, options: { editing } }),
-                ]
+                m(ManualTransition, { state, actions, options: { editing: (b) => (editing = b) } }),
+                m('h4', [
+                  m(Icon, {
+                    iconName: getInjectIcon(inject.type),
+                    style: 'margin-right: 12px;',
+                  }),
+                  inject.title,
+                ]),
+                m(MessageForm, { state, actions, options: { editing } }),
+              ]
               : inject && [
-                  m(ManualTransition, { state, actions, options: { editing: (b) => (editing = b) } }), // TODO can set editing to true
-                  m('h4', [
-                    m(Icon, {
-                      iconName: getMessageIcon(inject.topic),
-                      style: 'margin-right: 12px;',
-                    }),
-                    getMessageTitle(inject.topic),
-                  ]),
-                  editing
-                    ? m(MessageForm, { state, actions, options: { editing } })
-                    : m(ExecutingMessageView, { state, actions, options: { editing } }),
-                ]
+                m(ManualTransition, { state, actions, options: { editing: (b) => (editing = b) } }), // TODO can set editing to true
+                m('h4', [
+                  m(Icon, {
+                    iconName: getMessageIcon(inject.topic),
+                    style: 'margin-right: 12px;',
+                  }),
+                  getMessageTitle(inject.topic),
+                ]),
+                editing
+                  ? m(MessageForm, { state, actions, options: { editing } })
+                  : m(ExecutingMessageView, { state, actions, options: { editing } }),
+              ]
           )
         ),
       ]);

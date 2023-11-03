@@ -115,8 +115,8 @@ export const titleAndDescriptionFilter = (filterValue?: string) => {
   return !filterValue
     ? () => true
     : (content: IContent) =>
-        (content.title && content.title.toLowerCase().indexOf(filterValue as string) >= 0) ||
-        (content.description && content.description.toLowerCase().indexOf(filterValue as string) >= 0);
+      (content.title && content.title.toLowerCase().indexOf(filterValue as string) >= 0) ||
+      (content.description && content.description.toLowerCase().indexOf(filterValue as string) >= 0);
 };
 
 /**
@@ -138,8 +138,8 @@ export const getInjectIcon = (type?: InjectType) => {
  * Represent the message with an icon.
  * @param templates message templates
  */
-export const getMessageIconFromTemplate = (templates: IGuiTemplate[]) => (topic?: string) => {
-  const found = templates.find((t) => t.topic === topic);
+export const getMessageIconFromTemplate = (templates: IGuiTemplate[]) => (templateId?: string) => {
+  const found = templates.find((t) => t.id === templateId);
   return found ? found.icon : 'message';
 };
 
@@ -174,7 +174,7 @@ export const getMessageTitleFromTemplate = (templates: IGuiTemplate[]) => (topic
 
 /** Get the icon for an inject, either a scenario/storyline/act icon, or a message icon */
 export const getIconFromTemplate = (templates: IGuiTemplate[]) => (inject: IInject) =>
-  inject.type === InjectType.INJECT ? getMessageIconFromTemplate(templates)(inject.topic) : getInjectIcon(inject.type);
+  inject.type === InjectType.INJECT ? getMessageIconFromTemplate(templates)(inject.templateId) : getInjectIcon(inject.type);
 
 /** Get the icon representing the execution state */
 export const executionIcon = (inject: IExecutingInject) => {
@@ -196,12 +196,12 @@ export const assetIcon = (asset: IAsset) =>
   !asset.mimetype
     ? ''
     : asset.mimetype.indexOf('image/') === 0
-    ? 'image'
-    : asset.mimetype.indexOf('application/pdf') === 0
-    ? 'picture_as_pdf'
-    : asset.mimetype.indexOf('application/json') === 0
-    ? 'map'
-    : 'short_text';
+      ? 'image'
+      : asset.mimetype.indexOf('application/pdf') === 0
+        ? 'picture_as_pdf'
+        : asset.mimetype.indexOf('application/json') === 0
+          ? 'map'
+          : 'short_text';
 
 export const userIcon = (user?: IPerson) => {
   if (!user) return;
@@ -288,9 +288,8 @@ export const formatMsec = (t: number) => {
 /** Create an email link */
 export const createEmailLink = (emails: string | Array<string | undefined>, subject?: string, body?: string) => {
   const addresses = emails instanceof Array ? emails.join(',') : emails;
-  return `mailto:${addresses}${subject || body ? '?' : ''}${subject ? `subject=${subject}` : ''}${
-    subject && body ? '&' : ''
-  }${body ? `body=${body}` : ''}`;
+  return `mailto:${addresses}${subject || body ? '?' : ''}${subject ? `subject=${subject}` : ''}${subject && body ? '&' : ''
+    }${body ? `body=${body}` : ''}`;
 };
 
 /**
@@ -313,13 +312,13 @@ export const centerArea = (area: L.GeoJSON<any>) => {
   const bounds = area.getBounds();
   return Object.keys(bounds).length
     ? {
-        view: bounds.getCenter(),
-        zoom: 14,
-      }
+      view: bounds.getCenter(),
+      zoom: 14,
+    }
     : {
-        view: [51.5, 5] as LatLngExpression,
-        zoom: 4,
-      };
+      view: [51.5, 5] as LatLngExpression,
+      zoom: 4,
+    };
 };
 
 // export const centerAreas = (areas: Array<L.GeoJSON<any>>) => {
@@ -431,12 +430,12 @@ export const geoJSONtoAffectedArea: GeoJSON2Area = (geojson: FeatureCollection<P
   !geojson.features || geojson.features.length === 0
     ? undefined
     : {
-        type: 'MultiPolygon',
-        coordinates: geojson.features.reduce((acc, f) => {
-          acc.push(f.geometry.coordinates);
-          return acc;
-        }, [] as number[][][][]),
-      };
+      type: 'MultiPolygon',
+      coordinates: geojson.features.reduce((acc, f) => {
+        acc.push(f.geometry.coordinates);
+        return acc;
+      }, [] as number[][][][]),
+    };
 
 export const routeToGeoJSON = (route?: ILocation[] | null) => {
   const geojson: FeatureCollection<LineString> = {
@@ -465,13 +464,13 @@ export const geoJSONtoRoute: GeoJSON2Route = (geojson: FeatureCollection<LineStr
   geojson.features.length === 0
     ? undefined
     : geojson.features[0].geometry.coordinates.map(
-        (c) =>
-          ({
-            longitude: c[0],
-            latitude: c[1],
-            altitude: c[2],
-          } as ILocation)
-      );
+      (c) =>
+      ({
+        longitude: c[0],
+        latitude: c[1],
+        altitude: c[2],
+      } as ILocation)
+    );
 
 export const arrayMove = <T>(arr: Array<T | undefined>, oldIndex: number, newIndex: number) => {
   if (oldIndex < 0 || newIndex < 0) {
@@ -505,11 +504,11 @@ export const injectToTimelineItemFactory =
       dependsOn:
         condition && condition.injectId
           ? [
-              {
-                id: condition.injectId,
-                condition: condition.injectState === InjectState.EXECUTED ? 'finished' : 'started',
-              },
-            ]
+            {
+              id: condition.injectId,
+              condition: condition.injectState === InjectState.EXECUTED ? 'finished' : 'started',
+            },
+          ]
           : undefined,
     } as ITimelineItem & IExecutingInject & { delay: number };
   };

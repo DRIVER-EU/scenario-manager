@@ -681,17 +681,18 @@ export const appStateMgmt = {
       updateSelectedMessageTypes: async (messageTypes: string[]) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
+        console.log('CALLING UPDATE SELECTED MESSAGE TYPES')
         trial.selectedMessageTypes = messageTypes.map((msg: string) => {
           return {
             id: uniqueId(),
             name: msg,
-            messageForm: msg,
+            iconName: 'attach_file',
             messageType: msg as MessageType,
             kafkaTopic: '',
+            templateId: '',
             useNamespace: false,
-            iconName: 'attach_file',
             useCustomGUI: false,
-          };
+          } as IKafkaMessage;
         });
         await trialSvc.patch(trial, oldTrial);
         update({ app: { trial } });
@@ -761,7 +762,16 @@ export const appStateMgmt = {
       saveNewKafkaMessage: async (fn: string, tn: string) => {
         const { trial } = states().app;
         const oldTrial = deepCopy(trial);
-        trial.selectedMessageTypes.push({ id: uniqueId(), name: fn, messageForm: fn, kafkaTopic: tn } as IKafkaMessage);
+        trial.selectedMessageTypes.push({
+          id: uniqueId(),
+          name: fn,
+          templateId: '',
+          iconName: '',
+          messageType: MessageType.UNDEFINED,
+          useCustomGUI: false,
+          useNamespace: false,
+          kafkaTopic: tn
+        } as IKafkaMessage);
         await trialSvc.patch(trial, oldTrial);
         update({ app: { trial: trial } });
       },

@@ -1,17 +1,24 @@
 {
-  "label": "Send email, reports or other posts",
+  "id": "send_email",
+  "label": "Send email",
   "icon": "mail",
+  "topic": "simulation_entity_post",
+  "default": true,
   "ui": [
-    { "id": "messageType", "value": "POST_MESSAGE", "type": "none" },
+    {
+      "id": "messageType",
+      "value": "POST_MESSAGE",
+      "type": "none"
+    },
     {
       "id": "message",
       "label": " ",
-      "className":"col s12",
+      "className": "col s12",
       "type": [
         {
           "id": "POST_MESSAGE",
           "label": " ",
-          "className":"col s12",
+          "className": "col s12",
           "type": [
             {
               "id": "type",
@@ -23,14 +30,38 @@
               "value": "MAIL",
               "type": "select",
               "options": [
-                { "id": "CHAT", "label": "CHAT" },
-                { "id": "INCIDENT_REPORT", "label": "INCIDENT REPORT" },
-                { "id": "MAIL", "label": "MAIL" },
-                { "id": "MICROBLOG", "label": "MICROBLOG" },
-                { "id": "NEWS", "label": "NEWS" },
-                { "id": "SITUATION_REPORT", "label": "SITUATION REPORT" },
-                { "id": "SOCIAL_NETWORK", "label": "SOCIAL NETWORK" },
-                { "id": "VIDEO", "label": "VIDEO" }
+                {
+                  "id": "CHAT",
+                  "label": "CHAT"
+                },
+                {
+                  "id": "INCIDENT_REPORT",
+                  "label": "INCIDENT REPORT"
+                },
+                {
+                  "id": "MAIL",
+                  "label": "MAIL"
+                },
+                {
+                  "id": "MICROBLOG",
+                  "label": "MICROBLOG"
+                },
+                {
+                  "id": "NEWS",
+                  "label": "NEWS"
+                },
+                {
+                  "id": "SITUATION_REPORT",
+                  "label": "SITUATION REPORT"
+                },
+                {
+                  "id": "SOCIAL_NETWORK",
+                  "label": "SOCIAL NETWORK"
+                },
+                {
+                  "id": "VIDEO",
+                  "label": "VIDEO"
+                }
               ]
             },
             {

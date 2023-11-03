@@ -1,0 +1,42 @@
+{
+  "id": "send_clear_email",
+  "label": "Clear email",
+  "icon": "clear",
+  "topic": "simulation_entity_post",
+  "default": true,
+  "ui": [
+    {
+      "id": "messageType",
+      "value": "POST_MESSAGE",
+      "type": "none"
+    },
+    {
+      "id": "title",
+      "label": "Title",
+      "required": true,
+      "value": "Clear email",
+      "icon": "email",
+      "className": "col s12",
+      "type": "text"
+    },
+    {
+      "id": "message",
+      "label": " ",
+      "className": "col s12",
+      "type": [
+        {
+          "id": "POST_MESSAGE",
+          "label": " ",
+          "className": "col s12",
+          "type": [
+            {
+              "id": "id",
+              "value": "RESET_SCENARIO_REMOVE_ALL",
+              "type": "none"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

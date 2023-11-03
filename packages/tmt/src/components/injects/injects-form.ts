@@ -18,7 +18,6 @@ import {
   InjectType,
   IInjectGroup,
   deepCopy,
-  MessageType,
   getAllChildren,
   uniqueId,
   ITrial,
@@ -90,9 +89,9 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
       getMessageIcon = getMessageIconFromTemplate(templates);
       const { trial } = getActiveTrialInfo(state);
       messageOpt = trial.selectedMessageTypes
-        .map((t) => ({ id: t.id, label: t.name }))
+        .map((t) => ({ id: t.templateId, label: t.name }))
         .sort((a, b) => a.label.localeCompare(b.label));
-      console.log(messageOpt);
+      console.log(JSON.stringify(trial.selectedMessageTypes, null, 2))
     },
     view: ({ attrs: { state, actions, options } }) => {
       const { mode } = state.app;
@@ -191,74 +190,74 @@ export const InjectsForm: MeiosisComponent<{ editing: boolean }> = () => {
           },
           [
             options?.editing &&
-              m(FloatingActionButton, {
-                className: 'red',
-                iconName: 'add',
-                direction: 'left',
-                position: 'right',
-                buttons: [
-                  {
-                    iconName: 'delete',
-                    className: `red ${canDelete ? '' : ' disabled'}`,
-                    onClick: async () => await deleteInject(inject),
-                  },
-                  {
-                    iconName: 'content_cut',
-                    className: `red ${canDelete ? '' : ' disabled'}`,
-                    onClick: async () => await cutInject(inject),
-                  },
-                  {
-                    iconName: 'content_paste',
-                    className: `red ${canPaste ? '' : ' disabled'}`,
-                    onClick: async () => await pasteInject(inject),
-                  },
-                  { iconName: 'content_copy', className: 'green', onClick: () => copyInject(inject) },
-                  { iconName: 'add', className: 'blue', onClick: () => cloneInject(inject) },
-                ],
-              }),
+            m(FloatingActionButton, {
+              className: 'red',
+              iconName: 'add',
+              direction: 'left',
+              position: 'right',
+              buttons: [
+                {
+                  iconName: 'delete',
+                  className: `red ${canDelete ? '' : ' disabled'}`,
+                  onClick: async () => await deleteInject(inject),
+                },
+                {
+                  iconName: 'content_cut',
+                  className: `red ${canDelete ? '' : ' disabled'}`,
+                  onClick: async () => await cutInject(inject),
+                },
+                {
+                  iconName: 'content_paste',
+                  className: `red ${canPaste ? '' : ' disabled'}`,
+                  onClick: async () => await pasteInject(inject),
+                },
+                { iconName: 'content_copy', className: 'green', onClick: () => copyInject(inject) },
+                { iconName: 'add', className: 'blue', onClick: () => cloneInject(inject) },
+              ],
+            }),
             m(
               '.row',
               inject.type === InjectType.INJECT
                 ? [
-                    m(Select, {
-                      disabled,
-                      iconName: inject.selectedMessage?.iconName
-                        ? inject.selectedMessage?.iconName
-                        : getMessageIcon(inject.topic),
-                      placeholder: 'Select the message type',
-                      checkedId: inject.topicId,
-                      options: messageOpt,
-                      className: 'col s10',
-                      onchange: (v) => {
-                        // console.warn('Getting message form');
-                        const selMsg = selectedMessageTypes.find((msg: IKafkaMessage) => msg.id === v[0]);
-                        inject!.selectedMessage = selMsg;
-                        inject!.topic = selMsg?.messageForm as MessageType;
-                        inject!.topicId = v[0] as string;
-                        inject!.kafkaTopic = selMsg?.kafkaTopic as string;
-                        updateInject(inject);
-                      },
-                    }),
-                    m(Button, {
-                      className: 'col s2 button-layout',
-                      label: 'Send message',
-                      disabled: sessionControl.isConnected ? false : true,
-                      onclick: () => {
-                        forceInject(getInject(trial, injectId) as IInject, trial);
-                      },
-                    }),
-                  ]
-                : m('h4', [
-                    m(Icon, {
-                      iconName: getInjectIcon(inject.type),
-                      class: 'small',
-                      style: 'margin-right: 12px;',
-                    }),
-                    inject.type,
-                  ])
+                  m(Select, {
+                    disabled,
+                    iconName: inject.selectedMessage?.iconName
+                      ? inject.selectedMessage?.iconName
+                      : getMessageIcon(inject.templateId),
+                    placeholder: 'Select the message type',
+                    checkedId: inject.templateId,
+                    options: messageOpt,
+                    className: 'col s10',
+                    onchange: (v) => {
+                      // console.warn('Getting message form');
+                      const selMsg = selectedMessageTypes.find((msg: IKafkaMessage) => msg.id === v[0]);
+                      inject!.selectedMessage = selMsg;
+                      inject!.templateId = v[0] as string;
+                      inject!.kafkaTopic = selMsg?.kafkaTopic as string;
+                      updateInject(inject);
+                    },
+                  }),
+                  m(Button, {
+                    className: 'col s2 button-layout',
+                    label: 'Send message',
+                    icon: 'send',
+                    disabled: sessionControl.isConnected ? false : true,
+                    onclick: () => {
+                      forceInject(getInject(trial, injectId) as IInject, trial);
+                    },
+                  }),
+                ]
+                : m('h4.col.s12', [
+                  m(Icon, {
+                    iconName: getInjectIcon(inject.type),
+                    class: 'small',
+                    style: 'margin-right: 12px;',
+                  }),
+                  inject.type,
+                ])
             ),
             [
-              (inject.topic || isInjectGroup(inject)) && m(InjectConditions, { state, actions, options }),
+              (inject.templateId || isInjectGroup(inject)) && m(InjectConditions, { state, actions, options }),
               m(MessageForm, { state, actions, options }),
               // : m('div#dummy'),
               m(SetObjectives, { trial, disabled, inject }),
@@ -292,43 +291,43 @@ export const SetObjectives: FactoryComponent<{ trial: ITrial; inject: IInject; d
 
       return isGroup && !(disabled && !hasObjectives())
         ? m(
-            '.row',
-            [
-              m(Dropdown, {
-                key: inject.id + 'primary',
-                disabled,
-                id: 'primary' + inject.id,
-                className: 'col s6',
-                helperText: 'Main objective',
-                checkedId: getInjectGroup().mainObjectiveId,
-                items: objectives,
-                onchange: (id: string | number) => {
-                  if (id !== 'Pick one') {
-                    const ijg = getInjectGroup();
-                    ijg.mainObjectiveId = id as string;
-                    actions.updateInject(ijg);
-                  }
-                },
-              }),
-              injectGroup.mainObjectiveId &&
-                m(Dropdown, {
-                  key: inject.id + 'secondary',
-                  disabled,
-                  id: 'secondary' + inject.id,
-                  className: 'col s6',
-                  helperText: 'Secondary objective',
-                  checkedId: getInjectGroup().secondaryObjectiveId,
-                  items: objectives,
-                  onchange: (id: string | number) => {
-                    if (id !== 'Pick one') {
-                      const ijg = getInjectGroup();
-                      ijg.secondaryObjectiveId = id as string;
-                      actions.updateInject(ijg);
-                    }
-                  },
-                }),
-            ].filter(Boolean)
-          )
+          '.row',
+          [
+            m(Dropdown, {
+              key: inject.id + 'primary',
+              disabled,
+              id: 'primary' + inject.id,
+              className: 'col s6',
+              helperText: 'Main objective',
+              checkedId: getInjectGroup().mainObjectiveId,
+              items: objectives,
+              onchange: (id: string | number) => {
+                if (id !== 'Pick one') {
+                  const ijg = getInjectGroup();
+                  ijg.mainObjectiveId = id as string;
+                  actions.updateInject(ijg);
+                }
+              },
+            }),
+            injectGroup.mainObjectiveId &&
+            m(Dropdown, {
+              key: inject.id + 'secondary',
+              disabled,
+              id: 'secondary' + inject.id,
+              className: 'col s6',
+              helperText: 'Secondary objective',
+              checkedId: getInjectGroup().secondaryObjectiveId,
+              items: objectives,
+              onchange: (id: string | number) => {
+                if (id !== 'Pick one') {
+                  const ijg = getInjectGroup();
+                  ijg.secondaryObjectiveId = id as string;
+                  actions.updateInject(ijg);
+                }
+              },
+            }),
+          ].filter(Boolean)
+        )
         : undefined;
     },
   };

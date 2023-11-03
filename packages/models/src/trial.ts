@@ -27,7 +27,8 @@ export interface ITrialOverview {
 export interface IKafkaMessage {
   id: string;
   name: string;
-  messageForm: string;
+  /** Id of the template */
+  templateId: string;
   messageType: MessageType;
   kafkaTopic: string;
   useNamespace: boolean;

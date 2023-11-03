@@ -1,0 +1,17 @@
+{
+  "files": [
+    "inventory.json",
+    "inventory_request.json",
+    "resource_msg.json",
+    "send_file.json",
+    "send_message.json",
+    "simulation_entity_post.json",
+    "simulation_entity_post_clear.json",
+    "simulation_request_startinject.json",
+    "standard_cap.json",
+    "system_request_change_of_trial_stage.json",
+    "system_tm_info_msg.json",
+    "system_tm_info_msg_clear.json",
+    "system_tm_phase_message.json"
+  ]
+}

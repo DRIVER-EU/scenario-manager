@@ -1,6 +1,8 @@
 {
+  "id": "send_chg_obs_quest",
   "label": "Change observer questionnaire",
   "icon": "mail",
+  "topic": "system_request_change_of_trial_stage",
   "ui": [
     {
       "id": "messageType",
@@ -22,12 +24,12 @@
     {
       "id": "message",
       "label": " ",
-      "className":"col s12",
+      "className": "col s12",
       "type": [
         {
           "id": "CHANGE_OBSERVER_QUESTIONNAIRES",
           "label": " ",
-          "className":"col s12",
+          "className": "col s12",
           "type": [
             {
               "iconName": "filter_1",

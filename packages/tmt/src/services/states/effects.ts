@@ -1,46 +1,45 @@
 import m from 'mithril';
 import { actions, selectedMessageTypes } from '..';
-import { IGuiTemplate } from 'trial-manager-models';
-import { IActions, IAppModel } from '../meiosis';
+import { IGuiTemplate, MessageType, uniqueId } from 'trial-manager-models';
+import { IActions } from '../meiosis';
 
 export const LoadGuiTemplates = (_actions: IActions) => {
   //const server = location.origin + '/tmt';
   const server = (process.env.SERVER || location.origin) + '/tmt';
   let dataLoaded = false;
 
-  return async (state: IAppModel) => {
+  return async () => {
     if (dataLoaded) return;
-    const {
-      app: { templates },
-    } = state;
+    dataLoaded = true;
 
-    if (templates.length === 0) {
-      dataLoaded = true;
-      // console.log(`Loading data`);
-      const ignoredTopics = ['simulation_time_control', 'system_tm_role_player', 'role_player_message'];
-      const topics = (
-        await m.request<string[]>({
+    const templateFiles = await m.request<{ files: string[] }>({
+      method: 'GET',
+      url: `${server}/topics/index.json`,
+    });
+    const templates = [] as IGuiTemplate[];
+    for (const templateFile of templateFiles.files) {
+      let template: void | IGuiTemplate;
+      template = await m
+        .request<IGuiTemplate>({
           method: 'GET',
-          url: `${server}/run/topics`,
+          url: `${server}/topics/${templateFile}`,
         })
-      ).filter((t) => ignoredTopics.indexOf(t) < 0);
-      const templates = [] as IGuiTemplate[];
-      selectedMessageTypes
-        .map((m) => m.messageForm.toLowerCase())
-        .forEach((t) => {
-          if (topics.indexOf(t) < 0 && ignoredTopics.indexOf(t) < 0) topics.push(t);
-        });
-      for (const topic of topics) {
-        let template: void | IGuiTemplate;
-        template = await m
-          .request<IGuiTemplate>({
-            method: 'GET',
-            url: `${server}/topics/${topic.toLowerCase()}.json`,
-          })
-          .catch((_e) => console.warn(`No GUI template found for topic ${topic}.`));
-        if (template) templates.push({ ...template, ui: JSON.stringify(template.ui), topic });
+        .catch((_e) => console.warn(`No GUI template found for topic ${templateFile}.`));
+      if (template) {
+        if (!template.id) template.id = uniqueId();
+        templates.push({ ...template, ui: JSON.stringify(template.ui) });
       }
-      actions.update({ app: { templates } });
     }
+    for (const t of templates.filter(t => t.default)) selectedMessageTypes.push({
+      id: t.id,
+      name: t.label,
+      iconName: t.icon,
+      templateId: t.id,
+      kafkaTopic: t.topic,
+      messageType: (JSON.parse(t.ui as string) as Record<string, any>[]).filter(u => u.id === 'messageType').map(u => u.value).shift() || MessageType.UNDEFINED,
+      useNamespace: false,
+      useCustomGUI: true,
+    })
+    actions.update({ app: { templates } });
   };
 };

@@ -60,7 +60,7 @@ export interface IInject extends IContent {
   /** Is it a storyline, act or inject */
   type: InjectType;
   /** Topic for the inject */
-  topic?: string;
+  // topic?: string;
   /** Type of message: is used to extract the relevant message content */
   messageType?: string;
   /** Inject message */
@@ -72,7 +72,7 @@ export interface IInject extends IContent {
   isValid?: InjectValidationState;
   /** Optional kafka topic that overwrites other kafka topics */
   kafkaTopic?: string;
-  topicId?: string;
+  templateId?: string;
   selectedMessage?: IKafkaMessage;
 }
 

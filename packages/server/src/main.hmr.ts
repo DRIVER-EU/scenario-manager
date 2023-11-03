@@ -24,7 +24,7 @@ async function bootstrap() {
   });
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ limit: '10mb' }));
-  app.use('/tmt', express.static(path.join(process.cwd(), 'public')));
+  app.use('/', express.static(path.join(process.cwd(), 'public')));
 
   app.setGlobalPrefix('tmt');
 

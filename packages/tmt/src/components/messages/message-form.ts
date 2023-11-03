@@ -12,7 +12,7 @@ import {
 } from 'trial-manager-models';
 import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm } from '.';
 import { MessageComponent } from '../../services';
-import { getInject, getPath, getUsersByRole, isJSON, baseLayers } from '../../utils';
+import { getInject, getPath, getUsersByRole, isJSON, baseLayers, getResources } from '../../utils';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
 import { InputCheckbox, ModalPanel } from 'mithril-materialized';
 import { UploadAsset } from '../ui';
@@ -26,6 +26,7 @@ export const MessageForm: MessageComponent = () => {
   const getPathRegex = /&([\w.]+)/;
   let participants: string;
   let participantEmails: string;
+  let resources: string;
   let availableAssets: string;
   let kafkaTopicOpts: string;
   let filePreview: string = '';
@@ -64,6 +65,9 @@ export const MessageForm: MessageComponent = () => {
       participantEmails = JSON.stringify(
         getUsersByRole(trial, UserRole.PARTICIPANT).map((rp) => ({ id: rp.email, label: rp.name }))
       );
+      resources = JSON.stringify(
+        getResources(trial).map((r) => ({ id: r.id, label: r.name }))
+      );
       availableAssets = JSON.stringify(
         assets
           .filter((a) => a.alias !== 'gui_form')
@@ -79,7 +83,7 @@ export const MessageForm: MessageComponent = () => {
           }))
           .sort((a, b) => a.label.localeCompare(b.label))
       );
-      const customForms = trial.selectedMessageTypes.filter((msg: IKafkaMessage) => msg.useCustomGUI);
+      const customForms = trial.selectedMessageTypes.filter((msg) => msg.useCustomGUI);
       customForms.forEach((msg: IKafkaMessage) => {
         if (msg.useCustomGUI && msg.customGUI) {
           const gui = msg.customGUI;
@@ -87,7 +91,7 @@ export const MessageForm: MessageComponent = () => {
           customTemplates.push({
             label: msg.name,
             icon: msg.iconName,
-            topic: msg.messageForm,
+            topic: msg.templateId,
             ui: JSON.stringify(JSON.parse(gui).ui),
           } as IGuiTemplate);
         }
@@ -101,7 +105,8 @@ export const MessageForm: MessageComponent = () => {
 
       const { editing = true } = options || {};
 
-      if (inject && inject.type === InjectType.INJECT && inject.topic === MessageType.ROLE_PLAYER_MESSAGE) {
+      console.log(JSON.stringify(inject, null, 2))
+      if (inject && inject.type === InjectType.INJECT && inject.selectedMessage && inject.selectedMessage.templateId === MessageType.ROLE_PLAYER_MESSAGE) {
         const sao = { state, actions, options };
         return isExecuting && !editing ? m(RolePlayerMessageView, sao) : m(RolePlayerMessageForm, sao);
       }
@@ -111,19 +116,15 @@ export const MessageForm: MessageComponent = () => {
       }
 
       if (inject && inject.type === InjectType.INJECT) {
-        const kafkaTopicSelect =
-          inject.kafkaTopic === 'send_file' || inject.kafkaTopic === 'send_message'
-            ? JSON.stringify('select')
-            : JSON.stringify('none');
         const { updateInject, createAsset } = actions;
         const disabled = !editing;
-        const topic = [...customTemplates, ...templates].find((t) => t.topic === inject.topic);
-        if (!topic) return;
-        const { update } = topic;
+        const template = [...customTemplates, ...templates].find((t) => t.id === inject.templateId);
+        if (!template) return;
+        const { update } = template;
         const ui =
-          typeof topic.ui === 'string' &&
+          typeof template.ui === 'string' &&
           (JSON.parse(
-            topic.ui
+            template.ui
               .replace(/&id/g, inject.id)
               .replace(/&title/g, inject.title)
               .replace(/&owner/g, owner)
@@ -131,9 +132,7 @@ export const MessageForm: MessageComponent = () => {
               .replace(/"&participantEmails"/g, participantEmails)
               .replace(/"&assets"/g, availableAssets)
               .replace(/"&kafkaTopics"/g, kafkaTopicOpts)
-              .replace(/"&kafkaTopicSet"/g, kafkaTopicSelect)
           ) as UIForm);
-        console.log(JSON.stringify(inject, null, 2));
 
         const original = assets.filter((a) => a.id === assetId).shift();
         if (original && (!asset || asset.id !== assetId)) {
@@ -188,9 +187,9 @@ export const MessageForm: MessageComponent = () => {
                   .replace(/&owner/g, owner)
                   .replace(/"&participants"/g, participants)
                   .replace(/"&participantEmails"/g, participantEmails)
+                  .replace(/"&resources"/g, resources)
                   .replace(/"&assets"/g, availableAssets)
                   .replace(/"&kafkaTopics"/g, kafkaTopicOpts)
-                  .replace(/"&kafkaTopicSet"/g, kafkaTopicSelect)
               ) as UIForm);
           } else {
             messageIsGUI = false;
@@ -232,32 +231,32 @@ export const MessageForm: MessageComponent = () => {
             }),
             overlay && filePreview !== ''
               ? [
-                  m(LeafletMap, {
-                    className: 'col s6',
-                    baseLayers,
-                    style: 'height: 300px; max-height: 300px',
-                    overlays: { [asset.alias || asset.filename]: overlay },
-                    visible: [asset.alias || asset.filename],
-                    showScale: { imperial: false },
-                    onLoaded: (map) => {
-                      overlay && map.fitBounds(overlay?.getBounds());
+                m(LeafletMap, {
+                  className: 'col s6',
+                  baseLayers,
+                  style: 'height: 300px; max-height: 300px',
+                  overlays: { [asset.alias || asset.filename]: overlay },
+                  visible: [asset.alias || asset.filename],
+                  showScale: { imperial: false },
+                  onLoaded: (map) => {
+                    overlay && map.fitBounds(overlay?.getBounds());
+                  },
+                }),
+                m('div.input-field.col.s6', { style: 'height: 300px; margin: 0px; max-height: 300px' }, [
+                  m('span', 'File Preview'),
+                  m(
+                    'textarea.materialize-textarea',
+                    {
+                      style: 'height: 280px; overflow-y: auto; max-height: 280px',
+                      disabled: true,
+                      id: 'previewArea',
                     },
-                  }),
-                  m('div.input-field.col.s6', { style: 'height: 300px; margin: 0px; max-height: 300px' }, [
-                    m('span', 'File Preview'),
-                    m(
-                      'textarea.materialize-textarea',
-                      {
-                        style: 'height: 280px; overflow-y: auto; max-height: 280px',
-                        disabled: true,
-                        id: 'previewArea',
-                      },
-                      filePreview
-                    ),
-                  ]),
-                ]
+                    filePreview
+                  ),
+                ]),
+              ]
               : overlay
-              ? m(LeafletMap, {
+                ? m(LeafletMap, {
                   baseLayers,
                   style: 'width: 100%; height: 300px; margin: 5px; max-height: 300px',
                   overlays: { [asset.alias || asset.filename]: overlay },
@@ -267,59 +266,59 @@ export const MessageForm: MessageComponent = () => {
                     overlay && map.fitBounds(overlay?.getBounds());
                   },
                 })
-              : filePreview !== ''
-              ? m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
-                  m('span', 'File Preview'),
-                  m(
-                    'textarea.materialize-textarea',
-                    { style: 'height: 300px; overflow-y: auto; max-height: 300px', disabled: true, id: 'previewArea' },
-                    filePreview
-                  ),
-                ])
-              : inject.kafkaTopic === 'send_message'
-              ? [
-                  messageIsGUI
-                    ? m(InputCheckbox, {
-                        label: 'Render GUIForm?',
-                        className: 'col s6',
-                        checked: showGUI,
-                        onchange: (v) => {
-                          showGUI = v as boolean;
-                        },
-                      })
-                    : undefined,
-                  showGUI && visualizedGUI
-                    ? m(LayoutForm, {
-                        form: visualizedGUI as UIForm,
-                        obj: {},
-                        disabled: true,
-                      })
-                    : undefined,
-                  m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
-                    m('i.material-icons prefix', 'code'),
-                    // m('span', 'JSON message'),
+                : filePreview !== ''
+                  ? m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
+                    m('span', 'File Preview'),
                     m(
-                      'textarea.materialize-textarea#send_message_ta',
-                      {
-                        style: 'height: 300px; overflow-y: auto; max-height: 300px',
-                        id: 'jsonTextArea',
-                        onchange: (e: any) => {
-                          if (inject.message && inject.message.SEND_MESSAGE) {
-                            (inject.message.SEND_MESSAGE as ISendMessageMessage).message = e.target.value;
-                            updateInject(inject);
-                          }
-                        },
-                      },
-                      inject.message &&
-                        inject.message.SEND_MESSAGE &&
-                        (inject.message.SEND_MESSAGE as ISendMessageMessage).message
-                        ? (inject.message.SEND_MESSAGE as ISendMessageMessage).message
-                        : undefined
+                      'textarea.materialize-textarea',
+                      { style: 'height: 300px; overflow-y: auto; max-height: 300px', disabled: true, id: 'previewArea' },
+                      filePreview
                     ),
-                    m('label.active[for=send_message_ta]', 'JSON message'),
-                  ]),
-                ]
-              : undefined,
+                  ])
+                  : inject.kafkaTopic === 'send_message'
+                    ? [
+                      messageIsGUI
+                        ? m(InputCheckbox, {
+                          label: 'Render GUIForm?',
+                          className: 'col s6',
+                          checked: showGUI,
+                          onchange: (v) => {
+                            showGUI = v as boolean;
+                          },
+                        })
+                        : undefined,
+                      showGUI && visualizedGUI
+                        ? m(LayoutForm, {
+                          form: visualizedGUI as UIForm,
+                          obj: {},
+                          disabled: true,
+                        })
+                        : undefined,
+                      m('div.input-field.col.s12', { style: 'height: 300px; margin-bottom: 40px; max-height: 300px' }, [
+                        m('i.material-icons prefix', 'code'),
+                        // m('span', 'JSON message'),
+                        m(
+                          'textarea.materialize-textarea#send_message_ta',
+                          {
+                            style: 'height: 300px; overflow-y: auto; max-height: 300px',
+                            id: 'jsonTextArea',
+                            onchange: (e: any) => {
+                              if (inject.message && inject.message.SEND_MESSAGE) {
+                                (inject.message.SEND_MESSAGE as ISendMessageMessage).message = e.target.value;
+                                updateInject(inject);
+                              }
+                            },
+                          },
+                          inject.message &&
+                            inject.message.SEND_MESSAGE &&
+                            (inject.message.SEND_MESSAGE as ISendMessageMessage).message
+                            ? (inject.message.SEND_MESSAGE as ISendMessageMessage).message
+                            : undefined
+                        ),
+                        m('label.active[for=send_message_ta]', 'JSON message'),
+                      ]),
+                    ]
+                    : undefined,
             m(ModalPanel, {
               disabled,
               id: 'upload',

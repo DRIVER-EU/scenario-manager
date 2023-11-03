@@ -45,8 +45,8 @@ export const AssetsForm: MeiosisComponent = () => {
         prev_file_id = asset?.id;
         asset.url.length > 1
           ? m.request({ url: asset?.url as string, method: 'GET' }).then((json) => {
-              filePreview = JSON.stringify(json, undefined, 4);
-            })
+            filePreview = JSON.stringify(json, undefined, 4);
+          })
           : undefined;
       } else if (!asset.url) {
         filePreview = '';
@@ -61,70 +61,70 @@ export const AssetsForm: MeiosisComponent = () => {
           },
           asset
             ? [
-                m('h4', [
-                  m(Icon, {
-                    iconName: 'attach_file',
-                    style: 'margin-right: 12px;',
+              m('h4.col.s12', [
+                m(Icon, {
+                  iconName: 'attach_file',
+                  style: 'margin-right: 12px;',
+                }),
+                'Asset details',
+              ]),
+              [
+                m(TextInput, {
+                  id: 'name',
+                  isMandatory: true,
+                  initialValue: asset.alias,
+                  onchange: (v: string) => (asset.alias = v.replace(/\s/g, '_')),
+                  label: 'Alias',
+                  placeholder: 'No spaces allowed',
+                  iconName: 'title',
+                  className: 'col s12 m6',
+                }),
+                m(UrlInput, {
+                  id: 'file',
+                  initialValue: asset.url,
+                  disabled: true,
+                  label: 'URL',
+                  iconName: 'link',
+                  className: 'col s12 m6',
+                }),
+                m(FileInput, {
+                  initialValue: asset.filename,
+                  placeholder: 'Select or replace the file',
+                  onchange: (fl: FileList) => (files = fl),
+                }),
+                overlay && filePreview !== ''
+                  ? [m(LeafletMap, {
+                    className: 'col s6',
+                    baseLayers,
+                    style: 'height: 400px',
+                    overlays: { [asset.alias || asset.filename]: overlay },
+                    visible: [asset.alias || asset.filename],
+                    showScale: { imperial: false },
+                    onLoaded: (map) => {
+                      overlay && map.fitBounds(overlay?.getBounds());
+                    },
                   }),
-                  'Asset details',
-                ]),
-                [
-                  m(TextInput, {
-                    id: 'name',
-                    isMandatory: true,
-                    initialValue: asset.alias,
-                    onchange: (v: string) => (asset.alias = v.replace(/\s/g, '_')),
-                    label: 'Alias',
-                    placeholder: 'No spaces allowed',
-                    iconName: 'title',
-                    className: 'col s12 m6',
-                  }),
-                  m(UrlInput, {
-                    id: 'file',
-                    initialValue: asset.url,
-                    disabled: true,
-                    label: 'URL',
-                    iconName: 'link',
-                    className: 'col s12 m6',
-                  }),
-                  m(FileInput, {
-                    initialValue: asset.filename,
-                    placeholder: 'Select or replace the file',
-                    onchange: (fl: FileList) => (files = fl),
-                  }),
-                  overlay && filePreview !== ''
-                    ? [m(LeafletMap, {
-                      className: 'col s6',
-                        baseLayers,
-                        style: 'height: 400px',
-                        overlays: { [asset.alias || asset.filename]: overlay },
-                        visible: [asset.alias || asset.filename],
-                        showScale: { imperial: false },
-                        onLoaded: (map) => {
-                          overlay && map.fitBounds(overlay?.getBounds());
-                        },
-                      }),
-                      m('div.input-field.col.s6', { style: 'height: 400px; margin: 0px' }, [
-                        m('span', 'File Preview'),
-                        m(
-                          'textarea.materialize-textarea',
-                          { style: 'height: 380px; overflow-y: auto;', disabled: true, id: 'previewArea' },
-                          filePreview
-                        ),
-                      ])]
-                    : overlay
+                  m('div.input-field.col.s6', { style: 'height: 400px; margin: 0px' }, [
+                    m('span', 'File Preview'),
+                    m(
+                      'textarea.materialize-textarea',
+                      { style: 'height: 380px; overflow-y: auto;', disabled: true, id: 'previewArea' },
+                      filePreview
+                    ),
+                  ])]
+                  : overlay
                     ? m(LeafletMap, {
-                        baseLayers,
-                        style: 'width: 100%; height: 400px; margin: 5px;',
-                        overlays: { [asset.alias || asset.filename]: overlay },
-                        visible: [asset.alias || asset.filename],
-                        showScale: { imperial: false },
-                        onLoaded: (map) => {
-                          overlay && map.fitBounds(overlay?.getBounds());
-                        },
-                      })
+                      baseLayers,
+                      style: 'width: 100%; height: 400px; margin: 5px;',
+                      overlays: { [asset.alias || asset.filename]: overlay },
+                      visible: [asset.alias || asset.filename],
+                      showScale: { imperial: false },
+                      onLoaded: (map) => {
+                        overlay && map.fitBounds(overlay?.getBounds());
+                      },
+                    })
                     : filePreview !== ''
-                    ? m('div.input-field.col.s12', { style: 'height: 400px; margin-bottom: 40px' }, [
+                      ? m('div.input-field.col.s12', { style: 'height: 400px; margin-bottom: 40px' }, [
                         m('span', 'File Preview'),
                         m(
                           'textarea.materialize-textarea',
@@ -132,67 +132,67 @@ export const AssetsForm: MeiosisComponent = () => {
                           filePreview
                         ),
                       ])
-                    : undefined,
-                  asset.mimetype && asset.mimetype.indexOf('image/') === 0 && asset.url
-                    ? m(
-                        '.col.s12',
-                        { style: 'margin: 10px;' },
-                        m(MaterialBox, {
-                          src: asset.url + `?${asset.filename}`,
-                          height: 200,
-                        })
-                      )
-                    : undefined,
+                      : undefined,
+                asset.mimetype && asset.mimetype.indexOf('image/') === 0 && asset.url
+                  ? m(
+                    '.col.s12',
+                    { style: 'margin: 10px;' },
+                    m(MaterialBox, {
+                      src: asset.url + `?${asset.filename}`,
+                      height: 200,
+                    })
+                  )
+                  : undefined,
+              ],
+              m(
+                '.row.buttons',
+                m('.col.s12', [
+                  m(Button, {
+                    iconName: 'undo',
+                    class: `green ${hasChanged ? '' : 'disabled'}`,
+                    onclick: () => (asset = deepCopy(original)),
+                  }),
+                  ' ',
+                  m(Button, {
+                    iconName: 'save',
+                    class: `green ${hasChanged ? '' : 'disabled'}`,
+                    onclick: async () => {
+                      await updateAsset(asset, files);
+                      asset = {} as IAsset;
+                      files = undefined;
+                      prev_file_id = -1;
+                    },
+                  }),
+                  ' ',
+                  m(Button, {
+                    modalId: 'delete',
+                    iconName: 'delete',
+                    class: 'red',
+                  }),
+                ])
+              ),
+              m(ModalPanel, {
+                id: 'delete',
+                title: `Do you really want to delete "${asset.alias || asset.filename}?"`,
+                options: { opacity: 0.7 },
+                buttons: [
+                  {
+                    label: 'OK',
+                    onclick: async () => {
+                      await deleteAsset(asset);
+                      asset = {} as IAsset;
+                      files = undefined;
+                      prev_file_id = -1;
+                      overlay = undefined;
+                      filePreview = '';
+                    },
+                  },
+                  {
+                    label: 'Cancel',
+                  },
                 ],
-                m(
-                  '.row.buttons',
-                  m('.col.s12', [
-                    m(Button, {
-                      iconName: 'undo',
-                      class: `green ${hasChanged ? '' : 'disabled'}`,
-                      onclick: () => (asset = deepCopy(original)),
-                    }),
-                    ' ',
-                    m(Button, {
-                      iconName: 'save',
-                      class: `green ${hasChanged ? '' : 'disabled'}`,
-                      onclick: async () => {
-                        await updateAsset(asset, files);
-                        asset = {} as IAsset;
-                        files = undefined;
-                        prev_file_id = -1;
-                      },
-                    }),
-                    ' ',
-                    m(Button, {
-                      modalId: 'delete',
-                      iconName: 'delete',
-                      class: 'red',
-                    }),
-                  ])
-                ),
-                m(ModalPanel, {
-                  id: 'delete',
-                  title: `Do you really want to delete "${asset.alias || asset.filename}?"`,
-                  options: { opacity: 0.7 },
-                  buttons: [
-                    {
-                      label: 'OK',
-                      onclick: async () => {
-                        await deleteAsset(asset);
-                        asset = {} as IAsset;
-                        files = undefined;
-                        prev_file_id = -1;
-                        overlay = undefined;
-                        filePreview = '';
-                      },
-                    },
-                    {
-                      label: 'Cancel',
-                    },
-                  ],
-                }),
-              ]
+              }),
+            ]
             : []
         ),
       ]);

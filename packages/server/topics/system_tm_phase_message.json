@@ -1,8 +1,14 @@
 {
+  "id": "send_chg_phase",
   "label": "Change exercise phase",
   "icon": "flag",
+  "topic": "system_tm_phase_message",
   "ui": [
-    { "id": "messageType", "value": "PHASE_MESSAGE", "type": "none" },
+    {
+      "id": "messageType",
+      "value": "PHASE_MESSAGE",
+      "type": "none"
+    },
     {
       "id": "message",
       "label": " ",
@@ -22,12 +28,30 @@
               "required": true,
               "type": "select",
               "options": [
-                { "id": "INITIALIZATION", "label": "INITIALIZATION" },
-                { "id": "PREPARATION", "label": "PREPARATION" },
-                { "id": "PRE_INCIDENT", "label": "PRE-INCIDENT" },
-                { "id": "INCIDENT", "label": "INCIDENT" },
-                { "id": "POST_INCIDENT", "label": "POST-INCIDENT" },
-                { "id": "PROPER_NAME", "label": "PROPER NAME" }
+                {
+                  "id": "INITIALIZATION",
+                  "label": "INITIALIZATION"
+                },
+                {
+                  "id": "PREPARATION",
+                  "label": "PREPARATION"
+                },
+                {
+                  "id": "PRE_INCIDENT",
+                  "label": "PRE-INCIDENT"
+                },
+                {
+                  "id": "INCIDENT",
+                  "label": "INCIDENT"
+                },
+                {
+                  "id": "POST_INCIDENT",
+                  "label": "POST-INCIDENT"
+                },
+                {
+                  "id": "PROPER_NAME",
+                  "label": "PROPER NAME"
+                }
               ]
             },
             {

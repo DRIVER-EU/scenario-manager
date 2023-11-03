@@ -1,8 +1,14 @@
 {
+  "id": "send_inject",
   "label": "Send inject",
   "icon": "colorize",
+  "topic": "system_request_startinject",
   "ui": [
-    { "id": "messageType", "value": "START_INJECT", "type": "none" },
+    {
+      "id": "messageType",
+      "value": "START_INJECT",
+      "type": "none"
+    },
     {
       "id": "message",
       "label": " ",

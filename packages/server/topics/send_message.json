@@ -1,8 +1,14 @@
 {
+  "id": "send_msg",
   "label": "Send message (JSON)",
   "icon": "attach_file",
+  "default": true,
   "ui": [
-    { "id": "messageType", "value": "SEND_MESSAGE", "type": "none" },
+    {
+      "id": "messageType",
+      "value": "SEND_MESSAGE",
+      "type": "none"
+    },
     {
       "id": "title",
       "label": "Subject",
@@ -28,7 +34,7 @@
               "placeholder": "Pick one",
               "multiple": false,
               "required": true,
-              "type": "&kafkaTopicSet",
+              "type": "select",
               "options": "&kafkaTopics"
             }
           ]
