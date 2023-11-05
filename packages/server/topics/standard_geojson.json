@@ -1,0 +1,1118 @@
+{
+  "id": "send_geojson",
+  "label": "Send GeoJSON map layer",
+  "icon": "map",
+  "topic": "standard_geojson",
+  "default": true,
+  "ui": [
+    {
+      "id": "messageType",
+      "value": "CAP_MESSAGE",
+      "type": "none"
+    },
+    {
+      "id": "message",
+      "label": " ",
+      "className": "col s12",
+      "type": [
+        {
+          "id": "CAP_MESSAGE",
+          "label": " ",
+          "className": "col s12",
+          "type": [
+            {
+              "id": "identifier",
+              "label": "Message ID",
+              "value": "&id",
+              "type": "none"
+            },
+            {
+              "id": "sent",
+              "value": "&ISO",
+              "type": "none"
+            },
+            {
+              "id": "headline",
+              "label": "Headline",
+              "icon": "title",
+              "value": "&title",
+              "className": "col s12 m6",
+              "type": "text"
+            },
+            {
+              "id": "sender",
+              "label": "Sender ID",
+              "icon": "person",
+              "className": "col s12 m6",
+              "placeholder": "Select the sender",
+              "required": true,
+              "type": "select",
+              "options": "&participantEmails"
+            },
+            {
+              "id": "description",
+              "label": "Description",
+              "icon": "note",
+              "type": "textarea"
+            },
+            {
+              "id": "source",
+              "label": "Source",
+              "className": "col s12 m4 l3",
+              "placeholder": "Source of information",
+              "type": "text"
+            },
+            {
+              "id": "status",
+              "label": "Message status",
+              "className": "col s12 m4 l3",
+              "required": true,
+              "value": "Exercise",
+              "type": "select",
+              "options": [
+                {
+                  "id": "Actual",
+                  "label": "Actual"
+                },
+                {
+                  "id": "Exercise",
+                  "label": "Exercise"
+                },
+                {
+                  "id": "System",
+                  "label": "System"
+                },
+                {
+                  "id": "Test",
+                  "label": "Test"
+                },
+                {
+                  "id": "Draft",
+                  "label": "Draft"
+                }
+              ]
+            },
+            {
+              "id": "msgType",
+              "label": "Message type",
+              "className": "col s12 m4 l3",
+              "required": true,
+              "value": "Alert",
+              "type": "select",
+              "options": [
+                {
+                  "id": "Alert",
+                  "label": "Alert"
+                },
+                {
+                  "id": "Update",
+                  "label": "Update"
+                },
+                {
+                  "id": "Cancel",
+                  "label": "Cancel"
+                },
+                {
+                  "id": "Ack",
+                  "label": "Ack"
+                },
+                {
+                  "id": "Error",
+                  "label": "Error"
+                }
+              ]
+            },
+            {
+              "id": "scope",
+              "label": "Scope",
+              "className": "col s12 m4 l3",
+              "required": true,
+              "value": "Public",
+              "type": "select",
+              "options": [
+                {
+                  "id": "Public",
+                  "label": "Public"
+                },
+                {
+                  "id": "Restricted",
+                  "label": "Restricted"
+                },
+                {
+                  "id": "Private",
+                  "label": "Private"
+                }
+              ]
+            },
+            {
+              "id": "restriction",
+              "label": "Restriction",
+              "className": "col s12 m6",
+              "type": "text"
+            },
+            {
+              "id": "references",
+              "label": "Reference IDs",
+              "className": "col s12 m6",
+              "type": "textarea"
+            },
+            {
+              "id": "incidents",
+              "label": "Incident IDs",
+              "className": "col s12 m6",
+              "type": "textarea"
+            },
+            {
+              "id": "addresses",
+              "label": "Addresses",
+              "className": "col s12 m6",
+              "type": "textarea"
+            },
+            {
+              "id": "code",
+              "label": "Handling code",
+              "type": "tag"
+            },
+            {
+              "id": "info",
+              "label": "Information",
+              "value": [
+                {}
+              ],
+              "repeat": true,
+              "pageSize": 1,
+              "type": [
+                {
+                  "id": "headline",
+                  "label": "Headline",
+                  "icon": "title",
+                  "value": "&title",
+                  "className": "col s12 m6",
+                  "type": "text"
+                },
+                {
+                  "id": "sender",
+                  "label": "Sender",
+                  "icon": "person",
+                  "className": "col s12 m6",
+                  "placeholder": "Select the sender",
+                  "required": true,
+                  "type": "select",
+                  "options": "&participantEmails"
+                },
+                {
+                  "id": "description",
+                  "label": "Description",
+                  "icon": "note",
+                  "type": "textarea"
+                },
+                {
+                  "id": "instruction",
+                  "label": "Instruction",
+                  "icon": "note",
+                  "type": "textarea"
+                },
+                {
+                  "id": "web",
+                  "label": "URL",
+                  "className": "col s12 m6",
+                  "icon": "link",
+                  "type": "url"
+                },
+                {
+                  "id": "contact",
+                  "label": "Contact",
+                  "className": "col s12 m6",
+                  "icon": "person",
+                  "type": "text"
+                },
+                {
+                  "id": "event",
+                  "label": "Event",
+                  "className": "col s12 m6",
+                  "required": true,
+                  "type": "textarea"
+                },
+                {
+                  "id": "audience",
+                  "label": "Audience",
+                  "className": "col s12 m6",
+                  "type": "textarea"
+                },
+                {
+                  "id": "category",
+                  "label": "Category",
+                  "required": true,
+                  "multiple": true,
+                  "checkboxClass": "col s4",
+                  "type": "options",
+                  "options": [
+                    {
+                      "id": "Geo",
+                      "label": "Geo"
+                    },
+                    {
+                      "id": "Met",
+                      "label": "Met"
+                    },
+                    {
+                      "id": "Safety",
+                      "label": "Safety"
+                    },
+                    {
+                      "id": "Security",
+                      "label": "Security"
+                    },
+                    {
+                      "id": "Rescue",
+                      "label": "Rescue"
+                    },
+                    {
+                      "id": "Fire",
+                      "label": "Fire"
+                    },
+                    {
+                      "id": "Health",
+                      "label": "Health"
+                    },
+                    {
+                      "id": "Env",
+                      "label": "Env"
+                    },
+                    {
+                      "id": "Transport",
+                      "label": "Transport"
+                    },
+                    {
+                      "id": "Infra",
+                      "label": "Infra"
+                    },
+                    {
+                      "id": "CBRNE",
+                      "label": "CBRNE"
+                    },
+                    {
+                      "id": "Other",
+                      "label": "Other"
+                    }
+                  ]
+                },
+                {
+                  "id": "responseType",
+                  "label": "Response type",
+                  "required": true,
+                  "multiple": true,
+                  "checkboxClass": "col s4",
+                  "type": "options",
+                  "options": [
+                    {
+                      "id": "Shelter",
+                      "label": "Shelter"
+                    },
+                    {
+                      "id": "Evacuate",
+                      "label": "Evacuate"
+                    },
+                    {
+                      "id": "Prepare",
+                      "label": "Prepare"
+                    },
+                    {
+                      "id": "Execute",
+                      "label": "Execute"
+                    },
+                    {
+                      "id": "Avoid",
+                      "label": "Avoid"
+                    },
+                    {
+                      "id": "Monitor",
+                      "label": "Monitor"
+                    },
+                    {
+                      "id": "Assess",
+                      "label": "Assess"
+                    },
+                    {
+                      "id": "AllClear",
+                      "label": "AllClear"
+                    },
+                    {
+                      "id": "None",
+                      "label": "None"
+                    }
+                  ]
+                },
+                {
+                  "id": "language",
+                  "label": "Language",
+                  "type": "select",
+                  "value": "en-us",
+                  "className": "col s12 m4 l3",
+                  "options": [
+                    {
+                      "label": "Afrikaans",
+                      "id": "af"
+                    },
+                    {
+                      "label": "Albanian",
+                      "id": "sq"
+                    },
+                    {
+                      "label": "Arabic (Algeria)",
+                      "id": "ar-dz"
+                    },
+                    {
+                      "label": "Arabic (Bahrain)",
+                      "id": "ar-bh"
+                    },
+                    {
+                      "label": "Arabic (Egypt)",
+                      "id": "ar-eg"
+                    },
+                    {
+                      "label": "Arabic (Iraq)",
+                      "id": "ar-iq"
+                    },
+                    {
+                      "label": "Arabic (Jordan)",
+                      "id": "ar-jo"
+                    },
+                    {
+                      "label": "Arabic (Kuwait)",
+                      "id": "ar-kw"
+                    },
+                    {
+                      "label": "Arabic (Lebanon)",
+                      "id": "ar-lb"
+                    },
+                    {
+                      "label": "Arabic (Libya)",
+                      "id": "ar-ly"
+                    },
+                    {
+                      "label": "Arabic (Morocco)",
+                      "id": "ar-ma"
+                    },
+                    {
+                      "label": "Arabic (Oman)",
+                      "id": "ar-om"
+                    },
+                    {
+                      "label": "Arabic (Qatar)",
+                      "id": "ar-qa"
+                    },
+                    {
+                      "label": "Arabic (Saudi Arabia)",
+                      "id": "ar-sa"
+                    },
+                    {
+                      "label": "Arabic (Syria)",
+                      "id": "ar-sy"
+                    },
+                    {
+                      "label": "Arabic (Tunisia)",
+                      "id": "ar-tn"
+                    },
+                    {
+                      "label": "Arabic (U.A.E.)",
+                      "id": "ar-ae"
+                    },
+                    {
+                      "label": "Arabic (Yemen)",
+                      "id": "ar-ye"
+                    },
+                    {
+                      "label": "Basque",
+                      "id": "eu"
+                    },
+                    {
+                      "label": "Belarusian",
+                      "id": "be"
+                    },
+                    {
+                      "label": "Bulgarian",
+                      "id": "bg"
+                    },
+                    {
+                      "label": "Catalan",
+                      "id": "ca"
+                    },
+                    {
+                      "label": "Chinese (Hong Kong)",
+                      "id": "zh-hk"
+                    },
+                    {
+                      "label": "Chinese (PRC)",
+                      "id": "zh-cn"
+                    },
+                    {
+                      "label": "Chinese (Singapore)",
+                      "id": "zh-sg"
+                    },
+                    {
+                      "label": "Chinese (Taiwan)",
+                      "id": "zh-tw"
+                    },
+                    {
+                      "label": "Croatian",
+                      "id": "hr"
+                    },
+                    {
+                      "label": "Czech",
+                      "id": "cs"
+                    },
+                    {
+                      "label": "Danish",
+                      "id": "da"
+                    },
+                    {
+                      "label": "Dutch (Belgium)",
+                      "id": "nl-be"
+                    },
+                    {
+                      "label": "Dutch (Standard)",
+                      "id": "nl"
+                    },
+                    {
+                      "label": "English",
+                      "id": "en"
+                    },
+                    {
+                      "label": "English (Australia)",
+                      "id": "en-au"
+                    },
+                    {
+                      "label": "English (Belize)",
+                      "id": "en-bz"
+                    },
+                    {
+                      "label": "English (Canada)",
+                      "id": "en-ca"
+                    },
+                    {
+                      "label": "English (Ireland)",
+                      "id": "en-ie"
+                    },
+                    {
+                      "label": "English (Jamaica)",
+                      "id": "en-jm"
+                    },
+                    {
+                      "label": "English (New Zealand)",
+                      "id": "en-nz"
+                    },
+                    {
+                      "label": "English (South Africa)",
+                      "id": "en-za"
+                    },
+                    {
+                      "label": "English (Trinidad)",
+                      "id": "en-tt"
+                    },
+                    {
+                      "label": "English (United Kingdom)",
+                      "id": "en-gb"
+                    },
+                    {
+                      "label": "English (United States)",
+                      "id": "en-us"
+                    },
+                    {
+                      "label": "Estonian",
+                      "id": "et"
+                    },
+                    {
+                      "label": "Faeroese",
+                      "id": "fo"
+                    },
+                    {
+                      "label": "Farsi",
+                      "id": "fa"
+                    },
+                    {
+                      "label": "Finnish",
+                      "id": "fi"
+                    },
+                    {
+                      "label": "French (Belgium)",
+                      "id": "fr-be"
+                    },
+                    {
+                      "label": "French (Canada)",
+                      "id": "fr-ca"
+                    },
+                    {
+                      "label": "French (Luxembourg)",
+                      "id": "fr-lu"
+                    },
+                    {
+                      "label": "French (Standard)",
+                      "id": "fr"
+                    },
+                    {
+                      "label": "French (Switzerland)",
+                      "id": "fr-ch"
+                    },
+                    {
+                      "label": "Gaelic (Scotland)",
+                      "id": "gd"
+                    },
+                    {
+                      "label": "German (Austria)",
+                      "id": "de-at"
+                    },
+                    {
+                      "label": "German (Liechtenstein)",
+                      "id": "de-li"
+                    },
+                    {
+                      "label": "German (Luxembourg)",
+                      "id": "de-lu"
+                    },
+                    {
+                      "label": "German (Standard)",
+                      "id": "de"
+                    },
+                    {
+                      "label": "German (Switzerland)",
+                      "id": "de-ch"
+                    },
+                    {
+                      "label": "Greek",
+                      "id": "el"
+                    },
+                    {
+                      "label": "Hebrew",
+                      "id": "he"
+                    },
+                    {
+                      "label": "Hindi",
+                      "id": "hi"
+                    },
+                    {
+                      "label": "Hungarian",
+                      "id": "hu"
+                    },
+                    {
+                      "label": "Icelandic",
+                      "id": "is"
+                    },
+                    {
+                      "label": "Indonesian",
+                      "id": "id"
+                    },
+                    {
+                      "label": "Irish",
+                      "id": "ga"
+                    },
+                    {
+                      "label": "Italian (Standard)",
+                      "id": "it"
+                    },
+                    {
+                      "label": "Italian (Switzerland)",
+                      "id": "it-ch"
+                    },
+                    {
+                      "label": "Japanese",
+                      "id": "ja"
+                    },
+                    {
+                      "label": "Korean",
+                      "id": "ko"
+                    },
+                    {
+                      "label": "Korean (Johab)",
+                      "id": "ko"
+                    },
+                    {
+                      "label": "Kurdish",
+                      "id": "ku"
+                    },
+                    {
+                      "label": "Latvian",
+                      "id": "lv"
+                    },
+                    {
+                      "label": "Lithuanian",
+                      "id": "lt"
+                    },
+                    {
+                      "label": "Macedonian (FYROM)",
+                      "id": "mk"
+                    },
+                    {
+                      "label": "Malayalam",
+                      "id": "ml"
+                    },
+                    {
+                      "label": "Malaysian",
+                      "id": "ms"
+                    },
+                    {
+                      "label": "Maltese",
+                      "id": "mt"
+                    },
+                    {
+                      "label": "Norwegian",
+                      "id": "no"
+                    },
+                    {
+                      "label": "Norwegian (Bokmål)",
+                      "id": "nb"
+                    },
+                    {
+                      "label": "Norwegian (Nynorsk)",
+                      "id": "nn"
+                    },
+                    {
+                      "label": "Polish",
+                      "id": "pl"
+                    },
+                    {
+                      "label": "Portuguese (Brazil)",
+                      "id": "pt-br"
+                    },
+                    {
+                      "label": "Portuguese (Portugal)",
+                      "id": "pt"
+                    },
+                    {
+                      "label": "Punjabi",
+                      "id": "pa"
+                    },
+                    {
+                      "label": "Rhaeto-Romanic",
+                      "id": "rm"
+                    },
+                    {
+                      "label": "Romanian",
+                      "id": "ro"
+                    },
+                    {
+                      "label": "Romanian (Republic of Moldova)",
+                      "id": "ro-md"
+                    },
+                    {
+                      "label": "Russian",
+                      "id": "ru"
+                    },
+                    {
+                      "label": "Russian (Republic of Moldova)",
+                      "id": "ru-md"
+                    },
+                    {
+                      "label": "Serbian",
+                      "id": "sr"
+                    },
+                    {
+                      "label": "Slovak",
+                      "id": "sk"
+                    },
+                    {
+                      "label": "Slovenian",
+                      "id": "sl"
+                    },
+                    {
+                      "label": "Sorbian",
+                      "id": "sb"
+                    },
+                    {
+                      "label": "Spanish (Argentina)",
+                      "id": "es-ar"
+                    },
+                    {
+                      "label": "Spanish (Bolivia)",
+                      "id": "es-bo"
+                    },
+                    {
+                      "label": "Spanish (Chile)",
+                      "id": "es-cl"
+                    },
+                    {
+                      "label": "Spanish (Colombia)",
+                      "id": "es-co"
+                    },
+                    {
+                      "label": "Spanish (Costa Rica)",
+                      "id": "es-cr"
+                    },
+                    {
+                      "label": "Spanish (Dominican Republic)",
+                      "id": "es-do"
+                    },
+                    {
+                      "label": "Spanish (Ecuador)",
+                      "id": "es-ec"
+                    },
+                    {
+                      "label": "Spanish (El Salvador)",
+                      "id": "es-sv"
+                    },
+                    {
+                      "label": "Spanish (Guatemala)",
+                      "id": "es-gt"
+                    },
+                    {
+                      "label": "Spanish (Honduras)",
+                      "id": "es-hn"
+                    },
+                    {
+                      "label": "Spanish (Mexico)",
+                      "id": "es-mx"
+                    },
+                    {
+                      "label": "Spanish (Nicaragua)",
+                      "id": "es-ni"
+                    },
+                    {
+                      "label": "Spanish (Panama)",
+                      "id": "es-pa"
+                    },
+                    {
+                      "label": "Spanish (Paraguay)",
+                      "id": "es-py"
+                    },
+                    {
+                      "label": "Spanish (Peru)",
+                      "id": "es-pe"
+                    },
+                    {
+                      "label": "Spanish (Puerto Rico)",
+                      "id": "es-pr"
+                    },
+                    {
+                      "label": "Spanish (Spain)",
+                      "id": "es"
+                    },
+                    {
+                      "label": "Spanish (Uruguay)",
+                      "id": "es-uy"
+                    },
+                    {
+                      "label": "Spanish (Venezuela)",
+                      "id": "es-ve"
+                    },
+                    {
+                      "label": "Swedish",
+                      "id": "sv"
+                    },
+                    {
+                      "label": "Swedish (Finland)",
+                      "id": "sv-fi"
+                    },
+                    {
+                      "label": "Thai",
+                      "id": "th"
+                    },
+                    {
+                      "label": "Tsonga",
+                      "id": "ts"
+                    },
+                    {
+                      "label": "Tswana",
+                      "id": "tn"
+                    },
+                    {
+                      "label": "Turkish",
+                      "id": "tr"
+                    },
+                    {
+                      "label": "Ukrainian",
+                      "id": "ua"
+                    },
+                    {
+                      "label": "Urdu",
+                      "id": "ur"
+                    },
+                    {
+                      "label": "Venda",
+                      "id": "ve"
+                    },
+                    {
+                      "label": "Vietnamese",
+                      "id": "vi"
+                    },
+                    {
+                      "label": "Welsh",
+                      "id": "cy"
+                    },
+                    {
+                      "label": "Xhosa",
+                      "id": "xh"
+                    },
+                    {
+                      "label": "Yiddish",
+                      "id": "ji"
+                    },
+                    {
+                      "label": "Zulu",
+                      "id": "zu"
+                    }
+                  ]
+                },
+                {
+                  "id": "urgency",
+                  "label": "Urgency",
+                  "className": "col s12 m4 l3",
+                  "required": true,
+                  "value": "Immediate",
+                  "type": "select",
+                  "options": [
+                    {
+                      "id": "Immediate",
+                      "label": "Immediate"
+                    },
+                    {
+                      "id": "Expected",
+                      "label": "Expected"
+                    },
+                    {
+                      "id": "Future",
+                      "label": "Future"
+                    },
+                    {
+                      "id": "Past",
+                      "label": "Past"
+                    },
+                    {
+                      "id": "Unknown",
+                      "label": "Unknown"
+                    }
+                  ]
+                },
+                {
+                  "id": "certainty",
+                  "label": "Certainty",
+                  "className": "col s12 m4 l3",
+                  "required": true,
+                  "value": "Observed",
+                  "type": "select",
+                  "options": [
+                    {
+                      "id": "Observed",
+                      "label": "Observed"
+                    },
+                    {
+                      "id": "Likely",
+                      "label": "Likely"
+                    },
+                    {
+                      "id": "Possible",
+                      "label": "Possible"
+                    },
+                    {
+                      "id": "Unlikely",
+                      "label": "Unlikely"
+                    },
+                    {
+                      "id": "Unknown",
+                      "label": "Unknown"
+                    }
+                  ]
+                },
+                {
+                  "id": "severity",
+                  "label": "Severity",
+                  "className": "col s12 m4 l3",
+                  "required": true,
+                  "value": "Moderate",
+                  "type": "select",
+                  "options": [
+                    {
+                      "id": "Extreme",
+                      "label": "Extreme"
+                    },
+                    {
+                      "id": "Severe",
+                      "label": "Severe"
+                    },
+                    {
+                      "id": "Moderate",
+                      "label": "Moderate"
+                    },
+                    {
+                      "id": "Minor",
+                      "label": "Minor"
+                    },
+                    {
+                      "id": "Unknown",
+                      "label": "Unknown"
+                    }
+                  ]
+                },
+                {
+                  "id": "eventCode",
+                  "label": "Event code",
+                  "repeat": true,
+                  "pageSize": 10,
+                  "type": [
+                    {
+                      "id": "valueName",
+                      "label": "Name",
+                      "className": "col s12 m6",
+                      "type": "text"
+                    },
+                    {
+                      "id": "value",
+                      "label": "Value",
+                      "className": "col s12 m6",
+                      "type": "text"
+                    }
+                  ]
+                },
+                {
+                  "id": "parameter",
+                  "label": "Parameter",
+                  "repeat": true,
+                  "pageSize": 10,
+                  "type": [
+                    {
+                      "id": "valueName",
+                      "label": "Name",
+                      "className": "col s12 m6",
+                      "type": "text"
+                    },
+                    {
+                      "id": "value",
+                      "label": "Value",
+                      "className": "col s12 m6",
+                      "type": "text"
+                    }
+                  ]
+                },
+                {
+                  "id": "effective",
+                  "label": "Effective",
+                  "className": "col s12 m4",
+                  "type": "datetime"
+                },
+                {
+                  "id": "onset",
+                  "label": "Onset",
+                  "className": "col s12 m4",
+                  "type": "datetime"
+                },
+                {
+                  "id": "expires",
+                  "label": "Expires",
+                  "className": "col s12 m4",
+                  "type": "datetime"
+                },
+                {
+                  "id": "area",
+                  "label": "Area",
+                  "repeat": true,
+                  "pageSize": 1,
+                  "type": [
+                    {
+                      "id": "areaDesc",
+                      "label": "Description",
+                      "type": "text"
+                    },
+                    {
+                      "id": "polygon",
+                      "label": "Polygons",
+                      "type": "tags",
+                      "description": "The geographic polygon is represented by a whitespace-delimited list of [WGS 84] coordinate pairs. A minimum of 4 coordinates must be present, and the first and last pair must be the same."
+                    },
+                    {
+                      "id": "circle",
+                      "label": "Cirles",
+                      "type": "tags",
+                      "description": "The circular area is represented by a central point given as a [WGS 84] coordinate pair followed by a space character and a radius value in kilometers."
+                    },
+                    {
+                      "id": "geocode",
+                      "label": "Geo-codes",
+                      "repeat": true,
+                      "pageSize": 1,
+                      "type": [
+                        {
+                          "id": "valueName",
+                          "label": "Type of area, e.g. ZIP",
+                          "className": "col s6",
+                          "type": "text"
+                        },
+                        {
+                          "id": "value",
+                          "label": "Value, e.g. ZIP-CODE",
+                          "className": "col s6",
+                          "type": "text"
+                        }
+                      ],
+                      "description": "Any geographically-based code to describe a message target area"
+                    },
+                    {
+                      "id": "altitude",
+                      "label": "Altitude",
+                      "type": "number",
+                      "description": "The altitude measure is in FEET above mean sea level per the [WGS 84] datum",
+                      "className": "col s12 m6"
+                    },
+                    {
+                      "id": "ceiling",
+                      "label": "Ceiling",
+                      "type": "number",
+                      "show": "altitude",
+                      "description": "The ceiling measure is in FEET above mean sea level per the [WGS 84] datum.",
+                      "className": "col s12 m6"
+                    }
+                  ]
+                },
+                {
+                  "id": "resource",
+                  "label": "Multi-media resources",
+                  "repeat": true,
+                  "pageSize": 1,
+                  "type": [
+                    {
+                      "id": "resourceDesc",
+                      "label": "Description",
+                      "type": "text"
+                    },
+                    {
+                      "id": "mimeType",
+                      "label": "MIME type",
+                      "type": "text",
+                      "className": "col s12 m4"
+                    },
+                    {
+                      "id": "uri",
+                      "label": "URL/Link",
+                      "type": "url",
+                      "className": "col s12 m4"
+                    },
+                    {
+                      "id": "derefUri",
+                      "label": "Deref URL/Link",
+                      "type": "url",
+                      "className": "col s12 m4"
+                    },
+                    {
+                      "id": "size",
+                      "label": "Size",
+                      "type": "text",
+                      "className": "col s12 m6"
+                    },
+                    {
+                      "id": "digest",
+                      "label": "Digest",
+                      "type": "text",
+                      "className": "col s12 m6"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "update": {
+    "description": "&message.CAP_MESSAGE.description",
+    "title": "&message.CAP_MESSAGE.headline"
+  }
+}

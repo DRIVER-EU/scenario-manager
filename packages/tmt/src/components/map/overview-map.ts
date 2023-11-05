@@ -40,9 +40,9 @@ export const OverviewMap: MeiosisComponent = () => {
         return acc;
       }, {} as { [key: string]: GeoJSON });
       getInjects(trial)
-        .filter((i) => i.topic === MessageType.REQUEST_UNIT_MOVE || i.topic === MessageType.SET_AFFECTED_AREA)
+        .filter((i) => i.templateId === MessageType.REQUEST_UNIT_MOVE || i.templateId === MessageType.SET_AFFECTED_AREA)
         .forEach((i) => {
-          switch (i.topic) {
+          switch (i.templateId) {
             case MessageType.REQUEST_UNIT_MOVE:
               const ut = getMessage<IRequestMove>(i, MessageType.REQUEST_UNIT_MOVE);
               const route = ut.waypoints ? routeToGeoJSON(ut.waypoints) : undefined;
@@ -63,17 +63,17 @@ export const OverviewMap: MeiosisComponent = () => {
     view: () =>
       overlays
         ? m(
-            'div',
-            m(LeafletMap, {
-              baseLayers,
-              autoFit: true,
-              style: 'width: 100%; height: 90vh; margin: 0;',
-              overlays,
-              // onLoaded: (actualMap) => (map = actualMap),
-              visible: overlays ? Object.keys(overlays) : undefined,
-              showScale: { imperial: false },
-            })
-          )
+          'div',
+          m(LeafletMap, {
+            baseLayers,
+            autoFit: true,
+            style: 'width: 100%; height: 90vh; margin: 0;',
+            overlays,
+            // onLoaded: (actualMap) => (map = actualMap),
+            visible: overlays ? Object.keys(overlays) : undefined,
+            showScale: { imperial: false },
+          })
+        )
         : m('p', 'No assets found.'),
   };
 };

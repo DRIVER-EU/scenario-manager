@@ -162,7 +162,7 @@ export const isInt = (n: number | string | boolean) => Number(n) === n && n % 1 
 export const isFloat = (n: number | string | boolean) => Number(n) === n && n % 1 !== 0;
 
 /** Convert a GeoJSON to an AVRO representation */
-export const geojsonToAvro = (geojson?: FeatureCollection) => {
+export const geojsonToAvro = (geojson?: FeatureCollection, namespace = 'eu.driver.model.geojson') => {
   if (!geojson) {
     return;
   }
@@ -175,7 +175,7 @@ export const geojsonToAvro = (geojson?: FeatureCollection) => {
       const avroFeature = {} as { [key: string]: any };
       if (f && f.geometry && Object.keys(f.geometry).length > 1) {
         avroFeature.geometry = {
-          [`eu.driver.model.geojson.${f.geometry.type}`]: deepCopy(f.geometry),
+          [`${namespace}.${f.geometry.type}`]: deepCopy(f.geometry),
         } as { [key: string]: any };
       }
       avroFeature.properties = mapToAvro(f.properties);
@@ -187,20 +187,19 @@ export const geojsonToAvro = (geojson?: FeatureCollection) => {
 
 /** Convert a flat object to an AVRO representation, where all numbers will either be int or double. */
 export const mapToAvro = (props: { [key: string]: any } | null) => {
-  if (props && Object.keys(props).length > 0) {
-    return Object.keys(props).reduce((acc, key) => {
-      const val = props[key];
-      acc[key] = {} as { [key: string]: any };
-      if (typeof val === 'object') {
-        acc[key].string = JSON.stringify(val);
-      } else if (typeof val === 'number') {
-        acc[key][isInt(val) ? 'int' : 'double'] = val;
-      } else {
-        acc[key][typeof val] = val;
-      }
-      return acc;
-    }, {} as { [key: string]: any });
-  }
+  if (!props || Object.keys(props).length === 0) return {};
+  return Object.keys(props).reduce((acc, key) => {
+    const val = props[key];
+    acc[key] = {} as { [key: string]: any };
+    if (typeof val === 'object') {
+      acc[key].string = JSON.stringify(val);
+    } else if (typeof val === 'number') {
+      acc[key][isInt(val) ? 'int' : 'double'] = val;
+    } else {
+      acc[key][typeof val] = val;
+    }
+    return acc;
+  }, {} as { [key: string]: any });
 };
 
 /**

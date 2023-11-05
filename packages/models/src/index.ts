@@ -67,3 +67,16 @@ export {
   IMultiPoint,
   IMultiPolygon,
 } from 'test-bed-schemas';
+/**
+ * Straight – move in a direct line to all waypoints without taking into account
+ * the terrain; CrossCountry – move directly to all waypoints without taking into
+ * account the roads; OnlyRoads – stay on the roads to get to the closest point
+ * to the waypoints that is still on a road; RoadsAndCrossCountry – move to the
+ * waypoints by taking into account the roads; it is allowed to go off the road
+ */
+export enum MoveType {
+  Straight = "Straight",
+  CrossCountry = "CrossCountry",
+  OnlyRoads = "OnlyRoads",
+  RoadsAndCrossCountry = "RoadsAndCrossCountry"
+}

@@ -268,6 +268,7 @@ export class TrialRepository {
       if (!db) {
         return reject(`Error, no database with id ${id} found!`);
       }
+      console.log(`Trying to access ${assetId} from DB with id ${id}...`)
       db.get(
         `SELECT id, alias, mimetype, filename, data FROM ${ASSETS} WHERE id=?`,
         assetId,

@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { TextArea, TextInput, Select, FlatButton, ModalPanel, MapEditor } from 'mithril-materialized';
+import { TextInput, Select, FlatButton, ModalPanel, TextArea } from 'mithril-materialized';
 import { getMessage, MessageType, IGeoJsonMessage } from 'trial-manager-models';
 import { isJSON, getActiveTrialInfo, baseLayers } from '../../utils';
 import { UploadAsset } from '../ui';
@@ -28,10 +28,6 @@ export const GeoJsonMessageForm: MessageComponent = () => {
         gm.assetId = assetId;
         updateInject(inject);
       }
-      const subjects = [] as Array<{ id: string; label: string }>; // getMessageSubjects(trial, MessageType.GEOJSON_MESSAGE);
-      if (!gm.subjectId && subjects.length === 1) {
-        gm.subjectId = subjects[0].id;
-      }
 
       const availableAssets = assets
         .filter((a) => a.url && isJSON(a.filename))
@@ -49,33 +45,18 @@ export const GeoJsonMessageForm: MessageComponent = () => {
 
       return [
         m('.row', [
-          m(
-            '.col.s12.m4',
-            m(TextInput, {
-              disabled,
-              id: 'title',
-              isMandatory: true,
-              initialValue: inject.title,
-              onchange: (v: string) => {
-                inject.title = v;
-                updateInject(inject);
-              },
-              label: 'Title',
-              iconName: 'title',
-            })
-          ),
-          m(Select, {
-            disabled: disabled || subjects.length === 0,
-            placeholder: subjects.length === 0 ? 'First create a subject' : 'Select a subject',
-            className: 'col s6 m3',
-            label: 'Subject',
+          m(TextInput, {
+            disabled,
+            id: 'title',
             isMandatory: true,
-            options: subjects,
-            checkedId: gm.subjectId,
-            onchange: (v) => {
-              gm.subjectId = v[0] as string;
+            className: 'col s12 m6',
+            initialValue: inject.title,
+            onchange: (v: string) => {
+              inject.title = v;
               updateInject(inject);
             },
+            label: 'Title',
+            iconName: 'title',
           }),
           m(Select, {
             disabled,
@@ -99,65 +80,83 @@ export const GeoJsonMessageForm: MessageComponent = () => {
             modalId: 'upload',
             iconName: 'file_upload',
           }),
-        ]),
-        m('.row', [
+          m(TextInput, {
+            disabled,
+            id: 'id',
+            label: 'Layer identifier',
+            iconName: 'anchor',
+            helperText: 'Unique identifiers create new layers',
+            isMandatory: true,
+            className: 'col s12 m4',
+            initialValue: gm.layerId,
+            onchange: (v: string) => {
+              gm.layerId = v;
+              updateInject(inject);
+            },
+          }),
+          m(TextInput, {
+            disabled,
+            id: 'layerName',
+            label: 'Layer name',
+            iconName: 'label',
+            helperText: 'Used in map legend',
+            isMandatory: true,
+            className: 'col s12 m4',
+            initialValue: gm.layerName,
+            onchange: (v: string) => {
+              gm.layerName = v;
+              updateInject(inject);
+            },
+          }),
+          m(TextInput, {
+            disabled,
+            id: 'layerStyle',
+            label: 'Layer style',
+            iconName: 'style',
+            helperText: 'Determines visual appearance',
+            isMandatory: true,
+            className: 'col s12 m4',
+            initialValue: gm.layerStyle,
+            onchange: (v: string) => {
+              gm.layerStyle = v;
+              updateInject(inject);
+            },
+          }),
           m(TextArea, {
             disabled,
             id: 'desc',
-            className: 'col s10 m11',
-            initialValue: inject.description,
-            onchange: (v: string) => {
-              inject.description = v;
-              updateInject(inject);
-            },
             label: 'Description',
-            iconName: 'short_text',
-          }),
-          m(FlatButton, {
-            disabled,
-            className: 'input-field col s2 m1',
-            iconName: gm.properties ? 'delete' : 'add',
-            onclick: () => {
-              if (gm.properties) {
-                delete gm.properties;
-              } else {
-                gm.properties = {};
-              }
+            iconName: 'note',
+            className: 'col s12',
+            initialValue: gm.layerDesc,
+            onchange: (v: string) => {
+              gm.layerDesc = inject.description = v;
               updateInject(inject);
             },
           }),
         ]),
-        gm.properties
-          ? m(MapEditor, {
-              disabled,
-              label: 'Properties',
-              iconName: 'dns',
-              disallowArrays: true,
-              properties: gm.properties,
-            })
-          : undefined,
         [
           overlays
             ? m(LeafletMap, {
-                key: inject.id,
-                baseLayers,
-                style: 'width: 100%; height: 400px; margin: 10px;',
-                autoFit: true,
-                overlays,
-                visible: gm && gm.alias ? [gm.alias] : undefined,
-                // editable: ['overlay'],
-                showScale: { imperial: false },
-                // onLayerEdited: (f: FeatureGroup) => {
-                //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
-                //   const r = geoJSONtoRoute(geojson);
-                //   if (r) {
-                //     ut.route = r;
-                //     if (onChange) {
-                //       onChange();
-                //     }
-                //   }
-                // },
-              } as ILeafletMap)
+              key: inject.id,
+              baseLayers,
+              style: 'width: 100%; height: 400px; margin: 10px;',
+              autoFit: true,
+              overlays,
+              visible: gm && gm.alias ? [gm.alias] : undefined,
+              // editable: ['overlay'],
+              showScale: { imperial: false },
+              // onLayerEdited: (f: FeatureGroup) => {
+              //   const geojson = f.toGeoJSON() as FeatureCollection<LineString>;
+              //   const r = geoJSONtoRoute(geojson);
+              //   if (r) {
+              //     ut.route = r;
+              //     if (onChange) {
+              //       onChange();
+              //     }
+              //   }
+              // },
+            } as ILeafletMap)
             : undefined,
         ],
         m(ModalPanel, {

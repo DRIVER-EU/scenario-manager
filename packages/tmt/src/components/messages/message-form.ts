@@ -10,7 +10,7 @@ import {
   MessageType,
   UserRole,
 } from 'trial-manager-models';
-import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm } from '.';
+import { ScenarioForm, DefaultMessageForm, RolePlayerMessageForm, RequestUnitMoveForm, GeoJsonMessageForm } from '.';
 import { MessageComponent } from '../../services';
 import { getInject, getPath, getUsersByRole, isJSON, baseLayers, getResources } from '../../utils';
 import { UIForm, LayoutForm } from 'mithril-ui-form';
@@ -106,9 +106,16 @@ export const MessageForm: MessageComponent = () => {
       const { editing = true } = options || {};
 
       console.log(JSON.stringify(inject, null, 2))
-      if (inject && inject.type === InjectType.INJECT && inject.selectedMessage && inject.selectedMessage.templateId === MessageType.ROLE_PLAYER_MESSAGE) {
+      if (inject && inject.type === InjectType.INJECT) {
         const sao = { state, actions, options };
-        return isExecuting && !editing ? m(RolePlayerMessageView, sao) : m(RolePlayerMessageForm, sao);
+        switch (inject.templateId) {
+          case MessageType.ROLE_PLAYER_MESSAGE:
+            return isExecuting && !editing ? m(RolePlayerMessageView, sao) : m(RolePlayerMessageForm, sao);
+          case MessageType.REQUEST_UNIT_MOVE:
+            return m(RequestUnitMoveForm, sao);
+          case MessageType.GEOJSON_MESSAGE:
+            return m(GeoJsonMessageForm, sao);
+        }
       }
 
       if (inject && inject.message && inject.message.SEND_FILE) {

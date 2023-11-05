@@ -178,29 +178,43 @@ export class ExecutionService implements IExecutionService {
   }
 
   private async sendGeoJSON(i: IInject) {
+    const warn = (msg: string) => `Could not send message (${i.title}): ${msg}!`;
+
     const message = getMessage<IGeoJsonMessage>(i, MessageType.GEOJSON_MESSAGE);
-    const { kafkaTopic } = i;
-    // const topic = this.findTopic(
-    //   MessageType.GEOJSON_MESSAGE,
-    //   message.subjectId,
-    // );
+    if (!message) {
+      return warn(`No ${MessageType.GEOJSON_MESSAGE} message data`)
+    }
+
+    const { assetId, alias, ...params } = message;
+    const { kafkaTopic, selectedMessage: { namespace } = {} } = i;
+
+    if (message.layerId === 'CLEAR_ALL_COLLECTIONS') {
+      console.log('CLEARING MAP LAYERS');
+      const geojson = geojsonToAvro({
+        type: 'FeatureCollection',
+        features: [{
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [0, 0] },
+          properties: [],
+        }],
+      }, namespace);
+      this.kafkaService.sendMessage({ ...geojson, layerId: 'CLEAR_ALL_COLLECTIONS' }, kafkaTopic);
+      return;
+    }
+
     if (!kafkaTopic) {
-      return console.warn(
-        `Could not send message (${i.title}) - no topic configured`,
-      );
+      return warn('No topic configured!');
     }
-    const asset = await this.trialService.getAsset(
-      this.trial.id,
-      message.assetId,
-    );
+    const asset = await this.trialService.getAsset(this.trial.id, assetId);
     if (!asset) {
-      return console.warn(`Could not open asset with ID (${message.assetId})`);
+      return warn(`Could not open asset with ID (${assetId}: ${alias})`);
     }
-    const geojson = geojsonToAvro(JSON.parse(asset.data.toString()));
+    const geojson = geojsonToAvro(JSON.parse(asset.data.toString()), namespace);
     const msg = message.properties
       ? { geojson, properties: mapToAvro(message.properties) }
       : geojson;
-    this.kafkaService.sendMessage(msg, kafkaTopic);
+    const avroMsg = (Object.keys(params).length === 0) ? msg : { ...msg, ...params };
+    this.kafkaService.sendMessage(avroMsg, kafkaTopic);
   }
 
   private async sendLCMS(i: IInject) {

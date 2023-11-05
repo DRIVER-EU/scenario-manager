@@ -1,13 +1,13 @@
 {
-  "id": "send_clr_billboard",
-  "label": "Clear billboard",
-  "icon": "subtitles_off",
-  "topic": "system_tm_info_msg",
+  "id": "send_clr_geojson",
+  "label": "Clear map",
+  "icon": "clear",
+  "topic": "standard_geojson",
   "default": true,
   "ui": [
     {
       "id": "messageType",
-      "value": "INFO_MESSAGE",
+      "value": "GEOJSON_MESSAGE",
       "type": "none"
     },
     {
@@ -16,7 +16,7 @@
       "className": "col s12",
       "type": [
         {
-          "id": "INFO_MESSAGE",
+          "id": "GEOJSON_MESSAGE",
           "label": " ",
           "className": "col s12",
           "type": [
@@ -25,6 +25,7 @@
               "label": "Title",
               "required": true,
               "icon": "title",
+              "value": "Clear map",
               "className": "col s12",
               "type": "text"
             },
@@ -37,10 +38,8 @@
               "type": "textarea"
             },
             {
-              "id": "type",
-              "label": "Message type",
-              "icon": "message",
-              "value": "CLEAR",
+              "id": "layerId",
+              "value": "CLEAR_ALL_COLLECTIONS",
               "type": "none"
             }
           ]

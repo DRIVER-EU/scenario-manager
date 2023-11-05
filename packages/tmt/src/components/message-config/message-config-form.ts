@@ -260,7 +260,7 @@ export const MessageConfigForm: MeiosisComponent = () => {
                       id: 'namespace',
                       className: 'col s6 m3',
                       isMandatory: true,
-                      initialValue: message.namespace,
+                      initialValue: message.namespace || "eu.driver.model.geojson",
                       onchange: (v) => (message.namespace = v),
                       label: 'Namespace',
                     }),

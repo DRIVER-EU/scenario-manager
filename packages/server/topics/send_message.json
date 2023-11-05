@@ -17,6 +17,12 @@
       "className": "col s6"
     },
     {
+      "id": "description",
+      "label": "Description",
+      "icon": "note",
+      "type": "textarea"
+    },
+    {
       "id": "message",
       "label": " ",
       "className": "col s6",
@@ -40,12 +46,6 @@
           ]
         }
       ]
-    },
-    {
-      "id": "description",
-      "label": "Description",
-      "icon": "note",
-      "type": "textarea"
     }
   ]
 }

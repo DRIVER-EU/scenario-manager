@@ -1,6 +1,6 @@
 import m from 'mithril';
-import { TextArea, TextInput } from 'mithril-materialized';
-import { getMessage, IInject, MessageType, IRequestMove, ILocation } from 'trial-manager-models';
+import { ISelectOptions, Select, TextArea, TextInput } from 'mithril-materialized';
+import { getMessage, IInject, MessageType, IRequestMove, MoveType, ILocation } from 'trial-manager-models';
 import { LeafletMap } from 'mithril-leaflet';
 import { LineString, FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import { geoJSON, GeoJSON } from 'leaflet';
@@ -15,15 +15,20 @@ export const RequestUnitMoveForm: MessageComponent = () => {
     inject.title = newTitle;
   };
 
-  const moveUnitLayer = 'Move unit';
+  const moveUnitLayer = 'MOVE_UNIT';
 
   return {
-    oninit: async ({ attrs: { state } }) => {
+    oninit: async ({ attrs: {
+      state,
+      actions: { updateInject }
+    } }) => {
       const { owner, assets } = state.app;
       const { inject } = getActiveTrialInfo(state);
       if (!inject) return;
-      const ut = getMessage(inject, MessageType.REQUEST_UNIT_MOVE) as IRequestMove;
-      ut.applicant = owner;
+      const ut = getMessage<IRequestMove>(inject, MessageType.REQUEST_UNIT_MOVE);
+      if (!ut.applicant) ut.applicant = owner;
+      if (!ut.moveType) ut.moveType = MoveType.OnlyRoads;
+      if (!ut.waypoints) ut.waypoints = [];
       const route = ut.waypoints ? routeToGeoJSON(ut.waypoints) : undefined;
       overlays[moveUnitLayer] = route || geoJSON();
       const jsonAssets = assets.filter((a) => a.url && isJSON(a.filename));
@@ -33,6 +38,7 @@ export const RequestUnitMoveForm: MessageComponent = () => {
           overlays[asset.alias || asset.filename] = geoJSON(result);
         }
       }
+      updateInject(inject);
     },
     view: ({
       attrs: {
@@ -56,7 +62,7 @@ export const RequestUnitMoveForm: MessageComponent = () => {
       return [
         m(TextInput, {
           disabled,
-          className: 'col s6 m4',
+          className: 'col s6',
           label: 'Unit ID',
           iconName: 'title',
           isMandatory: true,
@@ -70,8 +76,8 @@ export const RequestUnitMoveForm: MessageComponent = () => {
         }),
         m(TextInput, {
           disabled,
-          className: 'col s6 m4',
-          label: 'Unit Type',
+          className: 'col s6',
+          label: 'Unit type',
           iconName: 'directions_car',
           isMandatory: false,
           // ('DEFAULT_BIKETYPE', 'DEFAULT_PEDTYPE', 'DEFAULT_VEHTYPE', 'bike_bicycle', 'bus_bus', 'emergency',
@@ -87,9 +93,24 @@ export const RequestUnitMoveForm: MessageComponent = () => {
             updateInject(inject);
           },
         }),
+        m(Select, {
+          label: 'Move type',
+          initialValue: ut.moveType,
+          iconName: 'add_road',
+          className: 'col s6',
+          options: [
+            { id: MoveType.OnlyRoads, label: 'Only roads' },
+            { id: MoveType.CrossCountry, label: 'Cross country' },
+            { id: MoveType.RoadsAndCrossCountry, label: 'Roads and cross country' },
+            { id: MoveType.Straight, label: 'Straight line' },
+          ],
+          onchange: v => {
+            ut.moveType = v[0] as MoveType;
+          }
+        } as ISelectOptions<string>),
         m(TextInput, {
           disabled,
-          className: 'col s6 m4',
+          className: 'col s6',
           label: 'Destination',
           iconName: 'store',
           isMandatory: true,
@@ -102,10 +123,10 @@ export const RequestUnitMoveForm: MessageComponent = () => {
           },
         }),
         m(LeafletMap, {
-          style: 'width: 100%; height: 400px; margin-top: 10px;',
           baseLayers,
+          autoFit: ut.waypoints && ut.waypoints.length > 0,
+          style: 'width: 100%; height: 400px; margin-top: 10px;',
           overlays,
-          autoFit: true,
           visible: [moveUnitLayer],
           editable: [moveUnitLayer],
           showScale: { imperial: false },
