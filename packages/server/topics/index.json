@@ -9,7 +9,6 @@
     "simulation_entity_post_clear.json",
     "simulation_request_startinject.json",
     "standard_cap.json",
-    "standard_geojson.json",
     "standard_geojson_clear.json",
     "system_request_change_of_trial_stage.json",
     "system_tm_info_msg.json",
