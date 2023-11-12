@@ -11,7 +11,7 @@ import {
   UserRole,
   ITrial,
 } from 'trial-manager-models';
-import { Select, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
+import { Select, ISelectOptions, NumberInput, IInputOption, TimePicker } from 'mithril-materialized';
 import { findPreviousInjects, getInject, getInjects, getUsersByRole, padLeft } from '../../utils';
 import { MeiosisComponent } from '../../services';
 
@@ -132,15 +132,16 @@ export const InjectConditions: MeiosisComponent = () => {
             onchange: (v) => {
               if (
                 inject.condition &&
-                inject.condition.type === InjectConditionType.AT_TIME &&
-                (v[0] as InjectConditionType) !== InjectConditionType.AT_TIME
+                (v[0] === InjectConditionType.IMMEDIATELY ||
+                  (inject.condition.type === InjectConditionType.AT_TIME && v[0] !== InjectConditionType.AT_TIME))
               ) {
+                console.log('RESET DELAY TO 0');
                 inject.condition.delay = 0;
               }
               inject.condition!.type = v[0] as InjectConditionType;
               updateInject(inject);
             },
-          }),
+          } as ISelectOptions<InjectConditionType>),
           type === InjectConditionType.MANUALLY && [
             m('span.inline', 'by'),
             m(Select, {
