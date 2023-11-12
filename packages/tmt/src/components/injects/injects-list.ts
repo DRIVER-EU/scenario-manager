@@ -91,9 +91,9 @@ export const InjectsList: MeiosisComponent = () => {
           },
           onCreate: (ti) => selectInject(ti as IInject),
           onBeforeUpdate: (ti, _, newParent) => {
+            if (!newParent) return;
             const src = ti as IInject;
             const tgt = newParent as IInject;
-
             if (src.id === tgt.id) return false; // No drop on oneself
 
             let checkTgtIsNoChildOfSrc: IInject | undefined = tgt;
@@ -195,6 +195,7 @@ export const InjectsList: MeiosisComponent = () => {
                       id,
                       title: 'New scenario',
                       type: InjectType.SCENARIO,
+                      parentId: undefined,
                     } as IScenario;
                     const newStoryline = {
                       id: uniqueId(),
