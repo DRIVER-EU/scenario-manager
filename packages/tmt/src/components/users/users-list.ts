@@ -52,7 +52,7 @@ const UsersList: MeiosisComponent = () => {
                 const user = {
                   id: uniqueId(),
                   name: 'New user',
-                  roles: [UserRole.STAKEHOLDER],
+                  roles: [UserRole.PARTICIPANT],
                 } as IPerson;
                 await createUser(user);
               },
