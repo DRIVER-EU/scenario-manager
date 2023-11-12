@@ -2,7 +2,7 @@
   "id": "send_email",
   "label": "Send email",
   "icon": "mail",
-  "topic": "simulation_entity_post",
+  "kafkaTopic": "simulation_entity_post",
   "default": true,
   "ui": [
     {

@@ -2,7 +2,7 @@
   "id": "send_chg_phase",
   "label": "Change exercise phase",
   "icon": "flag",
-  "topic": "system_tm_phase_message",
+  "kafkaTopic": "system_tm_phase_message",
   "ui": [
     {
       "id": "messageType",

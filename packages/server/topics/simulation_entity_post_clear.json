@@ -2,7 +2,7 @@
   "id": "send_clear_email",
   "label": "Clear email",
   "icon": "clear",
-  "topic": "simulation_entity_post",
+  "kafkaTopic": "simulation_entity_post",
   "default": true,
   "ui": [
     {

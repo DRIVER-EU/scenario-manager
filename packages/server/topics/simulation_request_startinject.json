@@ -2,7 +2,7 @@
   "id": "send_inject",
   "label": "Send inject",
   "icon": "colorize",
-  "topic": "system_request_startinject",
+  "kafkaTopic": "system_request_startinject",
   "ui": [
     {
       "id": "messageType",

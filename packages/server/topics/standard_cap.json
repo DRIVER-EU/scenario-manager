@@ -2,7 +2,7 @@
   "id": "send_cap",
   "label": "Send CAP message",
   "icon": "crisis_alert",
-  "topic": "standard_cap",
+  "kafkaTopic": "standard_cap",
   "default": true,
   "ui": [
     {

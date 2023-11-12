@@ -2,7 +2,7 @@
   "id": "send_clr_billboard",
   "label": "Clear billboard",
   "icon": "subtitles_off",
-  "topic": "system_tm_info_msg",
+  "kafkaTopic": "system_tm_info_msg",
   "default": true,
   "ui": [
     {

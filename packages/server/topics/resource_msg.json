@@ -1,7 +1,7 @@
 {
   "id": "send_resource_msg",
   "label": "Send resource message",
-  "topic": "resource",
+  "kafkaTopic": "resource",
   "ui": [
     {
       "id": "messageType",

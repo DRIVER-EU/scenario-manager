@@ -2,7 +2,7 @@
   "id": "send_clr_geojson",
   "label": "Clear map",
   "icon": "clear",
-  "topic": "standard_geojson",
+  "kafkaTopic": "standard_geojson",
   "default": true,
   "ui": [
     {
@@ -48,6 +48,6 @@
     }
   ],
   "update": {
-    "title": "&message.INFO_MESSAGE.title"
+    "title": "&message.GEOJSON_MESSAGE.title"
   }
 }

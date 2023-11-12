@@ -1,7 +1,7 @@
 {
   "id": "send_inventory_request",
   "label": "Send inventory request",
-  "topic": "request",
+  "kafkaTopic": "request",
   "ui": [
     {
       "id": "messageType",
