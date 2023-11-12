@@ -25,13 +25,13 @@ export const MessageConfigForm: MeiosisComponent = () => {
         if (isGuiTemplate(val)) {
           val.label = message.name;
           val.icon = message.iconName;
-          val.topic = message.kafkaTopic;
+          val.kafkaTopic = message.kafkaTopic;
         } else if (Array.isArray(val)) {
           val = {
             id: message.id,
             label: message.name,
             icon: message.iconName,
-            topic: message.kafkaTopic,
+            kafkaTopic: message.kafkaTopic,
             ui: [
               {
                 id: 'messageType',
@@ -227,7 +227,7 @@ export const MessageConfigForm: MeiosisComponent = () => {
                           if (!t) return;
                           message.templateId = t.id;
                           if (!t) return;
-                          message.kafkaTopic = t.topic;
+                          message.kafkaTopic = t.kafkaTopic;
                           message.name = t.label;
                           message.iconName = t.icon;
                         },

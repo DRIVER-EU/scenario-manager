@@ -50,10 +50,10 @@ export const ExecutingInjectView: MeiosisComponent = () => {
                 m(ManualTransition, { state, actions, options: { editing: (b) => (editing = b) } }), // TODO can set editing to true
                 m('h4', [
                   m(Icon, {
-                    iconName: getMessageIcon(inject.topic),
+                    iconName: getMessageIcon(inject.templateId),
                     style: 'margin-right: 12px;',
                   }),
-                  getMessageTitle(inject.topic),
+                  getMessageTitle(inject.templateId),
                 ]),
                 editing
                   ? m(MessageForm, { state, actions, options: { editing } })

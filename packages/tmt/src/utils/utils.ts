@@ -165,10 +165,10 @@ export const getRolePlayerMessageIcon = (type?: RolePlayerMessageType) => {
 /**
  * Represent the message with a title.
  * @param templates message templates
- * @param topic message type
+ * @param templateId template ID
  */
-export const getMessageTitleFromTemplate = (templates: IGuiTemplate[]) => (topic?: string) => {
-  const found = templates.find((t) => t.topic === topic);
+export const getMessageTitleFromTemplate = (templates: IGuiTemplate[]) => (templateId?: string) => {
+  const found = templates.find((t) => t.id === templateId);
   return found ? found.label : 'message';
 };
 

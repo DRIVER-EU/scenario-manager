@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { TextInput, Select, FlatButton, ModalPanel, TextArea } from 'mithril-materialized';
+import { TextInput, Select, FlatButton, ModalPanel, TextArea, InputCheckbox } from 'mithril-materialized';
 import { getMessage, MessageType, IGeoJsonMessage } from 'trial-manager-models';
 import { isJSON, getActiveTrialInfo, baseLayers } from '../../utils';
 import { UploadAsset } from '../ui';
@@ -87,7 +87,7 @@ export const GeoJsonMessageForm: MessageComponent = () => {
             iconName: 'anchor',
             helperText: 'Unique identifiers create new layers',
             isMandatory: true,
-            className: 'col s12 m4',
+            className: 'col s12 m3',
             initialValue: gm.layerId,
             onchange: (v: string) => {
               gm.layerId = v;
@@ -101,7 +101,7 @@ export const GeoJsonMessageForm: MessageComponent = () => {
             iconName: 'label',
             helperText: 'Used in map legend',
             isMandatory: true,
-            className: 'col s12 m4',
+            className: 'col s12 m3',
             initialValue: gm.layerName,
             onchange: (v: string) => {
               gm.layerName = v;
@@ -115,10 +115,22 @@ export const GeoJsonMessageForm: MessageComponent = () => {
             iconName: 'style',
             helperText: 'Determines visual appearance',
             isMandatory: true,
-            className: 'col s12 m4',
+            className: 'col s12 m3',
             initialValue: gm.layerStyle,
             onchange: (v: string) => {
               gm.layerStyle = v;
+              updateInject(inject);
+            },
+          }),
+          m(InputCheckbox, {
+            disabled,
+            id: 'layerShared',
+            label: 'Editable',
+            iconName: 'edit',
+            className: 'col s12 m3',
+            checked: gm.layerShared,
+            onchange: (v) => {
+              gm.layerShared = v;
               updateInject(inject);
             },
           }),

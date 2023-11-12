@@ -80,14 +80,14 @@ export class KafkaService extends EventEmitter implements TimeService {
       this.options.produce instanceof Array
         ? this.options.produce
         : this.options.produce
-        ? [this.options.produce]
-        : [];
+          ? [this.options.produce]
+          : [];
     this.options.consume =
       this.options.consume instanceof Array
         ? this.options.consume
         : this.options.consume
-        ? [this.options.consume]
-        : [];
+          ? [this.options.consume]
+          : [];
     if (this.options.produce.indexOf(tba.TimeControlTopic) < 0)
       this.options.produce.push(tba.TimeControlTopic);
     if (this.options.produce.indexOf(tba.TrialManagementSessionMgmtTopic) < 0)
@@ -147,9 +147,6 @@ export class KafkaService extends EventEmitter implements TimeService {
     this.adapter.on('error', (err) =>
       this.log.error(`Consumer received an error: ${err}`),
     );
-    // this.adapter.on('offsetOutOfRange', err =>
-    //   this.log.error(`Consumer received an offsetOutOfRange error: ${err.topic}`),
-    // );
   }
 
   public sendTimeControlMessage(timeCtrlMsg: ITimeControl) {
@@ -198,12 +195,12 @@ export class KafkaService extends EventEmitter implements TimeService {
     // this.adapter && console.log(this.adapter.timeElapsed);
     return this.adapter && this.adapter.simulationTime
       ? ({
-          timestamp: Date.now(),
-          simulationTime: this.adapter.simulationTime.valueOf(),
-          simulationSpeed: this.adapter.simulationSpeed,
-          state: this.adapter.timeState,
-          tags: { timeElapsed: this.adapter.timeElapsed.valueOf().toString() },
-        } as ITimeManagement)
+        timestamp: Date.now(),
+        simulationTime: this.adapter.simulationTime.valueOf(),
+        simulationSpeed: this.adapter.simulationSpeed,
+        state: this.adapter.timeState,
+        tags: { timeElapsed: this.adapter.timeElapsed.valueOf().toString() },
+      } as ITimeManagement)
       : undefined;
   }
 
@@ -214,7 +211,7 @@ export class KafkaService extends EventEmitter implements TimeService {
   public sendMessage<T>(m: T, topic: string) {
     try {
       if (typeof m === 'string') m = JSON.parse(m);
-    } catch {}
+    } catch { }
     // topic !== tba.TrialManagementSessionMgmtTopic &&
     //   console.log(
     //     `Sending message to topic ${topic}: ${JSON.stringify(m, null, 2)}`,

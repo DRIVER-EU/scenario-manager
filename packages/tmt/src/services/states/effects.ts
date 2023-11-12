@@ -35,10 +35,10 @@ export const LoadGuiTemplates = (_actions: IActions) => {
       name: t.label,
       iconName: t.icon,
       templateId: t.id,
-      kafkaTopic: t.topic,
+      kafkaTopic: t.kafkaTopic,
       messageType: (JSON.parse(t.ui as string) as Record<string, any>[]).filter(u => u.id === 'messageType').map(u => u.value).shift() || MessageType.UNDEFINED,
       useNamespace: false,
-      useCustomGUI: true,
+      useCustomGUI: false,
     })
     actions.update({ app: { templates } });
   };

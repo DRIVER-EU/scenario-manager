@@ -30,14 +30,15 @@ const SessionSettings: MeiosisComponent = () => {
           comment: s.tags?.comment || '',
         },
       };
+      // if (session && !session.name) {
+      //   session.name = 'New session';
+      // }
       const loggedInUser = getUserById(trial, userId);
-      const disabled = sessionControl.activeSession || !loggedInUser || !hasUserRole(loggedInUser, UserRole.EXCON);
+      const disabled =
+        sessionControl.activeSession || !loggedInUser || !hasUserRole(loggedInUser, UserRole.EXCON) || !session.name;
       const isConnected = sessionControl?.isConnected;
       const options = scenarios.map((s) => ({ id: s.id, label: s.title }));
 
-      if (session && !session.name) {
-        session.name = 'New session';
-      }
       return [
         m('.row', [
           m(
@@ -59,35 +60,29 @@ const SessionSettings: MeiosisComponent = () => {
         ]),
         !isConnected
           ? undefined
-          : m('.row', [
-              m(
-                '.col.s12',
-                m(TextInput, {
-                  initialValue: session.name || '',
-                  label: 'Session name',
-                  iconName: 'title',
-                  disabled,
-                  isMandatory: true,
-                  onchange: (v: string) => {
-                    session.name = v;
-                    updateSession(session);
-                  },
-                })
-              ),
-              m(
-                '.col.s12',
-                m(TextArea, {
-                  initialValue: session.tags ? session.tags.comment : undefined,
-                  label: 'Comments',
-                  iconName: 'note',
-                  disabled,
-                  onchange: (v: string) => {
-                    session.tags.comment = v;
-                    updateSession(session);
-                  },
-                })
-              ),
-              m('.col.s12.input-field', [
+          : [
+              m(TextInput, {
+                initialValue: session.name || '',
+                label: 'Session name',
+                iconName: 'title',
+                disabled,
+                isMandatory: true,
+                onchange: (v: string) => {
+                  session.name = v;
+                  updateSession(session);
+                },
+              }),
+              m(TextArea, {
+                initialValue: session.tags ? session.tags.comment : undefined,
+                label: 'Comments',
+                iconName: 'note',
+                disabled,
+                onchange: (v: string) => {
+                  session.tags.comment = v;
+                  updateSession(session);
+                },
+              }),
+              m('.button-group', [
                 m(FlatButton, {
                   className: 'col s6',
                   iconName: 'directions_run',
@@ -104,7 +99,7 @@ const SessionSettings: MeiosisComponent = () => {
                   onclick: async () => await stopSession(),
                 }),
               ]),
-            ]),
+            ],
       ];
     },
   };

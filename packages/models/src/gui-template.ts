@@ -6,7 +6,7 @@ export interface IGuiTemplate {
   /** Icon name, from the material-icons library */
   icon: string;
   /** Topic name, will be added after importing */
-  topic: string;
+  kafkaTopic: string;
   /** Use template as default in a trial */
   default?: boolean;
   /** UI Form template or string */

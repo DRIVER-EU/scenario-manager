@@ -91,7 +91,8 @@ export const MessageForm: MessageComponent = () => {
           customTemplates.push({
             label: msg.name,
             icon: msg.iconName,
-            topic: msg.templateId,
+            kafkaTopic: msg.kafkaTopic,
+            id: msg.templateId,
             ui: JSON.stringify(JSON.parse(gui).ui),
           } as IGuiTemplate);
         }
@@ -207,6 +208,29 @@ export const MessageForm: MessageComponent = () => {
           visualizedGUI = false;
         }
 
+        const onchange = () => {
+          if (update) {
+            Object.keys(update).forEach((key) => {
+              let replacement = update[key];
+              let matches: RegExpExecArray | null;
+              while ((matches = getPathRegex.exec(replacement))) {
+                if (matches.index === getPathRegex.lastIndex) getPathRegex.lastIndex++;
+                matches
+                  .filter((_, i) => i !== 0)
+                  .forEach((match) => {
+                    const value = getPath(inject, match);
+                    replacement = replacement.replace(
+                      new RegExp(`&${match}`, 'g'),
+                      typeof value === 'undefined' ? '' : value.toString()
+                    );
+                  });
+              }
+              (inject as Record<string, any>)[key] = eval(`\`${replacement}\``);
+            });
+          }
+          updateInject(inject);
+        };
+
         return (
           ui &&
           m('.row.message-form', [
@@ -214,27 +238,8 @@ export const MessageForm: MessageComponent = () => {
               form: ui,
               obj: inject,
               disabled,
-              onchange: () => {
-                update &&
-                  Object.keys(update).forEach((key) => {
-                    let replacement = update[key];
-                    let matches: RegExpExecArray | null;
-                    while ((matches = getPathRegex.exec(replacement))) {
-                      if (matches.index === getPathRegex.lastIndex) getPathRegex.lastIndex++;
-                      matches
-                        .filter((_, i) => i !== 0)
-                        .forEach((match) => {
-                          const value = getPath(inject, match);
-                          replacement = replacement.replace(
-                            new RegExp(`&${match}`, 'g'),
-                            typeof value === 'undefined' ? '' : value.toString()
-                          );
-                        });
-                    }
-                    (inject as Record<string, any>)[key] = eval(`\`${replacement}\``);
-                  });
-                updateInject(inject);
-              },
+              onchange,
+              oncreate: () => onchange(),
             }),
             overlay && filePreview !== ''
               ? [

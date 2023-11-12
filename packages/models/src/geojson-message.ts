@@ -7,6 +7,8 @@ export interface IGeoJsonMessage {
   layerName?: string;
   /** Layer style name, determines visual appearance of map layer */
   layerStyle?: string;
+  /** Allow others to edit the layer */
+  layerShared?: boolean;
   /** Layer description */
   layerDesc?: string;
   /** Link to the asset that holds the GeoJSON file */
